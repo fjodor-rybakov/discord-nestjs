@@ -1,6 +1,6 @@
 {
   "name": "discord-nestjs",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "NestJS package for discord.js",
   "author": "fjodor-rybakov",
   "license": "MIT",
@@ -13,6 +13,7 @@
     "url": "https://github.com/fjodor-rybakov/discord-nestjs"
   },
   "main": "dist/index.js",
+  "typings": "./dist/index.d.ts",
   "files": [
     "dist/**/*",
     "*.md"

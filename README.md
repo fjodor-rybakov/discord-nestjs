@@ -74,7 +74,6 @@ export interface OnDecoratorOptions {
 ```
 
 #### Decorator @Command handles command started with prefix
-
 ```
 @OnCommand({name: 'start'})
 async onCommand(message: Message): Promise<void> {
