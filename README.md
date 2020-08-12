@@ -35,7 +35,7 @@ $ npm install discord-nestjs
 ```
 OR 
 ```bash
-$ yarn install discord-nestjs
+$ yarn add discord-nestjs
 ```
 
 ## Usage
@@ -52,9 +52,9 @@ export class AppModule {
 }
 ```
 
-#### You can use the following decorators:
+### You can use the following decorators:
 
-##### Decorator @On handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
+#### Decorator @On handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
 ```
 @On({events: 'message'})
 async onMessage(message: Message): Promise<void> {
@@ -73,7 +73,7 @@ export interface OnDecoratorOptions {
 }
 ```
 
-##### Decorator @Command handles command started with prefix
+#### Decorator @Command handles command started with prefix
 
 ```
 @OnCommand({name: 'start'})
