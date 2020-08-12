@@ -38,10 +38,83 @@ OR
 $ yarn install discord-nestjs
 ```
 
-
 ## Usage
 
-// TODO
+`app.module.ts`
+```
+@Module({
+  imports: [DiscordModule.forRoot({
+    token: '<Your discord token>',
+    commandPrefix: '!'
+  })]
+})
+export class AppModule {
+}
+```
+
+#### You can use the following decorators:
+
+##### Decorator @On handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
+```
+@On({events: 'message'})
+async onMessage(message: Message): Promise<void> {
+    if (!message.author.bot) {
+        await message.reply('I\'m watching you');
+    }
+}
+```
+You can set this params
+```
+export interface OnDecoratorOptions {
+  /**
+   * Event type
+   */
+  events: keyof ClientEvents
+}
+```
+
+##### Decorator @Command handles command started with prefix
+
+```
+@OnCommand({name: 'start'})
+async onCommand(message: Message): Promise<void> {
+    await message.reply(`Execute command: ${message.content}`);
+}
+```
+You can set this params
+```
+export interface OnCommandDecoratorOptions {
+  /**
+   * Command name
+   */
+  name: string;
+
+  /**
+   * Your message prefix
+   * @default from module definition
+   */
+  prefix?: string;
+
+  /**
+   * Remove command name
+   * @default true
+   */
+  isRemoveCommandName?: boolean;
+
+  /**
+   * Remove prefix from message
+   * @default true
+   */
+  isRemovePrefix?: boolean;
+
+  /**
+   * Ignore bot message
+   * @default true
+   */
+  isIgnoreBotMessage?: boolean;
+}
+
+```
 
 ## License
 
