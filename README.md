@@ -52,6 +52,28 @@ export class AppModule {
 }
 ```
 
+`app.controller.ts`
+```
+import { Injectable, Logger } from '@nestjs/common';
+import { Client } from 'discord.js';
+import { On } from 'discord-nestjs';
+
+@Injectable()
+export class AppController {
+  private readonly logger = new Logger(AppController.name);
+
+  constructor(
+    private readonly discordClient: Client
+  ) {
+  }
+
+  @On({events: 'ready'})
+  async onReady(): Promise<void> {
+    this.logger.log(`Logged in as ${this.discordClient.user.tag}!`);
+  }
+}
+```
+
 ### You can use the following decorators:
 
 #### Decorator @On handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
