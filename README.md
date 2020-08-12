@@ -31,11 +31,11 @@ NestJS package for discord.js
 ## Installation
 
 ```bash
-$ npm install
+$ npm install discord-nestjs
 ```
 OR 
 ```bash
-$ yarn install
+$ yarn install discord-nestjs
 ```
 
 
