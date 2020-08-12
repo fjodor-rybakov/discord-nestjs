@@ -1,10 +1,10 @@
 import { ModuleMetadata, Type } from '@nestjs/common';
 import { DiscordOptionsFactory } from './discord-options-factory';
-import { DiscordModuleOption } from './discord-module-option';
+import { Client } from 'discord.js';
 
 export interface DiscordModuleAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
   useExisting?: Type<DiscordOptionsFactory>;
   useClass?: Type<DiscordOptionsFactory>;
-  useFactory?: (...args: any[]) => Promise<DiscordModuleOption> | DiscordModuleOption;
+  useFactory?: (...args: any[]) => Promise<Client> | Client;
   inject?: any[];
 }
