@@ -5,28 +5,41 @@ import { DiscordOptionsFactory } from './interface/discord-options-factory';
 import { DiscordService } from './discord.service';
 import { DiscordModuleOption } from './interface/discord-module-option';
 import { DISCORD_MODULE_OPTIONS } from './constant/discord.constant';
-import { Client } from 'discord.js';
+import { DiscordClient } from './discord-client';
 
 @Module({
   imports: [DiscoveryModule],
-  providers: [DiscordService],
-  exports: [DiscordService]
+  providers: [DiscordService]
 })
 export class DiscordModule {
   static forRoot(options: DiscordModuleOption): DynamicModule {
     return {
       module: DiscordModule,
       providers: DiscordModule.createDiscordProvider(options),
-      exports: [Client]
+      exports: [DiscordClient]
     };
   }
 
   static forRootAsync(options: DiscordModuleAsyncOptions): DynamicModule {
+    const connectionProvider = {
+      provide: DiscordClient,
+      useFactory: async (
+        discordModuleOption: DiscordModuleOption,
+      ): Promise<any> => {
+        const client = new DiscordClient(discordModuleOption);
+        await client.onApplicationBootstrap();
+        return client;
+      },
+      inject: [DISCORD_MODULE_OPTIONS],
+    };
     return {
       module: DiscordModule,
       imports: options.imports || [],
-      providers: DiscordModule.createAsyncProvider(options),
-      exports: [Client]
+      providers: [
+        this.createConfigAsyncProviders(options),
+        connectionProvider
+      ],
+      exports: [DiscordClient]
     };
   }
 
@@ -39,43 +52,37 @@ export class DiscordModule {
         useValue: options || {},
       },
       {
-        provide: Client,
-        useValue: new Client(options)
+        provide: DiscordClient,
+        useValue: new DiscordClient(options)
       },
       DiscordService
     ];
   }
 
-  private static createAsyncProvider(
-    options: DiscordModuleAsyncOptions,
-  ): Provider[] {
-    if (options.useExisting || options.useFactory) {
-      return [this.createAsyncOptionsProvider(options)];
-    }
-    return [
-      this.createAsyncOptionsProvider(options),
-      {
-        provide: options.useClass,
-        useClass: options.useClass,
-      },
-    ];
-  }
-
-  private static createAsyncOptionsProvider(
+  private static createConfigAsyncProviders(
     options: DiscordModuleAsyncOptions,
   ): Provider {
-    if (options.useFactory) {
+    if (options) {
+      if (options.useFactory) {
+        return {
+          provide: DISCORD_MODULE_OPTIONS,
+          useFactory: options.useFactory,
+          inject: options.inject || [],
+        };
+      } else {
+        // For useClass and useExisting...
+        return {
+          provide: DISCORD_MODULE_OPTIONS,
+          useFactory: async (optionsFactory: DiscordOptionsFactory): Promise<DiscordModuleOption> =>
+            await optionsFactory.createDiscordOptions(),
+          inject: [options.useExisting || options.useClass],
+        };
+      }
+    } else {
       return {
         provide: DISCORD_MODULE_OPTIONS,
-        useFactory: options.useFactory,
-        inject: options.inject || [],
+        useValue: {},
       };
     }
-    return {
-      provide: DISCORD_MODULE_OPTIONS,
-      useFactory: async (optionsFactory: DiscordOptionsFactory): Promise<DiscordModuleOption> =>
-        await optionsFactory.createTelegramOptions(),
-      inject: [options.useExisting || options.useClass],
-    };
   }
 }

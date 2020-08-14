@@ -1,32 +1,27 @@
-import { Inject, Injectable, OnApplicationBootstrap } from '@nestjs/common';
-import { Client } from 'discord.js';
-import { DiscordModuleOption } from './interface/discord-module-option';
-import { DISCORD_MODULE_OPTIONS } from './constant/discord.constant';
+import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { DiscoveryService, MetadataScanner } from '@nestjs/core';
 import { DiscordResolve } from './interface/discord-resolve';
 import { OnCommandResolver } from './resolver/on-command.resolver';
 import { OnResolver } from './resolver/on.resolver';
+import { DiscordClient } from './discord-client';
 
 @Injectable()
 export class DiscordService implements OnApplicationBootstrap {
   private readonly resolverList: DiscordResolve[] = [
     new OnCommandResolver(),
-    new OnResolver()
+    new OnResolver(),
   ];
 
   constructor(
-    @Inject(DISCORD_MODULE_OPTIONS)
-    private readonly options: DiscordModuleOption,
     private readonly discoveryService: DiscoveryService,
     private readonly metadataScanner: MetadataScanner,
-    private readonly discordClient: Client
+    private readonly discordClient: DiscordClient,
   ) {
-    this.resolve();
   }
 
-  async onApplicationBootstrap(): Promise<void> {
-    await this.discordClient.login(this.options.token);
+  onApplicationBootstrap() {
+    this.resolve();
   }
 
   resolve(): void {
@@ -36,7 +31,7 @@ export class DiscordService implements OnApplicationBootstrap {
       if (instance) {
         this.metadataScanner.scanFromPrototype(instance, Object.getPrototypeOf(instance), (methodName: string) => {
           this.resolverList.map((item: DiscordResolve) => {
-            item.resolve(instance, methodName, this.discordClient, this.options);
+            item.resolve(instance, methodName, this.discordClient);
           });
         });
       }

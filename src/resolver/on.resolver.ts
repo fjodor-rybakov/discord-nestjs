@@ -1,13 +1,14 @@
 import { DiscordResolve } from '../interface/discord-resolve';
-import { Client, ClientEvents } from 'discord.js';
+import { ClientEvents } from 'discord.js';
 import { ON_DECORATOR } from '../constant/discord.constant';
-import { OnDecoratorOptions } from '../decorator/interface/on-decorator-options';
+import { OnDecoratorOptions } from '..';
+import { DiscordClient } from '../discord-client';
 
 export class OnResolver implements DiscordResolve {
   resolve<T extends Record<string, (...args: ClientEvents[keyof ClientEvents]) => void>>(
     instance: T,
     methodName: string,
-    discordClient: Client
+    discordClient: DiscordClient
   ): void {
     const metadata: OnDecoratorOptions = Reflect.getMetadata(ON_DECORATOR, instance, methodName);
     if (metadata) {

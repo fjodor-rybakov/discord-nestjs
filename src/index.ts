@@ -4,3 +4,4 @@ export * from './decorator/on.decorator';
 export * from './decorator/on-command.decorator';
 export * from './decorator/interface/on-command-decorator-options';
 export * from './decorator/interface/on-decorator-options';
+export * from './discord-client';

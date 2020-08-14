@@ -51,19 +51,32 @@ $ yarn add discord-nestjs
 export class AppModule {
 }
 ```
+Or async
+```
+@Module({
+  imports: [DiscordModule.forRootAsync({
+    imports: [DiscordModule.forRootAsync({
+        useFactory: () => ({
+          token: '<Your discord token>',
+          commandPrefix: '!'
+        }),
+    })],
+})
+export class AppModule {
+}
+```
 
 `app.controller.ts`
 ```
 import { Injectable, Logger } from '@nestjs/common';
-import { Client } from 'discord.js';
-import { On } from 'discord-nestjs';
+import { On, DiscordClient } from 'discord-nestjs';
 
 @Injectable()
 export class AppController {
   private readonly logger = new Logger(AppController.name);
 
   constructor(
-    private readonly discordClient: Client
+    private readonly discordClient: DiscordClient
   ) {
   }
 

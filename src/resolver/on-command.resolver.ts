@@ -1,21 +1,20 @@
 import { DiscordResolve } from '../interface/discord-resolve';
-import { Client, ClientEvents, Message } from 'discord.js';
+import { ClientEvents, Message } from 'discord.js';
 import { ON_MESSAGE_DECORATOR } from '../constant/discord.constant';
-import { OnCommandDecoratorOptions } from '../decorator/interface/on-command-decorator-options';
-import { DiscordModuleOption } from '../interface/discord-module-option';
+import { OnCommandDecoratorOptions } from '..';
+import { DiscordClient } from '../discord-client';
 
 export class OnCommandResolver implements DiscordResolve {
   resolve<T extends Record<string, (...args: ClientEvents['message']) => void>>(
     instance: T,
     methodName: string,
-    discordClient: Client,
-    discordOptions: DiscordModuleOption
+    discordClient: DiscordClient
   ): void {
     const metadata: OnCommandDecoratorOptions = Reflect.getMetadata(ON_MESSAGE_DECORATOR, instance, methodName);
     if (metadata) {
       const {
         name,
-        prefix = discordOptions.commandPrefix,
+        prefix = discordClient.getCommandPrefix(),
         isRemovePrefix = true,
         isIgnoreBotMessage = true,
         isRemoveCommandName = true
