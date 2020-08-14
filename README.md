@@ -55,12 +55,11 @@ Or async
 ```
 @Module({
   imports: [DiscordModule.forRootAsync({
-    imports: [DiscordModule.forRootAsync({
-        useFactory: () => ({
-          token: '<Your discord token>',
-          commandPrefix: '!'
-        }),
-    })],
+    useFactory: () => ({
+      token: '<Your discord token>',
+      commandPrefix: '!'
+    })
+  })]
 })
 export class AppModule {
 }
@@ -93,9 +92,9 @@ export class AppController {
 ```
 @On({events: 'message'})
 async onMessage(message: Message): Promise<void> {
-    if (!message.author.bot) {
-        await message.reply('I\'m watching you');
-    }
+  if (!message.author.bot) {
+    await message.reply('I\'m watching you');
+  }
 }
 ```
 You can set this params
@@ -112,9 +111,9 @@ export interface OnDecoratorOptions {
 ```
 @Once({events: 'message'})
 async onceMessage(message: Message): Promise<void> {
-    if (!message.author.bot) {
-        await message.reply('I\'m watching you');
-    }
+  if (!message.author.bot) {
+    await message.reply('I\'m watching you');
+  }
 }
 ```
 You can set this params
