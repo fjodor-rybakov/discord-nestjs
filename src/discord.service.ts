@@ -5,12 +5,14 @@ import { DiscordResolve } from './interface/discord-resolve';
 import { OnCommandResolver } from './resolver/on-command.resolver';
 import { OnResolver } from './resolver/on.resolver';
 import { DiscordClient } from './discord-client';
+import { OnceResolver } from './resolver/once.resolver';
 
 @Injectable()
 export class DiscordService implements OnApplicationBootstrap {
   private readonly resolverList: DiscordResolve[] = [
     new OnCommandResolver(),
     new OnResolver(),
+    new OnceResolver()
   ];
 
   constructor(
@@ -20,7 +22,7 @@ export class DiscordService implements OnApplicationBootstrap {
   ) {
   }
 
-  onApplicationBootstrap() {
+  onApplicationBootstrap(): void {
     this.resolve();
   }
 

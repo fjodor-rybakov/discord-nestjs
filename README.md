@@ -108,6 +108,25 @@ export interface OnDecoratorOptions {
 }
 ```
 
+#### Decorator @Once handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
+```
+@Once({events: 'message'})
+async onceMessage(message: Message): Promise<void> {
+    if (!message.author.bot) {
+        await message.reply('I\'m watching you');
+    }
+}
+```
+You can set this params
+```
+export interface OnDecoratorOptions {
+  /**
+   * Event type
+   */
+  events: keyof ClientEvents
+}
+```
+
 #### Decorator @Command handles command started with prefix
 ```
 @OnCommand({name: 'start'})
