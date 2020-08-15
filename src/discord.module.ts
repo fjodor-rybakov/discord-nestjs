@@ -25,7 +25,7 @@ export class DiscordModule {
       provide: DiscordClient,
       useFactory: async (
         discordModuleOption: DiscordModuleOption,
-      ): Promise<any> => {
+      ): Promise<DiscordClient> => {
         const client = new DiscordClient(discordModuleOption);
         await client.onApplicationBootstrap();
         return client;
