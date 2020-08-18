@@ -1,6 +1,9 @@
 import { ON_DECORATOR } from '../constant/discord.constant';
 import { OnDecoratorOptions } from './interface/on-decorator-options';
 
+/**
+ * On event decorator
+ */
 export const On = (options?: OnDecoratorOptions): MethodDecorator => {
   return (
     target: Record<string, any>,

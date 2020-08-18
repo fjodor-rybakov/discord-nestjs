@@ -8,14 +8,16 @@ import { DISCORD_MODULE_OPTIONS } from './constant/discord.constant';
 import { DiscordClient } from './discord-client';
 
 @Module({
-  imports: [DiscoveryModule],
-  providers: [DiscordService]
+  imports: [DiscoveryModule]
 })
 export class DiscordModule {
   static forRoot(options: DiscordModuleOption): DynamicModule {
     return {
       module: DiscordModule,
-      providers: DiscordModule.createDiscordProvider(options),
+      providers: [
+        DiscordService,
+        ...DiscordModule.createDiscordProvider(options)
+      ],
       exports: [DiscordClient]
     };
   }
@@ -26,9 +28,7 @@ export class DiscordModule {
       useFactory: async (
         discordModuleOption: DiscordModuleOption,
       ): Promise<DiscordClient> => {
-        const client = new DiscordClient(discordModuleOption);
-        await client.onApplicationBootstrap();
-        return client;
+        return new DiscordClient(discordModuleOption);
       },
       inject: [DISCORD_MODULE_OPTIONS],
     };
@@ -36,6 +36,7 @@ export class DiscordModule {
       module: DiscordModule,
       imports: options.imports || [],
       providers: [
+        DiscordService,
         this.createConfigAsyncProviders(options),
         connectionProvider
       ],
