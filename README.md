@@ -79,7 +79,7 @@ export class AppController {
   ) {
   }
 
-  @On({events: 'ready'})
+  @On({event: 'ready'})
   async onReady(): Promise<void> {
     this.logger.log(`Logged in as ${this.discordClient.user.tag}!`);
   }
@@ -90,7 +90,7 @@ export class AppController {
 
 #### Decorator @On handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
 ```
-@On({events: 'message'})
+@On({event: 'message'})
 async onMessage(message: Message): Promise<void> {
   if (!message.author.bot) {
     await message.reply('I\'m watching you');
@@ -103,13 +103,13 @@ export interface OnDecoratorOptions {
   /**
    * Event type
    */
-  events: keyof ClientEvents
+  event: keyof ClientEvents
 }
 ```
 
 #### Decorator @Once handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
 ```
-@Once({events: 'message'})
+@Once({event: 'message'})
 async onceMessage(message: Message): Promise<void> {
   if (!message.author.bot) {
     await message.reply('I\'m watching you');
@@ -122,7 +122,7 @@ export interface OnDecoratorOptions {
   /**
    * Event type
    */
-  events: keyof ClientEvents
+  event: keyof ClientEvents
 }
 ```
 
