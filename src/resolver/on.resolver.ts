@@ -12,7 +12,7 @@ export class OnResolver implements DiscordResolve {
   ): void {
     const metadata: OnDecoratorOptions = Reflect.getMetadata(ON_DECORATOR, instance, methodName);
     if (metadata) {
-      discordClient.on(metadata.events, (...data: ClientEvents[keyof ClientEvents]) => {
+      discordClient.on(metadata.event, (...data: ClientEvents[keyof ClientEvents]) => {
         instance[methodName](...data);
       });
     }

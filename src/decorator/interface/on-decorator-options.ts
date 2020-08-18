@@ -4,5 +4,5 @@ export interface OnDecoratorOptions {
   /**
    * Event type
    */
-  events: keyof ClientEvents
+  event: keyof ClientEvents
 }

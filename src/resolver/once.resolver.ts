@@ -12,7 +12,7 @@ export class OnceResolver implements DiscordResolve {
   ): void {
     const metadata: OnDecoratorOptions = Reflect.getMetadata(ONCE_DECORATOR, instance, methodName);
     if (metadata) {
-      discordClient.once(metadata.events, (...data: ClientEvents[keyof ClientEvents]) => {
+      discordClient.once(metadata.event, (...data: ClientEvents[keyof ClientEvents]) => {
         instance[methodName](...data);
       });
     }
