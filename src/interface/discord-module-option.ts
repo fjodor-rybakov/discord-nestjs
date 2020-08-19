@@ -10,4 +10,9 @@ export interface DiscordModuleOption extends ClientOptions {
    * Start prefix for command
    */
   commandPrefix: string;
+
+  /**
+   * List of guild identifiers with which the bot will work
+   */
+  allowGuilds?: string[];
 }

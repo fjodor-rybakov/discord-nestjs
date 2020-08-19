@@ -33,7 +33,11 @@ export class DiscordService implements OnApplicationBootstrap {
       if (instance) {
         this.metadataScanner.scanFromPrototype(instance, Object.getPrototypeOf(instance), (methodName: string) => {
           this.resolverList.map((item: DiscordResolve) => {
-            item.resolve(instance, methodName, this.discordClient);
+            item.resolve({
+              instance,
+              methodName,
+              discordClient: this.discordClient
+            });
           });
         });
       }

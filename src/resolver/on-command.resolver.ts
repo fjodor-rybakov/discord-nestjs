@@ -1,15 +1,12 @@
 import { DiscordResolve } from '../interface/discord-resolve';
-import { ClientEvents, Message } from 'discord.js';
+import { Message } from 'discord.js';
 import { ON_MESSAGE_DECORATOR } from '../constant/discord.constant';
-import { OnCommandDecoratorOptions } from '..';
-import { DiscordClient } from '../discord-client';
+import { DiscordClient, OnCommandDecoratorOptions } from '..';
+import { DiscordResolveOptions } from '../interface/discord-resolve-options';
 
 export class OnCommandResolver implements DiscordResolve {
-  resolve<T extends Record<string, (...args: ClientEvents['message']) => void>>(
-    instance: T,
-    methodName: string,
-    discordClient: DiscordClient
-  ): void {
+  resolve(options: DiscordResolveOptions): void {
+    const {discordClient, instance, methodName} = options;
     const metadata: OnCommandDecoratorOptions = Reflect.getMetadata(ON_MESSAGE_DECORATOR, instance, methodName);
     if (metadata) {
       const {
@@ -20,6 +17,9 @@ export class OnCommandResolver implements DiscordResolve {
         isRemoveCommandName = true
       } = metadata;
       discordClient.on('message', (message: Message) => {
+        if (!this.isAllowGuild(discordClient, message)) {
+          return;
+        }
         const messageContent = message.content;
         const messagePrefix = this.getPrefix(messageContent, prefix);
         const commandName = this.getCommandName(messageContent.slice(messagePrefix.length), name);
@@ -47,6 +47,14 @@ export class OnCommandResolver implements DiscordResolve {
         }
       });
     }
+  }
+
+  private isAllowGuild(discordClient: DiscordClient, message: Message): boolean {
+    const guildId = message.guild && message.guild.id;
+    if (guildId) {
+      return discordClient.isAllowGuild(guildId);
+    }
+    return true;
   }
 
   private getPrefix(messageContent: string, prefix: string): string {

@@ -45,7 +45,8 @@ $ yarn add discord-nestjs
 @Module({
   imports: [DiscordModule.forRoot({
     token: '<Your discord token>',
-    commandPrefix: '!'
+    commandPrefix: '!',
+    allowGuilds: ['Some guild id'] // Optional
   })]
 })
 export class AppModule {
@@ -57,7 +58,8 @@ Or async
   imports: [DiscordModule.forRootAsync({
     useFactory: () => ({
       token: '<Your discord token>',
-      commandPrefix: '!'
+      commandPrefix: '!',
+      allowGuilds: ['Some guild id'] // Optional
     })
   })]
 })

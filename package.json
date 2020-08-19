@@ -1,6 +1,6 @@
 {
   "name": "discord-nestjs",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "NestJS package for discord.js",
   "author": "fjodor-rybakov",
   "license": "MIT",
@@ -21,7 +21,8 @@
   "keywords": [
     "nestjs",
     "discord",
-    "decorator"
+    "decorator",
+    "bot"
   ],
   "scripts": {
     "prebuild": "rimraf dist",

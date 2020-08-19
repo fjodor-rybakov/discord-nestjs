@@ -1,10 +1,6 @@
-import { DiscordClient } from '../discord-client';
+import { DiscordResolveOptions } from './discord-resolve-options';
 
 export interface DiscordResolve {
-  resolve(
-    instance: Record<string, any>,
-    methodName: string,
-    discordClient: DiscordClient
-  ): void;
+  resolve(options: DiscordResolveOptions): void;
 }
 
