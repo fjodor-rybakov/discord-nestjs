@@ -38,10 +38,11 @@ OR
 $ yarn add discord-nestjs
 ```
 
-## Usage
+## Overview
+Configuration
+```typescript
+/*app.module.ts*/
 
-`app.module.ts`
-```
 @Module({
   imports: [DiscordModule.forRoot({
     token: '<Your discord token>',
@@ -53,7 +54,9 @@ export class AppModule {
 }
 ```
 Or async
-```
+```typescript
+/*app.module.ts*/
+
 @Module({
   imports: [DiscordModule.forRootAsync({
     useFactory: () => ({
@@ -66,9 +69,10 @@ Or async
 export class AppModule {
 }
 ```
+Usage
+```typescript
+/*app.controller.ts*/
 
-`app.controller.ts`
-```
 import { Injectable, Logger } from '@nestjs/common';
 import { On, DiscordClient } from 'discord-nestjs';
 
@@ -88,10 +92,10 @@ export class AppController {
 }
 ```
 
-### You can use the following decorators:
+## You can use the following decorators:
 
-#### Decorator @On handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
-```
+### Decorator @On handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
+```typescript
 @On({event: 'message'})
 async onMessage(message: Message): Promise<void> {
   if (!message.author.bot) {
@@ -100,7 +104,7 @@ async onMessage(message: Message): Promise<void> {
 }
 ```
 You can set this params
-```
+```typescript
 export interface OnDecoratorOptions {
   /**
    * Event type
@@ -109,8 +113,8 @@ export interface OnDecoratorOptions {
 }
 ```
 
-#### Decorator @Once handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
-```
+### Decorator @Once handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
+```typescript
 @Once({event: 'message'})
 async onceMessage(message: Message): Promise<void> {
   if (!message.author.bot) {
@@ -119,7 +123,7 @@ async onceMessage(message: Message): Promise<void> {
 }
 ```
 You can set this params
-```
+```typescript
 export interface OnDecoratorOptions {
   /**
    * Event type
@@ -128,15 +132,15 @@ export interface OnDecoratorOptions {
 }
 ```
 
-#### Decorator @Command handles command started with prefix
-```
+### Decorator @Command handles command started with prefix
+```typescript
 @OnCommand({name: 'start'})
 async onCommand(message: Message): Promise<void> {
     await message.reply(`Execute command: ${message.content}`);
 }
 ```
 You can set this params
-```
+```typescript
 export interface OnCommandDecoratorOptions {
   /**
    * Command name
