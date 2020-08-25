@@ -76,7 +76,7 @@ Usage
 import { Injectable, Logger } from '@nestjs/common';
 import { On, DiscordClient } from 'discord-nestjs';
 
-@Injectable()
+@Injectable() /* You can use @Controller() or @Injectable() decorator */
 export class AppController {
   private readonly logger = new Logger(AppController.name);
 
