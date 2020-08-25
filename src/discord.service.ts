@@ -28,7 +28,8 @@ export class DiscordService implements OnApplicationBootstrap {
 
   resolve(): void {
     const providers: InstanceWrapper[] = this.discoveryService.getProviders();
-    providers.map((wrapper: InstanceWrapper) => {
+    const controllers: InstanceWrapper[] = this.discoveryService.getControllers();
+    providers.concat(controllers).map((wrapper: InstanceWrapper) => {
       const { instance } = wrapper;
       if (instance) {
         this.metadataScanner.scanFromPrototype(instance, Object.getPrototypeOf(instance), (methodName: string) => {
