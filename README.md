@@ -170,6 +170,11 @@ export interface OnCommandDecoratorOptions {
    * @default true
    */
   isIgnoreBotMessage?: boolean;
+  
+  /**
+   * List of channel identifiers with which the bot will work
+   */
+  allowChannel?: string[];
 }
 
 ```

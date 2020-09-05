@@ -20,6 +20,9 @@ export class OnCommandResolver implements DiscordResolve {
         if (!this.isAllowGuild(discordClient, message)) {
           return;
         }
+        if (metadata.allowChannel && !metadata.allowChannel.includes(message.channel.id)) {
+          return;
+        }
         const messageContent = message.content;
         const messagePrefix = this.getPrefix(messageContent, prefix);
         const commandName = this.getCommandName(messageContent.slice(messagePrefix.length), name);
