@@ -31,5 +31,5 @@ export interface OnCommandDecoratorOptions {
   /**
    * List of channel identifiers with which the bot will work
    */
-  allowChannel?: string[];
+  allowChannels?: string[];
 }
