@@ -13,6 +13,9 @@ export class OnResolver implements DiscordResolve {
         if (!this.isAllowGuild(discordClient, data)) {
           return;
         }
+        if (this.isDenyGuild(discordClient, data)) {
+          return;
+        }
         instance[methodName](...data);
       });
     }
@@ -25,5 +28,14 @@ export class OnResolver implements DiscordResolve {
       return discordClient.isAllowGuild(guildId);
     }
     return true;
+  }
+
+  private isDenyGuild(discordClient: DiscordClient, data: any[] = []): boolean {
+    const guild = data.find((item) => !!item && !!item.guild);
+    const guildId = !!guild && guild.guild.id;
+    if (!!guildId) {
+      return discordClient.isDenyGuild(guildId);
+    }
+    return false;
   }
 }

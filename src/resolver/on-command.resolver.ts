@@ -20,6 +20,9 @@ export class OnCommandResolver implements DiscordResolve {
         if (!this.isAllowGuild(discordClient, message)) {
           return;
         }
+        if (this.isDenyGuild(discordClient, message)) {
+          return;
+        }
         if (metadata.allowChannels && !metadata.allowChannels.includes(message.channel.id)) {
           return;
         }
@@ -54,10 +57,18 @@ export class OnCommandResolver implements DiscordResolve {
 
   private isAllowGuild(discordClient: DiscordClient, message: Message): boolean {
     const guildId = message.guild && message.guild.id;
-    if (guildId) {
+    if (!!guildId) {
       return discordClient.isAllowGuild(guildId);
     }
     return true;
+  }
+
+  private isDenyGuild(discordClient: DiscordClient, message: Message): boolean {
+    const guildId = message.guild && message.guild.id;
+    if (!!guildId) {
+      return discordClient.isDenyGuild(guildId);
+    }
+    return false;
   }
 
   private getPrefix(messageContent: string, prefix: string): string {

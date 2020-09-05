@@ -47,7 +47,8 @@ Configuration
   imports: [DiscordModule.forRoot({
     token: '<Your discord token>',
     commandPrefix: '!',
-    allowGuilds: ['Some guild id'] // Optional
+    allowGuilds: ['Some guild id'], // Optional
+    denyGuilds: ['Some guild id'] // Optional
   })]
 })
 export class AppModule {
@@ -62,7 +63,8 @@ Or async
     useFactory: () => ({
       token: '<Your discord token>',
       commandPrefix: '!',
-      allowGuilds: ['Some guild id'] // Optional
+      allowGuilds: ['Some guild id'], // Optional
+      denyGuilds: ['Some guild id'] // Optional
     })
   })]
 })
@@ -174,7 +176,7 @@ export interface OnCommandDecoratorOptions {
   /**
    * List of channel identifiers with which the bot will work
    */
-  allowChannel?: string[];
+  allowChannels?: string[];
 }
 
 ```

@@ -15,4 +15,9 @@ export interface DiscordModuleOption extends ClientOptions {
    * List of guild identifiers with which the bot will work
    */
   allowGuilds?: string[];
+
+  /**
+   * List of guilds identifiers with which the bot will not work
+   */
+  denyGuilds?: string[];
 }
