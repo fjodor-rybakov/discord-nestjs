@@ -24,11 +24,11 @@ NestJS package for discord.js
 ## Installation
 
 ```bash
-$ npm install discord-nestjs
+$ npm install discord-nestjs discord.js
 ```
 OR 
 ```bash
-$ yarn add discord-nestjs
+$ yarn add discord-nestjs discord.js
 ```
 
 ## Overview
@@ -171,5 +171,28 @@ export interface OnCommandDecoratorOptions {
    */
   allowChannels?: string[];
 }
+```
 
+### Decorator @Middleware (Test feature)
+
+You must implement `DiscordMiddleware` interface
+```typescript
+@Middleware()
+export class BotMiddleware implements DiscordMiddleware {
+  private readonly logger = new Logger(BotMiddleware.name);
+
+  use(event: keyof ClientEvents, context: ClientEvents[keyof ClientEvents]): void {
+    if (event === 'message') {
+      this.logger.log('On message event triggered');
+    }
+  }
+}
+```
+and add to providers
+```typescript
+@Module({
+  providers: [BotMiddleware]
+})
+export class BotModule {
+}
 ```

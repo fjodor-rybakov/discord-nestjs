@@ -1,12 +1,13 @@
 import { DiscordResolve } from '../interface/discord-resolve';
-import { Message } from 'discord.js';
+import { ClientEvents, Message } from 'discord.js';
 import { ON_MESSAGE_DECORATOR } from '../constant/discord.constant';
 import { DiscordClient, OnCommandDecoratorOptions } from '..';
 import { DiscordResolveOptions } from '../interface/discord-resolve-options';
+import { DiscordMiddlewareInstance } from '../interface/discord-middleware-instance';
 
 export class OnCommandResolver implements DiscordResolve {
   resolve(options: DiscordResolveOptions): void {
-    const {discordClient, instance, methodName} = options;
+    const {discordClient, instance, methodName, middlewareList} = options;
     const metadata: OnCommandDecoratorOptions = Reflect.getMetadata(ON_MESSAGE_DECORATOR, instance, methodName);
     if (metadata) {
       const {
@@ -16,7 +17,7 @@ export class OnCommandResolver implements DiscordResolve {
         isIgnoreBotMessage = true,
         isRemoveCommandName = true
       } = metadata;
-      discordClient.on('message', (message: Message) => {
+      discordClient.on('message', async (message: Message) => {
         if (!this.isAllowGuild(discordClient, message)) {
           return;
         }
@@ -46,13 +47,22 @@ export class OnCommandResolver implements DiscordResolve {
           if (isIgnoreBotMessage && message.author.bot) {
             return;
           }
-
           message.content = message.content.trim();
-
+          await this.applyMiddleware(middlewareList, 'message', [message]);
           instance[methodName](message);
         }
       });
     }
+  }
+
+  private async applyMiddleware(
+    middlewareList: DiscordMiddlewareInstance[],
+    event: keyof ClientEvents,
+    context: ClientEvents[keyof ClientEvents]
+  ): Promise<void> {
+    await Promise.all(middlewareList.map((item: DiscordMiddlewareInstance) => {
+      return item.instance.use(event, context);
+    }));
   }
 
   private isAllowGuild(discordClient: DiscordClient, message: Message): boolean {
