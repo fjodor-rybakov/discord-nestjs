@@ -75,7 +75,7 @@ import { On, DiscordClient } from 'discord-nestjs';
 
 @Injectable() /* You can use @Controller() or @Injectable() decorator */
 export class BotGateway {
-  private readonly logger = new Logger(AppController.name);
+  private readonly logger = new Logger(BotGateway.name);
 
   constructor(
     private readonly discordClient: DiscordClient
