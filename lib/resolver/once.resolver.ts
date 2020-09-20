@@ -29,7 +29,7 @@ export class OnceResolver implements DiscordResolve {
   }
 
 
-  private isAllowGuild(discordClient: DiscordClient, data: any[]): boolean {
+  private isAllowGuild(discordClient: DiscordClient, data: any[] = []): boolean {
     const guild = data.find((item) => !!item && !!item.guild);
     const guildId = !!guild && guild.guild.id;
     if (!!guildId) {
