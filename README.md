@@ -34,7 +34,7 @@ $ yarn add discord-nestjs discord.js
 ## Overview
 Configuration
 ```typescript
-/*app.module.ts*/
+/*bot.module.ts*/
 
 @Module({
   imports: [DiscordModule.forRoot({
@@ -50,7 +50,7 @@ export class BotModule {
 ```
 Or async
 ```typescript
-/*app.module.ts*/
+/*bot.module.ts*/
 
 @Module({
   imports: [DiscordModule.forRootAsync({
@@ -68,7 +68,7 @@ export class BotModule {
 ```
 Usage
 ```typescript
-/*app.controller.ts*/
+/*bot.gateway.ts*/
 
 import { Injectable, Logger } from '@nestjs/common';
 import { On, DiscordClient } from 'discord-nestjs';
@@ -93,6 +93,8 @@ export class BotGateway {
 
 ### Decorator @Command handles command started with prefix
 ```typescript
+/*bot.gateway.ts*/
+
 @Injectable()
 export class BotGateway {
   @OnCommand({name: 'start'})
@@ -142,6 +144,8 @@ export interface OnCommandDecoratorOptions {
 
 ### Decorator @On handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
 ```typescript
+/*bot.gateway.ts*/
+
 @Injectable()
 export class BotGateway {
   @On({event: 'message'})
@@ -164,6 +168,8 @@ export interface OnDecoratorOptions {
 
 ### Decorator @Once handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
 ```typescript
+/*bot.gateway.ts*/
+
 @Injectable()
 export class BotGateway {
   @Once({event: 'message'})
@@ -188,6 +194,8 @@ export interface OnDecoratorOptions {
 
 You must implement `DiscordMiddleware` interface
 ```typescript
+/*bot.middleware.ts*/
+
 @Middleware()
 export class BotMiddleware implements DiscordMiddleware {
   private readonly logger = new Logger(BotMiddleware.name);
@@ -213,7 +221,7 @@ export interface MiddlewareOptions {
   denyEvents?: Array<keyof ClientEvents>;
 }
 ```
-and add to providers
+Don't forget to add to providers
 ```typescript
 @Module({
   providers: [BotMiddleware]
