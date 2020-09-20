@@ -162,7 +162,7 @@ export interface OnDecoratorOptions {
   /**
    * Event type
    */
-  event: keyof ClientEvents
+  event: keyof ClientEvents;
 }
 ```
 
@@ -186,7 +186,7 @@ export interface OnDecoratorOptions {
   /**
    * Event type
    */
-  event: keyof ClientEvents
+  event: keyof ClientEvents;
 }
 ```
 
@@ -200,7 +200,10 @@ You must implement `DiscordMiddleware` interface
 export class BotMiddleware implements DiscordMiddleware {
   private readonly logger = new Logger(BotMiddleware.name);
 
-  use(event: keyof ClientEvents, context: ClientEvents[keyof ClientEvents]): void {
+  use(
+    event: keyof ClientEvents,
+    context: ClientEvents[keyof ClientEvents]
+  ): void {
     if (event === 'message') {
       this.logger.log('On message event triggered');
     }

@@ -1,3 +1,6 @@
+/**
+ * Command options
+ */
 export interface OnCommandDecoratorOptions {
   /**
    * Command name
