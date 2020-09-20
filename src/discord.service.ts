@@ -6,60 +6,54 @@ import { OnCommandResolver } from './resolver/on-command.resolver';
 import { OnResolver } from './resolver/on.resolver';
 import { DiscordClient } from './discord-client';
 import { OnceResolver } from './resolver/once.resolver';
-import { MIDDLEWARE_DECORATOR } from './constant/discord.constant';
 import { DiscordMiddlewareInstance } from './interface/discord-middleware-instance';
+import { DiscordMiddlewareService } from './discord-middleware.service';
 
 @Injectable()
 export class DiscordService implements OnApplicationBootstrap {
-  private readonly middlewareList: DiscordMiddlewareInstance[] = [];
-
-  private readonly resolverList: DiscordResolve[] = [
-    new OnCommandResolver(),
-    new OnResolver(),
-    new OnceResolver()
-  ];
+  private readonly resolverList: DiscordResolve[];
 
   constructor(
     private readonly discoveryService: DiscoveryService,
     private readonly metadataScanner: MetadataScanner,
-    private readonly discordClient: DiscordClient
+    private readonly discordClient: DiscordClient,
+    private readonly discordMiddlewareService: DiscordMiddlewareService,
+    private readonly commandResolver: OnCommandResolver,
+    private readonly onResolver: OnResolver,
+    private readonly onceResolver: OnceResolver,
   ) {
+    this.resolverList = [
+      commandResolver,
+      onResolver,
+      onceResolver
+    ];
   }
 
   onApplicationBootstrap(): void {
-    this.resolveMiddleware();
-    this.resolve();
-  }
-
-  resolve(): void {
     const providers: InstanceWrapper[] = this.discoveryService.getProviders();
     const controllers: InstanceWrapper[] = this.discoveryService.getControllers();
-    providers.concat(controllers).map((wrapper: InstanceWrapper) => {
+    const middlewareList = this.discordMiddlewareService.resolveMiddleware(providers);
+    this.resolve(providers, controllers, middlewareList);
+  }
+
+  resolve(
+    providers: InstanceWrapper[],
+    controllers: InstanceWrapper[],
+    middlewareList: DiscordMiddlewareInstance[]
+  ): void {
+    providers.concat(controllers).forEach((wrapper: InstanceWrapper) => {
       const { instance } = wrapper;
       if (instance) {
         this.metadataScanner.scanFromPrototype(instance, Object.getPrototypeOf(instance), (methodName?: string) => {
-          this.resolverList.map((item: DiscordResolve) => {
+          this.resolverList.forEach((item: DiscordResolve) => {
             item.resolve({
               instance,
               methodName,
               discordClient: this.discordClient,
-              middlewareList: this.middlewareList
+              middlewareList
             });
           });
         });
-      }
-    });
-  }
-
-  resolveMiddleware(): void {
-    const providers: InstanceWrapper[] = this.discoveryService.getProviders();
-    providers.map((wrapper: InstanceWrapper) => {
-      const { instance } = wrapper;
-      if (instance) {
-        const metadata = Reflect.getMetadata(MIDDLEWARE_DECORATOR, instance);
-        if (metadata) {
-          this.middlewareList.push({ instance, metadata });
-        }
       }
     });
   }

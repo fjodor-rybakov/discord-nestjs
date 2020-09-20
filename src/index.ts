@@ -7,4 +7,5 @@ export * from './decorator/on-command.decorator';
 export * from './decorator/middleware.decorator';
 export * from './decorator/interface/on-command-decorator-options';
 export * from './decorator/interface/on-decorator-options';
+export * from './decorator/interface/middleware-options';
 export * from './discord-client';

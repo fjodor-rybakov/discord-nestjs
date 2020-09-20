@@ -42,9 +42,10 @@ Configuration
     commandPrefix: '!',
     allowGuilds: ['Some guild id'], // Optional
     denyGuilds: ['Some guild id'] // Optional
-  })]
+  })],
+  providers: [BotGateway]
 })
-export class AppModule {
+export class BotModule {
 }
 ```
 Or async
@@ -59,9 +60,10 @@ Or async
       allowGuilds: ['Some guild id'], // Optional
       denyGuilds: ['Some guild id'] // Optional
     })
-  })]
+  })],
+  providers: [BotGateway]
 })
-export class AppModule {
+export class BotModule {
 }
 ```
 Usage
@@ -72,7 +74,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { On, DiscordClient } from 'discord-nestjs';
 
 @Injectable() /* You can use @Controller() or @Injectable() decorator */
-export class AppController {
+export class BotGateway {
   private readonly logger = new Logger(AppController.name);
 
   constructor(
@@ -89,49 +91,14 @@ export class AppController {
 
 ## You can use the following decorators:
 
-### Decorator @On handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
-```typescript
-@On({event: 'message'})
-async onMessage(message: Message): Promise<void> {
-  if (!message.author.bot) {
-    await message.reply('I\'m watching you');
-  }
-}
-```
-You can set this params
-```typescript
-export interface OnDecoratorOptions {
-  /**
-   * Event type
-   */
-  event: keyof ClientEvents
-}
-```
-
-### Decorator @Once handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
-```typescript
-@Once({event: 'message'})
-async onceMessage(message: Message): Promise<void> {
-  if (!message.author.bot) {
-    await message.reply('I\'m watching you');
-  }
-}
-```
-You can set this params
-```typescript
-export interface OnDecoratorOptions {
-  /**
-   * Event type
-   */
-  event: keyof ClientEvents
-}
-```
-
 ### Decorator @Command handles command started with prefix
 ```typescript
-@OnCommand({name: 'start'})
-async onCommand(message: Message): Promise<void> {
-    await message.reply(`Execute command: ${message.content}`);
+@Injectable()
+export class BotGateway {
+  @OnCommand({name: 'start'})
+  async onCommand(message: Message): Promise<void> {
+      await message.reply(`Execute command: ${message.content}`);
+  }
 }
 ```
 You can set this params
@@ -173,6 +140,50 @@ export interface OnCommandDecoratorOptions {
 }
 ```
 
+### Decorator @On handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
+```typescript
+@Injectable()
+export class BotGateway {
+  @On({event: 'message'})
+  async onMessage(message: Message): Promise<void> {
+    if (!message.author.bot) {
+      await message.reply('I\'m watching you');
+    }
+  }
+}
+```
+You can set this params
+```typescript
+export interface OnDecoratorOptions {
+  /**
+   * Event type
+   */
+  event: keyof ClientEvents
+}
+```
+
+### Decorator @Once handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
+```typescript
+@Injectable()
+export class BotGateway {
+  @Once({event: 'message'})
+  async onceMessage(message: Message): Promise<void> {
+    if (!message.author.bot) {
+      await message.reply('I\'m watching you');
+    }
+  }
+}
+```
+You can set this params
+```typescript
+export interface OnDecoratorOptions {
+  /**
+   * Event type
+   */
+  event: keyof ClientEvents
+}
+```
+
 ### Decorator @Middleware (Test feature)
 
 You must implement `DiscordMiddleware` interface
@@ -188,6 +199,20 @@ export class BotMiddleware implements DiscordMiddleware {
   }
 }
 ```
+You can set this params
+```typescript
+export interface MiddlewareOptions {
+  /**
+   * Take events
+   */
+  allowEvents?: Array<keyof ClientEvents>;
+
+  /**
+   * Skip events
+   */
+  denyEvents?: Array<keyof ClientEvents>;
+}
+```
 and add to providers
 ```typescript
 @Module({
@@ -196,3 +221,5 @@ and add to providers
 export class BotModule {
 }
 ```
+
+Any questions or suggestions? Discord Федок#3051

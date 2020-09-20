@@ -6,6 +6,10 @@ import { DiscordService } from './discord.service';
 import { DiscordModuleOption } from './interface/discord-module-option';
 import { DISCORD_MODULE_OPTIONS } from './constant/discord.constant';
 import { DiscordClient } from './discord-client';
+import { DiscordMiddlewareService } from './discord-middleware.service';
+import { OnResolver } from './resolver/on.resolver';
+import { OnCommandResolver } from './resolver/on-command.resolver';
+import { OnceResolver } from './resolver/once.resolver';
 
 @Module({
   imports: [DiscoveryModule]
@@ -15,6 +19,10 @@ export class DiscordModule {
     return {
       module: DiscordModule,
       providers: [
+        DiscordMiddlewareService,
+        OnResolver,
+        OnCommandResolver,
+        OnceResolver,
         DiscordService,
         ...DiscordModule.createDiscordProvider(options)
       ],
@@ -36,6 +44,10 @@ export class DiscordModule {
       module: DiscordModule,
       imports: options.imports || [],
       providers: [
+        DiscordMiddlewareService,
+        OnResolver,
+        OnCommandResolver,
+        OnceResolver,
         DiscordService,
         this.createConfigAsyncProviders(options),
         connectionProvider

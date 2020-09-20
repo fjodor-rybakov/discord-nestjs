@@ -1,15 +1,16 @@
 import { MIDDLEWARE_DECORATOR } from '../constant/discord.constant';
 import { applyDecorators, Injectable } from '@nestjs/common';
+import { MiddlewareOptions } from './interface/middleware-options';
 
 /**
  * Middleware decorator
  */
-export const Middleware = (): ClassDecorator => {
+export const Middleware = (options: MiddlewareOptions = {}): ClassDecorator => {
   return <TFunction extends Function>(
     target: TFunction
   ):  TFunction | void => {
     applyDecorators(Injectable);
-    Reflect.defineMetadata(MIDDLEWARE_DECORATOR, {}, target.prototype);
+    Reflect.defineMetadata(MIDDLEWARE_DECORATOR, options, target.prototype);
     return target;
   };
 };
