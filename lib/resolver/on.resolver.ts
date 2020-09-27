@@ -1,19 +1,25 @@
 import { DiscordResolve } from '../interface/discord-resolve';
 import { ClientEvents } from 'discord.js';
-import { ON_DECORATOR } from '../constant/discord.constant';
+import { ON_DECORATOR, USE_INTERCEPTORS_DECORATOR } from '../constant/discord.constant';
 import { DiscordClient, OnDecoratorOptions } from '..';
 import { DiscordResolveOptions } from '../interface/discord-resolve-options';
-import { DiscordMiddlewareService } from '../discord-middleware.service';
+import { DiscordMiddlewareService } from '../service/discord-middleware.service';
 import { Injectable } from '@nestjs/common';
+import { DiscordInterceptor } from '..';
+import { DiscordInterceptorService } from '../service/discord-interceptor.service';
 
 @Injectable()
 export class OnResolver implements DiscordResolve {
-  constructor(private readonly discordMiddlewareService: DiscordMiddlewareService) {
+  constructor(
+    private readonly discordMiddlewareService: DiscordMiddlewareService,
+    private readonly discordInterceptorService: DiscordInterceptorService
+  ) {
   }
 
   resolve(options: DiscordResolveOptions): void {
     const { discordClient, instance, methodName, middlewareList } = options;
     const metadata: OnDecoratorOptions = Reflect.getMetadata(ON_DECORATOR, instance, methodName);
+    const interceptors: (DiscordInterceptor | Function)[] = Reflect.getMetadata(USE_INTERCEPTORS_DECORATOR, instance, methodName);
     if (metadata) {
       discordClient.on(metadata.event, async (...data: ClientEvents[keyof ClientEvents]) => {
         if (!this.isAllowGuild(discordClient, data)) {
@@ -23,6 +29,9 @@ export class OnResolver implements DiscordResolve {
           return;
         }
         await this.discordMiddlewareService.applyMiddleware(middlewareList, metadata.event, data);
+        if (interceptors && interceptors.length !== 0) {
+          data = await this.discordInterceptorService.applyInterceptors(interceptors, metadata.event, data);
+        }
         instance[methodName](...data);
       });
     }

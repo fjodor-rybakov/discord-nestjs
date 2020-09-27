@@ -1,8 +1,8 @@
-import { DiscordMiddlewareInstance } from './interface/discord-middleware-instance';
+import { DiscordMiddlewareInstance } from '../interface/discord-middleware-instance';
 import { ClientEvents } from "discord.js";
 import { Injectable } from '@nestjs/common';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
-import { MIDDLEWARE_DECORATOR } from './constant/discord.constant';
+import { MIDDLEWARE_DECORATOR } from '../constant/discord.constant';
 
 @Injectable()
 export class DiscordMiddlewareService {

@@ -9,7 +9,7 @@ export const Middleware = (options: MiddlewareOptions = {}): ClassDecorator => {
   return <TFunction extends Function>(
     target: TFunction
   ):  TFunction | void => {
-    applyDecorators(Injectable);
+    applyDecorators(Injectable(options));
     Reflect.defineMetadata(MIDDLEWARE_DECORATOR, options, target.prototype);
     return target;
   };

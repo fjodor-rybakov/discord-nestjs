@@ -1,12 +1,12 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { DiscoveryService, MetadataScanner } from '@nestjs/core';
-import { DiscordResolve } from './interface/discord-resolve';
-import { OnCommandResolver } from './resolver/on-command.resolver';
-import { OnResolver } from './resolver/on.resolver';
-import { DiscordClient } from './discord-client';
-import { OnceResolver } from './resolver/once.resolver';
-import { DiscordMiddlewareInstance } from './interface/discord-middleware-instance';
+import { DiscordResolve } from '../interface/discord-resolve';
+import { OnCommandResolver } from '../resolver/on-command.resolver';
+import { OnResolver } from '../resolver/on.resolver';
+import { DiscordClient } from '../discord-client';
+import { OnceResolver } from '../resolver/once.resolver';
+import { DiscordMiddlewareInstance } from '../interface/discord-middleware-instance';
 import { DiscordMiddlewareService } from './discord-middleware.service';
 
 @Injectable()

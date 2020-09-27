@@ -2,14 +2,15 @@ import { DynamicModule, Module, Provider } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
 import { DiscordModuleAsyncOptions } from './interface/discord-module-async-options';
 import { DiscordOptionsFactory } from './interface/discord-options-factory';
-import { DiscordService } from './discord.service';
+import { DiscordService } from './service/discord.service';
 import { DiscordModuleOption } from './interface/discord-module-option';
 import { DISCORD_MODULE_OPTIONS } from './constant/discord.constant';
 import { DiscordClient } from './discord-client';
-import { DiscordMiddlewareService } from './discord-middleware.service';
+import { DiscordMiddlewareService } from './service/discord-middleware.service';
 import { OnResolver } from './resolver/on.resolver';
 import { OnCommandResolver } from './resolver/on-command.resolver';
 import { OnceResolver } from './resolver/once.resolver';
+import { DiscordInterceptorService } from './service/discord-interceptor.service';
 
 @Module({
   imports: [DiscoveryModule]
@@ -20,6 +21,7 @@ export class DiscordModule {
       module: DiscordModule,
       providers: [
         DiscordMiddlewareService,
+        DiscordInterceptorService,
         OnResolver,
         OnCommandResolver,
         OnceResolver,
@@ -45,6 +47,7 @@ export class DiscordModule {
       imports: options.imports || [],
       providers: [
         DiscordMiddlewareService,
+        DiscordInterceptorService,
         OnResolver,
         OnCommandResolver,
         OnceResolver,

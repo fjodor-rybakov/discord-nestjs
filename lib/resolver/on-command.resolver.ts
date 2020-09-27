@@ -1,19 +1,25 @@
 import { DiscordResolve } from '../interface/discord-resolve';
 import { Message } from 'discord.js';
-import { ON_MESSAGE_DECORATOR } from '../constant/discord.constant';
+import { ON_MESSAGE_DECORATOR, USE_INTERCEPTORS_DECORATOR } from '../constant/discord.constant';
 import { DiscordClient, OnCommandDecoratorOptions } from '..';
 import { DiscordResolveOptions } from '../interface/discord-resolve-options';
-import { DiscordMiddlewareService } from '../discord-middleware.service';
+import { DiscordMiddlewareService } from '../service/discord-middleware.service';
 import { Injectable } from '@nestjs/common';
+import { DiscordInterceptor } from '..';
+import { DiscordInterceptorService } from '../service/discord-interceptor.service';
 
 @Injectable()
 export class OnCommandResolver implements DiscordResolve {
-  constructor(private readonly discordMiddlewareService: DiscordMiddlewareService) {
+  constructor(
+    private readonly discordMiddlewareService: DiscordMiddlewareService,
+    private readonly discordInterceptorService: DiscordInterceptorService
+  ) {
   }
 
   resolve(options: DiscordResolveOptions): void {
     const { discordClient, instance, methodName, middlewareList } = options;
     const metadata: OnCommandDecoratorOptions = Reflect.getMetadata(ON_MESSAGE_DECORATOR, instance, methodName);
+    const interceptors: (DiscordInterceptor | Function)[] = Reflect.getMetadata(USE_INTERCEPTORS_DECORATOR, instance, methodName);
     if (metadata) {
       const {
         name,
@@ -54,6 +60,9 @@ export class OnCommandResolver implements DiscordResolve {
           }
           message.content = message.content.trim();
           await this.discordMiddlewareService.applyMiddleware(middlewareList, 'message', [message]);
+          if (interceptors && interceptors.length !== 0) {
+            message = await this.discordInterceptorService.applyInterceptors(interceptors, 'message', message);
+          }
           instance[methodName](message);
         }
       });

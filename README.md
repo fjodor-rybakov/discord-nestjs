@@ -42,6 +42,7 @@ Configuration
     commandPrefix: '!',
     allowGuilds: ['Some guild id'], // Optional
     denyGuilds: ['Some guild id'] // Optional
+    // and other discord options
   })],
   providers: [BotGateway]
 })
@@ -59,6 +60,7 @@ Or async
       commandPrefix: '!',
       allowGuilds: ['Some guild id'], // Optional
       denyGuilds: ['Some guild id'] // Optional
+      // and other discord options
     })
   })],
   providers: [BotGateway]
@@ -187,6 +189,36 @@ export interface OnDecoratorOptions {
    * Event type
    */
   event: keyof ClientEvents;
+}
+```
+
+### Decorator @UseInterceptor (Test feature)
+
+You must implement `DiscordInterceptor` interface
+```typescript
+/*bot.interceptor.ts*/
+
+import { DiscordInterceptor } from 'discord-nestjs';
+import { ClientEvents } from 'discord.js';
+
+export class BotInterceptor implements DiscordInterceptor {
+  intercept(event: keyof ClientEvents, context: any): any {
+    return 'Some custom value';
+  }
+}
+```
+
+```typescript
+/*bot.gateway.ts*/
+import { On, UseInterceptors } from 'discord-nestjs';
+
+@Injectable()
+export class BotGateway {
+  @UseInterceptors(BotInterceptor)
+  @On({event: 'message'})
+  async onSomeEvent(context: string): Promise<void> {
+      // to do something
+  }
 }
 ```
 

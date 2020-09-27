@@ -1,6 +1,6 @@
 {
   "name": "discord-nestjs",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "NestJS package for discord.js",
   "author": "fjodor-rybakov",
   "license": "MIT",

@@ -1,9 +1,10 @@
 import { ClientEvents } from 'discord.js';
+import { InjectableOptions } from '@nestjs/common/decorators/core/injectable.decorator';
 
 /**
  * Middleware options
  */
-export interface MiddlewareOptions {
+export interface MiddlewareOptions extends InjectableOptions {
   /**
    * Take events
    */
