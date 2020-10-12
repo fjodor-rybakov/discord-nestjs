@@ -44,17 +44,24 @@ export class DiscordService implements OnApplicationBootstrap {
     providers.concat(controllers).forEach((wrapper: InstanceWrapper) => {
       const { instance } = wrapper;
       if (instance) {
-        this.metadataScanner.scanFromPrototype(instance, Object.getPrototypeOf(instance), (methodName: string) => {
-          this.resolverList.forEach((item: DiscordResolve) => {
-            item.resolve({
-              instance,
-              methodName,
-              discordClient: this.discordClient,
-              middlewareList
-            });
-          });
-        });
+        this.scanMetadata(instance, middlewareList);
       }
+    });
+  }
+
+  private scanMetadata(
+    instance: any,
+    middlewareList: DiscordMiddlewareInstance[]
+  ): void {
+    this.metadataScanner.scanFromPrototype(instance, Object.getPrototypeOf(instance), (methodName: string) => {
+      this.resolverList.forEach((item: DiscordResolve) => {
+        item.resolve({
+          instance,
+          methodName,
+          discordClient: this.discordClient,
+          middlewareList
+        });
+      });
     });
   }
 }

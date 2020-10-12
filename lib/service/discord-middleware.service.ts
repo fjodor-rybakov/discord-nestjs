@@ -12,9 +12,12 @@ export class DiscordMiddlewareService {
     providers.map((wrapper: InstanceWrapper) => {
       const { instance } = wrapper;
       if (instance) {
-        const metadata = Reflect.getMetadata(MIDDLEWARE_DECORATOR, instance);
-        if (metadata) {
-          this.middlewareList.push({ instance, metadata });
+        try {
+          const metadata = Reflect.getMetadata(MIDDLEWARE_DECORATOR, instance);
+          if (metadata) {
+            this.middlewareList.push({ instance, metadata });
+          }
+        } catch (err) {
         }
       }
     });

@@ -85,7 +85,7 @@ export class BotGateway {
   }
 
   @On({event: 'ready'})
-  async onReady(): Promise<void> {
+  onReady(): void {
     this.logger.log(`Logged in as ${this.discordClient.user.tag}!`);
   }
 }
@@ -192,7 +192,7 @@ export interface OnDecoratorOptions {
 }
 ```
 
-### Decorator @UseInterceptor (Test feature)
+### Decorator @UseInterceptors (Test feature)
 
 You must implement `DiscordInterceptor` interface
 ```typescript
