@@ -8,6 +8,7 @@ import { DiscordClient } from '../discord-client';
 import { OnceResolver } from '../resolver/once.resolver';
 import { DiscordMiddlewareInstance } from '../interface/discord-middleware-instance';
 import { DiscordMiddlewareService } from './discord-middleware.service';
+import { IsObject } from '../function/is-object';
 
 @Injectable()
 export class DiscordService implements OnApplicationBootstrap {
@@ -43,7 +44,7 @@ export class DiscordService implements OnApplicationBootstrap {
   ): void {
     providers.concat(controllers).forEach((wrapper: InstanceWrapper) => {
       const { instance } = wrapper;
-      if (instance) {
+      if (instance && IsObject(instance)) {
         this.scanMetadata(instance, middlewareList);
       }
     });

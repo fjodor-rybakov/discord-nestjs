@@ -3,6 +3,7 @@ import { ClientEvents } from "discord.js";
 import { Injectable } from '@nestjs/common';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { MIDDLEWARE_DECORATOR } from '../constant/discord.constant';
+import { IsObject } from '../function/is-object';
 
 @Injectable()
 export class DiscordMiddlewareService {
@@ -11,13 +12,10 @@ export class DiscordMiddlewareService {
   resolveMiddleware(providers: InstanceWrapper[]): DiscordMiddlewareInstance[] {
     providers.map((wrapper: InstanceWrapper) => {
       const { instance } = wrapper;
-      if (instance) {
-        try {
-          const metadata = Reflect.getMetadata(MIDDLEWARE_DECORATOR, instance);
-          if (metadata) {
-            this.middlewareList.push({ instance, metadata });
-          }
-        } catch (err) {
+      if (instance && IsObject(instance)) {
+        const metadata = Reflect.getMetadata(MIDDLEWARE_DECORATOR, instance);
+        if (metadata) {
+          this.middlewareList.push({ instance, metadata });
         }
       }
     });
