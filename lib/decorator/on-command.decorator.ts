@@ -4,7 +4,9 @@ import { OnCommandDecoratorOptions } from './interface/on-command-decorator-opti
 /**
  * On command decorator
  */
-export const OnCommand = (options: OnCommandDecoratorOptions): MethodDecorator => {
+export const OnCommand = (
+  options: OnCommandDecoratorOptions,
+): MethodDecorator => {
   return (
     target: Record<string, any>,
     propertyKey: string | symbol,
@@ -14,4 +16,3 @@ export const OnCommand = (options: OnCommandDecoratorOptions): MethodDecorator =
     return descriptor;
   };
 };
-

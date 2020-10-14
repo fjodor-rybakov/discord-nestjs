@@ -1,6 +1,9 @@
 import { DiscordResolve } from '../interface/discord-resolve';
 import { Message } from 'discord.js';
-import { ON_MESSAGE_DECORATOR, USE_INTERCEPTORS_DECORATOR } from '../constant/discord.constant';
+import {
+  ON_MESSAGE_DECORATOR,
+  USE_INTERCEPTORS_DECORATOR,
+} from '../constant/discord.constant';
 import { DiscordClient, OnCommandDecoratorOptions } from '..';
 import { DiscordResolveOptions } from '../interface/discord-resolve-options';
 import { DiscordMiddlewareService } from '../service/discord-middleware.service';
@@ -12,14 +15,21 @@ import { DiscordInterceptorService } from '../service/discord-interceptor.servic
 export class OnCommandResolver implements DiscordResolve {
   constructor(
     private readonly discordMiddlewareService: DiscordMiddlewareService,
-    private readonly discordInterceptorService: DiscordInterceptorService
-  ) {
-  }
+    private readonly discordInterceptorService: DiscordInterceptorService,
+  ) {}
 
   resolve(options: DiscordResolveOptions): void {
     const { discordClient, instance, methodName, middlewareList } = options;
-    const metadata: OnCommandDecoratorOptions = Reflect.getMetadata(ON_MESSAGE_DECORATOR, instance, methodName);
-    const interceptors: (DiscordInterceptor | Function)[] = Reflect.getMetadata(USE_INTERCEPTORS_DECORATOR, instance, methodName);
+    const metadata: OnCommandDecoratorOptions = Reflect.getMetadata(
+      ON_MESSAGE_DECORATOR,
+      instance,
+      methodName,
+    );
+    const interceptors: (DiscordInterceptor | Function)[] = Reflect.getMetadata(
+      USE_INTERCEPTORS_DECORATOR,
+      instance,
+      methodName,
+    );
     if (metadata) {
       const {
         name,
@@ -35,12 +45,18 @@ export class OnCommandResolver implements DiscordResolve {
         if (this.isDenyGuild(discordClient, message)) {
           return;
         }
-        if (metadata.allowChannels && !metadata.allowChannels.includes(message.channel.id)) {
+        if (
+          metadata.allowChannels &&
+          !metadata.allowChannels.includes(message.channel.id)
+        ) {
           return;
         }
         const messageContent = message.content;
         const messagePrefix = this.getPrefix(messageContent, prefix);
-        const commandName = this.getCommandName(messageContent.slice(messagePrefix.length), name);
+        const commandName = this.getCommandName(
+          messageContent.slice(messagePrefix.length),
+          name,
+        );
 
         if (messagePrefix === prefix && commandName === name) {
           if (isRemovePrefix) {
@@ -49,9 +65,13 @@ export class OnCommandResolver implements DiscordResolve {
 
           if (isRemoveCommandName) {
             if (isRemovePrefix) {
-              message.content = messageContent.slice(prefix.length + commandName.length);
+              message.content = messageContent.slice(
+                prefix.length + commandName.length,
+              );
             } else {
-              message.content = messageContent.substring(0, prefix.length) + messageContent.substring(prefix.length + commandName.length);
+              message.content =
+                messageContent.substring(0, prefix.length) +
+                messageContent.substring(prefix.length + commandName.length);
             }
           }
 
@@ -59,9 +79,17 @@ export class OnCommandResolver implements DiscordResolve {
             return;
           }
           message.content = message.content.trim();
-          await this.discordMiddlewareService.applyMiddleware(middlewareList, 'message', [message]);
+          await this.discordMiddlewareService.applyMiddleware(
+            middlewareList,
+            'message',
+            [message],
+          );
           if (interceptors && interceptors.length !== 0) {
-            message = await this.discordInterceptorService.applyInterceptors(interceptors, 'message', message);
+            message = await this.discordInterceptorService.applyInterceptors(
+              interceptors,
+              'message',
+              message,
+            );
           }
           instance[methodName](message);
         }
@@ -69,7 +97,10 @@ export class OnCommandResolver implements DiscordResolve {
     }
   }
 
-  private isAllowGuild(discordClient: DiscordClient, message: Message): boolean {
+  private isAllowGuild(
+    discordClient: DiscordClient,
+    message: Message,
+  ): boolean {
     const guildId = message.guild && message.guild.id;
     if (!!guildId) {
       return discordClient.isAllowGuild(guildId);

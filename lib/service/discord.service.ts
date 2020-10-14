@@ -23,24 +23,22 @@ export class DiscordService implements OnApplicationBootstrap {
     private readonly onResolver: OnResolver,
     private readonly onceResolver: OnceResolver,
   ) {
-    this.resolverList = [
-      commandResolver,
-      onResolver,
-      onceResolver
-    ];
+    this.resolverList = [commandResolver, onResolver, onceResolver];
   }
 
   onApplicationBootstrap(): void {
     const providers: InstanceWrapper[] = this.discoveryService.getProviders();
     const controllers: InstanceWrapper[] = this.discoveryService.getControllers();
-    const middlewareList = this.discordMiddlewareService.resolveMiddleware(providers);
+    const middlewareList = this.discordMiddlewareService.resolveMiddleware(
+      providers,
+    );
     this.resolve(providers, controllers, middlewareList);
   }
 
   resolve(
     providers: InstanceWrapper[],
     controllers: InstanceWrapper[],
-    middlewareList: DiscordMiddlewareInstance[]
+    middlewareList: DiscordMiddlewareInstance[],
   ): void {
     providers.concat(controllers).forEach((wrapper: InstanceWrapper) => {
       const { instance } = wrapper;
@@ -52,17 +50,21 @@ export class DiscordService implements OnApplicationBootstrap {
 
   private scanMetadata(
     instance: any,
-    middlewareList: DiscordMiddlewareInstance[]
+    middlewareList: DiscordMiddlewareInstance[],
   ): void {
-    this.metadataScanner.scanFromPrototype(instance, Object.getPrototypeOf(instance), (methodName: string) => {
-      this.resolverList.forEach((item: DiscordResolve) => {
-        item.resolve({
-          instance,
-          methodName,
-          discordClient: this.discordClient,
-          middlewareList
+    this.metadataScanner.scanFromPrototype(
+      instance,
+      Object.getPrototypeOf(instance),
+      (methodName: string) => {
+        this.resolverList.forEach((item: DiscordResolve) => {
+          item.resolve({
+            instance,
+            methodName,
+            discordClient: this.discordClient,
+            middlewareList,
+          });
         });
-      });
-    });
+      },
+    );
   }
 }

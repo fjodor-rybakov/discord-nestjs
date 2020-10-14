@@ -13,7 +13,7 @@ import { OnceResolver } from './resolver/once.resolver';
 import { DiscordInterceptorService } from './service/discord-interceptor.service';
 
 @Module({
-  imports: [DiscoveryModule]
+  imports: [DiscoveryModule],
 })
 export class DiscordModule {
   static forRoot(options: DiscordModuleOption): DynamicModule {
@@ -26,9 +26,9 @@ export class DiscordModule {
         OnCommandResolver,
         OnceResolver,
         DiscordService,
-        ...DiscordModule.createDiscordProvider(options)
+        ...DiscordModule.createDiscordProvider(options),
       ],
-      exports: [DiscordClient]
+      exports: [DiscordClient],
     };
   }
 
@@ -53,9 +53,9 @@ export class DiscordModule {
         OnceResolver,
         DiscordService,
         this.createConfigAsyncProviders(options),
-        connectionProvider
+        connectionProvider,
       ],
-      exports: [DiscordClient]
+      exports: [DiscordClient],
     };
   }
 
@@ -69,9 +69,9 @@ export class DiscordModule {
       },
       {
         provide: DiscordClient,
-        useValue: new DiscordClient(options)
+        useValue: new DiscordClient(options),
       },
-      DiscordService
+      DiscordService,
     ];
   }
 
@@ -89,7 +89,9 @@ export class DiscordModule {
         // For useClass and useExisting...
         return {
           provide: DISCORD_MODULE_OPTIONS,
-          useFactory: async (optionsFactory: DiscordOptionsFactory): Promise<DiscordModuleOption> =>
+          useFactory: async (
+            optionsFactory: DiscordOptionsFactory,
+          ): Promise<DiscordModuleOption> =>
             await optionsFactory.createDiscordOptions(),
           inject: [options.useExisting || options.useClass],
         };

@@ -10,7 +10,13 @@ export class DiscordClient extends Client implements OnApplicationBootstrap {
   private readonly denyGuilds?: string[];
 
   constructor(options: DiscordModuleOption) {
-    const {token, commandPrefix, allowGuilds, denyGuilds, ...discordOption} = options
+    const {
+      token,
+      commandPrefix,
+      allowGuilds,
+      denyGuilds,
+      ...discordOption
+    } = options;
     super(discordOption);
     this.clientToken = token;
     this.commandPrefix = commandPrefix;

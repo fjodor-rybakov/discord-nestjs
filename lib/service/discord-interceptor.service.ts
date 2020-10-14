@@ -7,16 +7,19 @@ export class DiscordInterceptorService {
   async applyInterceptors(
     interceptors: (DiscordInterceptor | Function)[],
     event: keyof ClientEvents,
-    context: any
+    context: any,
   ): Promise<any> {
-    return interceptors.reduce(async (prev: Promise<Message>, curr: DiscordInterceptor | Function) => {
-      let interceptorInstance: DiscordInterceptor;
-      if (typeof curr === 'function') {
-        // @ts-ignore
-        interceptorInstance = new curr();
-      }
-      const prevData = await prev;
-      return interceptorInstance.intercept(event, prevData);
-    }, context);
+    return interceptors.reduce(
+      async (prev: Promise<Message>, curr: DiscordInterceptor | Function) => {
+        let interceptorInstance: DiscordInterceptor;
+        if (typeof curr === 'function') {
+          // @ts-ignore
+          interceptorInstance = new curr();
+        }
+        const prevData = await prev;
+        return interceptorInstance.intercept(event, prevData);
+      },
+      context,
+    );
   }
 }
