@@ -41,7 +41,11 @@ Configuration
     token: '<Your discord token>',
     commandPrefix: '!',
     allowGuilds: ['Some guild id'], // Optional
-    denyGuilds: ['Some guild id'] // Optional
+    denyGuilds: ['Some guild id'], // Optional
+    allowChannels: [{ // Optional
+      commandName: 'some',
+      channels: ['751760108802932827'] 
+    }]
     // and other discord options
   })],
   providers: [BotGateway]
@@ -59,7 +63,11 @@ Or async
       token: '<Your discord token>',
       commandPrefix: '!',
       allowGuilds: ['Some guild id'], // Optional
-      denyGuilds: ['Some guild id'] // Optional
+      denyGuilds: ['Some guild id'], // Optional
+      allowChannels: [{ // Optional
+        commandName: 'some',
+        channels: ['751760108802932827'] 
+      }]
       // and other discord options
     })
   })],
@@ -92,6 +100,17 @@ export class BotGateway {
 ```
 
 ## You can use the following decorators:
+
+### You can get discord client via @Client() decorator instead constructor property
+
+```typescript
+
+@Injectable()
+export class BotGateway {
+  @Client()
+  discordClient: DiscordClient;
+}
+```
 
 ### Decorator @Command handles command started with prefix
 ```typescript

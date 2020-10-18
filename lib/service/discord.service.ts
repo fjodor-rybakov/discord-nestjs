@@ -9,6 +9,7 @@ import { OnceResolver } from '../resolver/once.resolver';
 import { DiscordMiddlewareInstance } from '../interface/discord-middleware-instance';
 import { DiscordMiddlewareService } from './discord-middleware.service';
 import { IsObject } from '../utils/function/is-object';
+import { CLIENT_DECORATOR } from '../constant/discord.constant';
 
 @Injectable()
 export class DiscordService implements OnApplicationBootstrap {
@@ -35,7 +36,7 @@ export class DiscordService implements OnApplicationBootstrap {
     this.resolve(providers, controllers, middlewareList);
   }
 
-  resolve(
+  private resolve(
     providers: InstanceWrapper[],
     controllers: InstanceWrapper[],
     middlewareList: DiscordMiddlewareInstance[],
@@ -44,8 +45,22 @@ export class DiscordService implements OnApplicationBootstrap {
       const { instance } = wrapper;
       if (instance && IsObject(instance)) {
         this.scanMetadata(instance, middlewareList);
+        this.resolveDiscordClientDecorator(instance);
       }
     });
+  }
+
+  private resolveDiscordClientDecorator(instance: any): void {
+    for (const propertyKey in instance) {
+      const metadata = Reflect.getMetadata(
+        CLIENT_DECORATOR,
+        instance,
+        propertyKey,
+      );
+      if (metadata) {
+        instance[propertyKey] = this.discordClient;
+      }
+    }
   }
 
   private scanMetadata(

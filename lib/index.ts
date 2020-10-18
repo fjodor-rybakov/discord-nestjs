@@ -7,6 +7,7 @@ export * from './decorator/on.decorator';
 export * from './decorator/once.decorator';
 export * from './decorator/on-command.decorator';
 export * from './decorator/middleware.decorator';
+export * from './decorator/client.decorator';
 export * from './decorator/use-interceptor.decorator';
 export * from './decorator/interface/on-command-decorator-options';
 export * from './decorator/interface/on-decorator-options';
