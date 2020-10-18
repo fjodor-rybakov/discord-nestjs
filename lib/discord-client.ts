@@ -1,6 +1,7 @@
 import { Client } from 'discord.js';
 import { DiscordModuleOption } from './interface/discord-module-option';
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
+import { DiscordModuleChannelOptions } from './interface/discord-module-channel-options';
 
 @Injectable()
 export class DiscordClient extends Client implements OnApplicationBootstrap {
@@ -8,6 +9,7 @@ export class DiscordClient extends Client implements OnApplicationBootstrap {
   private readonly commandPrefix: string;
   private readonly allowGuilds?: string[];
   private readonly denyGuilds?: string[];
+  private readonly allowChannels?: DiscordModuleChannelOptions[];
 
   constructor(options: DiscordModuleOption) {
     const {
@@ -15,6 +17,7 @@ export class DiscordClient extends Client implements OnApplicationBootstrap {
       commandPrefix,
       allowGuilds,
       denyGuilds,
+      allowChannels,
       ...discordOption
     } = options;
     super(discordOption);
@@ -22,6 +25,7 @@ export class DiscordClient extends Client implements OnApplicationBootstrap {
     this.commandPrefix = commandPrefix;
     this.allowGuilds = allowGuilds;
     this.denyGuilds = denyGuilds;
+    this.allowChannels = allowChannels ?? [];
   }
 
   async onApplicationBootstrap(): Promise<void> {
@@ -30,6 +34,10 @@ export class DiscordClient extends Client implements OnApplicationBootstrap {
 
   public getCommandPrefix(): string {
     return this.commandPrefix;
+  }
+
+  public getAllowChannels(): DiscordModuleChannelOptions[] {
+    return this.allowChannels;
   }
 
   public isAllowGuild(guildId: string): boolean {

@@ -10,6 +10,7 @@ import { DiscordMiddlewareService } from '../service/discord-middleware.service'
 import { Injectable } from '@nestjs/common';
 import { DiscordInterceptor } from '..';
 import { DiscordInterceptorService } from '../service/discord-interceptor.service';
+import { DiscordModuleChannelOptions } from '..';
 
 @Injectable()
 export class OnCommandResolver implements DiscordResolve {
@@ -46,8 +47,9 @@ export class OnCommandResolver implements DiscordResolve {
           return;
         }
         if (
-          metadata.allowChannels &&
-          !metadata.allowChannels.includes(message.channel.id)
+          (metadata.allowChannels &&
+            !metadata.allowChannels.includes(message.channel.id)) ||
+          !this.isAllowChannel(discordClient, name, message.channel.id)
         ) {
           return;
         }
@@ -95,6 +97,22 @@ export class OnCommandResolver implements DiscordResolve {
         }
       });
     }
+  }
+
+  private isAllowChannel(
+    discordClient: DiscordClient,
+    eventName: string,
+    channelId: string,
+  ): boolean {
+    const allowChannels = discordClient.getAllowChannels();
+    if (allowChannels.length !== 0) {
+      return allowChannels.some((item: DiscordModuleChannelOptions) => {
+        return (
+          item.commandName === eventName && item.channels.includes(channelId)
+        );
+      });
+    }
+    return true;
   }
 
   private isAllowGuild(

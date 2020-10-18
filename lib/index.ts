@@ -2,6 +2,7 @@ export * from './discord.module';
 export * from './interface/discord-module-option';
 export * from './interface/discord-middleware';
 export * from './interface/discord-interceptor';
+export * from './interface/discord-module-channel-options';
 export * from './decorator/on.decorator';
 export * from './decorator/once.decorator';
 export * from './decorator/on-command.decorator';

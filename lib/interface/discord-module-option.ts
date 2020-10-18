@@ -1,4 +1,5 @@
 import { ClientOptions } from 'discord.js';
+import { DiscordModuleChannelOptions } from './discord-module-channel-options';
 
 export interface DiscordModuleOption extends ClientOptions {
   /**
@@ -20,4 +21,9 @@ export interface DiscordModuleOption extends ClientOptions {
    * List of guilds identifiers with which the bot will not work
    */
   denyGuilds?: string[];
+
+  /**
+   * List of channel identifiers with which the bot will work
+   */
+  allowChannels?: DiscordModuleChannelOptions[];
 }

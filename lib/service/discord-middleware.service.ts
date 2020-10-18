@@ -3,7 +3,7 @@ import { ClientEvents } from 'discord.js';
 import { Injectable } from '@nestjs/common';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { MIDDLEWARE_DECORATOR } from '../constant/discord.constant';
-import { IsObject } from '../function/is-object';
+import { IsObject } from '../utils/function/is-object';
 
 @Injectable()
 export class DiscordMiddlewareService {

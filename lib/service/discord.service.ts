@@ -8,7 +8,7 @@ import { DiscordClient } from '../discord-client';
 import { OnceResolver } from '../resolver/once.resolver';
 import { DiscordMiddlewareInstance } from '../interface/discord-middleware-instance';
 import { DiscordMiddlewareService } from './discord-middleware.service';
-import { IsObject } from '../function/is-object';
+import { IsObject } from '../utils/function/is-object';
 
 @Injectable()
 export class DiscordService implements OnApplicationBootstrap {
