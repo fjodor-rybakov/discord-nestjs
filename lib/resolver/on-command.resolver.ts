@@ -107,9 +107,10 @@ export class OnCommandResolver implements DiscordResolve {
     const allowChannels = discordClient.getAllowChannels();
     if (allowChannels.length !== 0) {
       return allowChannels.some((item: DiscordModuleChannelOptions) => {
-        return (
-          item.commandName === eventName && item.channels.includes(channelId)
-        );
+        if (item.commandName === eventName) {
+          return item.channels.includes(channelId);
+        }
+        return true;
       });
     }
     return true;
