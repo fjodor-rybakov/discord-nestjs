@@ -60,7 +60,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.3",
-    "ts-jest": "26.4.1",
+    "ts-jest": "26.4.2",
     "ts-loader": "^8.0.6",
     "ts-node": "^9.0.0",
     "tsconfig-paths": "^3.9.0",
