@@ -43,7 +43,7 @@ You can use `forRoot` or `forRootAsync` to configure your module
     * `channels` * - channel ID list
 * you can also set all options as for the client from the "discord.js" library
 
-### 💡 Example
+#### 💡 Example
 ```typescript
 /*bot.module.ts*/
 
@@ -89,6 +89,8 @@ export class BotModule {
 ```
 ## ▶️ Usage
 Create your class (e.g. `BotGateway`), mark it with `@Injectable()` or `@Controller()`
+
+#### 💡 Example
 ```typescript
 /*bot.gateway.ts*/
 
@@ -115,6 +117,8 @@ export class BotGateway {
 
 ### ℹ️ Decorator @Client
 You can get discord client via @Client() decorator instead constructor property
+
+#### 💡 Example
 ```typescript
 /*bot.gateway.ts*/
 
@@ -143,6 +147,8 @@ Use the @Command decorator to handle incoming commands to the bot
 * isRemovePrefix - remove prefix name from message
 * isIgnoreBotMessage - ignore incoming messages from bots
 * allowChannels - List of channel identifiers on which this command will work
+
+#### 💡 Example
 ```typescript
 /*bot.gateway.ts*/
 
@@ -156,8 +162,10 @@ export class BotGateway {
 ```
 
 ### ℹ️ Decorator @On
-handle discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
+Handle discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
 * event * - name of the event to listen to
+
+#### 💡 Example
 ```typescript
 /*bot.gateway.ts*/
 
@@ -173,8 +181,10 @@ export class BotGateway {
 ```
 
 ### ℹ️ Decorator @Once
-handle discord events (only once) [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
+Handle discord events (only once) [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
 * event * - name of the event to listen to
+
+#### 💡 Example
 ```typescript
 /*bot.gateway.ts*/
 
@@ -190,7 +200,10 @@ export class BotGateway {
 ```
 
 ### ℹ️ Decorator @UseInterceptors (Test feature)
-You must implement `DiscordInterceptor` interface
+To intercept incoming messages you can use `@UseInterceptors()` decorator
+
+#### 💡 Example
+You need to implement `DiscordInterceptor` interface
 ```typescript
 /*bot.interceptor.ts*/
 
@@ -219,9 +232,12 @@ export class BotGateway {
 ```
 
 ### ℹ️ Decorator @Middleware (Test feature)
-You must implement `DiscordMiddleware` interface
+For handling intermediate requests you can use `@Middleware` decorator
 * allowEvents - handled events
 * denyEvents - skipped events
+
+#### 💡 Example
+You need to implement `DiscordMiddleware` interface
 ```typescript
 /*bot.middleware.ts*/
 
