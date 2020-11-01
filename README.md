@@ -17,11 +17,11 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+## 🧾 Description
 
 NestJS package for discord.js
 
-## Installation
+## 💻 Installation
 
 ```bash
 $ npm install discord-nestjs discord.js
@@ -31,7 +31,7 @@ OR
 $ yarn add discord-nestjs discord.js
 ```
 
-## Overview
+## 📑 Overview
 Configuration
 ```typescript
 /*bot.module.ts*/
@@ -99,9 +99,9 @@ export class BotGateway {
 }
 ```
 
-## You can use the following decorators:
+## ✨ You can use the following decorators:
 
-### You can get discord client via @Client() decorator instead constructor property
+### ℹ️You can get discord client via @Client() decorator instead constructor property
 
 ```typescript
 
@@ -112,7 +112,7 @@ export class BotGateway {
 }
 ```
 
-### Decorator @Command handles command started with prefix
+### ℹ️Decorator @Command handles command started with prefix
 ```typescript
 /*bot.gateway.ts*/
 
@@ -163,7 +163,7 @@ export interface OnCommandDecoratorOptions {
 }
 ```
 
-### Decorator @On handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
+### ℹ️Decorator @On handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
 ```typescript
 /*bot.gateway.ts*/
 
@@ -187,7 +187,7 @@ export interface OnDecoratorOptions {
 }
 ```
 
-### Decorator @Once handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
+### ℹ️Decorator @Once handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
 ```typescript
 /*bot.gateway.ts*/
 
@@ -211,7 +211,7 @@ export interface OnDecoratorOptions {
 }
 ```
 
-### Decorator @UseInterceptors (Test feature)
+### ℹ️Decorator @UseInterceptors (Test feature)
 
 You must implement `DiscordInterceptor` interface
 ```typescript
@@ -241,7 +241,7 @@ export class BotGateway {
 }
 ```
 
-### Decorator @Middleware (Test feature)
+### ℹ️Decorator @Middleware (Test feature)
 
 You must implement `DiscordMiddleware` interface
 ```typescript
