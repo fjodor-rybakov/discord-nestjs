@@ -43,9 +43,10 @@ You can use `forRoot` or `forRootAsync` to configure your module
     * `channels` * - channel ID list
 * you can also set all options as for the client from the "discord.js" library
 
-### Example
+### 💡 Example
 ```typescript
 /*bot.module.ts*/
+
 @Module({
   imports: [DiscordModule.forRoot({
     token: 'Njg2MzI2OTMwNTg4NTY1NTQx.XmVlww.EF_bMXRvYgMUCQhg_jYnieoBW-k',
@@ -86,14 +87,15 @@ Or async
 export class BotModule {
 }
 ```
-Usage
+## ▶️ Usage
+Create your class (e.g. `BotGateway`), mark it with `@Injectable()` or `@Controller()`
 ```typescript
 /*bot.gateway.ts*/
 
 import { Injectable, Logger } from '@nestjs/common';
 import { On, DiscordClient } from 'discord-nestjs';
 
-@Injectable() /* You can use @Controller() or @Injectable() decorator */
+@Injectable()
 export class BotGateway {
   private readonly logger = new Logger(BotGateway.name);
 
@@ -111,18 +113,36 @@ export class BotGateway {
 
 ## ✨ You can use the following decorators:
 
-### ℹ️ You can get discord client via @Client() decorator instead constructor property
-
+### ℹ️ Decorator @Client
+You can get discord client via @Client() decorator instead constructor property
 ```typescript
+/*bot.gateway.ts*/
+
+import { Injectable, Logger } from '@nestjs/common';
+import { On, DiscordClient } from 'discord-nestjs';
 
 @Injectable()
 export class BotGateway {
+  private readonly logger = new Logger(BotGateway.name);
+
   @Client()
   discordClient: DiscordClient;
+
+  @On({event: 'ready'})
+  onReady(): void {
+    this.logger.log(`Logged in as ${this.discordClient.user.tag}!`);
+  }
 }
 ```
 
-### ℹ️ Decorator @Command handles command started with prefix
+### ℹ️ Decorator @Command
+Use the @Command decorator to handle incoming commands to the bot
+* name * - command name
+* prefix - override global prefix
+* isRemoveCommandName - remove command name from message
+* isRemovePrefix - remove prefix name from message
+* isIgnoreBotMessage - ignore incoming messages from bots
+* allowChannels - List of channel identifiers on which this command will work
 ```typescript
 /*bot.gateway.ts*/
 
@@ -134,46 +154,10 @@ export class BotGateway {
   }
 }
 ```
-You can set this params
-```typescript
-export interface OnCommandDecoratorOptions {
-  /**
-   * Command name
-   */
-  name: string;
 
-  /**
-   * Your message prefix
-   * @default from module definition
-   */
-  prefix?: string;
-
-  /**
-   * Remove command name
-   * @default true
-   */
-  isRemoveCommandName?: boolean;
-
-  /**
-   * Remove prefix from message
-   * @default true
-   */
-  isRemovePrefix?: boolean;
-
-  /**
-   * Ignore bot message
-   * @default true
-   */
-  isIgnoreBotMessage?: boolean;
-  
-  /**
-   * List of channel identifiers with which the bot will work
-   */
-  allowChannels?: string[];
-}
-```
-
-### ℹ️ Decorator @On handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
+### ℹ️ Decorator @On
+handle discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
+* event * - name of the event to listen to
 ```typescript
 /*bot.gateway.ts*/
 
@@ -187,17 +171,10 @@ export class BotGateway {
   }
 }
 ```
-You can set this params
-```typescript
-export interface OnDecoratorOptions {
-  /**
-   * Event type
-   */
-  event: keyof ClientEvents;
-}
-```
 
-### ℹ️ Decorator @Once handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
+### ℹ️ Decorator @Once
+handle discord events (only once) [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
+* event * - name of the event to listen to
 ```typescript
 /*bot.gateway.ts*/
 
@@ -211,18 +188,8 @@ export class BotGateway {
   }
 }
 ```
-You can set this params
-```typescript
-export interface OnDecoratorOptions {
-  /**
-   * Event type
-   */
-  event: keyof ClientEvents;
-}
-```
 
 ### ℹ️ Decorator @UseInterceptors (Test feature)
-
 You must implement `DiscordInterceptor` interface
 ```typescript
 /*bot.interceptor.ts*/
@@ -252,8 +219,9 @@ export class BotGateway {
 ```
 
 ### ℹ️ Decorator @Middleware (Test feature)
-
 You must implement `DiscordMiddleware` interface
+* allowEvents - handled events
+* denyEvents - skipped events
 ```typescript
 /*bot.middleware.ts*/
 
@@ -269,20 +237,6 @@ export class BotMiddleware implements DiscordMiddleware {
       this.logger.log('On message event triggered');
     }
   }
-}
-```
-You can set this params
-```typescript
-export interface MiddlewareOptions {
-  /**
-   * Take events
-   */
-  allowEvents?: Array<keyof ClientEvents>;
-
-  /**
-   * Skip events
-   */
-  denyEvents?: Array<keyof ClientEvents>;
 }
 ```
 Don't forget to add to providers
