@@ -17,11 +17,11 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-# 🧾 Description
+## 🧾 Description
 
 NestJS package for discord.js
 
-# 💻 Installation
+## 👨🏻‍💻 Installation
 
 ```bash
 $ npm install discord-nestjs discord.js
@@ -31,7 +31,7 @@ OR
 $ yarn add discord-nestjs discord.js
 ```
 
-# 📑 Overview
+## 📑 Overview
 You can use `forRoot` or `forRootAsync` to configure your module
 * `token` * - your discord bot token [see](https://discord.com/developers/applications)
 * `commandPrefix` * - global prefix for command events
