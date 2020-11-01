@@ -19,7 +19,7 @@
 
 ## 🧾 Description
 
-NestJS package for discord.js
+👾 NestJS package for discord.js
 
 ## 👨🏻‍💻 Installation
 
