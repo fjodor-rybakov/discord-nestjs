@@ -32,19 +32,29 @@ $ yarn add discord-nestjs discord.js
 ```
 
 ## 📑 Overview
-Configuration
+
+You can use `forRoot` or `forRootAsync` to configure your module
+* `token` * - your discord bot token [see](https://discord.com/developers/applications)
+* `commandPrefix` * - global prefix for command events
+* `allowGuilds` - list of Guild IDs that the bot is allowed to work with
+* `denyGuilds` - list of Guild IDs that the bot is not allowed to work with
+* `allowChannels` - linking commands to a channel (can also be set through a decorator)
+    * `commandName` * - command name
+    * `channels` * - channel ID list
+* you can also set all options as for the client from the "discord.js" library
+
+### Example
 ```typescript
 /*bot.module.ts*/
-
 @Module({
   imports: [DiscordModule.forRoot({
-    token: '<Your discord token>',
+    token: 'Njg2MzI2OTMwNTg4NTY1NTQx.XmVlww.EF_bMXRvYgMUCQhg_jYnieoBW-k',
     commandPrefix: '!',
-    allowGuilds: ['Some guild id'], // Optional
-    denyGuilds: ['Some guild id'], // Optional
-    allowChannels: [{ // Optional
+    allowGuilds: ['745366351929016363'],
+    denyGuilds: ['520622812742811698'],
+    allowChannels: [{
       commandName: 'some',
-      channels: ['751760108802932827'] 
+      channels: ['745366352386326572'] 
     }]
     // and other discord options
   })],
@@ -60,13 +70,13 @@ Or async
 @Module({
   imports: [DiscordModule.forRootAsync({
     useFactory: () => ({
-      token: '<Your discord token>',
+      token: 'Njg2MzI2OTMwNTg4NTY1NTQx.XmVlww.EF_bMXRvYgMUCQhg_jYnieoBW-k',
       commandPrefix: '!',
-      allowGuilds: ['Some guild id'], // Optional
-      denyGuilds: ['Some guild id'], // Optional
-      allowChannels: [{ // Optional
+      allowGuilds: ['745366351929016363'],
+      denyGuilds: ['520622812742811698'],
+      allowChannels: [{
         commandName: 'some',
-        channels: ['751760108802932827'] 
+        channels: ['745366352386326572'] 
       }]
       // and other discord options
     })
@@ -101,7 +111,7 @@ export class BotGateway {
 
 ## ✨ You can use the following decorators:
 
-### ℹ️You can get discord client via @Client() decorator instead constructor property
+### ℹ️ You can get discord client via @Client() decorator instead constructor property
 
 ```typescript
 
@@ -112,7 +122,7 @@ export class BotGateway {
 }
 ```
 
-### ℹ️Decorator @Command handles command started with prefix
+### ℹ️ Decorator @Command handles command started with prefix
 ```typescript
 /*bot.gateway.ts*/
 
@@ -163,7 +173,7 @@ export interface OnCommandDecoratorOptions {
 }
 ```
 
-### ℹ️Decorator @On handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
+### ℹ️ Decorator @On handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
 ```typescript
 /*bot.gateway.ts*/
 
@@ -187,7 +197,7 @@ export interface OnDecoratorOptions {
 }
 ```
 
-### ℹ️Decorator @Once handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
+### ℹ️ Decorator @Once handles discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
 ```typescript
 /*bot.gateway.ts*/
 
@@ -211,7 +221,7 @@ export interface OnDecoratorOptions {
 }
 ```
 
-### ℹ️Decorator @UseInterceptors (Test feature)
+### ℹ️ Decorator @UseInterceptors (Test feature)
 
 You must implement `DiscordInterceptor` interface
 ```typescript
@@ -241,7 +251,7 @@ export class BotGateway {
 }
 ```
 
-### ℹ️Decorator @Middleware (Test feature)
+### ℹ️ Decorator @Middleware (Test feature)
 
 You must implement `DiscordMiddleware` interface
 ```typescript
