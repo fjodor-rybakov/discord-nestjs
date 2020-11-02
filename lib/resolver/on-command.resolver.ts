@@ -14,6 +14,7 @@ import { DiscordInterceptorService } from '../service/discord-interceptor.servic
 import { DiscordModuleChannelOptions } from '..';
 import { DiscordGuardService } from '../service/discord-guard.service';
 import { DiscordGuard } from '..';
+import { ConstructorType } from '../utils/type/constructor-type';
 
 @Injectable()
 export class OnCommandResolver implements DiscordResolve {
@@ -168,7 +169,7 @@ export class OnCommandResolver implements DiscordResolve {
   private getInterceptorMetadata(
     instance: any,
     methodName: string,
-  ): (DiscordInterceptor | Function)[] {
+  ): (DiscordInterceptor | ConstructorType)[] {
     return Reflect.getMetadata(
       USE_INTERCEPTORS_DECORATOR,
       instance,
@@ -179,7 +180,7 @@ export class OnCommandResolver implements DiscordResolve {
   private getGuardMetadata(
     instance: any,
     methodName: string,
-  ): (DiscordGuard | Function)[] {
+  ): (DiscordGuard | ConstructorType)[] {
     return Reflect.getMetadata(USE_GUARDS_DECORATOR, instance, methodName);
   }
 }

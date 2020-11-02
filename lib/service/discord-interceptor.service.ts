@@ -1,19 +1,22 @@
 import { DiscordInterceptor } from '..';
 import { ClientEvents, Message } from 'discord.js';
 import { Injectable } from '@nestjs/common';
+import { ConstructorType } from '../utils/type/constructor-type';
 
 @Injectable()
 export class DiscordInterceptorService {
   applyInterceptors(
-    interceptors: (DiscordInterceptor | Function)[],
+    interceptors: (DiscordInterceptor | ConstructorType)[],
     event: keyof ClientEvents,
     context: any,
   ): Promise<any> {
     return interceptors.reduce(
-      async (prev: Promise<Message>, curr: DiscordInterceptor | Function) => {
+      async (
+        prev: Promise<Message>,
+        curr: DiscordInterceptor | ConstructorType,
+      ) => {
         let interceptorInstance: DiscordInterceptor;
         if (typeof curr === 'function') {
-          // @ts-ignore
           interceptorInstance = new curr();
         }
         const prevData = await prev;

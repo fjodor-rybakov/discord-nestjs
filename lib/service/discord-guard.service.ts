@@ -1,21 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { DiscordGuard } from '..';
 import { ClientEvents, Message } from 'discord.js';
+import { ConstructorType } from '../utils/type/constructor-type';
 
 @Injectable()
 export class DiscordGuardService {
   async applyGuards(
-    guards: (DiscordGuard | Function)[],
+    guards: (DiscordGuard | ConstructorType)[],
     event: keyof ClientEvents,
     context: any,
   ): Promise<boolean> {
     try {
-      console.log('call');
       await guards.reduce(
-        async (prev: Promise<Message>, curr: DiscordGuard | Function) => {
+        async (
+          prev: Promise<Message>,
+          curr: DiscordGuard | ConstructorType,
+        ) => {
           let discordGuard: DiscordGuard;
           if (typeof curr === 'function') {
-            // @ts-ignore
             discordGuard = new curr();
           }
           const prevData = await prev;
