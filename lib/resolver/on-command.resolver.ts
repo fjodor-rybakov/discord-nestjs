@@ -38,6 +38,7 @@ export class OnCommandResolver implements DiscordResolve {
         isRemovePrefix = true,
         isIgnoreBotMessage = true,
         isRemoveCommandName = true,
+        isRemoveMessage = false,
       } = metadata;
       discordClient.on('message', async (message: Message) => {
         if (!this.isAllowGuild(discordClient, message)) {
@@ -53,7 +54,7 @@ export class OnCommandResolver implements DiscordResolve {
         ) {
           return;
         }
-        const messageContent = message.content;
+        const messageContent = message.content.replace(/\s+/g, ' ').trim();
         const messagePrefix = this.getPrefix(messageContent, prefix);
         const commandName = this.getCommandName(
           messageContent.slice(messagePrefix.length),
@@ -94,6 +95,9 @@ export class OnCommandResolver implements DiscordResolve {
             );
           }
           instance[methodName](message);
+          if (isRemoveMessage) {
+            await this.removeMessageFromChannel(message);
+          }
         }
       });
     }
@@ -141,5 +145,9 @@ export class OnCommandResolver implements DiscordResolve {
 
   private getCommandName(messageContent: string, commandName: string): string {
     return messageContent.slice(0, commandName.length);
+  }
+
+  private async removeMessageFromChannel(message: Message): Promise<void> {
+    await message.delete();
   }
 }

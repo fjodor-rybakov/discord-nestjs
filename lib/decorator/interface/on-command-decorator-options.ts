@@ -35,4 +35,10 @@ export interface OnCommandDecoratorOptions {
    * List of channel identifiers with which the bot will work
    */
   allowChannels?: string[];
+
+  /**
+   * Is remove message from channel after receive
+   * @default false
+   */
+  isRemoveMessage?: boolean;
 }

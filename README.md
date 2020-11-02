@@ -145,7 +145,8 @@ Use the @Command decorator to handle incoming commands to the bot
 * isRemoveCommandName - remove command name from message
 * isRemovePrefix - remove prefix name from message
 * isIgnoreBotMessage - ignore incoming messages from bots
-* allowChannels - List of channel identifiers on which this command will work
+* allowChannels - list of channel identifiers on which this command will work
+* isRemoveMessage - remove message from channel after receive
 
 #### 💡 Example
 ```typescript
