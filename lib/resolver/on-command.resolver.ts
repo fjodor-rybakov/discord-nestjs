@@ -2,6 +2,7 @@ import { DiscordResolve } from '../interface/discord-resolve';
 import { Message } from 'discord.js';
 import {
   ON_MESSAGE_DECORATOR,
+  USE_GUARDS_DECORATOR,
   USE_INTERCEPTORS_DECORATOR,
 } from '../constant/discord.constant';
 import { DiscordClient, OnCommandDecoratorOptions } from '..';
@@ -11,26 +12,22 @@ import { Injectable } from '@nestjs/common';
 import { DiscordInterceptor } from '..';
 import { DiscordInterceptorService } from '../service/discord-interceptor.service';
 import { DiscordModuleChannelOptions } from '..';
+import { DiscordGuardService } from '../service/discord-guard.service';
+import { DiscordGuard } from '..';
 
 @Injectable()
 export class OnCommandResolver implements DiscordResolve {
   constructor(
     private readonly discordMiddlewareService: DiscordMiddlewareService,
     private readonly discordInterceptorService: DiscordInterceptorService,
+    private readonly discordGuardService: DiscordGuardService,
   ) {}
 
   resolve(options: DiscordResolveOptions): void {
     const { discordClient, instance, methodName, middlewareList } = options;
-    const metadata: OnCommandDecoratorOptions = Reflect.getMetadata(
-      ON_MESSAGE_DECORATOR,
-      instance,
-      methodName,
-    );
-    const interceptors: (DiscordInterceptor | Function)[] = Reflect.getMetadata(
-      USE_INTERCEPTORS_DECORATOR,
-      instance,
-      methodName,
-    );
+    const metadata = this.getDecoratorMetadata(instance, methodName);
+    const interceptors = this.getInterceptorMetadata(instance, methodName);
+    const guards = this.getGuardMetadata(instance, methodName);
     if (metadata) {
       const {
         name,
@@ -45,6 +42,9 @@ export class OnCommandResolver implements DiscordResolve {
           return;
         }
         if (this.isDenyGuild(discordClient, message)) {
+          return;
+        }
+        if (isIgnoreBotMessage && message.author.bot) {
           return;
         }
         if (
@@ -62,6 +62,16 @@ export class OnCommandResolver implements DiscordResolve {
         );
 
         if (messagePrefix === prefix && commandName === name) {
+          if (guards && guards.length !== 0) {
+            const isAllowFromGuards = await this.discordGuardService.applyGuards(
+              guards,
+              'message',
+              message,
+            );
+            if (!isAllowFromGuards) {
+              return;
+            }
+          }
           if (isRemovePrefix) {
             message.content = messageContent.slice(prefix.length);
           }
@@ -78,9 +88,6 @@ export class OnCommandResolver implements DiscordResolve {
             }
           }
 
-          if (isIgnoreBotMessage && message.author.bot) {
-            return;
-          }
           message.content = message.content.trim();
           await this.discordMiddlewareService.applyMiddleware(
             middlewareList,
@@ -149,5 +156,30 @@ export class OnCommandResolver implements DiscordResolve {
 
   private async removeMessageFromChannel(message: Message): Promise<void> {
     await message.delete();
+  }
+
+  private getDecoratorMetadata(
+    instance: any,
+    methodName: string,
+  ): OnCommandDecoratorOptions {
+    return Reflect.getMetadata(ON_MESSAGE_DECORATOR, instance, methodName);
+  }
+
+  private getInterceptorMetadata(
+    instance: any,
+    methodName: string,
+  ): (DiscordInterceptor | Function)[] {
+    return Reflect.getMetadata(
+      USE_INTERCEPTORS_DECORATOR,
+      instance,
+      methodName,
+    );
+  }
+
+  private getGuardMetadata(
+    instance: any,
+    methodName: string,
+  ): (DiscordGuard | Function)[] {
+    return Reflect.getMetadata(USE_GUARDS_DECORATOR, instance, methodName);
   }
 }

@@ -199,6 +199,50 @@ export class BotGateway {
 }
 ```
 
+### ℹ️ Decorator @UseGuards (Test feature)
+To guard incoming messages you can use `@UseGuards()` decorator
+
+#### 💡 Example
+You need to implement `DiscordGuard` interface
+```typescript
+/*bot.guard.ts*/
+
+import { DiscordGuard } from 'discord-nestjs';
+import { ClientEvents, Message } from 'discord.js';
+
+export class BotGuard implements DiscordGuard {
+  async canActive(
+    event: keyof ClientEvents,
+    context: Message
+  ): Promise<boolean> {
+    if (context.author.id === '766863033789563648') {
+      return true;
+    } else {
+      const embed = new MessageEmbed()
+        .setColor()
+        .setTitle('Ups! Not allowed!');
+      await context.reply(embed);
+      return false;
+    }
+  }
+}
+```
+
+```typescript
+/*bot.gateway.ts*/
+import { On, UseGuards, OnCommand } from 'discord-nestjs';
+import { Message } from 'discord.js';
+
+@Injectable()
+export class BotGateway {
+  @UseGuards(BotGuard)
+  @OnCommand({name: 'hide'})
+  async guardCommand(message: Message): Promise<void> {
+      // to do something
+  }
+}
+```
+
 ### ℹ️ Decorator @UseInterceptors (Test feature)
 To intercept incoming messages you can use `@UseInterceptors()` decorator
 

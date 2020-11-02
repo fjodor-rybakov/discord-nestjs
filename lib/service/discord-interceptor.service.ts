@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class DiscordInterceptorService {
-  async applyInterceptors(
+  applyInterceptors(
     interceptors: (DiscordInterceptor | Function)[],
     event: keyof ClientEvents,
     context: any,

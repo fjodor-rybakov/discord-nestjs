@@ -11,6 +11,7 @@ import { OnResolver } from './resolver/on.resolver';
 import { OnCommandResolver } from './resolver/on-command.resolver';
 import { OnceResolver } from './resolver/once.resolver';
 import { DiscordInterceptorService } from './service/discord-interceptor.service';
+import { DiscordGuardService } from './service/discord-guard.service';
 
 @Module({
   imports: [DiscoveryModule],
@@ -21,6 +22,7 @@ export class DiscordModule {
       module: DiscordModule,
       providers: [
         DiscordMiddlewareService,
+        DiscordGuardService,
         DiscordInterceptorService,
         OnResolver,
         OnCommandResolver,
@@ -47,6 +49,7 @@ export class DiscordModule {
       imports: options.imports || [],
       providers: [
         DiscordMiddlewareService,
+        DiscordGuardService,
         DiscordInterceptorService,
         OnResolver,
         OnCommandResolver,
