@@ -140,13 +140,13 @@ export class BotGateway {
 
 ### ℹ️ Decorator @Command
 Use the @Command decorator to handle incoming commands to the bot
-* name * - command name
-* prefix - override global prefix
-* isRemoveCommandName - remove command name from message
-* isRemovePrefix - remove prefix name from message
-* isIgnoreBotMessage - ignore incoming messages from bots
-* allowChannels - list of channel identifiers on which this command will work
-* isRemoveMessage - remove message from channel after receive
+* `name` * - command name
+* `prefix` - override global prefix
+* `isRemoveCommandName` - remove command name from message
+* `isRemovePrefix` - remove prefix name from message
+* `isIgnoreBotMessage` - ignore incoming messages from bots
+* `allowChannels` - list of channel identifiers on which this command will work
+* `isRemoveMessage` - remove message from channel after receive
 
 #### 💡 Example
 ```typescript
@@ -163,7 +163,7 @@ export class BotGateway {
 
 ### ℹ️ Decorator @On
 Handle discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
-* event * - name of the event to listen to
+* `event` * - name of the event to listen to
 
 #### 💡 Example
 ```typescript
@@ -182,7 +182,7 @@ export class BotGateway {
 
 ### ℹ️ Decorator @Once
 Handle discord events (only once) [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
-* event * - name of the event to listen to
+* `event` * - name of the event to listen to
 
 #### 💡 Example
 ```typescript
@@ -277,8 +277,8 @@ export class BotGateway {
 
 ### ℹ️ Decorator @Middleware (Test feature)
 For handling intermediate requests you can use `@Middleware` decorator
-* allowEvents - handled events
-* denyEvents - skipped events
+* `allowEvents` - handled events
+* `denyEvents` - skipped events
 
 #### 💡 Example
 You need to implement `DiscordMiddleware` interface
