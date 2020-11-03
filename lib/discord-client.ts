@@ -35,17 +35,7 @@ export class DiscordClient extends Client implements OnApplicationBootstrap {
 
   async onApplicationBootstrap(): Promise<void> {
     await this.login(this.clientToken);
-    await this.createWebhookClient();
-  }
-
-  async createWebhookClient(): Promise<void> {
-    if (this.webhook != undefined) {
-      this.webhookClient = await new WebhookClient(
-        this.webhook.webhookId,
-        this.webhook.webhookToken,
-      );
-    }
-    return;
+    this.createWebhookClient();
   }
 
   public getCommandPrefix(): string {
@@ -54,10 +44,6 @@ export class DiscordClient extends Client implements OnApplicationBootstrap {
 
   public getAllowChannels(): DiscordModuleChannelOptions[] {
     return this.allowChannels;
-  }
-
-  public getWebhook(): DiscordModuleWebhookOptions {
-    return this.webhook;
   }
 
   public getWebhookClient(): WebhookClient {
@@ -76,5 +62,14 @@ export class DiscordClient extends Client implements OnApplicationBootstrap {
       return false;
     }
     return this.denyGuilds.includes(guildId);
+  }
+
+  private createWebhookClient(): void {
+    if (this.webhook) {
+      this.webhookClient = new WebhookClient(
+        this.webhook.webhookId,
+        this.webhook.webhookToken,
+      );
+    }
   }
 }

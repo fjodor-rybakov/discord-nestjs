@@ -55,7 +55,7 @@ export class OnCommandResolver implements DiscordResolve {
         ) {
           return;
         }
-        const messageContent = message.content.replace(/\s+/g, ' ').trim();
+        const messageContent = message.content.trim();
         const messagePrefix = this.getPrefix(messageContent, prefix);
         const commandName = this.getCommandName(
           messageContent.slice(messagePrefix.length),
