@@ -1,5 +1,6 @@
 import { ClientOptions } from 'discord.js';
 import { DiscordModuleChannelOptions } from './discord-module-channel-options';
+import { DiscordModuleWebhookOptions } from './discord-module-webhook-options';
 
 export interface DiscordModuleOption extends ClientOptions {
   /**
@@ -26,4 +27,9 @@ export interface DiscordModuleOption extends ClientOptions {
    * List of channel identifiers with which the bot will work
    */
   allowChannels?: DiscordModuleChannelOptions[];
+
+  /**
+   * Webhook for the bot
+   */
+  webhook?: DiscordModuleWebhookOptions;
 }
