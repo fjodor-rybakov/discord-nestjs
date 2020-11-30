@@ -249,7 +249,7 @@ but you can manage the arguments yourself using the `@Content()` and `@Context()
 
 ```typescript
 /*bot.gateway.ts*/
-import { Content } from 'discord-nestjs';
+import { Content, Context, OnCommand } from 'discord-nestjs';
 
 @Injectable()
 export class BotGateway {
