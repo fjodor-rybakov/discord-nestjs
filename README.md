@@ -141,7 +141,7 @@ export class BotGateway {
 
 ### ℹ️ Decorator @Client
 
-You can get discord client via @Client() decorator instead constructor property
+You can get discord client via `@Client()` decorator instead constructor property
 
 #### 💡 Example
 
@@ -167,7 +167,7 @@ export class BotGateway {
 
 ### ℹ️ Decorator @Command
 
-Use the @Command decorator to handle incoming commands to the bot
+Use the `@Command` decorator to handle incoming commands to the bot
 
 - `name` \* - command name
 - `prefix` - override global prefix
@@ -231,6 +231,31 @@ export class BotGateway {
     if (!message.author.bot) {
       await message.reply("I'm watching you");
     }
+  }
+}
+```
+
+### ℹ️ Decorator @Content and @Context
+
+By default, the library sets the handler arguments on its own,
+but you can manage the arguments yourself using the `@Content()` and `@Context()` decorators
+
+- Content - message content (allow only for on message event)
+- Context - default args
+
+⚠️**Using a decorator overrides the default behavior**
+
+#### 💡 Example
+
+```typescript
+/*bot.gateway.ts*/
+import { Content } from 'discord-nestjs';
+
+@Injectable()
+export class BotGateway {
+  @OnCommand({ name: 'start' })
+  async onCommand(@Content() content: string, @Context() context: any[]): Promise<void> {
+    await message.reply(`Execute command: ${content}`, `Args: ${context}`);
   }
 }
 ```

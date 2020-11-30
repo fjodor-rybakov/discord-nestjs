@@ -1,19 +1,13 @@
 import { DiscordResolve } from '../interface/discord-resolve';
 import { ClientEvents } from 'discord.js';
-import {
-  ON_DECORATOR,
-  USE_GUARDS_DECORATOR,
-  USE_INTERCEPTORS_DECORATOR,
-} from '../constant/discord.constant';
+import { ON_DECORATOR } from '../constant/discord.constant';
 import { DiscordClient, OnDecoratorOptions } from '..';
 import { DiscordResolveOptions } from '../interface/discord-resolve-options';
 import { DiscordMiddlewareService } from '../service/discord-middleware.service';
 import { Injectable } from '@nestjs/common';
-import { DiscordInterceptor } from '..';
 import { DiscordInterceptorService } from '../service/discord-interceptor.service';
 import { DiscordGuardService } from '../service/discord-guard.service';
-import { DiscordGuard } from '..';
-import { ConstructorType } from '../utils/type/constructor-type';
+import { DiscordResolverHelper } from '../helper/discord-resolver.helper';
 
 @Injectable()
 export class OnResolver implements DiscordResolve {
@@ -21,13 +15,20 @@ export class OnResolver implements DiscordResolve {
     private readonly discordMiddlewareService: DiscordMiddlewareService,
     private readonly discordInterceptorService: DiscordInterceptorService,
     private readonly discordGuardService: DiscordGuardService,
+    private readonly discordResolverHelper: DiscordResolverHelper,
   ) {}
 
   resolve(options: DiscordResolveOptions): void {
     const { discordClient, instance, methodName, middlewareList } = options;
     const metadata = this.getDecoratorMetadata(instance, methodName);
-    const interceptors = this.getInterceptorMetadata(instance, methodName);
-    const guards = this.getGuardMetadata(instance, methodName);
+    const interceptors = this.discordResolverHelper.getInterceptorMetadata(
+      instance,
+      methodName,
+    );
+    const guards = this.discordResolverHelper.getGuardMetadata(
+      instance,
+      methodName,
+    );
     if (metadata) {
       discordClient.on(
         metadata.event,
@@ -60,7 +61,12 @@ export class OnResolver implements DiscordResolve {
               data,
             );
           }
-          instance[methodName](...data);
+          this.discordResolverHelper.callHandler(
+            instance,
+            methodName,
+            data,
+            metadata.event,
+          );
         },
       );
     }
@@ -92,23 +98,5 @@ export class OnResolver implements DiscordResolve {
     methodName: string,
   ): OnDecoratorOptions {
     return Reflect.getMetadata(ON_DECORATOR, instance, methodName);
-  }
-
-  private getInterceptorMetadata(
-    instance: any,
-    methodName: string,
-  ): (DiscordInterceptor | ConstructorType)[] {
-    return Reflect.getMetadata(
-      USE_INTERCEPTORS_DECORATOR,
-      instance,
-      methodName,
-    );
-  }
-
-  private getGuardMetadata(
-    instance: any,
-    methodName: string,
-  ): (DiscordGuard | ConstructorType)[] {
-    return Reflect.getMetadata(USE_GUARDS_DECORATOR, instance, methodName);
   }
 }

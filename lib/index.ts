@@ -8,6 +8,8 @@ export * from './decorator/on.decorator';
 export * from './decorator/once.decorator';
 export * from './decorator/on-command.decorator';
 export * from './decorator/middleware.decorator';
+export * from './decorator/content.decorator';
+export * from './decorator/context.decorator';
 export * from './decorator/client.decorator';
 export * from './decorator/use-guard.decorator';
 export * from './decorator/use-interceptor.decorator';
