@@ -10,6 +10,7 @@ export * from './decorator/on-command.decorator';
 export * from './decorator/middleware.decorator';
 export * from './decorator/content.decorator';
 export * from './decorator/context.decorator';
+export * from './decorator/arg-num.decorator';
 export * from './decorator/client.decorator';
 export * from './decorator/use-guard.decorator';
 export * from './decorator/use-interceptor.decorator';

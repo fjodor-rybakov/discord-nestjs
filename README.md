@@ -253,11 +253,44 @@ import { Content, Context, OnCommand } from 'discord-nestjs';
 
 @Injectable()
 export class BotGateway {
+  private readonly logger = new Logger(BotGateway.name);
+
   @OnCommand({ name: 'start' })
   async onCommand(@Content() content: string, @Context() context: any[]): Promise<void> {
-    await message.reply(`Execute command: ${content}`, `Args: ${context}`);
+    await context[0].reply(`Execute command: ${content}`, `Args: ${context}`);
   }
 }
+```
+
+### ℹ️ Decorator @ArgNum
+
+Set value by argument number
+
+#### 💡 Example
+
+```typescript
+/*some.dto.ts*/
+import { ArgNum } from 'discord-nestjs';
+
+export class SomeDto {
+  @ArgNum(0)
+  name: string;
+}
+```
+```typescript
+/*bot.gateway.ts*/
+import { Content, Context, OnCommand } from 'discord-nestjs';
+
+@Injectable()
+export class BotGateway {
+  @OnCommand({ name: 'start' })
+  async onCommand(@Content() content: SomeDto, @Context() context: any[]): Promise<void> {
+    await context[0].reply(`Hello ${content.name}`);
+  }
+}
+```
+```
+!start Alice
 ```
 
 ### ℹ️ Decorator @UseGuards (Test feature)

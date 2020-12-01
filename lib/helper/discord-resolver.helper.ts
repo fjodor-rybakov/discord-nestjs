@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Message } from 'discord.js';
 import {
+  ARG_NUM_DECORATOR,
   CONTENT_DECORATOR,
   CONTEXT_DECORATOR,
   USE_GUARDS_DECORATOR,
@@ -41,7 +41,17 @@ export class DiscordResolverHelper {
               if (eventName !== 'message') {
                 throw new Error('Content allow only for message event');
               }
-              return argsData[0].content;
+              const argsParamType = Reflect.getMetadata(
+                'design:paramtypes',
+                instance,
+                methodName,
+              );
+              const paramType = argsParamType[item.parameterIndex];
+              const content = argsData[0].content;
+              if (typeof paramType === 'function') {
+                return this.initContent(new paramType(), content);
+              }
+              return content;
             }
             case DecoratorParamType.CONTEXT: {
               return argsData;
@@ -70,5 +80,20 @@ export class DiscordResolverHelper {
     methodName: string,
   ): (DiscordGuard | ConstructorType)[] {
     return Reflect.getMetadata(USE_GUARDS_DECORATOR, instance, methodName);
+  }
+
+  private initContent(instance: any, inputData: string) {
+    const inputPart = inputData.split(' ');
+    for (const propKey in instance) {
+      const metadata = Reflect.getMetadata(
+        ARG_NUM_DECORATOR,
+        instance,
+        propKey,
+      );
+      if (metadata) {
+        instance[propKey] = inputPart[metadata.position];
+      }
+    }
+    return instance;
   }
 }
