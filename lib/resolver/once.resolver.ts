@@ -5,7 +5,7 @@ import { ONCE_DECORATOR } from '../constant/discord.constant';
 import { DiscordResolveOptions } from '../interface/discord-resolve-options';
 import { DiscordMiddlewareService } from '../service/discord-middleware.service';
 import { Injectable } from '@nestjs/common';
-import { DiscordInterceptorService } from '../service/discord-interceptor.service';
+import { DiscordPipeService } from '../service/discord-pipe.service';
 import { DiscordGuardService } from '../service/discord-guard.service';
 import { DiscordResolverHelper } from '../helper/discord-resolver.helper';
 
@@ -13,7 +13,7 @@ import { DiscordResolverHelper } from '../helper/discord-resolver.helper';
 export class OnceResolver implements DiscordResolve {
   constructor(
     private readonly discordMiddlewareService: DiscordMiddlewareService,
-    private readonly discordInterceptorService: DiscordInterceptorService,
+    private readonly discordPipeService: DiscordPipeService,
     private readonly discordGuardService: DiscordGuardService,
     private readonly discordResolverHelper: DiscordResolverHelper,
   ) {}
@@ -21,7 +21,7 @@ export class OnceResolver implements DiscordResolve {
   resolve(options: DiscordResolveOptions): void {
     const { discordClient, instance, methodName, middlewareList } = options;
     const metadata = this.getDecoratorMetadata(instance, methodName);
-    const interceptors = this.discordResolverHelper.getInterceptorMetadata(
+    const pipes = this.discordResolverHelper.getPipeMetadata(
       instance,
       methodName,
     );
@@ -54,9 +54,9 @@ export class OnceResolver implements DiscordResolve {
             metadata.event,
             data,
           );
-          if (interceptors && interceptors.length !== 0) {
-            data = await this.discordInterceptorService.applyInterceptors(
-              interceptors,
+          if (pipes && pipes.length !== 0) {
+            data = await this.discordPipeService.applyPipes(
+              pipes,
               metadata.event,
               data,
             );

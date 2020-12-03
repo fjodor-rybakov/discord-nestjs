@@ -10,7 +10,7 @@ import { DiscordMiddlewareService } from './service/discord-middleware.service';
 import { OnResolver } from './resolver/on.resolver';
 import { OnCommandResolver } from './resolver/on-command.resolver';
 import { OnceResolver } from './resolver/once.resolver';
-import { DiscordInterceptorService } from './service/discord-interceptor.service';
+import { DiscordPipeService } from './service/discord-pipe.service';
 import { DiscordGuardService } from './service/discord-guard.service';
 import { DiscordResolverHelper } from './helper/discord-resolver.helper';
 
@@ -25,7 +25,7 @@ export class DiscordModule {
         DiscordResolverHelper,
         DiscordMiddlewareService,
         DiscordGuardService,
-        DiscordInterceptorService,
+        DiscordPipeService,
         OnResolver,
         OnCommandResolver,
         OnceResolver,
@@ -53,7 +53,7 @@ export class DiscordModule {
         DiscordResolverHelper,
         DiscordMiddlewareService,
         DiscordGuardService,
-        DiscordInterceptorService,
+        DiscordPipeService,
         OnResolver,
         OnCommandResolver,
         OnceResolver,

@@ -1,26 +1,26 @@
-import { DiscordInterceptor } from '..';
+import { DiscordPipeTransform } from '..';
 import { ClientEvents, Message } from 'discord.js';
 import { Injectable } from '@nestjs/common';
 import { ConstructorType } from '../utils/type/constructor-type';
 
 @Injectable()
-export class DiscordInterceptorService {
-  applyInterceptors(
-    interceptors: (DiscordInterceptor | ConstructorType)[],
+export class DiscordPipeService {
+  applyPipes(
+    pipes: (DiscordPipeTransform | ConstructorType)[],
     event: keyof ClientEvents,
     context: any,
   ): Promise<any> {
-    return interceptors.reduce(
+    return pipes.reduce(
       async (
         prev: Promise<Message>,
-        curr: DiscordInterceptor | ConstructorType,
+        curr: DiscordPipeTransform | ConstructorType,
       ) => {
-        let interceptorInstance: DiscordInterceptor;
+        let pipesInstance: DiscordPipeTransform;
         if (typeof curr === 'function') {
-          interceptorInstance = new curr();
+          pipesInstance = new curr();
         }
         const prevData = await prev;
-        return interceptorInstance.intercept(event, prevData);
+        return pipesInstance.transform(event, prevData);
       },
       context,
     );

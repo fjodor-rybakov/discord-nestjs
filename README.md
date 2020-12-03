@@ -293,7 +293,7 @@ export class BotGateway {
 !start Alice
 ```
 
-### ℹ️ Decorator @UseGuards (Test feature)
+### ℹ️ Decorator @UseGuards
 
 To guard incoming messages you can use `@UseGuards()` decorator
 
@@ -338,42 +338,7 @@ export class BotGateway {
 }
 ```
 
-### ℹ️ Decorator @UseInterceptors (Test feature)
-
-To intercept incoming messages you can use `@UseInterceptors()` decorator
-
-#### 💡 Example
-
-You need to implement `DiscordInterceptor` interface
-
-```typescript
-/*bot.interceptor.ts*/
-
-import { DiscordInterceptor } from 'discord-nestjs';
-import { ClientEvents } from 'discord.js';
-
-export class BotInterceptor implements DiscordInterceptor {
-  intercept(event: keyof ClientEvents, context: any): any {
-    return 'Some custom value';
-  }
-}
-```
-
-```typescript
-/*bot.gateway.ts*/
-import { On, UseInterceptors } from 'discord-nestjs';
-
-@Injectable()
-export class BotGateway {
-  @UseInterceptors(BotInterceptor)
-  @On({ event: 'message' })
-  async onSomeEvent(context: string): Promise<void> {
-    // to do something
-  }
-}
-```
-
-### ℹ️ Decorator @Middleware (Test feature)
+### ℹ️ Decorator @Middleware
 
 For handling intermediate requests you can use `@Middleware` decorator
 
@@ -409,6 +374,43 @@ Don't forget to add to providers
   providers: [BotMiddleware],
 })
 export class BotModule {}
+```
+
+### ℹ️ Decorator @UsePipes
+
+To intercept incoming messages for some function you can use `@UsePipes()` decorator
+
+⚠️**Test feature: Do not use in production code**
+
+#### 💡 Example
+
+You need to implement `DiscordPipesTransform` interface
+
+```typescript
+/*bot.pipe.ts*/
+
+import { DiscordPipeTransform } from 'discord-nestjs';
+import { ClientEvents } from 'discord.js';
+
+export class BotPipe implements DiscordPipeTransform {
+  transform(event: keyof ClientEvents, context: any): any {
+    return 'Some custom value';
+  }
+}
+```
+
+```typescript
+/*bot.gateway.ts*/
+import { On, UsePipes } from 'discord-nestjs';
+
+@Injectable()
+export class BotGateway {
+  @UsePipes(BotPipe)
+  @On({ event: 'message' })
+  async onSomeEvent(context: string): Promise<void> {
+    // to do something
+  }
+}
 ```
 
 Any questions or suggestions? Discord Федок#3051
