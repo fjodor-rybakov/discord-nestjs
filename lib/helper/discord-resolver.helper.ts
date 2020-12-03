@@ -4,11 +4,11 @@ import {
   CONTENT_DECORATOR,
   CONTEXT_DECORATOR,
   USE_GUARDS_DECORATOR,
-  USE_INTERCEPTORS_DECORATOR,
+  USE_PIPES_DECORATOR,
 } from '../constant/discord.constant';
 import { DiscordParamDecoratorType } from '../interface/discord-param-decorator-type';
 import { DecoratorParamType } from '../utils/enums/decorator-param-type';
-import { DiscordGuard, DiscordInterceptor } from '..';
+import { DiscordGuard, DiscordPipeTransform } from '..';
 import { ConstructorType } from '../utils/type/constructor-type';
 
 @Injectable()
@@ -64,15 +64,11 @@ export class DiscordResolverHelper {
     }
   }
 
-  getInterceptorMetadata(
+  getPipeMetadata(
     instance: any,
     methodName: string,
-  ): (DiscordInterceptor | ConstructorType)[] {
-    return Reflect.getMetadata(
-      USE_INTERCEPTORS_DECORATOR,
-      instance,
-      methodName,
-    );
+  ): (DiscordPipeTransform | ConstructorType)[] {
+    return Reflect.getMetadata(USE_PIPES_DECORATOR, instance, methodName);
   }
 
   getGuardMetadata(
