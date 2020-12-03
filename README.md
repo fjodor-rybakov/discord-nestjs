@@ -380,7 +380,7 @@ export class BotModule {}
 
 To intercept incoming messages for some function you can use `@UsePipes()` decorator
 
-⚠️**Test feature: Do not use in production code**
+⚠️**Test feature: Do not use in production code! Doesn't work with `@Content()` and `@Context()` decorators**
 
 #### 💡 Example
 

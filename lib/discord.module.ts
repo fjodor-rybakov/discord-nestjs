@@ -12,7 +12,7 @@ import { OnCommandResolver } from './resolver/on-command.resolver';
 import { OnceResolver } from './resolver/once.resolver';
 import { DiscordPipeService } from './service/discord-pipe.service';
 import { DiscordGuardService } from './service/discord-guard.service';
-import { DiscordResolverHelper } from './helper/discord-resolver.helper';
+import { DiscordResolverService } from './service/discord-resolver.service';
 
 @Module({
   imports: [DiscoveryModule],
@@ -22,7 +22,7 @@ export class DiscordModule {
     return {
       module: DiscordModule,
       providers: [
-        DiscordResolverHelper,
+        DiscordResolverService,
         DiscordMiddlewareService,
         DiscordGuardService,
         DiscordPipeService,
@@ -50,7 +50,7 @@ export class DiscordModule {
       module: DiscordModule,
       imports: options.imports || [],
       providers: [
-        DiscordResolverHelper,
+        DiscordResolverService,
         DiscordMiddlewareService,
         DiscordGuardService,
         DiscordPipeService,

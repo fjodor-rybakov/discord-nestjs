@@ -1,7 +1,7 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { DiscoveryService, MetadataScanner } from '@nestjs/core';
-import { DiscordResolve } from '../interface/discord-resolve';
+import { DiscordEventResolver } from '../interface/discord-event-resolver';
 import { OnCommandResolver } from '../resolver/on-command.resolver';
 import { OnResolver } from '../resolver/on.resolver';
 import { DiscordClient } from '../discord-client';
@@ -13,7 +13,7 @@ import { CLIENT_DECORATOR } from '../constant/discord.constant';
 
 @Injectable()
 export class DiscordService implements OnApplicationBootstrap {
-  private readonly resolverList: DiscordResolve[];
+  private readonly resolverList: DiscordEventResolver[];
 
   constructor(
     private readonly discoveryService: DiscoveryService,
@@ -71,7 +71,7 @@ export class DiscordService implements OnApplicationBootstrap {
       instance,
       Object.getPrototypeOf(instance),
       (methodName: string) => {
-        this.resolverList.forEach((item: DiscordResolve) => {
+        this.resolverList.forEach((item: DiscordEventResolver) => {
           item.resolve({
             instance,
             methodName,
