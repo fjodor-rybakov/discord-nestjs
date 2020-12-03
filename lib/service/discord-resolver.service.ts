@@ -12,7 +12,7 @@ import { DiscordGuard, DiscordPipeTransform } from '..';
 import { ConstructorType } from '../utils/type/constructor-type';
 
 @Injectable()
-export class DiscordResolverHelper {
+export class DiscordResolverService {
   callHandler(
     instance: any,
     methodName: string,

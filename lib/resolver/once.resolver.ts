@@ -1,4 +1,4 @@
-import { DiscordResolve } from '../interface/discord-resolve';
+import { DiscordEventResolver } from '../interface/discord-event-resolver';
 import { ClientEvents } from 'discord.js';
 import { DiscordClient, OnDecoratorOptions } from '..';
 import { ONCE_DECORATOR } from '../constant/discord.constant';
@@ -7,25 +7,25 @@ import { DiscordMiddlewareService } from '../service/discord-middleware.service'
 import { Injectable } from '@nestjs/common';
 import { DiscordPipeService } from '../service/discord-pipe.service';
 import { DiscordGuardService } from '../service/discord-guard.service';
-import { DiscordResolverHelper } from '../helper/discord-resolver.helper';
+import { DiscordResolverService } from '../service/discord-resolver.service';
 
 @Injectable()
-export class OnceResolver implements DiscordResolve {
+export class OnceResolver implements DiscordEventResolver {
   constructor(
     private readonly discordMiddlewareService: DiscordMiddlewareService,
     private readonly discordPipeService: DiscordPipeService,
     private readonly discordGuardService: DiscordGuardService,
-    private readonly discordResolverHelper: DiscordResolverHelper,
+    private readonly discordResolverService: DiscordResolverService,
   ) {}
 
   resolve(options: DiscordResolveOptions): void {
     const { discordClient, instance, methodName, middlewareList } = options;
     const metadata = this.getDecoratorMetadata(instance, methodName);
-    const pipes = this.discordResolverHelper.getPipeMetadata(
+    const pipes = this.discordResolverService.getPipeMetadata(
       instance,
       methodName,
     );
-    const guards = this.discordResolverHelper.getGuardMetadata(
+    const guards = this.discordResolverService.getGuardMetadata(
       instance,
       methodName,
     );
@@ -61,7 +61,7 @@ export class OnceResolver implements DiscordResolve {
               data,
             );
           }
-          this.discordResolverHelper.callHandler(
+          this.discordResolverService.callHandler(
             instance,
             methodName,
             data,
