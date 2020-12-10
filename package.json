@@ -43,8 +43,8 @@
   },
   "devDependencies": {
     "@nestjs/cli": "7.5.4",
-    "@nestjs/common": "7.6.0",
-    "@nestjs/core": "7.6.0",
+    "@nestjs/common": "7.6.1",
+    "@nestjs/core": "7.6.1",
     "@nestjs/schematics": "7.2.5",
     "@types/node": "14.14.12",
     "@typescript-eslint/eslint-plugin": "4.9.1",
