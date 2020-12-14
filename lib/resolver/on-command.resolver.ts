@@ -71,7 +71,7 @@ export class OnCommandResolver implements DiscordEventResolver {
             const isAllowFromGuards = await this.discordGuardService.applyGuards(
               guards,
               'message',
-              message,
+              [message],
             );
             if (!isAllowFromGuards) {
               return;

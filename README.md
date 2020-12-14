@@ -310,13 +310,13 @@ import { ClientEvents, Message } from 'discord.js';
 export class BotGuard implements DiscordGuard {
   async canActive(
     event: keyof ClientEvents,
-    context: Message,
+    context: any[],
   ): Promise<boolean> {
-    if (context.author.id === '766863033789563648') {
+    if (context[0].author.id === '766863033789563648') {
       return true;
     } else {
       const embed = new MessageEmbed().setColor().setTitle('Ups! Not allowed!');
-      await context.reply(embed);
+      await context[0].reply(embed);
       return false;
     }
   }
@@ -358,7 +358,7 @@ export class BotMiddleware implements DiscordMiddleware {
 
   use(
     event: keyof ClientEvents,
-    context: ClientEvents[keyof ClientEvents],
+    context: any[],
   ): void {
     if (event === 'message') {
       this.logger.log('On message event triggered');
