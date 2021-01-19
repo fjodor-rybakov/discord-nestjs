@@ -51,7 +51,7 @@
     "@typescript-eslint/parser": "4.13.0",
     "discord.js": "12.5.1",
     "eslint": "7.18.0",
-    "eslint-config-prettier": "7.1.0",
+    "eslint-config-prettier": "7.2.0",
     "eslint-plugin-import": "2.22.1",
     "husky": "5.0.6",
     "lint-staged": "10.5.3",
