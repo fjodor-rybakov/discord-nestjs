@@ -46,7 +46,7 @@
     "@nestjs/common": "7.6.12",
     "@nestjs/core": "7.6.12",
     "@nestjs/schematics": "7.2.7",
-    "@types/node": "14.14.25",
+    "@types/node": "14.14.26",
     "@typescript-eslint/eslint-plugin": "4.15.0",
     "@typescript-eslint/parser": "4.15.0",
     "discord.js": "12.5.1",
