@@ -9,6 +9,7 @@ import { MiddlewareResolver } from '../resolver/middleware.resolver';
 import { ParamResolver } from '../resolver/param.resolver';
 import { OnMessageResolver } from '../resolver/on-message.resolver';
 import { OnceMessageResolver } from '../resolver/once-message.resolver';
+import { ClientResolver } from '../resolver/client.resolver';
 
 @Injectable()
 export class DiscordResolverService implements OnApplicationBootstrap {
@@ -22,6 +23,7 @@ export class DiscordResolverService implements OnApplicationBootstrap {
     private readonly paramResolver: ParamResolver,
     private readonly onMessageResolver: OnMessageResolver,
     private readonly onceMessageResolver: OnceMessageResolver,
+    private readonly clientResolver: ClientResolver,
   ) {
   }
 
@@ -31,41 +33,30 @@ export class DiscordResolverService implements OnApplicationBootstrap {
     await this.resolveDecorators(providers, controllers);
   }
 
-  private async resolveDecorators(providers: InstanceWrapper[], controllers: InstanceWrapper[]) {
+  private resolveDecorators(providers: InstanceWrapper[], controllers: InstanceWrapper[]) {
+    const methodResolvers = [
+      this.guardResolver,
+      this.onMessageResolver,
+      this.onCommandResolver,
+      this.onceMessageResolver,
+      this.pipeResolver,
+      this.paramResolver
+    ];
     return Promise.all(providers.concat(controllers).map((instanceWrapper: InstanceWrapper) => {
       const { instance } = instanceWrapper;
       if (!instance || !IsObject(instance)) {
         return;
       }
+      this.clientResolver.resolve({ instance });
+      this.middlewareResolver.resolve({ instance });
       const methodNames = this.scanMetadata(instance);
       return Promise.all(methodNames.map(async (methodName: string) => {
-        this.middlewareResolver.resolve({
-          instance,
-        });
-        await this.guardResolver.resolve({
-          instance,
-          methodName,
-        });
-        this.onMessageResolver.resolve({
-          instance,
-          methodName,
-        });
-        this.onceMessageResolver.resolve({
-          instance,
-          methodName,
-        });
-        this.onCommandResolver.resolve({
-          instance,
-          methodName,
-        });
-        await this.pipeResolver.resolve({
-          instance,
-          methodName,
-        });
-        await this.paramResolver.resolve({
-          instance,
-          methodName,
-        });
+        for await (const resolver of methodResolvers) {
+          await resolver.resolve({
+            instance,
+            methodName,
+          });
+        }
       }));
     }));
   }

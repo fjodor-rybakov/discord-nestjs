@@ -9,9 +9,10 @@ import { MethodResolveOptions } from './interface/method-resolve-options';
 import { MiddlewareResolver } from './middleware.resolver';
 import { PipeResolver } from './pipe.resolver';
 import { ParamResolver } from './param.resolver';
+import { MethodResolver } from './interface/method-resolver';
 
 @Injectable()
-export class OnCommandResolver {
+export class OnCommandResolver implements MethodResolver {
   constructor(
     private readonly guardResolver: GuardResolver,
     private readonly metadataProvider: ReflectMetadataProvider,

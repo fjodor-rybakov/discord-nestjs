@@ -17,6 +17,7 @@ import { PipeResolver } from './resolver/pipe.resolver';
 import { ParamResolver } from './resolver/param.resolver';
 import { OnMessageResolver } from './resolver/on-message.resolver';
 import { OnceMessageResolver } from './resolver/once-message.resolver';
+import { ClientResolver } from './resolver/client.resolver';
 
 @Module({
   imports: [DiscoveryModule],
@@ -39,6 +40,7 @@ export class DiscordModule {
         ...DiscordModule.createDiscordProvider(options),
         DiscordClientProvider,
         DiscordResolverService,
+        ClientResolver,
       ],
       exports: [DiscordClientProvider],
     };
@@ -70,6 +72,7 @@ export class DiscordModule {
         DiscordClientProvider,
         DiscordResolverService,
         connectionProvider,
+        ClientResolver,
       ],
       exports: [DiscordClientProvider],
     };

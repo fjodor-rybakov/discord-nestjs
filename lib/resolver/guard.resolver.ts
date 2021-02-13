@@ -5,9 +5,10 @@ import { DiscordGuard } from '../decorator/interface/discord-guard';
 import { DiscordGuardOptions } from './interface/discord-guard-options';
 import { DiscordGuardList } from './interface/discord-guard-list';
 import { MethodResolveOptions } from './interface/method-resolve-options';
+import { MethodResolver } from './interface/method-resolver';
 
 @Injectable()
-export class GuardResolver {
+export class GuardResolver implements MethodResolver {
   private readonly guardList: DiscordGuardList[] = [];
 
   constructor(

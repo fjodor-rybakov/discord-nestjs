@@ -5,9 +5,10 @@ import { MethodResolveOptions } from './interface/method-resolve-options';
 import { DiscordPipeList } from './interface/discord-pipe-list';
 import { DiscordPipeTransform } from '../decorator/interface/discord-pipe-transform';
 import { DiscordPipeOptions } from './interface/discord-pipe-options';
+import { MethodResolver } from './interface/method-resolver';
 
 @Injectable()
-export class PipeResolver {
+export class PipeResolver implements MethodResolver {
   private readonly pipeList: DiscordPipeList[] = [];
 
   constructor(

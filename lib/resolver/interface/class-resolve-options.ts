@@ -1,3 +1,3 @@
 export interface ClassResolveOptions {
-  instance: unknown;
+  instance: any;
 }

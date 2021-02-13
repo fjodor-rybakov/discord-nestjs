@@ -1,20 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { ReflectMetadataProvider } from '../provider/reflect-metadata.provider';
-import { PropertyResolveOptions } from './interface/property-resolve-options';
 import { DiscordParamList } from './interface/discord-param-list';
 import { DecoratorParamType } from '../constant/decorator-param-type';
 import { DecoratorTypeArg } from './interface/decorator-type-arg';
 import { ApplyPropertyOption } from './interface/apply-property-option';
+import { MethodResolveOptions } from './interface/method-resolve-options';
+import { MethodResolver } from './interface/method-resolver';
 
 @Injectable()
-export class ParamResolver {
+export class ParamResolver implements MethodResolver {
   private readonly params: DiscordParamList[] = [];
 
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
   ) {}
 
-  resolve(options: PropertyResolveOptions) {
+  resolve(options: MethodResolveOptions): void {
     const {instance, methodName} = options;
     const contentMetadata = this.metadataProvider.getContentDecoratorMetadata(
       instance,

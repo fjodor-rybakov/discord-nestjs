@@ -9,9 +9,10 @@ import { PipeResolver } from './pipe.resolver';
 import { ParamResolver } from './param.resolver';
 import { MethodResolveOptions } from './interface/method-resolve-options';
 import { ClientEvents } from 'discord.js';
+import { MethodResolver } from './interface/method-resolver';
 
 @Injectable()
-export class OnMessageResolver {
+export class OnMessageResolver implements MethodResolver {
   constructor(
     private readonly guardResolver: GuardResolver,
     private readonly metadataProvider: ReflectMetadataProvider,
