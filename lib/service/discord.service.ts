@@ -1,85 +1,81 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
-import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
-import { DiscoveryService, MetadataScanner } from '@nestjs/core';
-import { DiscordEventResolver } from '../interface/discord-event-resolver';
-import { OnCommandResolver } from '../resolver/on-command.resolver';
-import { OnResolver } from '../resolver/on.resolver';
-import { DiscordClient } from '../discord-client';
-import { OnceResolver } from '../resolver/once.resolver';
-import { DiscordMiddlewareInstance } from '../interface/discord-middleware-instance';
-import { DiscordMiddlewareService } from './discord-middleware.service';
-import { IsObject } from '../utils/function/is-object';
-import { CLIENT_DECORATOR } from '../constant/discord.constant';
+import { Client, WebhookClient } from 'discord.js';
+import { DiscordModuleOption } from '../interface/discord-module-option';
+import { DiscordModuleChannelOptions } from '../interface/discord-module-channel-options';
+import { DiscordModuleWebhookOptions } from '../interface/discord-module-webhook-options';
 
 @Injectable()
 export class DiscordService implements OnApplicationBootstrap {
-  private readonly resolverList: DiscordEventResolver[];
+  private readonly clientToken: string;
+  private readonly commandPrefix: string;
+  private readonly allowGuilds?: string[];
+  private readonly denyGuilds?: string[];
+  private readonly allowChannels?: DiscordModuleChannelOptions[];
 
-  constructor(
-    private readonly discoveryService: DiscoveryService,
-    private readonly metadataScanner: MetadataScanner,
-    private readonly discordClient: DiscordClient,
-    private readonly discordMiddlewareService: DiscordMiddlewareService,
-    private readonly commandResolver: OnCommandResolver,
-    private readonly onResolver: OnResolver,
-    private readonly onceResolver: OnceResolver,
-  ) {
-    this.resolverList = [commandResolver, onResolver, onceResolver];
+  private readonly client: Client;
+  private readonly webhookClient: WebhookClient;
+
+  constructor(options: DiscordModuleOption) {
+    const {
+      token,
+      commandPrefix,
+      allowGuilds,
+      denyGuilds,
+      allowChannels,
+      webhook,
+      ...discordOption
+    } = options;
+    this.client = new Client(discordOption);
+    this.clientToken = token;
+    this.commandPrefix = commandPrefix;
+    this.allowGuilds = allowGuilds;
+    this.denyGuilds = denyGuilds;
+    this.allowChannels = allowChannels ?? [];
+    this.webhookClient = this.createWebhookClient(webhook);
   }
 
-  onApplicationBootstrap(): void {
-    const providers: InstanceWrapper[] = this.discoveryService.getProviders();
-    const controllers: InstanceWrapper[] = this.discoveryService.getControllers();
-    const middlewareList = this.discordMiddlewareService.resolveMiddleware(
-      providers,
-    );
-    this.resolve(providers, controllers, middlewareList);
+  async onApplicationBootstrap(): Promise<void> {
+    await this.client.login(this.clientToken);
   }
 
-  private resolve(
-    providers: InstanceWrapper[],
-    controllers: InstanceWrapper[],
-    middlewareList: DiscordMiddlewareInstance[],
-  ): void {
-    providers.concat(controllers).forEach((wrapper: InstanceWrapper) => {
-      const { instance } = wrapper;
-      if (instance && IsObject(instance)) {
-        this.scanMetadata(instance, middlewareList);
-        this.resolveDiscordClientDecorator(instance);
-      }
-    });
+  getCommandPrefix(): string {
+    return this.commandPrefix;
   }
 
-  private resolveDiscordClientDecorator(instance: any): void {
-    for (const propertyKey in instance) {
-      const metadata = Reflect.getMetadata(
-        CLIENT_DECORATOR,
-        instance,
-        propertyKey,
-      );
-      if (metadata) {
-        instance[propertyKey] = this.discordClient;
-      }
+  getAllowChannels(): DiscordModuleChannelOptions[] {
+    return this.allowChannels;
+  }
+
+  getClient(): Client {
+    return this.client;
+  }
+
+  getWebhookClient(): WebhookClient {
+    return this.webhookClient;
+  }
+
+  isAllowGuild(guildId: string): boolean {
+    if (!this.allowGuilds) {
+      return true;
     }
+    return this.allowGuilds.includes(guildId);
   }
 
-  private scanMetadata(
-    instance: any,
-    middlewareList: DiscordMiddlewareInstance[],
-  ): void {
-    this.metadataScanner.scanFromPrototype(
-      instance,
-      Object.getPrototypeOf(instance),
-      (methodName: string) => {
-        this.resolverList.forEach((item: DiscordEventResolver) => {
-          item.resolve({
-            instance,
-            methodName,
-            discordClient: this.discordClient,
-            middlewareList,
-          });
-        });
-      },
-    );
+  isDenyGuild(guildId: string): boolean {
+    if (!this.denyGuilds) {
+      return false;
+    }
+    return this.denyGuilds.includes(guildId);
+  }
+
+  private createWebhookClient(
+    webhookOptions: DiscordModuleWebhookOptions
+  ): WebhookClient {
+    if (webhookOptions) {
+      return new WebhookClient(
+        webhookOptions.webhookId,
+        webhookOptions.webhookToken,
+      );
+    }
   }
 }

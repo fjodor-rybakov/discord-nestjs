@@ -5,7 +5,7 @@ export interface DiscordModuleChannelOptions {
   commandName: string;
 
   /**
-   * channel identifiers
+   * Channel identifiers
    */
   channels: string[];
 }

@@ -1,159 +1,118 @@
-import { DiscordEventResolver } from '../interface/discord-event-resolver';
-import { Message } from 'discord.js';
-import { ON_MESSAGE_DECORATOR } from '../constant/discord.constant';
-import {
-  DiscordClient,
-  DiscordModuleChannelOptions,
-  OnCommandDecoratorOptions,
-} from '..';
-import { DiscordResolveOptions } from '../interface/discord-resolve-options';
-import { DiscordMiddlewareService } from '../service/discord-middleware.service';
 import { Injectable } from '@nestjs/common';
-import { DiscordPipeService } from '../service/discord-pipe.service';
-import { DiscordGuardService } from '../service/discord-guard.service';
-import { DiscordResolverService } from '../service/discord-resolver.service';
+import { ClientEvents, Message } from 'discord.js';
+import { DiscordService } from '../service/discord.service';
+import { ReflectMetadataProvider } from '../provider/reflect-metadata.provider';
+import { GuardResolver } from './guard.resolver';
+import { DiscordHandlerService } from '../service/discord-handler.service';
+import { DiscordAccessService } from '../service/discord-access.service';
+import { MethodResolveOptions } from './interface/method-resolve-options';
+import { MiddlewareResolver } from './middleware.resolver';
+import { PipeResolver } from './pipe.resolver';
 
 @Injectable()
-export class OnCommandResolver implements DiscordEventResolver {
+export class OnCommandResolver {
   constructor(
-    private readonly discordMiddlewareService: DiscordMiddlewareService,
-    private readonly discordPipeService: DiscordPipeService,
-    private readonly discordGuardService: DiscordGuardService,
-    private readonly discordResolverService: DiscordResolverService,
+    private readonly guardResolver: GuardResolver,
+    private readonly metadataProvider: ReflectMetadataProvider,
+    private readonly discordService: DiscordService,
+    private readonly discordHandlerService: DiscordHandlerService,
+    private readonly discordAccessService: DiscordAccessService,
+    private readonly middlewareResolver: MiddlewareResolver,
+    private readonly pipeResolver: PipeResolver,
   ) {}
 
-  resolve(options: DiscordResolveOptions): void {
-    const { discordClient, instance, methodName, middlewareList } = options;
-    const metadata = this.getDecoratorMetadata(instance, methodName);
-    const pipes = this.discordResolverService.getPipeMetadata(
-      instance,
-      methodName,
-    );
-    const guards = this.discordResolverService.getGuardMetadata(
-      instance,
-      methodName,
-    );
-    if (metadata) {
-      const {
+  resolve(options: MethodResolveOptions): void {
+    const { instance, methodName } = options;
+    const metadata = this.metadataProvider.getOnCommandDecoratorMetadata(instance, methodName);
+    if (!metadata) {
+      return;
+    }
+    const {
+      name,
+      prefix = this.discordService.getCommandPrefix(),
+      isRemovePrefix = true,
+      isIgnoreBotMessage = true,
+      isRemoveCommandName = true,
+      isRemoveMessage = false,
+      allowChannels
+    } = metadata;
+    this.discordService.getClient().on('message', async (message: Message) => {
+      //#region check allow handle message
+      if (isIgnoreBotMessage && message.author.bot) {
+        return;
+      }
+      if (!this.discordAccessService.isAllowMessageGuild(message)) {
+        return;
+      }
+      if (this.discordAccessService.isDenyMessageGuild(message)) {
+        return;
+      }
+      const channelIsNotAllowed = allowChannels && !allowChannels.includes(message.channel.id); // channels from decorator
+      if (channelIsNotAllowed || !this.discordAccessService.isAllowChannel(name, message.channel.id)) {
+        return;
+      }
+      //#endregion
+
+      let messageContent = message.content.trim();
+      const messagePrefix = this.getPrefix(messageContent, prefix);
+      const commandName = this.getCommandName(
+        messageContent.slice(messagePrefix.length),
         name,
-        prefix = discordClient.getCommandPrefix(),
-        isRemovePrefix = true,
-        isIgnoreBotMessage = true,
-        isRemoveCommandName = true,
-        isRemoveMessage = false,
-      } = metadata;
-      discordClient.on('message', async (message: Message) => {
-        if (!this.isAllowGuild(discordClient, message)) {
-          return;
-        }
-        if (this.isDenyGuild(discordClient, message)) {
-          return;
-        }
-        if (isIgnoreBotMessage && message.author.bot) {
-          return;
-        }
-        if (
-          (metadata.allowChannels &&
-            !metadata.allowChannels.includes(message.channel.id)) ||
-          !this.isAllowChannel(discordClient, name, message.channel.id)
-        ) {
-          return;
-        }
-        const messageContent = message.content.trim();
-        const messagePrefix = this.getPrefix(messageContent, prefix);
-        const commandName = this.getCommandName(
-          messageContent.slice(messagePrefix.length),
-          name,
-        );
+      );
+      if (messagePrefix !== prefix || commandName !== name) {
+        return; // not suitable for handler
+      }
 
-        if (messagePrefix === prefix && commandName === name) {
-          if (guards && guards.length !== 0) {
-            const isAllowFromGuards = await this.discordGuardService.applyGuards(
-              guards,
-              'message',
-              [message],
-            );
-            if (!isAllowFromGuards) {
-              return;
-            }
-          }
-          if (isRemovePrefix) {
-            message.content = messageContent.slice(prefix.length);
-          }
-
-          if (isRemoveCommandName) {
-            if (isRemovePrefix) {
-              message.content = messageContent.slice(
-                prefix.length + commandName.length,
-              );
-            } else {
-              message.content =
-                messageContent.substring(0, prefix.length) +
-                messageContent.substring(prefix.length + commandName.length);
-            }
-          }
-
-          message.content = message.content.trim();
-          await this.discordMiddlewareService.applyMiddleware(
-            middlewareList,
-            'message',
-            [message],
+      ///#region handle message
+      if (isRemovePrefix) {
+        messageContent = messageContent.slice(prefix.length);
+      }
+      if (isRemoveCommandName) {
+        if (isRemovePrefix) {
+          messageContent = messageContent.slice(
+            prefix.length + commandName.length,
           );
-          if (pipes && pipes.length !== 0) {
-            message = await this.discordPipeService.applyPipes(
-              pipes,
-              'message',
-              message,
-            );
-          }
-          this.discordResolverService.callHandler(
-            instance,
-            methodName,
-            [message],
-            'message',
-          );
-          if (isRemoveMessage) {
-            await this.removeMessageFromChannel(message);
-          }
+        } else {
+          messageContent =
+            messageContent.substring(0, prefix.length) +
+            messageContent.substring(prefix.length + commandName.length);
         }
+      }
+      messageContent = messageContent.trim();
+      //#endregion
+
+      //#region apply middleware, guard, pipe
+      const eventName = 'message';
+      const context: ClientEvents['message'] = [message];
+      await this.middlewareResolver.applyMiddleware(eventName, context);
+      const isAllowFromGuards = await this.guardResolver.applyGuard({
+        instance,
+        methodName,
+        event: eventName,
+        context
       });
-    }
-  }
-
-  private isAllowChannel(
-    discordClient: DiscordClient,
-    eventName: string,
-    channelId: string,
-  ): boolean {
-    const allowChannels = discordClient.getAllowChannels();
-    if (allowChannels.length !== 0) {
-      return allowChannels.some((item: DiscordModuleChannelOptions) => {
-        if (item.commandName === eventName) {
-          return item.channels.includes(channelId);
-        }
-        return true;
+      if (!isAllowFromGuards) {
+        return;
+      }
+      message.content = await this.pipeResolver.applyPipe({
+        instance,
+        methodName,
+        event: eventName,
+        context,
+        content: messageContent
       });
-    }
-    return true;
-  }
+      //#endregion
 
-  private isAllowGuild(
-    discordClient: DiscordClient,
-    message: Message,
-  ): boolean {
-    const guildId = message.guild && message.guild.id;
-    if (!!guildId) {
-      return discordClient.isAllowGuild(guildId);
-    }
-    return true;
-  }
-
-  private isDenyGuild(discordClient: DiscordClient, message: Message): boolean {
-    const guildId = message.guild && message.guild.id;
-    if (!!guildId) {
-      return discordClient.isDenyGuild(guildId);
-    }
-    return false;
+      this.discordHandlerService.callHandler(
+        instance,
+        methodName,
+        eventName,
+        context,
+      );
+      if (isRemoveMessage) {
+        await this.removeMessageFromChannel(message);
+      }
+    });
   }
 
   private getPrefix(messageContent: string, prefix: string): string {
@@ -166,12 +125,5 @@ export class OnCommandResolver implements DiscordEventResolver {
 
   private async removeMessageFromChannel(message: Message): Promise<void> {
     await message.delete();
-  }
-
-  private getDecoratorMetadata(
-    instance: any,
-    methodName: string,
-  ): OnCommandDecoratorOptions {
-    return Reflect.getMetadata(ON_MESSAGE_DECORATOR, instance, methodName);
   }
 }

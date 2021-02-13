@@ -1,5 +1,5 @@
-import { ON_MESSAGE_DECORATOR } from '../constant/discord.constant';
 import { OnCommandDecoratorOptions } from './interface/on-command-decorator-options';
+import { DecoratorConstant } from '../constant/decorator.constant';
 
 /**
  * On command decorator
@@ -12,7 +12,7 @@ export const OnCommand = (
     propertyKey: string | symbol,
     descriptor: PropertyDescriptor,
   ): PropertyDescriptor => {
-    Reflect.defineMetadata(ON_MESSAGE_DECORATOR, options, target, propertyKey);
+    Reflect.defineMetadata(DecoratorConstant.ON_COMMAND_DECORATOR, options, target, propertyKey);
     return descriptor;
   };
 };

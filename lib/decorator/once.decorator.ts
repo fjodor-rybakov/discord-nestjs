@@ -1,5 +1,5 @@
-import { ONCE_DECORATOR } from '../constant/discord.constant';
 import { OnDecoratorOptions } from './interface/on-decorator-options';
+import { DecoratorConstant } from '../constant/decorator.constant';
 
 /**
  * Once handle event decorator
@@ -10,7 +10,7 @@ export const Once = (options: OnDecoratorOptions): MethodDecorator => {
     propertyKey: string | symbol,
     descriptor: PropertyDescriptor,
   ): PropertyDescriptor => {
-    Reflect.defineMetadata(ONCE_DECORATOR, options, target, propertyKey);
+    Reflect.defineMetadata(DecoratorConstant.ONCE_DECORATOR, options, target, propertyKey);
     return descriptor;
   };
 };

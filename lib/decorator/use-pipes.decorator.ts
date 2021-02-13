@@ -1,5 +1,5 @@
-import { USE_PIPES_DECORATOR } from '../constant/discord.constant';
-import { DiscordPipeTransform } from '..';
+import { DecoratorConstant } from '../constant/decorator.constant';
+import { DiscordPipeTransform } from './interface/discord-pipe-transform';
 
 /**
  * UsePipes decorator
@@ -12,7 +12,7 @@ export const UsePipes = (
     propertyKey: string | symbol,
     descriptor: PropertyDescriptor,
   ): PropertyDescriptor => {
-    Reflect.defineMetadata(USE_PIPES_DECORATOR, pipes, target, propertyKey);
+    Reflect.defineMetadata(DecoratorConstant.USE_PIPES_DECORATOR, pipes, target, propertyKey);
     return descriptor;
   };
 };

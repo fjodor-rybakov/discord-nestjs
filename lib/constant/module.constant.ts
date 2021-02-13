@@ -1,0 +1,3 @@
+export enum ModuleConstant {
+  DISCORD_MODULE_OPTIONS = 'DISCORD_MODULE_OPTIONS'
+}

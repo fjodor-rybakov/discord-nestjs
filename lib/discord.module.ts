@@ -2,17 +2,18 @@ import { DynamicModule, Module, Provider } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
 import { DiscordModuleAsyncOptions } from './interface/discord-module-async-options';
 import { DiscordOptionsFactory } from './interface/discord-options-factory';
+import { ModuleConstant } from './constant/module.constant';
+import { DiscordClientProvider } from './provider/discord-client-provider';
 import { DiscordService } from './service/discord.service';
 import { DiscordModuleOption } from './interface/discord-module-option';
-import { DISCORD_MODULE_OPTIONS } from './constant/discord.constant';
-import { DiscordClient } from './discord-client';
-import { DiscordMiddlewareService } from './service/discord-middleware.service';
-import { OnResolver } from './resolver/on.resolver';
+import { ReflectMetadataProvider } from './provider/reflect-metadata.provider';
+import { DiscordHandlerService } from './service/discord-handler.service';
+import { DiscordAccessService } from './service/discord-access.service';
+import { GuardResolver } from './resolver/guard.resolver';
 import { OnCommandResolver } from './resolver/on-command.resolver';
-import { OnceResolver } from './resolver/once.resolver';
-import { DiscordPipeService } from './service/discord-pipe.service';
-import { DiscordGuardService } from './service/discord-guard.service';
 import { DiscordResolverService } from './service/discord-resolver.service';
+import { MiddlewareResolver } from './resolver/middleware.resolver';
+import { PipeResolver } from './resolver/pipe.resolver';
 
 @Module({
   imports: [DiscoveryModule],
@@ -22,46 +23,46 @@ export class DiscordModule {
     return {
       module: DiscordModule,
       providers: [
-        DiscordResolverService,
-        DiscordMiddlewareService,
-        DiscordGuardService,
-        DiscordPipeService,
-        OnResolver,
+        MiddlewareResolver,
+        GuardResolver,
+        PipeResolver,
         OnCommandResolver,
-        OnceResolver,
-        DiscordService,
+        ReflectMetadataProvider,
+        DiscordHandlerService,
+        DiscordAccessService,
         ...DiscordModule.createDiscordProvider(options),
+        DiscordClientProvider,
+        DiscordResolverService,
       ],
-      exports: [DiscordClient],
+      exports: [DiscordClientProvider],
     };
   }
 
   static forRootAsync(options: DiscordModuleAsyncOptions): DynamicModule {
     const connectionProvider = {
-      provide: DiscordClient,
-      useFactory: async (
-        discordModuleOption: DiscordModuleOption,
-      ): Promise<DiscordClient> => {
-        return new DiscordClient(discordModuleOption);
+      provide: DiscordService,
+      useFactory: (discordModuleOption: DiscordModuleOption) => {
+        return new DiscordService(discordModuleOption);
       },
-      inject: [DISCORD_MODULE_OPTIONS],
+      inject: [ModuleConstant.DISCORD_MODULE_OPTIONS],
     };
     return {
       module: DiscordModule,
       imports: options.imports || [],
       providers: [
-        DiscordResolverService,
-        DiscordMiddlewareService,
-        DiscordGuardService,
-        DiscordPipeService,
-        OnResolver,
+        MiddlewareResolver,
+        GuardResolver,
+        PipeResolver,
         OnCommandResolver,
-        OnceResolver,
-        DiscordService,
+        ReflectMetadataProvider,
+        DiscordHandlerService,
+        DiscordAccessService,
         this.createConfigAsyncProviders(options),
+        DiscordClientProvider,
+        DiscordResolverService,
         connectionProvider,
       ],
-      exports: [DiscordClient],
+      exports: [DiscordClientProvider],
     };
   }
 
@@ -70,14 +71,16 @@ export class DiscordModule {
   ): Provider[] {
     return [
       {
-        provide: DISCORD_MODULE_OPTIONS,
+        provide: ModuleConstant.DISCORD_MODULE_OPTIONS,
         useValue: options || {},
       },
       {
-        provide: DiscordClient,
-        useValue: new DiscordClient(options),
+        provide: DiscordService,
+        useFactory: (discordModuleOption: DiscordModuleOption) => {
+          return new DiscordService(discordModuleOption);
+        },
+        inject: [ModuleConstant.DISCORD_MODULE_OPTIONS],
       },
-      DiscordService,
     ];
   }
 
@@ -87,14 +90,14 @@ export class DiscordModule {
     if (options) {
       if (options.useFactory) {
         return {
-          provide: DISCORD_MODULE_OPTIONS,
+          provide: ModuleConstant.DISCORD_MODULE_OPTIONS,
           useFactory: options.useFactory,
           inject: options.inject || [],
         };
       } else {
         // For useClass and useExisting...
         return {
-          provide: DISCORD_MODULE_OPTIONS,
+          provide: ModuleConstant.DISCORD_MODULE_OPTIONS,
           useFactory: async (
             optionsFactory: DiscordOptionsFactory,
           ): Promise<DiscordModuleOption> =>
@@ -104,7 +107,7 @@ export class DiscordModule {
       }
     } else {
       return {
-        provide: DISCORD_MODULE_OPTIONS,
+        provide: ModuleConstant.DISCORD_MODULE_OPTIONS,
         useValue: {},
       };
     }

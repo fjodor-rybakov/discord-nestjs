@@ -1,5 +1,5 @@
-import { CONTENT_DECORATOR } from '../constant/discord.constant';
-import { DecoratorParamType } from '../utils/enums/decorator-param-type';
+import { DecoratorConstant } from '../constant/decorator.constant';
+import { DecoratorParamType } from '../constant/decorator-param-type';
 
 /**
  * Message content decorator
@@ -11,7 +11,7 @@ export const Content = (): ParameterDecorator => {
     parameterIndex: number,
   ): void => {
     Reflect.defineMetadata(
-      CONTENT_DECORATOR,
+      DecoratorConstant.CONTENT_DECORATOR,
       { parameterIndex, type: DecoratorParamType.CONTENT },
       target,
       propertyKey,

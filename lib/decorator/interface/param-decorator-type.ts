@@ -1,4 +1,4 @@
-import { DecoratorParamType } from '../utils/enums/decorator-param-type';
+import { DecoratorParamType } from '../../constant/decorator-param-type';
 
 export interface DiscordParamDecoratorType {
   parameterIndex: number;
