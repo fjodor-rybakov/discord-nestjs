@@ -1,8 +1,7 @@
-import { DecoratorParamType } from '../../constant/decorator-param-type';
+import { DecoratorTypeArg } from './decorator-type-arg';
 
 export interface DiscordParamList {
   instance: unknown;
-  propertyKey: string;
-  type: DecoratorParamType;
-  index: number;
+  methodName: string;
+  args: DecoratorTypeArg[];
 }

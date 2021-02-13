@@ -14,6 +14,9 @@ import { OnCommandResolver } from './resolver/on-command.resolver';
 import { DiscordResolverService } from './service/discord-resolver.service';
 import { MiddlewareResolver } from './resolver/middleware.resolver';
 import { PipeResolver } from './resolver/pipe.resolver';
+import { ParamResolver } from './resolver/param.resolver';
+import { OnMessageResolver } from './resolver/on-message.resolver';
+import { OnceMessageResolver } from './resolver/once-message.resolver';
 
 @Module({
   imports: [DiscoveryModule],
@@ -26,6 +29,9 @@ export class DiscordModule {
         MiddlewareResolver,
         GuardResolver,
         PipeResolver,
+        ParamResolver,
+        OnMessageResolver,
+        OnceMessageResolver,
         OnCommandResolver,
         ReflectMetadataProvider,
         DiscordHandlerService,
@@ -53,6 +59,9 @@ export class DiscordModule {
         MiddlewareResolver,
         GuardResolver,
         PipeResolver,
+        ParamResolver,
+        OnMessageResolver,
+        OnceMessageResolver,
         OnCommandResolver,
         ReflectMetadataProvider,
         DiscordHandlerService,

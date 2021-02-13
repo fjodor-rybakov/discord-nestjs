@@ -43,4 +43,22 @@ export class DiscordAccessService {
     }
     return false;
   }
+
+  isAllowGuild(data: any[] = []): boolean {
+    const guild = data.find((item) => !!item && !!item.guild);
+    const guildId = !!guild && guild.guild.id;
+    if (!!guildId) {
+      return this.discordService.isAllowGuild(guildId);
+    }
+    return true;
+  }
+
+  isDenyGuild(data: any[] = []): boolean {
+    const guild = data.find((item) => !!item && !!item.guild);
+    const guildId = !!guild && guild.guild.id;
+    if (!!guildId) {
+      return this.discordService.isDenyGuild(guildId);
+    }
+    return false;
+  }
 }

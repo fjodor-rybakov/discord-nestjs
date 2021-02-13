@@ -6,6 +6,9 @@ import { OnCommandResolver } from '../resolver/on-command.resolver';
 import { IsObject } from '../util/function/is-object';
 import { PipeResolver } from '../resolver/pipe.resolver';
 import { MiddlewareResolver } from '../resolver/middleware.resolver';
+import { ParamResolver } from '../resolver/param.resolver';
+import { OnMessageResolver } from '../resolver/on-message.resolver';
+import { OnceMessageResolver } from '../resolver/once-message.resolver';
 
 @Injectable()
 export class DiscordResolverService implements OnApplicationBootstrap {
@@ -16,6 +19,9 @@ export class DiscordResolverService implements OnApplicationBootstrap {
     private readonly onCommandResolver: OnCommandResolver,
     private readonly pipeResolver: PipeResolver,
     private readonly middlewareResolver: MiddlewareResolver,
+    private readonly paramResolver: ParamResolver,
+    private readonly onMessageResolver: OnMessageResolver,
+    private readonly onceMessageResolver: OnceMessageResolver,
   ) {
   }
 
@@ -40,11 +46,23 @@ export class DiscordResolverService implements OnApplicationBootstrap {
           instance,
           methodName,
         });
+        this.onMessageResolver.resolve({
+          instance,
+          methodName,
+        });
+        this.onceMessageResolver.resolve({
+          instance,
+          methodName,
+        });
         this.onCommandResolver.resolve({
           instance,
           methodName,
         });
         await this.pipeResolver.resolve({
+          instance,
+          methodName,
+        });
+        await this.paramResolver.resolve({
           instance,
           methodName,
         });

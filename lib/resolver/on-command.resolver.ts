@@ -8,6 +8,7 @@ import { DiscordAccessService } from '../service/discord-access.service';
 import { MethodResolveOptions } from './interface/method-resolve-options';
 import { MiddlewareResolver } from './middleware.resolver';
 import { PipeResolver } from './pipe.resolver';
+import { ParamResolver } from './param.resolver';
 
 @Injectable()
 export class OnCommandResolver {
@@ -19,6 +20,7 @@ export class OnCommandResolver {
     private readonly discordAccessService: DiscordAccessService,
     private readonly middlewareResolver: MiddlewareResolver,
     private readonly pipeResolver: PipeResolver,
+    private readonly paramResolver: ParamResolver,
   ) {}
 
   resolve(options: MethodResolveOptions): void {
@@ -103,11 +105,17 @@ export class OnCommandResolver {
       });
       //#endregion
 
+      const argsFromDecorator = this.paramResolver.applyParam({
+        instance,
+        methodName,
+        context,
+        content: message.content
+      });
+      const handlerArgs = argsFromDecorator ?? context;
       this.discordHandlerService.callHandler(
         instance,
         methodName,
-        eventName,
-        context,
+        handlerArgs
       );
       if (isRemoveMessage) {
         await this.removeMessageFromChannel(message);
