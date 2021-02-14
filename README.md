@@ -55,7 +55,7 @@ You can use `forRoot` or `forRootAsync` to configure your module
 /*bot.module.ts*/
 
 import { Module } from '@nestjs/common';
-import { DiscordModule } from 'discord-nestjs/core';
+import { DiscordModule } from 'discord-nestjs';
 import { BotGateway } from './bot-gateway';
 
 @Module({
@@ -89,7 +89,7 @@ Or async
 /*bot.module.ts*/
 
 import { Module } from '@nestjs/common';
-import { DiscordModule } from 'discord-nestjs/core';
+import { DiscordModule } from 'discord-nestjs';
 import { BotGateway } from './bot-gateway';
 
 @Module({
@@ -129,7 +129,7 @@ Create your class (e.g. `BotGateway`), mark it with `@Injectable()` or `@Control
 /*bot.gateway.ts*/
 
 import { Injectable, Logger } from '@nestjs/common';
-import { On, DiscordClientProvider } from 'discord-nestjs/core';
+import { On, DiscordClientProvider } from 'discord-nestjs';
 
 @Injectable()
 export class BotGateway {
@@ -157,7 +157,7 @@ You can get discord client via `@Client()` decorator instead constructor propert
 /*bot.gateway.ts*/
 
 import { Injectable, Logger } from '@nestjs/common';
-import { On, ClientProvider } from 'discord-nestjs/core';
+import { On, ClientProvider } from 'discord-nestjs';
 
 @Injectable()
 export class BotGateway {
@@ -191,7 +191,7 @@ Use the `@Command` decorator to handle incoming commands to the bot
 /*bot.gateway.ts*/
 
 import { Injectable } from '@nestjs/common';
-import { OnCommand } from 'discord-nestjs/core';
+import { OnCommand } from 'discord-nestjs';
 import { Message } from 'discord.js';
 
 @Injectable()
@@ -215,7 +215,7 @@ Handle discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62ddd
 /*bot.gateway.ts*/
 
 import { Injectable } from '@nestjs/common';
-import { On } from 'discord-nestjs/core';
+import { On } from 'discord-nestjs';
 import { Message } from 'discord.js';
 
 @Injectable()
@@ -241,7 +241,7 @@ Handle discord events (only once) [see](https://gist.github.com/koad/316b265a91d
 /*bot.gateway.ts*/
 
 import { Injectable } from '@nestjs/common';
-import { Once } from 'discord-nestjs/core';
+import { Once } from 'discord-nestjs';
 import { Message } from 'discord.js';
 
 @Injectable()
@@ -270,7 +270,7 @@ but you can manage the arguments yourself using the `@Content()` and `@Context()
 ```typescript
 /*bot.gateway.ts*/
 
-import { Content, Context, OnCommand } from 'discord-nestjs/core';
+import { Content, Context, OnCommand } from 'discord-nestjs';
 import { Injectable, Logger } from '@nestjs/common';
 import { Message } from 'discord.js';
 
@@ -300,7 +300,7 @@ Create dto
 ```typescript
 /*some.dto.ts*/
 
-import { ArgNum } from 'discord-nestjs/core';
+import { ArgNum } from 'discord-nestjs';
 import { Expose } from 'class-transformer';
 
 export class SomeDto {
@@ -314,9 +314,9 @@ Create command handler
 /*bot.gateway.ts*/
 
 import { Message } from 'discord.js';
-import { Content, Context, OnCommand, UsePipes } from 'discord-nestjs/core';
+import { Content, Context, OnCommand, UsePipes } from 'discord-nestjs';
 import { SomeDto } from './some.dto';
-import { TransformPipe } from 'discord-nestjs/common';
+import { TransformPipe } from 'discord-nestjs';
 
 @Injectable()
 export class BotGateway {
@@ -351,7 +351,7 @@ Create dto
 /*some.dto.ts*/
 
 import { Expose, Type } from 'class-transformer';
-import { ArgRange, ArgNum } from 'discord-nestjs/core';
+import { ArgRange, ArgNum } from 'discord-nestjs';
 
 export class SomeDto {
   @ArgRange(() => ({formPosition: 0, toPosition: 2}))
@@ -369,9 +369,9 @@ Create command handler
 /*bot.gateway.ts*/
 
 import { Message } from 'discord.js';
-import { Content, Context, OnCommand, UsePipes } from 'discord-nestjs/core';
+import { Content, Context, OnCommand, UsePipes } from 'discord-nestjs';
 import { SomeDto } from './some.dto';
-import { TransformPipe } from 'discord-nestjs/common';
+import { TransformPipe } from 'discord-nestjs';
 
 @Injectable()
 export class BotGateway {
@@ -402,7 +402,7 @@ You need to implement `DiscordGuard` interface
 ```typescript
 /*bot.guard.ts*/
 
-import { DiscordGuard } from 'discord-nestjs/core';
+import { DiscordGuard } from 'discord-nestjs';
 import { ClientEvents, MessageEmbed } from 'discord.js';
 
 export class BotGuard implements DiscordGuard {
@@ -424,7 +424,7 @@ export class BotGuard implements DiscordGuard {
 ```typescript
 /*bot.gateway.ts*/
 
-import { On, UseGuards, OnCommand } from 'discord-nestjs/core';
+import { On, UseGuards, OnCommand } from 'discord-nestjs';
 import { Message } from 'discord.js';
 import { BotGuard } from './bot.guard';
 import { Injectable } from '@nestjs/common';
@@ -453,7 +453,7 @@ You need to implement `DiscordMiddleware` interface
 ```typescript
 /*bot.middleware.ts*/
 
-import { Middleware, DiscordMiddleware } from 'discord-nestjs/core';
+import { Middleware, DiscordMiddleware } from 'discord-nestjs';
 import { Logger } from '@nestjs/common';
 import { ClientEvents } from 'discord.js';
 
@@ -493,7 +493,7 @@ Arguments `content` and `type` set only during the "message" event
 ```typescript
 /*transform.pipe.ts*/
 
-import { TransformProvider, ConstructorType, DiscordPipeTransform } from 'discord-nestjs/core';
+import { TransformProvider, ConstructorType, DiscordPipeTransform } from 'discord-nestjs';
 import { ClientEvents } from 'discord.js';
 import { SomeDto } from './some.dto';
 import { Injectable } from '@nestjs/common';
@@ -519,7 +519,7 @@ export class TransformPipe implements DiscordPipeTransform {
 ```typescript
 /*bot.gateway.ts*/
 
-import { On, UsePipes, Content } from 'discord-nestjs/core';
+import { On, UsePipes, Content } from 'discord-nestjs';
 import { Injectable } from '@nestjs/common';
 import { TransformPipe } from './transform.pipe';
 import { SomeDto } from './some.dto';
