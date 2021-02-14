@@ -173,7 +173,7 @@ export class BotGateway {
 }
 ```
 
-### ℹ️ Decorator @Command
+### ℹ️ Decorator @OnCommand
 
 Use the `@Command` decorator to handle incoming commands to the bot
 

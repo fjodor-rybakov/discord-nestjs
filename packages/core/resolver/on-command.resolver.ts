@@ -101,7 +101,7 @@ export class OnCommandResolver implements MethodResolver {
         instance,
         methodName,
       });
-      message.content = await this.pipeResolver.applyPipe({
+      const pipeMessageContent = await this.pipeResolver.applyPipe({
         instance,
         methodName,
         event: eventName,
@@ -109,8 +109,10 @@ export class OnCommandResolver implements MethodResolver {
         content: messageContent,
         type: paramType
       });
+      message.content = pipeMessageContent ?? messageContent;
       //#endregion
 
+      console.log(message.content)
       const argsFromDecorator = this.paramResolver.applyParam({
         instance,
         methodName,

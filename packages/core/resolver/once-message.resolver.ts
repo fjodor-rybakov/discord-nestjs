@@ -8,7 +8,7 @@ import { MiddlewareResolver } from './middleware.resolver';
 import { PipeResolver } from './pipe.resolver';
 import { ParamResolver } from './param.resolver';
 import { MethodResolveOptions } from './interface/method-resolve-options';
-import { ClientEvents } from 'discord.js';
+import { ClientEvents, Message } from 'discord.js';
 import { MethodResolver } from './interface/method-resolver';
 
 @Injectable()
@@ -57,19 +57,24 @@ export class OnceMessageResolver implements MethodResolver {
         instance,
         methodName,
       });
-      await this.pipeResolver.applyPipe({
+      const pipeMessageContent = await this.pipeResolver.applyPipe({
         instance,
         methodName,
         event,
         context,
+        content: event === 'message' ? data[0].content : undefined,
         type: paramType
       });
+      if (event === 'message') {
+        data[0].content = pipeMessageContent ?? data[0].content;
+      }
       //#endregion
 
       const argsFromDecorator = this.paramResolver.applyParam({
         instance,
         methodName,
-        context
+        context,
+        content: event === 'message' ? data[0].content : undefined
       });
       const handlerArgs = argsFromDecorator ?? context;
       this.discordHandlerService.callHandler(
