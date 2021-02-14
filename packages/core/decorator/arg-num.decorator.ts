@@ -5,7 +5,6 @@ import { DecoratorConstant } from '../constant/decorator.constant';
  */
 export const ArgNum = (position: number): PropertyDecorator => {
   return (target: Record<string, any>, propertyKey: string | symbol): void => {
-    Reflect.set(target, propertyKey, null);
     Reflect.defineMetadata(
       DecoratorConstant.ARG_NUM_DECORATOR,
       { position },

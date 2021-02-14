@@ -6,4 +6,5 @@ export interface DiscordPipeOptions {
   event: keyof ClientEvents;
   context: ClientEvents[keyof ClientEvents];
   content?: unknown;
+  type: any;
 }

@@ -29,7 +29,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
-    "format": "prettier --write \"lib/**/*.ts\" ",
+    "format": "prettier --write \\\"packages/**/*.ts\\\" ",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -40,6 +40,10 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json"
+  },
+  "dependencies": {
+    "class-transformer": "^0.3.2",
+    "class-validator": "^0.13.1"
   },
   "devDependencies": {
     "@nestjs/cli": "7.5.4",

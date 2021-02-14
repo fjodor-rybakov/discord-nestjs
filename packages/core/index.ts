@@ -19,3 +19,4 @@ export * from './decorator/interface/on-decorator-options';
 export * from './decorator/interface/middleware-options';
 export * from './provider/discord-client-provider';
 export * from './provider/interface/client-provider.interface';
+export * from './provider/transform.provider';

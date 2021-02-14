@@ -53,11 +53,16 @@ export class OnMessageResolver implements MethodResolver {
       if (!isAllowFromGuards) {
         return;
       }
+      const paramType = this.paramResolver.getContentType({
+        instance,
+        methodName,
+      });
       await this.pipeResolver.applyPipe({
         instance,
         methodName,
         event,
-        context
+        context,
+        type: paramType
       });
       //#endregion
 

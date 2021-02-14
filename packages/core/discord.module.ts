@@ -18,6 +18,7 @@ import { ParamResolver } from './resolver/param.resolver';
 import { OnMessageResolver } from './resolver/on-message.resolver';
 import { OnceMessageResolver } from './resolver/once-message.resolver';
 import { ClientResolver } from './resolver/client.resolver';
+import { TransformProvider } from './provider/transform.provider';
 
 @Module({
   imports: [DiscoveryModule],
@@ -41,8 +42,9 @@ export class DiscordModule {
         DiscordClientProvider,
         DiscordResolverService,
         ClientResolver,
+        TransformProvider
       ],
-      exports: [DiscordClientProvider],
+      exports: [DiscordClientProvider, TransformProvider],
     };
   }
 
@@ -73,8 +75,9 @@ export class DiscordModule {
         DiscordResolverService,
         connectionProvider,
         ClientResolver,
+        TransformProvider
       ],
-      exports: [DiscordClientProvider],
+      exports: [DiscordClientProvider, TransformProvider],
     };
   }
 

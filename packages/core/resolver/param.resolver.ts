@@ -65,7 +65,6 @@ export class ParamResolver implements MethodResolver {
     return paramsList.args.map((arg: DecoratorTypeArg) => {
       switch (arg.decoratorType) {
         case DecoratorParamType.CONTENT:
-          // TODO: add create dto
           return content;
         case DecoratorParamType.CONTEXT:
           return context;
@@ -73,17 +72,14 @@ export class ParamResolver implements MethodResolver {
     });
   }
 
-  private initContent(instance: any, inputData: string) {
-    const inputPart = inputData.split(' ');
-    for (const propKey in instance) {
-      const metadata = this.metadataProvider.getArgNumDecoratorMetadata(
-        instance,
-        propKey,
-      );
-      if (metadata) {
-        instance[propKey] = inputPart[metadata.position];
-      }
+  getContentType(options: MethodResolveOptions): any {
+    const {instance, methodName} = options;
+    const paramsList = this.params.find((item: DiscordParamList) =>
+      item.instance === instance && item.methodName === methodName
+    );
+    if (!paramsList) {
+      return;
     }
-    return instance;
+    return paramsList.args.find((item) => item.decoratorType === DecoratorParamType.CONTENT).paramType;
   }
 }

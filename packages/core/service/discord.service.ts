@@ -39,7 +39,7 @@ export class DiscordService implements OnApplicationBootstrap {
     try {
       await this.client.login(this.clientToken);
     } catch (err) {
-      this.logger.error("Failed to connect to discord api");
+      this.logger.error("Failed to connect to Discord API");
       this.logger.error(err);
     }
   }

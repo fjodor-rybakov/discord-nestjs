@@ -97,12 +97,17 @@ export class OnCommandResolver implements MethodResolver {
       if (!isAllowFromGuards) {
         return;
       }
+      const paramType = this.paramResolver.getContentType({
+        instance,
+        methodName,
+      });
       message.content = await this.pipeResolver.applyPipe({
         instance,
         methodName,
         event: eventName,
         context,
-        content: messageContent
+        content: messageContent,
+        type: paramType
       });
       //#endregion
 
