@@ -29,7 +29,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
-    "format": "prettier --write \"lib/**/*.ts\" ",
+    "format": "prettier --write \\\"packages/**/*.ts\\\" ",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -40,6 +40,10 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json"
+  },
+  "dependencies": {
+    "class-transformer": "0.3.1",
+    "class-validator": "^0.13.1"
   },
   "devDependencies": {
     "@nestjs/cli": "7.5.4",
@@ -65,8 +69,8 @@
     "typescript": "4.1.5"
   },
   "peerDependencies": {
-    "@nestjs/common": "^7.4.4",
-    "@nestjs/core": "^7.4.4",
+    "@nestjs/common": "^7.6.11",
+    "@nestjs/core": "^7.6.11",
     "discord.js": "^12.4.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.6.3"
