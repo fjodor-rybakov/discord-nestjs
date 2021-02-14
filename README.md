@@ -401,11 +401,11 @@ export class BotGateway {
 }
 ```
 ```
-Input
+Input:
 !reg Ivan Ivanovich Ivanov 22
 ```
 ```
-Output
+Output:
 FIO: Ivan-Ivanovich-Ivanov, Age: 22
 ```
 
