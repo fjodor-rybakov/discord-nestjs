@@ -310,6 +310,8 @@ export class SomeDto {
 }
 ```
 Create command handler
+
+`TransformPipe` required for transform input string to DTO
 ```typescript
 /*bot.gateway.ts*/
 
@@ -366,6 +368,8 @@ export class SomeDto {
 }
 ```
 Create command handler
+
+`TransformPipe` required for transform input string to DTO
 ```typescript
 /*bot.gateway.ts*/
 
