@@ -528,7 +528,7 @@ export class TransformPipe implements DiscordPipeTransform {
 
 ```typescript
 /*bot.gateway.ts*/
-import { On, UsePipes } from 'discord-nestjs/core';
+import { On, UsePipes, Content } from 'discord-nestjs/core';
 
 @Injectable()
 export class BotGateway {
