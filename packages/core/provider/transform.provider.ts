@@ -12,6 +12,9 @@ export class TransformProvider {
   }
 
   transformContent<T>(classType: ConstructorType<T>, inputData: string, options?: ClassTransformOptions): T {
+    if (!classType || !inputData) {
+      return;
+    }
     const inputPart = inputData.split(' ');
     const properties = defaultMetadataStorage.getExposedProperties(classType, 0);
     const newObj = {};

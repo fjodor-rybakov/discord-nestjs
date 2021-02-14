@@ -54,6 +54,10 @@ You can use `forRoot` or `forRootAsync` to configure your module
 ```typescript
 /*bot.module.ts*/
 
+import { Module } from '@nestjs/common';
+import { DiscordModule } from 'discord-nestjs/core';
+import { BotGateway } from './bot-gateway';
+
 @Module({
   imports: [
     DiscordModule.forRoot({
@@ -83,6 +87,10 @@ Or async
 
 ```typescript
 /*bot.module.ts*/
+
+import { Module } from '@nestjs/common';
+import { DiscordModule } from 'discord-nestjs/core';
+import { BotGateway } from './bot-gateway';
 
 @Module({
   imports: [
@@ -121,7 +129,7 @@ Create your class (e.g. `BotGateway`), mark it with `@Injectable()` or `@Control
 /*bot.gateway.ts*/
 
 import { Injectable, Logger } from '@nestjs/common';
-import { On, DiscordClient } from 'discord-nestjs/core';
+import { On, DiscordClientProvider } from 'discord-nestjs/core';
 
 @Injectable()
 export class BotGateway {
@@ -182,6 +190,10 @@ Use the `@Command` decorator to handle incoming commands to the bot
 ```typescript
 /*bot.gateway.ts*/
 
+import { Injectable } from '@nestjs/common';
+import { OnCommand } from 'discord-nestjs/core';
+import { Message } from 'discord.js';
+
 @Injectable()
 export class BotGateway {
   @OnCommand({ name: 'start' })
@@ -201,6 +213,10 @@ Handle discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62ddd
 
 ```typescript
 /*bot.gateway.ts*/
+
+import { Injectable } from '@nestjs/common';
+import { On } from 'discord-nestjs/core';
+import { Message } from 'discord.js';
 
 @Injectable()
 export class BotGateway {
@@ -223,6 +239,10 @@ Handle discord events (only once) [see](https://gist.github.com/koad/316b265a91d
 
 ```typescript
 /*bot.gateway.ts*/
+
+import { Injectable } from '@nestjs/common';
+import { Once } from 'discord-nestjs/core';
+import { Message } from 'discord.js';
 
 @Injectable()
 export class BotGateway {
@@ -249,14 +269,17 @@ but you can manage the arguments yourself using the `@Content()` and `@Context()
 
 ```typescript
 /*bot.gateway.ts*/
+
 import { Content, Context, OnCommand } from 'discord-nestjs/core';
+import { Injectable, Logger } from '@nestjs/common';
+import { Message } from 'discord.js';
 
 @Injectable()
 export class BotGateway {
   private readonly logger = new Logger(BotGateway.name);
 
   @OnCommand({ name: 'start' })
-  async onCommand(@Content() content: string, @Context() context: any[]): Promise<void> {
+  async onCommand(@Content() content: string, @Context() context: Message[]): Promise<void> {
     await context[0].reply(`Execute command: ${content}`, `Args: ${context}`);
   }
 }
@@ -273,46 +296,27 @@ Set value by argument number
 
 #### 💡 Example
 Create dto
+
 ```typescript
 /*some.dto.ts*/
+
 import { ArgNum } from 'discord-nestjs/core';
+import { Expose } from 'class-transformer';
 
 export class SomeDto {
-  @ArgNum((last: number) => ({position: 0}))
+  @ArgNum((last: number) => ({ position: 0 }))
+  @Expose()
   name: string;
-}
-```
-Create transform pipe
-```typescript
-/*transform.pipe.ts*/
-import { TransformProvider, ConstructorType, DiscordPipeTransform } from 'discord-nestjs/core';
-import { ClientEvents } from 'discord.js';
-import { SomeDto } from './some-dto';
-
-@Injectable()
-export class TransformPipe implements DiscordPipeTransform {
-  constructor(
-    private readonly transformProvider: TransformProvider
-  ) {
-  }
-
-  transform(
-    event: keyof ClientEvents,
-    context: any,
-    content?: any,
-    type?: ConstructorType<SomeDto>
-  ): SomeDto {
-    return this.transformProvider.transformContent(type, content);
-  }
 }
 ```
 Create command handler
 ```typescript
 /*bot.gateway.ts*/
+
 import { Message } from 'discord.js';
 import { Content, Context, OnCommand, UsePipes } from 'discord-nestjs/core';
-import { SomeDto } from './some-dto';
-import { TransformPipe } from './transform-pipe';
+import { SomeDto } from './some.dto';
+import { TransformPipe } from 'discord-nestjs/common';
 
 @Injectable()
 export class BotGateway {
@@ -345,6 +349,7 @@ Set value by argument number
 Create dto
 ```typescript
 /*some.dto.ts*/
+
 import { Expose, Type } from 'class-transformer';
 import { ArgRange, ArgNum } from 'discord-nestjs/core';
 
@@ -359,37 +364,14 @@ export class SomeDto {
   age: number;
 }
 ```
-Create transform pipe
-```typescript
-/*transform.pipe.ts*/
-import { TransformProvider, ConstructorType, DiscordPipeTransform } from 'discord-nestjs/core';
-import { ClientEvents } from 'discord.js';
-import { SomeDto } from './some-dto';
-
-@Injectable()
-export class TransformPipe implements DiscordPipeTransform {
-  constructor(
-    private readonly transformProvider: TransformProvider
-  ) {
-  }
-
-  transform(
-    event: keyof ClientEvents,
-    context: any,
-    content?: any,
-    type?: ConstructorType<SomeDto>
-  ): SomeDto {
-    return this.transformProvider.transformContent(type, content);
-  }
-}
-```
 Create command handler
 ```typescript
 /*bot.gateway.ts*/
+
 import { Message } from 'discord.js';
 import { Content, Context, OnCommand, UsePipes } from 'discord-nestjs/core';
-import { SomeDto } from './some-dto';
-import { TransformPipe } from './transform-pipe';
+import { SomeDto } from './some.dto';
+import { TransformPipe } from 'discord-nestjs/common';
 
 @Injectable()
 export class BotGateway {
@@ -421,7 +403,7 @@ You need to implement `DiscordGuard` interface
 /*bot.guard.ts*/
 
 import { DiscordGuard } from 'discord-nestjs/core';
-import { ClientEvents, Message } from 'discord.js';
+import { ClientEvents, MessageEmbed } from 'discord.js';
 
 export class BotGuard implements DiscordGuard {
   async canActive(
@@ -441,8 +423,11 @@ export class BotGuard implements DiscordGuard {
 
 ```typescript
 /*bot.gateway.ts*/
+
 import { On, UseGuards, OnCommand } from 'discord-nestjs/core';
 import { Message } from 'discord.js';
+import { BotGuard } from './bot.guard';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class BotGateway {
@@ -467,6 +452,10 @@ You need to implement `DiscordMiddleware` interface
 
 ```typescript
 /*bot.middleware.ts*/
+
+import { Middleware, DiscordMiddleware } from 'discord-nestjs/core';
+import { Logger } from '@nestjs/common';
+import { ClientEvents } from 'discord.js';
 
 @Middleware()
 export class BotMiddleware implements DiscordMiddleware {
@@ -496,17 +485,18 @@ export class BotModule {}
 
 To intercept incoming messages for some function you can use `@UsePipes()` decorator
 
-⚠️**Test feature: Do not use in production code! Doesn't work with `@Content()` and `@Context()` decorators**
-
 #### 💡 Example
 
 You need to implement `DiscordPipesTransform` interface
+Arguments `content` and `type` set only during the "message" event
 
 ```typescript
 /*transform.pipe.ts*/
+
 import { TransformProvider, ConstructorType, DiscordPipeTransform } from 'discord-nestjs/core';
 import { ClientEvents } from 'discord.js';
-import { SomeDto } from './some-dto';
+import { SomeDto } from './some.dto';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class TransformPipe implements DiscordPipeTransform {
@@ -528,7 +518,11 @@ export class TransformPipe implements DiscordPipeTransform {
 
 ```typescript
 /*bot.gateway.ts*/
+
 import { On, UsePipes, Content } from 'discord-nestjs/core';
+import { Injectable } from '@nestjs/common';
+import { TransformPipe } from './transform.pipe';
+import { SomeDto } from './some.dto';
 
 @Injectable()
 export class BotGateway {
