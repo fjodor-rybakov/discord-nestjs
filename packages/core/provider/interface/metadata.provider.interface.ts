@@ -6,6 +6,7 @@ import { ArgNumOptions } from '../../decorator/interface/arg-num-options';
 import { DiscordParamDecoratorType } from '../../decorator/interface/param-decorator-type';
 import { PipeType } from '../../util/type/pipe-type';
 import { GuardType } from '../../util/type/guard-type';
+import { ArgRangeOptions } from '../../decorator/interface/arg-range-options';
 
 export interface MetadataProvider {
   /**
@@ -46,7 +47,12 @@ export interface MetadataProvider {
   /**
    * Getting metadata from @ArgNum decorator
    */
-  getArgNumDecoratorMetadata(instance: unknown, propertyKey: string): ArgNumOptions;
+  getArgNumDecoratorMetadata(instance: unknown, propertyKey: string): (last: number) => ArgNumOptions;
+
+  /**
+   * Getting metadata from @ArgRange decorator
+   */
+  getArgRangeDecoratorMetadata(instance: unknown, propertyKey: string): (last: number) => ArgRangeOptions;
 
   /**
    * Getting metadata from @Content decorator

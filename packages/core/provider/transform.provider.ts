@@ -1,28 +1,41 @@
 import { Injectable } from '@nestjs/common';
-import { defaultMetadataStorage } from 'class-transformer/types/storage';
-import { plainToClass } from 'class-transformer';
-import { MetadataProvider } from './interface/metadata.provider.interface';
+import { defaultMetadataStorage } from 'class-transformer/storage';
+import { ClassTransformOptions, plainToClass } from 'class-transformer';
+import { ReflectMetadataProvider } from './reflect-metadata.provider';
+import { ConstructorType } from '../util/type/constructor-type';
 
 @Injectable()
 export class TransformProvider {
   constructor(
-    private readonly metadataProvider: MetadataProvider,
+    private readonly metadataProvider: ReflectMetadataProvider,
   ) {
   }
 
-  transformContent(classType: any, inputData: string): any {
+  transformContent<T>(classType: ConstructorType<T>, inputData: string, options?: ClassTransformOptions): T {
     const inputPart = inputData.split(' ');
     const properties = defaultMetadataStorage.getExposedProperties(classType, 0);
     const newObj = {};
+    let last = 0;
     for (const propKey of properties) {
-      const metadata = this.metadataProvider.getArgNumDecoratorMetadata(
+      const metadataArgNum = this.metadataProvider.getArgNumDecoratorMetadata(
         classType.prototype,
         propKey,
       );
-      if (metadata) {
-        newObj[propKey] = inputPart[metadata.position];
+      const metadataArgRange = this.metadataProvider.getArgRangeDecoratorMetadata(
+        classType.prototype,
+        propKey,
+      );
+      if (metadataArgNum) {
+        const argNum = metadataArgNum(last);
+        newObj[propKey] = inputPart[argNum.position];
+        last = argNum.position;
+      }
+      if (metadataArgRange) {
+        const argRange = metadataArgRange(last);
+        newObj[propKey] = inputPart.slice(argRange.formPosition, argRange.toPosition + 1);
+        last = argRange.toPosition;
       }
     }
-    return plainToClass(classType, newObj);
+    return plainToClass(classType, newObj, options);
   }
 }

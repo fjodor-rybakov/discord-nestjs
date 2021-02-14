@@ -1,13 +1,13 @@
 import { DecoratorConstant } from '../constant/decorator.constant';
-import { ArgNumOptions } from './interface/arg-num-options';
+import { ArgRangeOptions } from './interface/arg-range-options';
 
 /**
- * Set value by argument number
+ * Set value by argument range
  */
-export const ArgNum = (options: (last: number) => ArgNumOptions): PropertyDecorator => {
+export const ArgRange = (options: (last: number) => ArgRangeOptions): PropertyDecorator => {
   return (target: Record<string, any>, propertyKey: string | symbol): void => {
     Reflect.defineMetadata(
-      DecoratorConstant.ARG_NUM_DECORATOR,
+      DecoratorConstant.ARG_RANGE_DECORATOR,
       options,
       target,
       propertyKey,

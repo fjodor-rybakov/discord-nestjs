@@ -20,3 +20,7 @@ export * from './decorator/interface/middleware-options';
 export * from './provider/discord-client-provider';
 export * from './provider/interface/client-provider.interface';
 export * from './provider/transform.provider';
+export * from './provider/transform.provider';
+export * from './decorator/interface/arg-num-options';
+export * from './decorator/interface/arg-range-options';
+export * from './util/type/constructor-type';
