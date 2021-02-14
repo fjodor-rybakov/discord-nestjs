@@ -343,7 +343,8 @@ Set value by argument number
 - arguments
   - `last` - last index position
 - return
-  - `position` \* - position index form input
+  - `formPosition` \* - start index position form input
+  - `toPosition` \* - finish index position form input
 
 #### 💡 Example
 Create dto
