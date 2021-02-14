@@ -175,7 +175,7 @@ export class BotGateway {
 
 ### ℹ️ Decorator @OnCommand
 
-Use the `@Command` decorator to handle incoming commands to the bot
+Use the `@OnCommand` decorator to handle incoming commands to the bot
 
 - `name` \* - command name
 - `prefix` - override global prefix
