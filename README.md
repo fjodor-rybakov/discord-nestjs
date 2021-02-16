@@ -385,7 +385,7 @@ export class BotGateway {
   @OnCommand({ name: 'reg' })
   @UsePipes(TransformPipe)
   async onCommand(@Content() content: SomeDto, @Context() [context]: [Message]): Promise<void> {
-    return context.reply(`FIO: ${content.name.join('-')}, Age: ${content.age}`);
+    await context.reply(`FIO: ${content.name.join('-')}, Age: ${content.age}`);
   }
 }
 ```
