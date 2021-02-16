@@ -8,11 +8,11 @@ import { MiddlewareResolver } from './middleware.resolver';
 import { PipeResolver } from './pipe.resolver';
 import { ParamResolver } from './param.resolver';
 import { MethodResolveOptions } from './interface/method-resolve-options';
-import { ClientEvents, Message } from 'discord.js';
+import { ClientEvents } from 'discord.js';
 import { MethodResolver } from './interface/method-resolver';
 
 @Injectable()
-export class OnceMessageResolver implements MethodResolver {
+export class OnceEventResolver implements MethodResolver {
   constructor(
     private readonly guardResolver: GuardResolver,
     private readonly metadataProvider: ReflectMetadataProvider,
@@ -77,7 +77,7 @@ export class OnceMessageResolver implements MethodResolver {
         content: event === 'message' ? data[0].content : undefined
       });
       const handlerArgs = argsFromDecorator ?? context;
-      this.discordHandlerService.callHandler(
+      await this.discordHandlerService.callHandler(
         instance,
         methodName,
         handlerArgs

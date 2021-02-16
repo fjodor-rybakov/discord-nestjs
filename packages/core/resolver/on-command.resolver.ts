@@ -112,7 +112,6 @@ export class OnCommandResolver implements MethodResolver {
       message.content = pipeMessageContent ?? messageContent;
       //#endregion
 
-      console.log(message.content)
       const argsFromDecorator = this.paramResolver.applyParam({
         instance,
         methodName,
@@ -120,7 +119,7 @@ export class OnCommandResolver implements MethodResolver {
         content: message.content
       });
       const handlerArgs = argsFromDecorator ?? context;
-      this.discordHandlerService.callHandler(
+      await this.discordHandlerService.callHandler(
         instance,
         methodName,
         handlerArgs

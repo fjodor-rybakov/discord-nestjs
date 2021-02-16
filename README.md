@@ -33,6 +33,8 @@ OR
 $ yarn add discord-nestjs discord.js
 ```
 
+⚠️**Now the library uses the "class-transformer" version 3.1.0 and works correctly only with her.**
+
 ## 📑 Overview
 
 You can use `forRoot` or `forRootAsync` to configure your module
@@ -129,7 +131,7 @@ Create your class (e.g. `BotGateway`), mark it with `@Injectable()` or `@Control
 /*bot.gateway.ts*/
 
 import { Injectable, Logger } from '@nestjs/common';
-import { On, DiscordClientProvider } from 'discord-nestjs';
+import { Once, DiscordClientProvider } from 'discord-nestjs';
 
 @Injectable()
 export class BotGateway {
@@ -137,10 +139,10 @@ export class BotGateway {
 
   constructor(private readonly discordProvider: DiscordClientProvider) {}
 
-  @On({ event: 'ready' })
+  @Once({ event: 'ready' })
   onReady(): void {
-    Logger.log(`Logged in as ${this.discordProvider.getClient().user.tag}!`);
-    this.discordProvider.getClient().getWebhookClient().send('hello bot is up!');
+    this.logger.log(`Logged in as ${this.discordProvider.getClient().user.tag}!`);
+    this.discordProvider.getWebhookClient().send('hello bot is up!');
   }
 }
 ```
@@ -157,7 +159,7 @@ You can get discord client via `@Client()` decorator instead constructor propert
 /*bot.gateway.ts*/
 
 import { Injectable, Logger } from '@nestjs/common';
-import { On, ClientProvider } from 'discord-nestjs';
+import { Once, ClientProvider } from 'discord-nestjs';
 
 @Injectable()
 export class BotGateway {
@@ -166,7 +168,7 @@ export class BotGateway {
   @Client()
   discordProvider: ClientProvider;
 
-  @On({ event: 'ready' })
+  @Once({ event: 'ready' })
   onReady(): void {
     this.logger.log(`Logged in as ${this.discordProvider.getClient().user.tag}!`);
   }
@@ -346,7 +348,7 @@ Set value by argument number
   - `last` - last index position
 - return
   - `formPosition` \* - start index position form input
-  - `toPosition` \* - finish index position form input
+  - `toPosition` - finish index position form input (default last index of input)
 
 #### 💡 Example
 Create dto

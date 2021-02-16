@@ -7,5 +7,5 @@ export interface ArgRangeOptions {
   /**
    * Finish index position form input
    */
-  toPosition: number;
+  toPosition?: number;
 }

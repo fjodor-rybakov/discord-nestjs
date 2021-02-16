@@ -35,7 +35,7 @@ export class TransformProvider {
       }
       if (metadataArgRange) {
         const argRange = metadataArgRange(last);
-        newObj[propKey] = inputPart.slice(argRange.formPosition, argRange.toPosition + 1);
+        newObj[propKey] = inputPart.slice(argRange.formPosition, argRange.toPosition ? argRange.toPosition + 1 : inputPart.length);
         last = argRange.toPosition;
       }
     }

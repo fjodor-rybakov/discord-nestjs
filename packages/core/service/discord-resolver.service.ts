@@ -7,8 +7,8 @@ import { IsObject } from '../util/function/is-object';
 import { PipeResolver } from '../resolver/pipe.resolver';
 import { MiddlewareResolver } from '../resolver/middleware.resolver';
 import { ParamResolver } from '../resolver/param.resolver';
-import { OnMessageResolver } from '../resolver/on-message.resolver';
-import { OnceMessageResolver } from '../resolver/once-message.resolver';
+import { OnEventResolver } from '../resolver/on-event.resolver';
+import { OnceEventResolver } from '../resolver/once-event.resolver';
 import { ClientResolver } from '../resolver/client.resolver';
 
 @Injectable()
@@ -21,8 +21,8 @@ export class DiscordResolverService implements OnApplicationBootstrap {
     private readonly pipeResolver: PipeResolver,
     private readonly middlewareResolver: MiddlewareResolver,
     private readonly paramResolver: ParamResolver,
-    private readonly onMessageResolver: OnMessageResolver,
-    private readonly onceMessageResolver: OnceMessageResolver,
+    private readonly onMessageResolver: OnEventResolver,
+    private readonly onceMessageResolver: OnceEventResolver,
     private readonly clientResolver: ClientResolver,
   ) {
   }

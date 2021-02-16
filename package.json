@@ -1,6 +1,6 @@
 {
   "name": "discord-nestjs",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "NestJS package for discord.js",
   "author": "fjodor-rybakov",
   "license": "MIT",
@@ -42,8 +42,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "class-transformer": "0.3.1",
-    "class-validator": "^0.13.1"
+    "class-transformer": "0.3.1"
   },
   "devDependencies": {
     "@nestjs/cli": "7.5.4",
@@ -71,6 +70,7 @@
   "peerDependencies": {
     "@nestjs/common": "^7.6.11",
     "@nestjs/core": "^7.6.11",
+    "class-transformer": "3.1.0",
     "discord.js": "^12.4.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.6.3"

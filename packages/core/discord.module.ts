@@ -15,8 +15,8 @@ import { DiscordResolverService } from './service/discord-resolver.service';
 import { MiddlewareResolver } from './resolver/middleware.resolver';
 import { PipeResolver } from './resolver/pipe.resolver';
 import { ParamResolver } from './resolver/param.resolver';
-import { OnMessageResolver } from './resolver/on-message.resolver';
-import { OnceMessageResolver } from './resolver/once-message.resolver';
+import { OnEventResolver } from './resolver/on-event.resolver';
+import { OnceEventResolver } from './resolver/once-event.resolver';
 import { ClientResolver } from './resolver/client.resolver';
 import { TransformProvider } from './provider/transform.provider';
 
@@ -32,8 +32,8 @@ export class DiscordModule {
         GuardResolver,
         PipeResolver,
         ParamResolver,
-        OnMessageResolver,
-        OnceMessageResolver,
+        OnEventResolver,
+        OnceEventResolver,
         OnCommandResolver,
         ReflectMetadataProvider,
         DiscordHandlerService,
@@ -64,8 +64,8 @@ export class DiscordModule {
         GuardResolver,
         PipeResolver,
         ParamResolver,
-        OnMessageResolver,
-        OnceMessageResolver,
+        OnEventResolver,
+        OnceEventResolver,
         OnCommandResolver,
         ReflectMetadataProvider,
         DiscordHandlerService,

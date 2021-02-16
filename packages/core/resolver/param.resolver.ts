@@ -80,6 +80,6 @@ export class ParamResolver implements MethodResolver {
     if (!paramsList) {
       return;
     }
-    return paramsList.args.find((item) => item.decoratorType === DecoratorParamType.CONTENT).paramType;
+    return paramsList.args.find((item: DecoratorTypeArg) => item.decoratorType === DecoratorParamType.CONTENT)?.paramType;
   }
 }
