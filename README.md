@@ -279,8 +279,8 @@ export class BotGateway {
   private readonly logger = new Logger(BotGateway.name);
 
   @OnCommand({ name: 'start' })
-  async onCommand(@Content() content: string, @Context() context: Message[]): Promise<void> {
-    await context[0].reply(`Execute command: ${content}`, `Args: ${context}`);
+  async onCommand(@Content() content: string, @Context() [context]: [Message]): Promise<void> {
+    await context.reply(`Execute command: ${content}`, `Args: ${context}`);
   }
 }
 ```
@@ -324,8 +324,8 @@ import { TransformPipe } from 'discord-nestjs';
 export class BotGateway {
   @OnCommand({ name: 'start' })
   @UsePipes(TransformPipe)
-  async onCommand(@Content() content: SomeDto, @Context() context: Message[]): Promise<void> {
-    await context[0].reply(`Hello ${content.name}`);
+  async onCommand(@Content() content: SomeDto, @Context() [context]: [Message]): Promise<void> {
+    await context.reply(`Hello ${content.name}`);
   }
 }
 ```
@@ -382,8 +382,8 @@ import { TransformPipe } from 'discord-nestjs';
 export class BotGateway {
   @OnCommand({ name: 'reg' })
   @UsePipes(TransformPipe)
-  async onCommand(@Content() content: SomeDto, @Context() context: Message[]): Promise<void> {
-    return context[0].reply(`FIO: ${content.name.join('-')}, Age: ${content.age}`);
+  async onCommand(@Content() content: SomeDto, @Context() [context]: [Message]): Promise<void> {
+    return context.reply(`FIO: ${content.name.join('-')}, Age: ${content.age}`);
   }
 }
 ```
@@ -413,13 +413,13 @@ import { ClientEvents, MessageEmbed } from 'discord.js';
 export class BotGuard implements DiscordGuard {
   async canActive(
     event: keyof ClientEvents,
-    context: any[],
+    [context]: [any],
   ): Promise<boolean> {
-    if (context[0].author.id === '766863033789563648') {
+    if (context.author.id === '766863033789563648') {
       return true;
     } else {
       const embed = new MessageEmbed().setColor().setTitle('Ups! Not allowed!');
-      await context[0].reply(embed);
+      await context.reply(embed);
       return false;
     }
   }
