@@ -3,6 +3,7 @@ import { defaultMetadataStorage } from 'class-transformer/cjs/storage';
 import { ClassTransformOptions, plainToClass } from 'class-transformer';
 import { ReflectMetadataProvider } from './reflect-metadata.provider';
 import { ConstructorType } from '../util/type/constructor-type';
+import { ArgRangeOptions } from '../decorator/interface/arg-range-options';
 
 @Injectable()
 export class TransformProvider {
@@ -40,5 +41,26 @@ export class TransformProvider {
       }
     }
     return plainToClass(classType, newObj, options);
+  }
+
+  getArgPositions(target: any, propertyKey: string, messagePartLength: number): ArgRangeOptions {
+    const metadataArgNum = this.metadataProvider.getArgNumDecoratorMetadata(
+      target,
+      propertyKey,
+    );
+    if (metadataArgNum) {
+      return {formPosition: metadataArgNum().position};
+    }
+    const metadataArgRange = this.metadataProvider.getArgRangeDecoratorMetadata(
+      target,
+      propertyKey,
+    );
+    if (metadataArgRange) {
+      const pos = metadataArgRange();
+      return {
+        formPosition: pos.formPosition,
+        toPosition: pos.toPosition ?? messagePartLength
+      };
+    }
   }
 }

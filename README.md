@@ -33,7 +33,7 @@ OR
 $ yarn add discord-nestjs discord.js
 ```
 
-⚠️**Now the library uses the "class-transformer" version 3.1.0 and works correctly only with her.**
+⚠️**Now the library uses the "class-transformer" version 4.0.0 and works correctly only with her.**
 
 ## 📑 Overview
 

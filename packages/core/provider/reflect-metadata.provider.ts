@@ -14,11 +14,11 @@ import { ArgRangeOptions } from '../decorator/interface/arg-range-options';
 
 @Injectable()
 export class ReflectMetadataProvider implements MetadataProvider {
-  getArgNumDecoratorMetadata(instance: unknown, propertyKey: string): (last: number) => ArgNumOptions {
+  getArgNumDecoratorMetadata(instance: unknown, propertyKey: string): (last?: number) => ArgNumOptions {
     return Reflect.getMetadata(DecoratorConstant.ARG_NUM_DECORATOR, instance, propertyKey);
   }
 
-  getArgRangeDecoratorMetadata(instance: unknown, propertyKey: string): (last: number) => ArgRangeOptions {
+  getArgRangeDecoratorMetadata(instance: unknown, propertyKey: string): (last?: number) => ArgRangeOptions {
     return Reflect.getMetadata(DecoratorConstant.ARG_RANGE_DECORATOR, instance, propertyKey);
   }
 

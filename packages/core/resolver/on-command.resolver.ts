@@ -10,6 +10,8 @@ import { MiddlewareResolver } from './middleware.resolver';
 import { PipeResolver } from './pipe.resolver';
 import { ParamResolver } from './param.resolver';
 import { MethodResolver } from './interface/method-resolver';
+import { ValidationError } from 'class-validator';
+import { ValidationProvider } from '../provider/validation.provider';
 
 @Injectable()
 export class OnCommandResolver implements MethodResolver {
@@ -22,6 +24,7 @@ export class OnCommandResolver implements MethodResolver {
     private readonly middlewareResolver: MiddlewareResolver,
     private readonly pipeResolver: PipeResolver,
     private readonly paramResolver: ParamResolver,
+    private readonly validationProvider: ValidationProvider,
   ) {}
 
   resolve(options: MethodResolveOptions): void {
@@ -101,14 +104,22 @@ export class OnCommandResolver implements MethodResolver {
         instance,
         methodName,
       });
-      const pipeMessageContent = await this.pipeResolver.applyPipe({
-        instance,
-        methodName,
-        event: eventName,
-        context,
-        content: messageContent,
-        type: paramType
-      });
+      let pipeMessageContent;
+      try {
+        pipeMessageContent = await this.pipeResolver.applyPipe({
+          instance,
+          methodName,
+          event: eventName,
+          context,
+          content: messageContent,
+          type: paramType
+        });
+      } catch (err) {
+        if (err instanceof Array && err[0] instanceof ValidationError) {
+          await message.reply(this.validationProvider.defaultErrorMessage(err, messageContent));
+          return;
+        }
+      }
       message.content = pipeMessageContent ?? messageContent;
       //#endregion
 

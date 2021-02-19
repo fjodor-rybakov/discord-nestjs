@@ -19,6 +19,7 @@ import { OnEventResolver } from './resolver/on-event.resolver';
 import { OnceEventResolver } from './resolver/once-event.resolver';
 import { ClientResolver } from './resolver/client.resolver';
 import { TransformProvider } from './provider/transform.provider';
+import { ValidationProvider } from './provider/validation.provider';
 
 @Module({
   imports: [DiscoveryModule],
@@ -42,7 +43,8 @@ export class DiscordModule {
         DiscordClientProvider,
         DiscordResolverService,
         ClientResolver,
-        TransformProvider
+        TransformProvider,
+        ValidationProvider
       ],
       exports: [DiscordClientProvider, TransformProvider],
     };
@@ -75,7 +77,8 @@ export class DiscordModule {
         DiscordResolverService,
         connectionProvider,
         ClientResolver,
-        TransformProvider
+        TransformProvider,
+        ValidationProvider
       ],
       exports: [DiscordClientProvider, TransformProvider],
     };
