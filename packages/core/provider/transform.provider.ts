@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { defaultMetadataStorage } from 'class-transformer/storage';
+import { defaultMetadataStorage } from 'class-transformer/cjs/storage';
 import { ClassTransformOptions, plainToClass } from 'class-transformer';
 import { ReflectMetadataProvider } from './reflect-metadata.provider';
 import { ConstructorType } from '../util/type/constructor-type';

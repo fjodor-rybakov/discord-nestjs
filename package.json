@@ -42,14 +42,14 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "class-transformer": "0.3.1"
+    "class-transformer": "0.4.0"
   },
   "devDependencies": {
-    "@nestjs/cli": "7.5.4",
+    "@nestjs/cli": "7.5.5",
     "@nestjs/common": "7.6.12",
     "@nestjs/core": "7.6.12",
     "@nestjs/schematics": "7.2.7",
-    "@types/node": "14.14.28",
+    "@types/node": "14.14.30",
     "@typescript-eslint/eslint-plugin": "4.15.1",
     "@typescript-eslint/parser": "4.15.1",
     "discord.js": "12.5.1",
