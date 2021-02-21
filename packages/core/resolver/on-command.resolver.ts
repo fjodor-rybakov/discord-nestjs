@@ -117,7 +117,7 @@ export class OnCommandResolver implements MethodResolver {
       } catch (err) {
         if (err instanceof Array && err[0] instanceof ValidationError) {
           const messageEmbed = this.validationProvider.getErrorMessage() ??
-            this.validationProvider.getDefaultErrorMessage(err, messageContent);
+            this.validationProvider.getDefaultErrorMessage(err, message.content);
           await message.reply(messageEmbed);
           return;
         }
