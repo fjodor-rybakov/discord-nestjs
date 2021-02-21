@@ -49,6 +49,8 @@ You can use `forRoot` or `forRootAsync` to configure your module
 - `webhook` - connecting with webhook
   - `webhookId` \* - webhook id
   - `webhookToken` \* - webhook token
+- `usePipes` - list of pipes that will be applied to all handlers with `@Content` decorator(With class type, except for string type)
+- `useGuards` - list of guards that will be applied to all handlers
 - you can also set all options as for the client from the "discord.js" library
 
 #### 💡 Example
@@ -57,7 +59,7 @@ You can use `forRoot` or `forRootAsync` to configure your module
 /*bot.module.ts*/
 
 import { Module } from '@nestjs/common';
-import { DiscordModule } from 'discord-nestjs';
+import { DiscordModule, TransformPipe, ValidationPipe } from 'discord-nestjs';
 import { BotGateway } from './bot-gateway';
 
 @Module({
@@ -77,6 +79,7 @@ import { BotGateway } from './bot-gateway';
         webhookId: 'your_webhook_id',
         webhookToken: 'your_webhook_token',
       },
+      usePipes: [TransformPipe, ValidationPipe],
       // and other discord options
     }),
   ],
@@ -91,7 +94,7 @@ Or async
 /*bot.module.ts*/
 
 import { Module } from '@nestjs/common';
-import { DiscordModule } from 'discord-nestjs';
+import { DiscordModule, TransformPipe, ValidationPipe } from 'discord-nestjs';
 import { BotGateway } from './bot-gateway';
 
 @Module({
@@ -112,6 +115,7 @@ import { BotGateway } from './bot-gateway';
           webhookId: 'your_webhook_id',
           webhookToken: 'your_webhook_token',
         },
+        usePipes: [TransformPipe, ValidationPipe],
         // and other discord options
       }),
     }),
@@ -287,6 +291,59 @@ export class BotGateway {
 }
 ```
 
+### ℹ️ Decorator @UsePipes
+
+To intercept incoming messages for some function you can use `@UsePipes()` decorator
+
+#### 💡 Example
+
+You need to implement `DiscordPipesTransform` interface
+Arguments `content` and `type` set only during the "message" event
+
+```typescript
+/*transform.pipe.ts*/
+
+import { TransformProvider, ConstructorType, DiscordPipeTransform } from 'discord-nestjs';
+import { ClientEvents } from 'discord.js';
+import { SomeDto } from './some.dto';
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class TransformPipe implements DiscordPipeTransform {
+  constructor(
+    private readonly transformProvider: TransformProvider
+  ) {
+  }
+
+  transform(
+    event: keyof ClientEvents,
+    context: any,
+    content?: any,
+    type?: ConstructorType<SomeDto>
+  ): SomeDto {
+    return this.transformProvider.transformContent(type, content);
+  }
+}
+```
+
+```typescript
+/*bot.gateway.ts*/
+
+import { On, UsePipes, Content } from 'discord-nestjs';
+import { Injectable } from '@nestjs/common';
+import { TransformPipe } from './transform.pipe';
+import { SomeDto } from './some.dto';
+
+@Injectable()
+export class BotGateway {
+  @UsePipes(TransformPipe)
+  @On({ event: 'message' })
+  async onSomeEvent(@Content() content: SomeDto): Promise<void> {
+    // to do something
+  }
+}
+```
+
 ### ℹ️ Decorator @ArgNum
 
 Set value by argument number
@@ -306,7 +363,7 @@ import { ArgNum } from 'discord-nestjs';
 import { Expose } from 'class-transformer';
 
 export class SomeDto {
-  @ArgNum((last: number) => ({ position: 0 }))
+  @ArgNum((last: number) => ({ position: 1 }))
   @Expose()
   name: string;
 }
@@ -314,6 +371,7 @@ export class SomeDto {
 Create command handler
 
 `TransformPipe` required for transform input string to DTO
+You can also use `ValidationPipe` for validate input
 ```typescript
 /*bot.gateway.ts*/
 
@@ -352,26 +410,31 @@ Set value by argument number
 
 #### 💡 Example
 Create dto
+
 ```typescript
 /*some.dto.ts*/
 
 import { Expose, Type } from 'class-transformer';
 import { ArgRange, ArgNum } from 'discord-nestjs';
+import { IsNumber } from 'class-validator';
 
 export class SomeDto {
-  @ArgRange(() => ({formPosition: 0, toPosition: 2}))
+  @ArgRange(() => ({ formPosition: 1, toPosition: 4 }))
   @Expose()
   name: string[];
 
-  @ArgNum((last: number) => ({position: last + 1}))
+  @ArgNum((last: number) => ({ position: last }))
   @Expose()
   @Type(() => Number)
+  @IsNumber()
+  @Min(18)
   age: number;
 }
 ```
 Create command handler
 
 `TransformPipe` required for transform input string to DTO
+You can also use `ValidationPipe` for validate input
 ```typescript
 /*bot.gateway.ts*/
 
@@ -486,59 +549,6 @@ Don't forget to add to providers
   providers: [BotMiddleware],
 })
 export class BotModule {}
-```
-
-### ℹ️ Decorator @UsePipes
-
-To intercept incoming messages for some function you can use `@UsePipes()` decorator
-
-#### 💡 Example
-
-You need to implement `DiscordPipesTransform` interface
-Arguments `content` and `type` set only during the "message" event
-
-```typescript
-/*transform.pipe.ts*/
-
-import { TransformProvider, ConstructorType, DiscordPipeTransform } from 'discord-nestjs';
-import { ClientEvents } from 'discord.js';
-import { SomeDto } from './some.dto';
-import { Injectable } from '@nestjs/common';
-
-@Injectable()
-export class TransformPipe implements DiscordPipeTransform {
-  constructor(
-    private readonly transformProvider: TransformProvider
-  ) {
-  }
-
-  transform(
-    event: keyof ClientEvents,
-    context: any,
-    content?: any,
-    type?: ConstructorType<SomeDto>
-  ): SomeDto {
-    return this.transformProvider.transformContent(type, content);
-  }
-}
-```
-
-```typescript
-/*bot.gateway.ts*/
-
-import { On, UsePipes, Content } from 'discord-nestjs';
-import { Injectable } from '@nestjs/common';
-import { TransformPipe } from './transform.pipe';
-import { SomeDto } from './some.dto';
-
-@Injectable()
-export class BotGateway {
-  @UsePipes(TransformPipe)
-  @On({ event: 'message' })
-  async onSomeEvent(@Content() content: SomeDto): Promise<void> {
-    // to do something
-  }
-}
 ```
 
 Any questions or suggestions? Discord Федок#3051

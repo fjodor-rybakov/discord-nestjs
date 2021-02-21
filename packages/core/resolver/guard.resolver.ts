@@ -44,14 +44,6 @@ export class GuardResolver implements MethodResolver {
       if (guards.length === 0) {
         return;
       }
-      const contentInfo = this.metadataProvider.getContentDecoratorMetadata(instance, methodName);
-      if (!contentInfo) {
-        return;
-      }
-      const argsTypeList = this.metadataProvider.getParamTypesMetadata(instance, methodName);
-      if (argsTypeList.length === 0 || argsTypeList[contentInfo.parameterIndex] === String) {
-        return;
-      }
     }
     await this.addGuard(options, guards);
   }
