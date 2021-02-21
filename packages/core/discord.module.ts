@@ -19,6 +19,8 @@ import { OnEventResolver } from './resolver/on-event.resolver';
 import { OnceEventResolver } from './resolver/once-event.resolver';
 import { ClientResolver } from './resolver/client.resolver';
 import { TransformProvider } from './provider/transform.provider';
+import { ValidationProvider } from './provider/validation.provider';
+import { ArgParamResolver } from './resolver/arg-param.resolver';
 
 @Module({
   imports: [DiscoveryModule],
@@ -35,6 +37,7 @@ export class DiscordModule {
         OnEventResolver,
         OnceEventResolver,
         OnCommandResolver,
+        ArgParamResolver,
         ReflectMetadataProvider,
         DiscordHandlerService,
         DiscordAccessService,
@@ -42,9 +45,10 @@ export class DiscordModule {
         DiscordClientProvider,
         DiscordResolverService,
         ClientResolver,
-        TransformProvider
+        TransformProvider,
+        ValidationProvider,
       ],
-      exports: [DiscordClientProvider, TransformProvider],
+      exports: [DiscordClientProvider, TransformProvider, ValidationProvider],
     };
   }
 
@@ -67,6 +71,7 @@ export class DiscordModule {
         OnEventResolver,
         OnceEventResolver,
         OnCommandResolver,
+        ArgParamResolver,
         ReflectMetadataProvider,
         DiscordHandlerService,
         DiscordAccessService,
@@ -75,9 +80,10 @@ export class DiscordModule {
         DiscordResolverService,
         connectionProvider,
         ClientResolver,
-        TransformProvider
+        TransformProvider,
+        ValidationProvider
       ],
-      exports: [DiscordClientProvider, TransformProvider],
+      exports: [DiscordClientProvider, TransformProvider, ValidationProvider],
     };
   }
 
