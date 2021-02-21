@@ -3,6 +3,8 @@ import { Client, WebhookClient } from 'discord.js';
 import { DiscordModuleOption } from '../interface/discord-module-option';
 import { DiscordModuleChannelOptions } from '../interface/discord-module-channel-options';
 import { DiscordModuleWebhookOptions } from '../interface/discord-module-webhook-options';
+import { PipeType } from '../util/type/pipe-type';
+import { GuardType } from '../util/type/guard-type';
 
 @Injectable()
 export class DiscordService implements OnApplicationBootstrap {
@@ -11,6 +13,8 @@ export class DiscordService implements OnApplicationBootstrap {
   private readonly allowGuilds?: string[];
   private readonly denyGuilds?: string[];
   private readonly allowChannels?: DiscordModuleChannelOptions[];
+  private readonly pipeList?: PipeType[];
+  private readonly guardList?: GuardType[];
 
   private readonly client: Client;
   private readonly webhookClient: WebhookClient;
@@ -24,6 +28,8 @@ export class DiscordService implements OnApplicationBootstrap {
       denyGuilds,
       allowChannels,
       webhook,
+      usePipes,
+      useGuards,
       ...discordOption
     } = options;
     this.client = new Client(discordOption);
@@ -33,6 +39,8 @@ export class DiscordService implements OnApplicationBootstrap {
     this.denyGuilds = denyGuilds;
     this.allowChannels = allowChannels ?? [];
     this.webhookClient = this.createWebhookClient(webhook);
+    this.pipeList = usePipes ?? [];
+    this.guardList = useGuards ?? [];
   }
 
   async onApplicationBootstrap(): Promise<void> {
@@ -58,6 +66,14 @@ export class DiscordService implements OnApplicationBootstrap {
 
   getWebhookClient(): WebhookClient {
     return this.webhookClient;
+  }
+
+  getPipes(): PipeType[] {
+    return this.pipeList;
+  }
+
+  getGuards(): GuardType[] {
+    return this.guardList;
   }
 
   isAllowGuild(guildId: string): boolean {

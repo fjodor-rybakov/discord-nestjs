@@ -104,23 +104,25 @@ export class OnCommandResolver implements MethodResolver {
         instance,
         methodName,
       });
-      let pipeMessageContent;
       try {
-        pipeMessageContent = await this.pipeResolver.applyPipe({
+        const pipeMessageContent = await this.pipeResolver.applyPipe({
           instance,
           methodName,
           event: eventName,
           context,
-          content: messageContent,
+          content: message.content,
           type: paramType
         });
+        message.content = pipeMessageContent ?? messageContent;
       } catch (err) {
         if (err instanceof Array && err[0] instanceof ValidationError) {
-          await message.reply(this.validationProvider.defaultErrorMessage(err, messageContent));
+          const messageEmbed = this.validationProvider.getErrorMessage() ??
+            this.validationProvider.getDefaultErrorMessage(err, messageContent);
+          await message.reply(messageEmbed);
           return;
         }
+        throw err;
       }
-      message.content = pipeMessageContent ?? messageContent;
       //#endregion
 
       const argsFromDecorator = this.paramResolver.applyParam({

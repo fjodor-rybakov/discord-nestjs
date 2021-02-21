@@ -1,6 +1,8 @@
 import { ClientOptions } from 'discord.js';
 import { DiscordModuleChannelOptions } from './discord-module-channel-options';
 import { DiscordModuleWebhookOptions } from './discord-module-webhook-options';
+import { PipeType } from '../util/type/pipe-type';
+import { GuardType } from '../util/type/guard-type';
 
 export interface DiscordModuleOption extends ClientOptions {
   /**
@@ -27,6 +29,16 @@ export interface DiscordModuleOption extends ClientOptions {
    * List of channel identifiers with which the bot will work
    */
   allowChannels?: DiscordModuleChannelOptions[];
+
+  /**
+   * Use pipes for all handlers
+   */
+  usePipes?: PipeType[];
+
+  /**
+   * Use guards for all handlers
+   */
+  useGuards?: GuardType[];
 
   /**
    * Webhook for the bot

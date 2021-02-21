@@ -46,7 +46,7 @@ export class DiscordModule {
         TransformProvider,
         ValidationProvider
       ],
-      exports: [DiscordClientProvider, TransformProvider],
+      exports: [DiscordClientProvider, TransformProvider, ValidationProvider],
     };
   }
 
@@ -80,7 +80,7 @@ export class DiscordModule {
         TransformProvider,
         ValidationProvider
       ],
-      exports: [DiscordClientProvider, TransformProvider],
+      exports: [DiscordClientProvider, TransformProvider, ValidationProvider],
     };
   }
 

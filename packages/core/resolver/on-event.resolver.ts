@@ -8,8 +8,10 @@ import { MiddlewareResolver } from './middleware.resolver';
 import { PipeResolver } from './pipe.resolver';
 import { ParamResolver } from './param.resolver';
 import { MethodResolveOptions } from './interface/method-resolve-options';
-import { ClientEvents } from 'discord.js';
+import { ClientEvents, Message } from 'discord.js';
 import { MethodResolver } from './interface/method-resolver';
+import { ValidationError } from 'class-validator';
+import { ValidationProvider } from '../provider/validation.provider';
 
 @Injectable()
 export class OnEventResolver implements MethodResolver {
@@ -22,6 +24,7 @@ export class OnEventResolver implements MethodResolver {
     private readonly middlewareResolver: MiddlewareResolver,
     private readonly pipeResolver: PipeResolver,
     private readonly paramResolver: ParamResolver,
+    private readonly validationProvider: ValidationProvider,
   ) {}
 
   resolve(options: MethodResolveOptions): void {
@@ -57,16 +60,27 @@ export class OnEventResolver implements MethodResolver {
         instance,
         methodName,
       });
-      const pipeMessageContent = await this.pipeResolver.applyPipe({
-        instance,
-        methodName,
-        event,
-        context,
-        content: event === 'message' ? data[0].content : undefined,
-        type: paramType
-      });
       if (event === 'message') {
-        data[0].content = pipeMessageContent ?? data[0].content;
+        const messageContext: Message = context[0];
+        try {
+          const pipeMessageContent = await this.pipeResolver.applyPipe({
+            instance,
+            methodName,
+            event,
+            context,
+            content: messageContext.content,
+            type: paramType
+          });
+          context[0].content = pipeMessageContent ?? messageContext.content;
+        } catch (err) {
+          if (err instanceof Array && err[0] instanceof ValidationError) {
+            const messageEmbed = this.validationProvider.getErrorMessage() ??
+              this.validationProvider.getDefaultErrorMessage(err, messageContext.content);
+            await messageContext.reply(messageEmbed);
+            return;
+          }
+          throw err;
+        }
       }
       //#endregion
 
@@ -74,7 +88,7 @@ export class OnEventResolver implements MethodResolver {
         instance,
         methodName,
         context,
-        content: event === 'message' ? data[0].content : undefined
+        content: event === 'message' ? context[0].content : undefined
       });
       const handlerArgs = argsFromDecorator ?? context;
       await this.discordHandlerService.callHandler(

@@ -30,3 +30,5 @@ export * from './provider/transform.provider';
 export * from './provider/transform.provider';
 
 export * from './util/type/constructor-type';
+export * from './util/type/guard-type';
+export * from './util/type/pipe-type';
