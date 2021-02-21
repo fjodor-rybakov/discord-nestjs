@@ -33,8 +33,6 @@ OR
 $ yarn add discord-nestjs discord.js
 ```
 
-⚠️**Now the library uses the "class-transformer" version 4.0.0 and works correctly only with her.**
-
 ## 📑 Overview
 
 You can use `forRoot` or `forRootAsync` to configure your module
