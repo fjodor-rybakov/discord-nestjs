@@ -104,8 +104,9 @@ export class OnCommandResolver implements MethodResolver {
         instance,
         methodName,
       });
+      let pipeMessageContent;
       try {
-        const pipeMessageContent = await this.pipeResolver.applyPipe({
+        pipeMessageContent = await this.pipeResolver.applyPipe({
           instance,
           methodName,
           event: eventName,
@@ -113,7 +114,7 @@ export class OnCommandResolver implements MethodResolver {
           content: message.content,
           type: paramType
         });
-        message.content = pipeMessageContent ?? messageContent;
+        messageContent = pipeMessageContent ?? messageContent;
       } catch (err) {
         if (err instanceof Array && err[0] instanceof ValidationError) {
           const messageEmbed = this.validationProvider.getErrorMessage() ??
@@ -129,7 +130,7 @@ export class OnCommandResolver implements MethodResolver {
         instance,
         methodName,
         context,
-        content: message.content
+        content: messageContent
       });
       const handlerArgs = argsFromDecorator ?? context;
       await this.discordHandlerService.callHandler(

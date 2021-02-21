@@ -26,7 +26,7 @@
     "@nestjs/core": "7.6.12",
     "@nestjs/platform-express": "7.6.12",
     "class-transformer": "0.4.0",
-    "discord-nestjs": "1.0.4",
+    "discord-nestjs": "1.1.0-beta-1",
     "discord.js": "12.5.1",
     "reflect-metadata": "0.1.13",
     "rimraf": "3.0.2",

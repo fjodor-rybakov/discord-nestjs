@@ -60,10 +60,12 @@ export class OnceEventResolver implements MethodResolver {
         instance,
         methodName,
       });
+      let message;
       if (event === 'message') {
         const messageContext: Message = context[0];
+        let pipeMessageContent;
         try {
-          const pipeMessageContent = await this.pipeResolver.applyPipe({
+          pipeMessageContent = await this.pipeResolver.applyPipe({
             instance,
             methodName,
             event,
@@ -71,7 +73,6 @@ export class OnceEventResolver implements MethodResolver {
             content: messageContext.content,
             type: paramType
           });
-          context[0].content = pipeMessageContent ?? messageContext.content;
         } catch (err) {
           if (err instanceof Array && err[0] instanceof ValidationError) {
             const messageEmbed = this.validationProvider.getErrorMessage() ??
@@ -81,6 +82,7 @@ export class OnceEventResolver implements MethodResolver {
           }
           throw err;
         }
+        message = pipeMessageContent ?? messageContext.content;
       }
       //#endregion
 
@@ -88,7 +90,7 @@ export class OnceEventResolver implements MethodResolver {
         instance,
         methodName,
         context,
-        content: event === 'message' ? context[0].content : undefined
+        content: message
       });
       const handlerArgs = argsFromDecorator ?? context;
       await this.discordHandlerService.callHandler(

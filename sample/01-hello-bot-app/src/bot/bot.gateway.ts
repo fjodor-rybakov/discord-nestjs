@@ -9,6 +9,7 @@ import {
   UsePipes,
   UseGuards,
   Once,
+  ValidationPipe,
 } from 'discord-nestjs';
 import { Message } from 'discord.js';
 import { RegDto } from './dto/reg.dto';
@@ -37,7 +38,7 @@ export class BotGateway {
   }
 
   @OnCommand({name: 'reg'})
-  @UsePipes(TransformPipe)
+  @UsePipes(TransformPipe, ValidationPipe)
   async onRegCommand(
     @Content() content: RegDto,
     @Context() [context]: [Message]
@@ -69,7 +70,9 @@ export class BotGateway {
 
   @On({event: 'message'})
   @UsePipes(TransformPipe)
-  async omMessage(@Content() content: MessageDto): Promise<void> {
-    this.logger.log(`Income message with value: ${content.value}`);
+  async omMessage(@Content() content: MessageDto, @Context() [context]: [Message]): Promise<void> {
+    if (!context.author.bot) {
+      this.logger.log(`Income message with value: ${content.value}`);
+    }
   }
 }
