@@ -14,13 +14,12 @@ export class ValidationProvider {
   }
 
   getDefaultErrorMessage(validationError: ValidationError[], messageContent: string): MessageEmbed {
-    const messageParts = messageContent.split(' ');
     return new MessageEmbed()
       .setColor('#d21111')
       .setTitle('Your input is incorrect')
       .addFields(validationError.map((errItem: ValidationError) => {
-        const positions = this.transformProvider.getArgPositions(errItem.target, errItem.property, messageParts.length);
-        const causeValue = this.getCauseValue(positions, messageParts);
+        const positions = this.transformProvider.getArgPositions(errItem.target, errItem.property);
+        const causeValue = this.getCauseValue(positions, messageContent);
 
         const name = this.getCauseName(positions);
         const value = Object.values(errItem.constraints)
@@ -55,7 +54,8 @@ export class ValidationProvider {
     return name;
   }
 
-  private getCauseValue(positions: ArgRangeOptions, messageParts: string[]): string {
+  private getCauseValue(positions: ArgRangeOptions, messageContent: string): string {
+    const messageParts = messageContent.split(' ');
     const inputValue = messageParts
       .slice(positions.formPosition, positions.toPosition ?? positions.formPosition + 1)
       .join(' ');

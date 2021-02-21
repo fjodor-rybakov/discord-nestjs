@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { defaultMetadataStorage } from 'class-transformer/cjs/storage';
 import { ClassTransformOptions, plainToClass } from 'class-transformer';
 import { ReflectMetadataProvider } from './reflect-metadata.provider';
 import { ConstructorType } from '../util/type/constructor-type';
 import { ArgRangeOptions } from '../decorator/interface/arg-range-options';
+import { ArgParamResolver } from '../resolver/arg-param.resolver';
 
 @Injectable()
 export class TransformProvider {
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
+    private readonly argParamResolver: ArgParamResolver,
   ) {
   }
 
@@ -16,52 +17,33 @@ export class TransformProvider {
     if (!classType || !inputData) {
       return;
     }
-    const inputPart = inputData.split(' ');
-    const properties = defaultMetadataStorage.getExposedProperties(classType, 0);
     const newObj = {};
-    let last = 0;
-    for (const propKey of properties) {
-      const metadataArgNum = this.metadataProvider.getArgNumDecoratorMetadata(
-        classType.prototype,
-        propKey,
-      );
-      const metadataArgRange = this.metadataProvider.getArgRangeDecoratorMetadata(
-        classType.prototype,
-        propKey,
-      );
-      if (metadataArgNum) {
-        const argNum = metadataArgNum(last);
-        newObj[propKey] = inputPart[argNum.position];
-        last = argNum.position;
+    const inputPart = inputData.split(' ');
+    const paramData = this.argParamResolver.getArgsParamByTarget(classType);
+    for (const item of paramData) {
+      if (item.argNum) {
+        newObj[item.propertyKey] = inputPart[item.argNum.position];
       }
-      if (metadataArgRange) {
-        const argRange = metadataArgRange(last);
-        argRange.toPosition = argRange.toPosition !== undefined ? argRange.toPosition : inputPart.length;
-        newObj[propKey] = inputPart.slice(argRange.formPosition, argRange.toPosition);
-        last = argRange.toPosition;
+      if (item.argRange) {
+        item.argRange.toPosition = item.argRange.toPosition !== undefined ? item.argRange.toPosition : inputPart.length;
+        newObj[item.propertyKey] = inputPart.slice(item.argRange.formPosition, item.argRange.toPosition);
       }
     }
     return plainToClass(classType, newObj, options);
   }
 
-  getArgPositions(target: any, propertyKey: string, messagePartLength: number): ArgRangeOptions {
-    const metadataArgNum = this.metadataProvider.getArgNumDecoratorMetadata(
-      target,
-      propertyKey,
-    );
-    if (metadataArgNum) {
-      return {formPosition: metadataArgNum().position};
-    }
-    const metadataArgRange = this.metadataProvider.getArgRangeDecoratorMetadata(
-      target,
-      propertyKey,
-    );
-    if (metadataArgRange) {
-      const pos = metadataArgRange();
-      return {
-        formPosition: pos.formPosition,
-        toPosition: pos.toPosition ?? messagePartLength
-      };
+  getArgPositions(target: any, propertyKey: string): ArgRangeOptions {
+    const argData = this.argParamResolver.getArgsParamByTargetAndProperty(target.constructor, propertyKey);
+    if (argData) {
+      if (argData.argNum) {
+        return {formPosition: argData.argNum.position};
+      }
+      if (argData.argRange) {
+        return {
+          formPosition: argData.argRange.formPosition,
+          toPosition: argData.argRange.toPosition
+        };
+      }
     }
   }
 }
