@@ -342,6 +342,50 @@ export class BotGateway {
 }
 ```
 
+### ℹ️ Decorator @TransformToUser
+
+Transform alias to user class
+Works only in conjunction with `@ArgNum` decorator
+
+#### 💡 Example
+Create dto
+
+```typescript
+/*some.dto.ts*/
+
+import { ArgNum, TransformToUser } from 'discord-nestjs';
+import { Expose } from 'class-transformer';
+import { User } from 'discord.js';
+
+export class SomeDto {
+  @ArgNum((last: number) => ({ position: 1 }))
+  @Expose()
+  @TransformToUser()
+  user: User;
+}
+```
+Create command handler
+
+`TransformPipe` required for transform input string to DTO
+You can also use `ValidationPipe` for validate input
+```typescript
+/*bot.gateway.ts*/
+
+import { Message } from 'discord.js';
+import { Content, Context, OnCommand, UsePipes } from 'discord-nestjs';
+import { SomeDto } from './some.dto';
+import { TransformPipe } from 'discord-nestjs';
+
+@Injectable()
+export class BotGateway {
+  @OnCommand({ name: 'avatar' })
+  @UsePipes(TransformPipe)
+  async onCommand(@Content() content: SomeDto, @Context() [context]: [Message]): Promise<void> {
+    await context.reply(`User avatar: ${content.user.avatarURL()}`);
+  }
+}
+```
+
 ### ℹ️ Decorator @ArgNum
 
 Set value by argument number

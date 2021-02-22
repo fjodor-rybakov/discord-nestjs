@@ -14,6 +14,7 @@ export * from './decorator/client.decorator';
 export * from './decorator/use-guard.decorator';
 export * from './decorator/use-pipes.decorator';
 export * from './decorator/arg-range.decorator';
+export * from './decorator/transform-to-user.decorator';
 
 export * from './decorator/interface/discord-middleware';
 export * from './decorator/interface/discord-pipe-transform';

@@ -10,7 +10,7 @@ import { ParamResolver } from '../resolver/param.resolver';
 import { OnEventResolver } from '../resolver/on-event.resolver';
 import { OnceEventResolver } from '../resolver/once-event.resolver';
 import { ClientResolver } from '../resolver/client.resolver';
-import { ArgParamResolver } from '../resolver/arg-param.resolver';
+import { TransformParamResolver } from '../resolver/transform-param.resolver';
 
 @Injectable()
 export class DiscordResolverService implements OnApplicationBootstrap {
@@ -25,7 +25,7 @@ export class DiscordResolverService implements OnApplicationBootstrap {
     private readonly onMessageResolver: OnEventResolver,
     private readonly onceMessageResolver: OnceEventResolver,
     private readonly clientResolver: ClientResolver,
-    private readonly argParamResolver: ArgParamResolver,
+    private readonly transformParamResolver: TransformParamResolver,
   ) {
   }
 
@@ -43,7 +43,7 @@ export class DiscordResolverService implements OnApplicationBootstrap {
       this.onceMessageResolver,
       this.pipeResolver,
       this.paramResolver,
-      this.argParamResolver
+      this.transformParamResolver
     ];
     return Promise.all(providers.concat(controllers).map((instanceWrapper: InstanceWrapper) => {
       const { instance } = instanceWrapper;

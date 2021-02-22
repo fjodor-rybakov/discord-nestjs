@@ -20,7 +20,7 @@ import { OnceEventResolver } from './resolver/once-event.resolver';
 import { ClientResolver } from './resolver/client.resolver';
 import { TransformProvider } from './provider/transform.provider';
 import { ValidationProvider } from './provider/validation.provider';
-import { ArgParamResolver } from './resolver/arg-param.resolver';
+import { TransformParamResolver } from './resolver/transform-param.resolver';
 
 @Module({
   imports: [DiscoveryModule],
@@ -37,7 +37,7 @@ export class DiscordModule {
         OnEventResolver,
         OnceEventResolver,
         OnCommandResolver,
-        ArgParamResolver,
+        TransformParamResolver,
         ReflectMetadataProvider,
         DiscordHandlerService,
         DiscordAccessService,
@@ -71,7 +71,7 @@ export class DiscordModule {
         OnEventResolver,
         OnceEventResolver,
         OnCommandResolver,
-        ArgParamResolver,
+        TransformParamResolver,
         ReflectMetadataProvider,
         DiscordHandlerService,
         DiscordAccessService,

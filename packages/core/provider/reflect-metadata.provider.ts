@@ -11,6 +11,7 @@ import { GuardType } from '../util/type/guard-type';
 import { PipeType } from '../util/type/pipe-type';
 import { DiscordMiddleware } from '../decorator/interface/discord-middleware';
 import { ArgRangeOptions } from '../decorator/interface/arg-range-options';
+import { TransformToUserOptions } from '../decorator/interface/transform-to-user-options';
 
 @Injectable()
 export class ReflectMetadataProvider implements MetadataProvider {
@@ -60,5 +61,9 @@ export class ReflectMetadataProvider implements MetadataProvider {
 
   getUsePipesDecoratorMetadata(instance: unknown, methodName: string): PipeType[] {
     return Reflect.getMetadata(DecoratorConstant.USE_PIPES_DECORATOR, instance, methodName);
+  }
+
+  getTransformToUserDecoratorMetadata(instance: unknown, methodName: string): TransformToUserOptions {
+    return Reflect.getMetadata(DecoratorConstant.TRANSFORM_TO_USER_DECORATOR, instance, methodName);
   }
 }

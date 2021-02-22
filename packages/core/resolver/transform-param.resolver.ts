@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { defaultMetadataStorage } from 'class-transformer/cjs/storage';
-import { ArgParamList } from './interface/arg-param-list';
+import { TransformParamList } from './interface/transform-param-list';
 import { ConstructorType } from '../util/type/constructor-type';
 import { ReflectMetadataProvider } from '../provider/reflect-metadata.provider';
 import { MethodResolveOptions } from './interface/method-resolve-options';
 import { ParamResolver } from './param.resolver';
 
 @Injectable()
-export class ArgParamResolver {
-  private readonly argParamList: ArgParamList[] = [];
+export class TransformParamResolver {
+  private readonly transformParamList: TransformParamList[] = [];
 
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
@@ -41,17 +41,22 @@ export class ArgParamResolver {
       );
       if (metadataArgNum) {
         const argNum = metadataArgNum(last);
-        this.argParamList.push({
+        const metadataTransformToUser = this.metadataProvider.getTransformToUserDecoratorMetadata(
+          paramType.prototype,
+          propertyKey,
+        );
+        this.transformParamList.push({
           instance: paramType,
           propertyKey,
           last,
-          argNum
+          argNum,
+          transformToUser: metadataTransformToUser
         });
         last = argNum.position;
       }
       if (metadataArgRange) {
         const argRange = metadataArgRange(last);
-        this.argParamList.push({
+        this.transformParamList.push({
           instance: paramType,
           propertyKey,
           last,
@@ -62,16 +67,16 @@ export class ArgParamResolver {
     }
   }
 
-  getArgsParamByTarget(classType: ConstructorType): ArgParamList[] {
-    return this.argParamList.filter((item: ArgParamList) => item.instance === classType);
+  getTransformParamByTarget(classType: ConstructorType): TransformParamList[] {
+    return this.transformParamList.filter((item: TransformParamList) => item.instance === classType);
   }
 
-  getArgsParamByTargetAndProperty(
+  getTransformParamByTargetAndProperty(
     classType: ConstructorType,
     propertyKey: string
-  ): ArgParamList {
-    return this.argParamList.find(
-      (item: ArgParamList) => item.instance === classType && item.propertyKey === propertyKey
+  ): TransformParamList {
+    return this.transformParamList.find(
+      (item: TransformParamList) => item.instance === classType && item.propertyKey === propertyKey
     );
   }
 }
