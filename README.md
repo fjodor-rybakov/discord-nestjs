@@ -385,6 +385,14 @@ export class BotGateway {
   }
 }
 ```
+```
+Input:
+!avatar @Федок
+```
+``` 
+Output:
+User avatar: https://cdn.discordapp.com/avatars/261863053329563648/d12c5a04be7bcabea7b9778b7e4fa6d5.webp
+```
 
 ### ℹ️ Decorator @ArgNum
 
