@@ -57,6 +57,9 @@ export class TransformProvider {
   }
 
   private getCleanUserId(inputValue: string): string {
+    if (!inputValue) {
+      return;
+    }
     return inputValue.split("").slice(3, inputValue.length - 1).join("");
   }
 
@@ -72,9 +75,15 @@ export class TransformProvider {
 
   private async getTransformValue(inputPart: string[], item: TransformParamList): Promise<User> {
     const userId = this.getCleanUserId(inputPart[item.argNum.position]);
+    if (!userId) {
+      return;
+    }
     let user = this.discordService.getClient().users.cache.get(userId);
     if (!user) {
       user = await this.discordService.getClient().users.fetch(userId);
+      if (!user && item.transformToUser.force) {
+        return;
+      }
     }
     return user;
   }

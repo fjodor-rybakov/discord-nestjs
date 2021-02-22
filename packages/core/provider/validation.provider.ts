@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { MessageEmbed } from 'discord.js';
+import { DiscordAPIError, MessageEmbed } from 'discord.js';
 import { ValidationError } from 'class-validator';
 import { TransformProvider } from './transform.provider';
 import { ArgRangeOptions } from '../decorator/interface/arg-range-options';
@@ -13,24 +13,34 @@ export class ValidationProvider {
   ) {
   }
 
-  getDefaultErrorMessage(validationError: ValidationError[], messageContent: string): MessageEmbed {
+  getDefaultErrorMessage(err: Error | ValidationError[] | DiscordAPIError, messageContent: string): MessageEmbed {
+    if (err instanceof Array && err[0] instanceof ValidationError) {
+      return new MessageEmbed()
+        .setColor('#d21111')
+        .setTitle('Your input is incorrect')
+        .addFields(err.map((errItem: ValidationError) => {
+          const positions = this.transformProvider.getArgPositions(errItem.target, errItem.property);
+          const causeValue = this.getCauseValue(positions, messageContent);
+
+          const name = this.getCauseName(positions);
+          const value = Object.values(errItem.constraints)
+            .map((item: string) => this.replaceStringValue(item, causeValue));
+
+          return {
+            inline: true,
+            name,
+            value
+          };
+        }));
+    }
+    if (err instanceof DiscordAPIError) {
+      return new MessageEmbed()
+        .setColor('#d21111')
+        .setTitle(err.message);
+    }
     return new MessageEmbed()
       .setColor('#d21111')
-      .setTitle('Your input is incorrect')
-      .addFields(validationError.map((errItem: ValidationError) => {
-        const positions = this.transformProvider.getArgPositions(errItem.target, errItem.property);
-        const causeValue = this.getCauseValue(positions, messageContent);
-
-        const name = this.getCauseName(positions);
-        const value = Object.values(errItem.constraints)
-          .map((item: string) => this.replaceStringValue(item, causeValue));
-
-        return {
-          inline: true,
-          name,
-          value
-        };
-      }));
+      .setTitle('Something unexpected happened')
   }
 
   setErrorMessage(messageEmbed: MessageEmbed): void {
@@ -54,11 +64,14 @@ export class ValidationProvider {
     return name;
   }
 
-  private getCauseValue(positions: ArgRangeOptions, messageContent: string): string {
+  private getCauseValue(positions: ArgRangeOptions, messageContent: string): string | null {
     const messageParts = messageContent.split(' ');
     const inputValue = messageParts
       .slice(positions.formPosition, positions.toPosition ?? positions.formPosition + 1)
       .join(' ');
+    if (!inputValue) {
+      return null;
+    }
     return `**__${inputValue}__**`;
   }
 

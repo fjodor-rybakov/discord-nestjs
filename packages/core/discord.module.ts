@@ -21,6 +21,7 @@ import { ClientResolver } from './resolver/client.resolver';
 import { TransformProvider } from './provider/transform.provider';
 import { ValidationProvider } from './provider/validation.provider';
 import { TransformParamResolver } from './resolver/transform-param.resolver';
+import { DiscordCatchService } from './service/discord-catch.service';
 
 @Module({
   imports: [DiscoveryModule],
@@ -41,6 +42,7 @@ export class DiscordModule {
         ReflectMetadataProvider,
         DiscordHandlerService,
         DiscordAccessService,
+        DiscordCatchService,
         ...DiscordModule.createDiscordProvider(options),
         DiscordClientProvider,
         DiscordResolverService,
@@ -75,6 +77,7 @@ export class DiscordModule {
         ReflectMetadataProvider,
         DiscordHandlerService,
         DiscordAccessService,
+        DiscordCatchService,
         this.createConfigAsyncProviders(options),
         DiscordClientProvider,
         DiscordResolverService,

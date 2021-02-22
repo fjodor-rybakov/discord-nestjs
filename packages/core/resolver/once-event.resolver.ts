@@ -11,7 +11,7 @@ import { MethodResolveOptions } from './interface/method-resolve-options';
 import { ClientEvents, Message } from 'discord.js';
 import { MethodResolver } from './interface/method-resolver';
 import { ValidationError } from 'class-validator';
-import { ValidationProvider } from '../provider/validation.provider';
+import { DiscordCatchService } from '../service/discord-catch.service';
 
 @Injectable()
 export class OnceEventResolver implements MethodResolver {
@@ -24,7 +24,7 @@ export class OnceEventResolver implements MethodResolver {
     private readonly middlewareResolver: MiddlewareResolver,
     private readonly pipeResolver: PipeResolver,
     private readonly paramResolver: ParamResolver,
-    private readonly validationProvider: ValidationProvider,
+    private readonly discordCatchService: DiscordCatchService,
   ) {}
 
   resolve(options: MethodResolveOptions): void {
@@ -74,13 +74,8 @@ export class OnceEventResolver implements MethodResolver {
             type: paramType
           });
         } catch (err) {
-          if (err instanceof Array && err[0] instanceof ValidationError) {
-            const messageEmbed = this.validationProvider.getErrorMessage() ??
-              this.validationProvider.getDefaultErrorMessage(err, messageContext.content);
-            await messageContext.reply(messageEmbed);
-            return;
-          }
-          throw err;
+          await this.discordCatchService.pipeExceptionFactory(err, messageContext);
+          return;
         }
         message = pipeMessageContent ?? messageContext.content;
       }

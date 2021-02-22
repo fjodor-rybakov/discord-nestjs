@@ -1,6 +1,6 @@
 import { ValidationError } from 'class-validator';
 import { ValidatorOptions } from 'class-validator/types/validation/ValidatorOptions';
-import { Message, MessageEmbed } from 'discord.js';
+import { DiscordAPIError, Message, MessageEmbed } from 'discord.js';
 
 export interface ValidationOptionsPipe {
   /**
@@ -11,5 +11,8 @@ export interface ValidationOptionsPipe {
   /**
    * Override default error message
    */
-  exceptionFactory?: (errors: ValidationError[], context: Message) => MessageEmbed;
+  exceptionFactory?: (
+    errors: Error | ValidationError[] | DiscordAPIError,
+    context: Message
+  ) => MessageEmbed;
 }

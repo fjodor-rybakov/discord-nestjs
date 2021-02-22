@@ -11,7 +11,7 @@ import {
   Once,
   ValidationPipe,
 } from 'discord-nestjs';
-import { Message } from 'discord.js';
+import { Message, User } from 'discord.js';
 import { RegDto } from './dto/reg.dto';
 import { DelDto } from './dto/del.dto';
 import { AdminGuard } from './guard/admin.guard';
@@ -55,17 +55,17 @@ export class BotGateway {
 
   @OnCommand({name: 'del'})
   @UseGuards(AdminGuard)
-  @UsePipes(TransformPipe)
+  @UsePipes(TransformPipe, ValidationPipe)
   async onRemoveUser(
     @Content() content: DelDto,
     @Context() [context]: [Message]
   ): Promise<Message> {
     const userIndex = this.users.findIndex((user) => user.id === context.author.id);
     if (userIndex === -1) {
-      return context.reply(`User with id ${content.id} not found!`);
+      return context.reply(`User with id ${content.user.id} not found!`);
     }
     this.users.splice(userIndex, 1);
-    await context.reply(`User success deleted with id: ${content.id}!`);
+    await context.reply(`User success deleted with id: ${content.user.id}!`);
   }
 
   @On({event: 'message'})

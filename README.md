@@ -53,6 +53,8 @@ You can use `forRoot` or `forRootAsync` to configure your module
 
 #### 💡 Example
 
+⚠️**Import `TransformPipe` and `ValidationPipe` from `discord-nestjs` package**
+
 ```typescript
 /*bot.module.ts*/
 
@@ -295,8 +297,10 @@ To intercept incoming messages for some function you can use `@UsePipes()` decor
 
 #### 💡 Example
 
-You need to implement `DiscordPipesTransform` interface
+You need to implement `DiscordPipesTransform` interface.
 Arguments `content` and `type` set only during the "message" event
+
+⚠️**Import `@UsePipes` from `discord-nestjs` package**
 
 ```typescript
 /*transform.pipe.ts*/
@@ -345,6 +349,7 @@ export class BotGateway {
 ### ℹ️ Decorator @TransformToUser
 
 Transform alias to user class
+
 Works only in conjunction with `@ArgNum` decorator
 
 #### 💡 Example
@@ -366,8 +371,9 @@ export class SomeDto {
 ```
 Create command handler
 
-`TransformPipe` required for transform input string to DTO
+`TransformPipe` required for transform input string to DTO.
 You can also use `ValidationPipe` for validate input
+
 ```typescript
 /*bot.gateway.ts*/
 
@@ -420,8 +426,9 @@ export class SomeDto {
 ```
 Create command handler
 
-`TransformPipe` required for transform input string to DTO
+`TransformPipe` required for transform input string to DTO.
 You can also use `ValidationPipe` for validate input
+
 ```typescript
 /*bot.gateway.ts*/
 
@@ -483,8 +490,9 @@ export class SomeDto {
 ```
 Create command handler
 
-`TransformPipe` required for transform input string to DTO
+`TransformPipe` required for transform input string to DTO.
 You can also use `ValidationPipe` for validate input
+
 ```typescript
 /*bot.gateway.ts*/
 
@@ -514,6 +522,8 @@ FIO: Ivan-Ivanovich-Ivanov, Age: 22
 ### ℹ️ Decorator @UseGuards
 
 To guard incoming messages you can use `@UseGuards()` decorator
+
+⚠️**Import `@UseGuards` from `discord-nestjs` package**
 
 #### 💡 Example
 
