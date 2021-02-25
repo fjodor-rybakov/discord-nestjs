@@ -62,7 +62,7 @@
     "prettier": "2.2.1",
     "reflect-metadata": "0.1.13",
     "rimraf": "3.0.2",
-    "rxjs": "6.6.3",
+    "rxjs": "6.6.6",
     "ts-loader": "8.0.17",
     "ts-node": "9.1.1",
     "tsconfig-paths": "3.9.0",
