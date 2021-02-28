@@ -68,7 +68,7 @@ creating a dynamic module through the `forRoot` and `forRootAsync` functions.
 - `allowCommands` - Binding channels and user to a command. Can be overridden in the handler decorator
   - `name` \* - Command name
   - `channels` - List of channel IDs with which the command will work
-  - `directMessageFor` - List of user IDs with which the command will work
+  - `users` - List of user IDs with which the command will work
 - `webhook` - Connecting with webhook
   - `webhookId` \* - Webhook id
   - `webhookToken` \* - Webhook token
@@ -606,7 +606,7 @@ Mark as command handler
 - `isIgnoreBotMessage` - Ignore messages from bots (Default `true`)
 - `allowChannels` - List of channel IDs with which the command will work (If set, it overrides the global)
 - `isRemoveMessage` - Remove message from channel after processing (Default `false`)
-- `allowDirectMessageFor` - List of user IDs with which the command will work (If set, it overrides the global)
+- `allowUsers` - List of user IDs with which the command will work (If set, it overrides the global)
 
 ### ℹ️ @On <a name="On"></a>
 

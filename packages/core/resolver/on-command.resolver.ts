@@ -41,7 +41,7 @@ export class OnCommandResolver implements MethodResolver {
       isRemoveCommandName = true,
       isRemoveMessage = false,
       allowChannels,
-      allowDirectMessageFor
+      allowUsers
     } = metadata;
     this.discordService.getClient().on('message', async (message: Message) => {
       //#region check allow handle message
@@ -67,11 +67,11 @@ export class OnCommandResolver implements MethodResolver {
       }
 
       let allowCommandOptions: DiscordModuleCommandOptions[];
-      if (allowChannels || allowDirectMessageFor) {
+      if (allowChannels || allowUsers) {
         allowCommandOptions = [{
           name,
           channels: allowChannels,
-          directMessageFor: allowDirectMessageFor
+          users: allowUsers
         }];
       } else {
         allowCommandOptions = this.discordService.getAllowCommands();

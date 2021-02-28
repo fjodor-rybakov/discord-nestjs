@@ -12,5 +12,5 @@ export interface DiscordModuleCommandOptions {
   /**
    * List of user identifiers with which the command will work
    */
-  directMessageFor?: string[];
+  users?: string[];
 }

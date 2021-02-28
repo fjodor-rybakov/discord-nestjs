@@ -45,5 +45,5 @@ export interface OnCommandDecoratorOptions {
   /**
    * List of user identifiers with which the command will work
    */
-  allowDirectMessageFor?: string[];
+  allowUsers?: string[];
 }
