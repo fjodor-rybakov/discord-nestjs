@@ -606,7 +606,7 @@ Mark as command handler
 - `isIgnoreBotMessage` - Ignore messages from bots (Default `true`)
 - `allowChannels` - List of channel IDs with which the command will work (If set, it overrides the global)
 - `isRemoveMessage` - Remove message from channel after processing (Default `false`)
-- `directMessageFor` - List of user IDs with which the command will work (If set, it overrides the global)
+- `allowDirectMessageFor` - List of user IDs with which the command will work (If set, it overrides the global)
 
 ### ℹ️ @On <a name="On"></a>
 

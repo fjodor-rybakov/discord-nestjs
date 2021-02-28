@@ -43,7 +43,7 @@ export interface OnCommandDecoratorOptions {
   isRemoveMessage?: boolean;
 
   /**
-   * List of user identifiers with which the bot will work
+   * List of user identifiers with which the command will work
    */
   allowDirectMessageFor?: string[];
 }
