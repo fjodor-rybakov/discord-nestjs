@@ -65,7 +65,7 @@ creating a dynamic module through the `forRoot` and `forRootAsync` functions.
 - `commandPrefix` \* - Global prefix for command
 - `allowGuilds` - List of Guild IDs that the bot is allowed to work with
 - `denyGuilds` - List of Guild IDs that the bot is not allowed to work with
-- `allowChannels` - Binding channels to a command. Can be overridden in the handler decorator
+- `allowCommands` - Binding channels to a command. Can be overridden in the handler decorator
   - `commandName` \* - Command name
   - `channels` - List of channel IDs on which this command will work
   - `allowDirectMessageFor` - List of channel IDs on which this command will work
