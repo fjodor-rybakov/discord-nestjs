@@ -68,7 +68,7 @@ creating a dynamic module through the `forRoot` and `forRootAsync` functions.
   - `commandName` \* - Command name
   - `channels` \* - List of channel IDs on which this command will work
 - `webhook` - Connecting with webhook
-  - `webhookId` \* - Webhook id`
+  - `webhookId` \* - Webhook id
   - `webhookToken` \* - Webhook token
 - `usePipes` - List of pipes that will be applied to all handlers with the `@Content` decorator
   (with class type other than string type). Can be overridden via the `@UsePipes` decorator
