@@ -58,7 +58,7 @@ $ yarn add discord-nestjs discord.js
 ## 📑 Overview <a name="Overview"></a>
 
 The module declaration proceeds in the same way as it is done in NestJS by means
-creating a dynamic module through the `forRoot` and` forRootAsync` functions.
+creating a dynamic module through the `forRoot` and `forRootAsync` functions.
 
 - `token` \* - Your discord bot token. You can get [here](https://discord.com/developers/applications)
 - `commandPrefix` \* - Global prefix for command
