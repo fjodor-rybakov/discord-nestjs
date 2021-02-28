@@ -56,11 +56,16 @@ export class TransformParamResolver {
       }
       if (metadataArgRange) {
         const argRange = metadataArgRange(last);
+        const metadataTransformToUser = this.metadataProvider.getTransformToUserDecoratorMetadata(
+          paramType.prototype,
+          propertyKey,
+        );
         this.transformParamList.push({
           instance: paramType,
           propertyKey,
           last,
-          argRange
+          argRange,
+          transformToUser: metadataTransformToUser
         });
         last = argRange.toPosition;
       }

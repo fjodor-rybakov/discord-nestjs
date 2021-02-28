@@ -628,7 +628,9 @@ To intercept incoming messages for some function
 
 Transform alias to user class
 
-Works only in conjunction with `@ArgNum` decorator
+Works only in conjunction with `@ArgNum` and `@ArgRange` decorator
+
+- `throwError` - If an error occurs from Discord APIm it will be thrown (Default `false`)
 
 ### ℹ️ @ArgNum <a name="ArgNum"></a>
 

@@ -35,7 +35,12 @@ export class TransformProvider {
     const newClass = plainToClass(classType, newObj, options);
     await Promise.all(paramData.map(async (item) => {
       if (item.transformToUser && item.argNum) {
-        newClass[item.propertyKey] = await this.getTransformValue(inputPart, item);
+        const argNumValue = this.getArgNumValue(inputPart, item);
+        newClass[item.propertyKey] = await this.getTransformValue(argNumValue, item);
+      }
+      if (item.transformToUser && item.argRange) {
+        const argRangeValue = this.getArgRangeValue(inputPart, item);
+        newClass[item.propertyKey] = await this.getTransformValueFromArray(argRangeValue, item);
       }
     }));
     return newClass;
@@ -73,18 +78,30 @@ export class TransformProvider {
     return inputPart.slice(item.argRange.formPosition, item.argRange.toPosition);
   }
 
-  private async getTransformValue(inputPart: string[], item: TransformParamList): Promise<User> {
-    const userId = this.getCleanUserId(inputPart[item.argNum.position]);
+  private async getTransformValue(value: string, item: TransformParamList): Promise<User> {
+    const userId = this.getCleanUserId(value);
     if (!userId) {
       return;
     }
-    let user = this.discordService.getClient().users.cache.get(userId);
-    if (!user) {
-      user = await this.discordService.getClient().users.fetch(userId);
-      if (!user && item.transformToUser.force) {
-        return;
+    return this.findUser(userId, item);
+  }
+
+  private async getTransformValueFromArray(valueList: string[], item: TransformParamList): Promise<User[]> {
+    const userIdList = valueList.map((value) =>  this.getCleanUserId(value));
+    return Promise.all(userIdList.map((userId: string) => this.findUser(userId, item)));
+  }
+
+  private async findUser(userId: string, item: TransformParamList): Promise<User> {
+    try {
+      let user = this.discordService.getClient().users.cache.get(userId);
+      if (!user) {
+        user = await this.discordService.getClient().users.fetch(userId);
+      }
+      return user;
+    } catch (err) {
+      if (item.transformToUser.throwError) {
+        throw err;
       }
     }
-    return user;
   }
 }

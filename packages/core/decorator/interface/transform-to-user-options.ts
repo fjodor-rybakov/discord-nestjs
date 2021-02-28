@@ -1,7 +1,7 @@
 export interface TransformToUserOptions {
   /**
-   * Don't set property if not exist
+   * If an error occurs from Discord APIm it will be thrown
    * @default false
    */
-  force: boolean;
+  throwError: boolean;
 }
