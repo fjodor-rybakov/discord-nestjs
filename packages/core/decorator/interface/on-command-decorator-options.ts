@@ -32,7 +32,7 @@ export interface OnCommandDecoratorOptions {
   isIgnoreBotMessage?: boolean;
 
   /**
-   * List of channel identifiers with which the bot will work
+   * List of channel identifiers with which the command will work
    */
   allowChannels?: string[];
 
