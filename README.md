@@ -73,7 +73,7 @@ creating a dynamic module through the `forRoot` and` forRootAsync` functions.
 - `usePipes` - List of pipes that will be applied to all handlers with the `@Content` decorator
   (with class type other than string type). Can be overridden via the `@UsePipes` decorator
 - `useGuards` - A list of guards that will apply to all handlers.
-  Can be overridden via the `@ UseGuards` decorator
+  Can be overridden via the `@UseGuards` decorator
 - You can also set all options as for the client from the "discord.js" library
 
 #### 💡 Example
@@ -313,7 +313,7 @@ export class BotGateway {
 
 To intercept messages before invoking the handler, use the `@UsePipes` decorator.
 Works only with the "message" event.
-For convenience, the library already has an implementation of `TransformPipe` and` ValidationPipe`.
+For convenience, the library already has an implementation of `TransformPipe` and `ValidationPipe`.
 
 First thing you need to do is create a DTO class.
 First, each field in the class must be marked with the `@Expose` decorator from the" class-transform "library,
@@ -429,7 +429,7 @@ export class BotGateway {
 Input:
 !avatar @Федок
 ```
-``` 
+```
 Output:
 User avatar: https://cdn.discordapp.com/avatars/261863053329563648/d12c5a04be7bcabea7b9778b7e4fa6d5.webp
 ```
@@ -466,7 +466,7 @@ export class BotGateway {
 }
 ```
 
-You can also create your own `TransformPipe` or` ValidationPipe` by implementing the `DiscordPipeTransform` interface.
+You can also create your own `TransformPipe` or `ValidationPipe` by implementing the `DiscordPipeTransform` interface.
 
 ```typescript
 /*transform.pipe.ts*/
@@ -608,7 +608,7 @@ Handle discord events [hint](https://gist.github.com/koad/316b265a91d933fd1b62dd
 
 #### Params
 
-- `event` \* - name of the event to listen to
+- `event` \* - Name of the event to listen to
 
 ### ℹ️ @Once <a name="Once"></a>
 
@@ -616,7 +616,7 @@ Handle discord events (only once) [hint](https://gist.github.com/koad/316b265a91
 
 #### Params
 
-- `event` \* - name of the event to listen to
+- `event` \* - Name of the event to listen to
 
 ### ℹ️ @Content <a name="Content"></a>
 
@@ -632,7 +632,7 @@ To intercept incoming messages for some function
 
 #### Params
 
-- list of classes or instances
+- List of classes or instances that implement the `DiscordPipeTransform` interface
 
 ### ℹ️ @TransformToUser <a name="TransformToUser"></a>
 
@@ -651,9 +651,9 @@ Set value by argument number
 #### Params
 
 - arguments
-  - `last` - last index position
+  - `last` - Last index position
 - return
-  - `position` \* - position index form input
+  - `position` \* - Position index form input
 
 ### ℹ️ @ArgRange <a name="ArgRange"></a>
 
@@ -662,10 +662,10 @@ Set value by argument number
 #### Params
 
 - arguments
-  - `last` - last index position
+  - `last` - Last index position
 - return
-  - `formPosition` \* - start index position form input
-  - `toPosition` - finish index position form input (default last index of input)
+  - `formPosition` \* - Start index position form input
+  - `toPosition` - Finish index position form input (default last index of input)
 
 ### ℹ️ @UseGuards <a name="UseGuards"></a>
 
@@ -673,7 +673,7 @@ To guard incoming messages
 
 #### Params
 
-- list of classes or instances
+- List of classes or instances that implement the `DiscordGuard` interface 
 
 ### ℹ️ @Middleware <a name="Middleware"></a>
 
@@ -681,7 +681,7 @@ For handling intermediate requests
 
 #### Params
 
-- `allowEvents` - handled events
-- `denyEvents` - skipped events
+- `allowEvents` - Handled events
+- `denyEvents` - Skipped events
 
 Any questions or suggestions? Discord Федок#3051
