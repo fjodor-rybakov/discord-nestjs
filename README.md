@@ -135,7 +135,7 @@ import { BotGateway } from './bot-gateway';
         commandPrefix: '!',
         allowGuilds: ['745366351929016363'],
         denyGuilds: ['520622812742811698'],
-        allowChannels: [
+        allowCommands: [
           {
             commandName: 'some',
             channels: ['745366352386326572'],
