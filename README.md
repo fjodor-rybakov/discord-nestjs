@@ -351,7 +351,7 @@ export class RegistrationDto {
 
 After that we attach the decorator `@UsePipes` to the handler and pass `TransformPipe` and `ValidationPipe` to the arguments
 in the same sequence.
-Pipes are executed sequentially from left to right. The `@UsePipes` declaration overrides the global usePipes declaration.
+Pipes are executed sequentially from left to right. The `@UsePipes` declaration overrides the global `usePipes` declaration.
 
 #### 💡 Example
 
@@ -498,6 +498,7 @@ export class TransformPipe implements DiscordPipeTransform {
 
 To protect commands and events, use. The `canActive` function returns boolean. If one of the guards returns false,
 then the chain will stop there and the handler itself will not be called.
+The `@UseGuards` declaration overrides the global `useGuards` declaration.
 
 ⚠️**Import `@UseGuards` from the `discord-nestjs` package**
 
