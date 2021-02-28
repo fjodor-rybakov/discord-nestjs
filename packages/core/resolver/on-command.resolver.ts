@@ -71,7 +71,7 @@ export class OnCommandResolver implements MethodResolver {
         allowCommandOptions = [{
           name,
           channels: allowChannels,
-          allowDirectMessageFor: allowDirectMessageFor
+          directMessageFor: allowDirectMessageFor
         }];
       } else {
         allowCommandOptions = this.discordService.getAllowCommands();

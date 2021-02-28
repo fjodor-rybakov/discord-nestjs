@@ -5,12 +5,12 @@ export interface DiscordModuleCommandOptions {
   name: string;
 
   /**
-   * Channel identifiers
+   * List of channel identifiers with which the command will work
    */
   channels?: string[];
 
   /**
-   * List of user identifiers with which the bot will work
+   * List of user identifiers with which the command will work
    */
-  allowDirectMessageFor?: string[];
+  directMessageFor?: string[];
 }

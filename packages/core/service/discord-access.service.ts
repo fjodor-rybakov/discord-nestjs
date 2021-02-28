@@ -21,8 +21,8 @@ export class DiscordAccessService {
         return true;
       }
       let isAllowDirect = true, isAllowChannel = true;
-      if (item.allowDirectMessageFor && item.allowDirectMessageFor.length !== 0) {
-        isAllowDirect = item.allowDirectMessageFor.includes(userId);
+      if (item.directMessageFor && item.directMessageFor.length !== 0) {
+        isAllowDirect = item.directMessageFor.includes(userId);
       }
       if (item.channels && item.channels.length !== 0) {
         isAllowChannel = item.channels.includes(channelId);
