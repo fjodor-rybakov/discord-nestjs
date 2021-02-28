@@ -24,8 +24,8 @@ NestJS package for discord.js
 - [Installation](#Installation)
 - [Overview](#Overview)
 - [Usage](#Usage)
-  - [Creating a handler for receiving messages by a bot](#SubToEvent)
-  - [Receiving messages](#ReceivingMessages)
+  - [Creating a handler for receiving messages by a bot](#OnCommand)
+  - [Subscribe to event](#SubToEvent)
   - [Getting content and context through a decorator](#ContentContext)
   - [Using pipes. Transformation and validation](#Pipes)
   - [Using guards](#Guards)
@@ -205,7 +205,7 @@ export class BotGateway {
 }
 ```
 
-### ℹ️Creating a handler for receiving messages by a bot <a name="SubToEvent"></a>
+### ℹ️Creating a handler for receiving messages by a bot <a name="OnCommand"></a>
 
 Use the `@OnCommand` decorator to declare a command handler.
 
@@ -232,7 +232,7 @@ export class BotGateway {
 }
 ```
 
-### ℹ️ Receiving messages <a name="ReceivingMessages"></a>
+### ℹ️ Subscribe to event <a name="SubToEvent"></a>
 
 Subscription to incoming events ([hint](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584))
 
