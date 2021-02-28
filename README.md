@@ -21,6 +21,7 @@
 
 NestJS package for discord.js
 
+- [Installation](#Installation)
 - [Overview](#Overview)
 - [Usage](#Usage)
   - [Creating a handler for receiving messages by a bot](#SubToEvent)
@@ -43,7 +44,7 @@ NestJS package for discord.js
   - [@UseGuards](#UseGuards)
   - [@Middleware](#Middleware)
 
-## 👨🏻‍💻 Installation
+## 👨🏻‍💻 Installation <a name="Installation"></a>
 
 ```bash
 $ npm install discord-nestjs discord.js
@@ -495,7 +496,7 @@ export class TransformPipe implements DiscordPipeTransform {
 
 ### ℹ️ Using guards <a name="Guards"></a>
 
-To protect teams and events, use. The `canActive` function returns boolean. If one of the guards returns false,
+To protect commands and events, use. The `canActive` function returns boolean. If one of the guards returns false,
 then the chain will stop there and the handler itself will not be called.
 
 ⚠️**Import `@UseGuards` from the `discord-nestjs` package**
