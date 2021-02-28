@@ -21,39 +21,66 @@
 
 NestJS package for discord.js
 
+- [Overview](#Overview)
+- [Usage](#Usage)
+  - [Creating a handler for receiving messages by a bot](#SubToEvent)
+  - [Receiving messages](#ReceivingMessages)
+  - [Getting content and context through a decorator](#ContentContext)
+  - [Using pipes. Transformation and validation](#Pipes)
+  - [Using guards](#Guards)
+  - [Using middleware](#Middleware)
+- [Decorators description](#DecoratorsDescription)
+  - [@Client](#Client)
+  - [@OnCommand](#OnCommand)
+  - [@On](#On)
+  - [@Once](#Once)
+  - [@Content](#Content)
+  - [@Context](#Context)
+  - [@UsePipes](#UsePipes)
+  - [@TransformToUser](#TransformToUser)
+  - [@ArgNum](#ArgNum)
+  - [@ArgRange](#ArgRange)
+  - [@UseGuards](#UseGuards)
+  - [@Middleware](#Middleware)
+
 ## 👨🏻‍💻 Installation
 
 ```bash
 $ npm install discord-nestjs discord.js
 ```
 
-OR
+Or via yarn 
 
 ```bash
 $ yarn add discord-nestjs discord.js
 ```
 
-## 📑 Overview
+## 📑 Overview <a name="Overview"></a>
 
-You can use `forRoot` or `forRootAsync` to configure your module
+The module declaration proceeds in the same way as it is done in NestJS by means
+creating a dynamic module through the `forRoot` and` forRootAsync` functions.
 
-- `token` \* - your discord bot token [see](https://discord.com/developers/applications)
-- `commandPrefix` \* - global prefix for command events
-- `allowGuilds` - list of Guild IDs that the bot is allowed to work with
-- `denyGuilds` - list of Guild IDs that the bot is not allowed to work with
-- `allowChannels` - linking commands to a channel (can also be set through a decorator)
-  - `commandName` \* - command name
-  - `channels` \* - channel ID list
-- `webhook` - connecting with webhook
-  - `webhookId` \* - webhook id
-  - `webhookToken` \* - webhook token
-- `usePipes` - list of pipes that will be applied to all handlers with `@Content` decorator(With class type, except for string type)
-- `useGuards` - list of guards that will be applied to all handlers
-- you can also set all options as for the client from the "discord.js" library
+- `token` \* - Your discord bot token. You can get [here](https://discord.com/developers/applications)
+- `commandPrefix` \* - Global prefix for command
+- `allowGuilds` - List of Guild IDs that the bot is allowed to work with
+- `denyGuilds` - List of Guild IDs that the bot is not allowed to work with
+- `allowChannels` - Binding channels to a command. Can be overridden in the handler decorator
+  - `commandName` \* - Command name
+  - `channels` \* - List of channel IDs on which this command will work
+- `webhook` - Connecting with webhook
+  - `webhookId` \* - Webhook id
+  - `webhookToken` \* - Webhook token
+- `usePipes` - List of pipes that will be applied to all handlers with the `@Content` decorator
+  (with class type other than string type). Can be overridden via the `@UsePipes` decorator
+- `useGuards` - A list of guards that will apply to all handlers.
+  Can be overridden via the `@ UseGuards` decorator
+- You can also set all options as for the client from the "discord.js" library
 
 #### 💡 Example
 
 ⚠️**Import `TransformPipe` and `ValidationPipe` from `discord-nestjs` package**
+
+Below is an example of creating a dynamic module using the `forRoot` function
 
 ```typescript
 /*bot.module.ts*/
@@ -88,7 +115,7 @@ import { BotGateway } from './bot-gateway';
 export class BotModule {}
 ```
 
-Or async
+Alternatively, you can create a module via the `forRootAsync` function
 
 ```typescript
 /*bot.module.ts*/
@@ -125,9 +152,11 @@ import { BotGateway } from './bot-gateway';
 export class BotModule {}
 ```
 
-## ▶️ Usage
+## ▶️ Usage <a name="Usage"></a>
 
-Create your class (e.g. `BotGateway`), mark it with `@Injectable()` or `@Controller()`
+Create a class (for example `BotGateway`) and mark it with the decorator `@Injectable` or `@Controller`.
+You can get the client provider by adding a variable of type `DiscordClientProvider` to the dependency.
+Below is an example of how you can notify yourself that a bot has successfully established a connection to the Discord API.
 
 #### 💡 Example
 
@@ -151,11 +180,7 @@ export class BotGateway {
 }
 ```
 
-## ✨ You can use the following decorators:
-
-### ℹ️ Decorator @Client
-
-You can get discord client via `@Client()` decorator instead constructor property
+You can also get the client provider using the `@Client` decorator.
 
 #### 💡 Example
 
@@ -179,17 +204,14 @@ export class BotGateway {
 }
 ```
 
-### ℹ️ Decorator @OnCommand
+### ℹ️Creating a handler for receiving messages by a bot <a name="SubToEvent"></a>
 
-Use the `@OnCommand` decorator to handle incoming commands to the bot
+Use the `@OnCommand` decorator to declare a command handler.
 
-- `name` \* - command name
-- `prefix` - override global prefix
-- `isRemoveCommandName` - remove command name from message
-- `isRemovePrefix` - remove prefix name from message
-- `isIgnoreBotMessage` - ignore incoming messages from bots
-- `allowChannels` - list of channel identifiers on which this command will work
-- `isRemoveMessage` - remove message from channel after receive
+An example of creating a command is shown below. By default, the handler arguments will be the same as if 
+you were signing up for an event in the "discord.js" library. ([hint](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584))
+
+The `OnCommand` decorator always subscribes to the "message" event
 
 #### 💡 Example
 
@@ -209,11 +231,11 @@ export class BotGateway {
 }
 ```
 
-### ℹ️ Decorator @On
+### ℹ️ Receiving messages <a name="ReceivingMessages"></a>
 
-Handle discord events [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
+Subscription to incoming events ([hint](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584))
 
-- `event` \* - name of the event to listen to
+Use the `@On` decorator to subscribe to an event
 
 #### 💡 Example
 
@@ -235,11 +257,7 @@ export class BotGateway {
 }
 ```
 
-### ℹ️ Decorator @Once
-
-Handle discord events (only once) [see](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
-
-- `event` \* - name of the event to listen to
+You can also subscribe to an event once using the `@Once` decorator
 
 #### 💡 Example
 
@@ -261,15 +279,15 @@ export class BotGateway {
 }
 ```
 
-### ℹ️ Decorator @Content and @Context
+### ℹ️ Getting content and context through a decorator <a name="ContentContext"></a>
 
-By default, the library sets the handler arguments on its own,
-but you can manage the arguments yourself using the `@Content()` and `@Context()` decorators
+By default, the library sets the handler arguments on its own, as it was said [above](#SubToEvent),
+but you can manipulate the arguments yourself using the `@Content` and `@Context` decorators
 
-- Content - message content (allow only for on message event)
-- Context - default handler args
+- Content - Message body (applicable only for "message" events)
+- Context - Default handler arguments ([hint](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584))
 
-⚠️**Using a decorator overrides the default behavior**
+⚠️**Using decorators overrides the setting of arguments in the handler**
 
 #### 💡 Example
 
@@ -291,69 +309,85 @@ export class BotGateway {
 }
 ```
 
-### ℹ️ Decorator @UsePipes
+### ℹ️Using pipes. Transformation and validation <a name="Pipes"></a>
 
-To intercept incoming messages for some function you can use `@UsePipes()` decorator
+To intercept messages before invoking the handler, use the `@UsePipes` decorator.
+Works only with the "message" event.
+For convenience, the library already has an implementation of `TransformPipe` and` ValidationPipe`.
+
+First thing you need to do is create a DTO class.
+First, each field in the class must be marked with the `@Expose` decorator from the" class-transform "library,
+secondly, it is necessary to mark how we will enter data into the variable.
+Use the `@ArgNum` and `@ArgRange` decorators for markup.
+`@ArgNum` takes the value at the index. Think of `@ArgRange` as a `slice` function for arrays.
+Then you can add validation as you like.
+
+⚠️**Import `@UsePipes, TransformPipe, ValidationPipe` from the `discord-nestjs` package**
 
 #### 💡 Example
 
-You need to implement `DiscordPipesTransform` interface.
-Arguments `content` and `type` set only during the "message" event
-
-⚠️**Import `@UsePipes` from `discord-nestjs` package**
-
 ```typescript
-/*transform.pipe.ts*/
+/*registration.dto.ts*/
 
-import { TransformProvider, ConstructorType, DiscordPipeTransform } from 'discord-nestjs';
-import { ClientEvents } from 'discord.js';
-import { SomeDto } from './some.dto';
-import { Injectable } from '@nestjs/common';
+import { ArgNum, ArgRange } from 'discord-nestjs';
+import { Expose } from 'class-transformer';
+import { IsNumber, Min, IsArray } from 'class-validator';
 
-@Injectable()
-export class TransformPipe implements DiscordPipeTransform {
-  constructor(
-    private readonly transformProvider: TransformProvider
-  ) {
-  }
+export class RegistrationDto {
+  @ArgRange(() => ({ formPosition: 1, toPosition: 4 }))
+  @Expose()
+  @IsArray()
+  name: string[];
 
-  transform(
-    event: keyof ClientEvents,
-    context: any,
-    content?: any,
-    type?: ConstructorType<SomeDto>
-  ): SomeDto {
-    return this.transformProvider.transformContent(type, content);
-  }
+  @ArgNum((last: number) => ({ position: last }))
+  @Expose()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(18)
+  age: number;
 }
 ```
+
+After that we attach the decorator `@UsePipes` to the handler and pass `TransformPipe` and `ValidationPipe` to the arguments
+in the same sequence.
+Pipes are executed sequentially from left to right. The `@UsePipes` declaration overrides the global usePipes declaration.
+
+#### 💡 Example
 
 ```typescript
 /*bot.gateway.ts*/
 
-import { On, UsePipes, Content } from 'discord-nestjs';
+import { UsePipes, Content, Context, OnCommand, TransformPipe, ValidationPipe } from 'discord-nestjs';
 import { Injectable } from '@nestjs/common';
-import { TransformPipe } from './transform.pipe';
-import { SomeDto } from './some.dto';
+import { RegistrationDto } from './registration.dto';
+import { Message } from 'discord.js';
 
 @Injectable()
 export class BotGateway {
-  @UsePipes(TransformPipe)
-  @On({ event: 'message' })
-  async onSomeEvent(@Content() content: SomeDto): Promise<void> {
-    // to do something
+  @OnCommand({name: 'reg'})
+  @UsePipes(TransformPipe, ValidationPipe)
+  async onSomeEvent(
+    @Content() content: RegistrationDto,
+    @Context() [context]: [Message]
+  ): Promise<void> {
+    await context.reply(
+      `User was created! Id: ${context.author.id}, FIO: ${content.name.join('-')}, Age: ${content.age}`
+    );
   }
 }
 ```
-
-### ℹ️ Decorator @TransformToUser
+```
+Input:
+!reg Ivan Ivanovich Ivanov 22
+```
+```
+Output:
+User was created!: Id: 261863053329563648, Ivan-Ivanovich-Ivanov, Age: 22
+```
 
 Transform alias to user class
 
-Works only in conjunction with `@ArgNum` decorator
-
 #### 💡 Example
-Create dto
 
 ```typescript
 /*some.dto.ts*/
@@ -400,134 +434,75 @@ Output:
 User avatar: https://cdn.discordapp.com/avatars/261863053329563648/d12c5a04be7bcabea7b9778b7e4fa6d5.webp
 ```
 
-### ℹ️ Decorator @ArgNum
-
-Set value by argument number
-
-- arguments
-  - `last` - last index position
-- return
-  - `position` \* - position index form input
+In order to override error handling in `ValidationPipe` you need to create an instance of the class manually.
 
 #### 💡 Example
-Create dto
-
-```typescript
-/*some.dto.ts*/
-
-import { ArgNum } from 'discord-nestjs';
-import { Expose } from 'class-transformer';
-
-export class SomeDto {
-  @ArgNum((last: number) => ({ position: 1 }))
-  @Expose()
-  name: string;
-}
-```
-Create command handler
-
-`TransformPipe` required for transform input string to DTO.
-You can also use `ValidationPipe` for validate input
 
 ```typescript
 /*bot.gateway.ts*/
 
-import { Message } from 'discord.js';
-import { Content, Context, OnCommand, UsePipes } from 'discord-nestjs';
-import { SomeDto } from './some.dto';
-import { TransformPipe } from 'discord-nestjs';
+import { UsePipes, Content, Context, OnCommand, TransformPipe, ValidationPipe } from 'discord-nestjs';
+import { Injectable } from '@nestjs/common';
+import { RegistrationDto } from './registration.dto';
+import { Message, MessageEmbed } from 'discord.js';
+import { ValidationError } from 'class-validator';
 
 @Injectable()
 export class BotGateway {
-  @OnCommand({ name: 'start' })
-  @UsePipes(TransformPipe)
-  async onCommand(@Content() content: SomeDto, @Context() [context]: [Message]): Promise<void> {
-    await context.reply(`Hello ${content.name}`);
+  @OnCommand({name: 'reg'})
+  @UsePipes(TransformPipe, new ValidationPipe({
+    exceptionFactory: (
+      errors: ValidationError[], message: Message
+    ) => new MessageEmbed().setTitle('Upss!').setDescription(message.content)
+  }))
+  async onSomeEvent(
+    @Content() content: RegistrationDto,
+    @Context() [context]: [Message]
+  ): Promise<void> {
+    await context.reply(
+      `User was created! Id: ${context.author.id}, FIO: ${content.name.join('-')}, Age: ${content.age}`
+    );
   }
 }
 ```
-```
-Input:
-!start Alice
-```
-``` 
-Output:
-Hello Alice
-```
 
-### ℹ️ Decorator @ArgRange
-
-Set value by argument number
-
-- arguments
-  - `last` - last index position
-- return
-  - `formPosition` \* - start index position form input
-  - `toPosition` - finish index position form input (default last index of input)
-
-#### 💡 Example
-Create dto
+You can also create your own `TransformPipe` or` ValidationPipe` by implementing the `DiscordPipeTransform` interface.
 
 ```typescript
-/*some.dto.ts*/
+/*transform.pipe.ts*/
 
-import { Expose, Type } from 'class-transformer';
-import { ArgRange, ArgNum } from 'discord-nestjs';
-import { IsNumber } from 'class-validator';
-
-export class SomeDto {
-  @ArgRange(() => ({ formPosition: 1, toPosition: 4 }))
-  @Expose()
-  name: string[];
-
-  @ArgNum((last: number) => ({ position: last }))
-  @Expose()
-  @Type(() => Number)
-  @IsNumber()
-  @Min(18)
-  age: number;
-}
-```
-Create command handler
-
-`TransformPipe` required for transform input string to DTO.
-You can also use `ValidationPipe` for validate input
-
-```typescript
-/*bot.gateway.ts*/
-
-import { Message } from 'discord.js';
-import { Content, Context, OnCommand, UsePipes } from 'discord-nestjs';
-import { SomeDto } from './some.dto';
-import { TransformPipe } from 'discord-nestjs';
+import { TransformProvider, ConstructorType, ValidationPipe, DiscordPipeTransform } from 'discord-nestjs';
+import { ClientEvents, Message } from 'discord.js';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class BotGateway {
-  @OnCommand({ name: 'reg' })
-  @UsePipes(TransformPipe)
-  async onCommand(@Content() content: SomeDto, @Context() [context]: [Message]): Promise<void> {
-    await context.reply(`FIO: ${content.name.join('-')}, Age: ${content.age}`);
+export class TransformPipe implements DiscordPipeTransform {
+  constructor(
+    private readonly transformProvider: TransformProvider
+  ) {
+  }
+
+  transform(
+    event: keyof ClientEvents,
+    [context]: [Message],
+    content?: any,
+    type?: ConstructorType<any>
+  ): any {
+    return this.transformProvider.transformContent(type, content);
   }
 }
 ```
-```
-Input:
-!reg Ivan Ivanovich Ivanov 22
-```
-```
-Output:
-FIO: Ivan-Ivanovich-Ivanov, Age: 22
-```
 
-### ℹ️ Decorator @UseGuards
+### ℹ️ Using guards <a name="Guards"></a>
 
-To guard incoming messages you can use `@UseGuards()` decorator
+To protect teams and events, use. The `canActive` function returns boolean. If one of the guards returns false,
+then the chain will stop there and the handler itself will not be called.
 
-⚠️**Import `@UseGuards` from `discord-nestjs` package**
+⚠️**Import `@UseGuards` from the `discord-nestjs` package**
+
+You need to implement the `DiscordGuard` interface
 
 #### 💡 Example
-
-You need to implement `DiscordGuard` interface
 
 ```typescript
 /*bot.guard.ts*/
@@ -569,16 +544,12 @@ export class BotGateway {
 }
 ```
 
-### ℹ️ Decorator @Middleware
+### ℹ️ Using middleware <a name="Middleware"></a>
 
-For handling intermediate requests you can use `@Middleware` decorator
-
-- `allowEvents` - handled events
-- `denyEvents` - skipped events
+You can use a middleware to process all incoming messages.
+To do this, you need to implement the `DiscordMiddleware` interface.
 
 #### 💡 Example
-
-You need to implement `DiscordMiddleware` interface
 
 ```typescript
 /*bot.middleware.ts*/
@@ -602,7 +573,7 @@ export class BotMiddleware implements DiscordMiddleware {
 }
 ```
 
-Don't forget to add to providers
+Also don't forget to add your middleware to the providers.
 
 ```typescript
 @Module({
@@ -610,5 +581,83 @@ Don't forget to add to providers
 })
 export class BotModule {}
 ```
+
+## 🗂 Decorators description <a name="DecoratorsDescription"></a>
+
+### ℹ️ @Client <a name="Client"></a>
+
+Inject client provider
+
+### ℹ️@OnCommand <a name="OnCommand"></a>
+
+Mark as command handler
+
+- `name` \* - Command name
+- `prefix` - Command prefix (If set, it overrides the global)
+- `isRemoveCommandName` - Remove command name from input string (Default `true`)
+- `isRemovePrefix` - Remove prefix from input string (Default `true`)
+- `isIgnoreBotMessage` - Ignore messages from bots (Default `true`)
+- `allowChannels` - List of channel IDs for command binding (If set, it overrides the global)
+- `isRemoveMessage` - Remove message from channel after processing (Default `false`)
+
+### ℹ️@On <a name="On"></a>
+
+Handle discord events [hint](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
+
+- `event` \* - name of the event to listen to
+
+### ℹ️@Once <a name="Once"></a>
+
+Handle discord events (only once) [hint](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
+
+- `event` \* - name of the event to listen to
+
+### ℹ️@Content <a name="Content"></a>
+
+Message content (applicable only for "message" events)
+
+### ℹ️@Context <a name="Context"></a>
+
+Default handler arguments ([hint](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584))
+
+### ℹ️@UsePipes <a name="UsePipes"></a>
+
+To intercept incoming messages for some function
+
+### ℹ️@TransformToUser <a name="TransformToUser"></a>
+
+Transform alias to user class
+
+Works only in conjunction with `@ArgNum` decorator
+
+### ℹ️@ArgNum <a name="ArgNum"></a>
+
+Set value by argument number
+
+- arguments
+  - `last` - last index position
+- return
+  - `position` \* - position index form input
+
+### ℹ️@ArgRange <a name="ArgRange"></a>
+
+Set value by argument number
+
+- arguments
+  - `last` - last index position
+- return
+  - `formPosition` \* - start index position form input
+  - `toPosition` - finish index position form input (default last index of input)
+
+### ℹ️@UseGuards <a name="UseGuards"></a>
+
+To guard incoming messages
+
+### ℹ️@Middleware <a name="Middleware"></a>
+
+For handling intermediate requests
+
+- `allowEvents` - handled events
+- `denyEvents` - skipped events
 
 Any questions or suggestions? Discord Федок#3051
