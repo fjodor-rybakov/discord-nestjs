@@ -309,7 +309,7 @@ export class BotGateway {
 }
 ```
 
-### ℹ️Using pipes. Transformation and validation <a name="Pipes"></a>
+### ℹ️ Using pipes. Transformation and validation <a name="Pipes"></a>
 
 To intercept messages before invoking the handler, use the `@UsePipes` decorator.
 Works only with the "message" event.
@@ -588,7 +588,7 @@ export class BotModule {}
 
 Inject client provider
 
-### ℹ️@OnCommand <a name="OnCommand"></a>
+### ℹ️ @OnCommand <a name="OnCommand"></a>
 
 Mark as command handler
 
@@ -600,37 +600,37 @@ Mark as command handler
 - `allowChannels` - List of channel IDs for command binding (If set, it overrides the global)
 - `isRemoveMessage` - Remove message from channel after processing (Default `false`)
 
-### ℹ️@On <a name="On"></a>
+### ℹ️ @On <a name="On"></a>
 
 Handle discord events [hint](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
 
 - `event` \* - name of the event to listen to
 
-### ℹ️@Once <a name="Once"></a>
+### ℹ️ @Once <a name="Once"></a>
 
 Handle discord events (only once) [hint](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
 
 - `event` \* - name of the event to listen to
 
-### ℹ️@Content <a name="Content"></a>
+### ℹ️ @Content <a name="Content"></a>
 
 Message content (applicable only for "message" events)
 
-### ℹ️@Context <a name="Context"></a>
+### ℹ️ @Context <a name="Context"></a>
 
 Default handler arguments ([hint](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584))
 
-### ℹ️@UsePipes <a name="UsePipes"></a>
+### ℹ️ @UsePipes <a name="UsePipes"></a>
 
 To intercept incoming messages for some function
 
-### ℹ️@TransformToUser <a name="TransformToUser"></a>
+### ℹ️ @TransformToUser <a name="TransformToUser"></a>
 
 Transform alias to user class
 
 Works only in conjunction with `@ArgNum` decorator
 
-### ℹ️@ArgNum <a name="ArgNum"></a>
+### ℹ️ @ArgNum <a name="ArgNum"></a>
 
 Set value by argument number
 
@@ -639,7 +639,7 @@ Set value by argument number
 - return
   - `position` \* - position index form input
 
-### ℹ️@ArgRange <a name="ArgRange"></a>
+### ℹ️ @ArgRange <a name="ArgRange"></a>
 
 Set value by argument number
 
@@ -649,11 +649,11 @@ Set value by argument number
   - `formPosition` \* - start index position form input
   - `toPosition` - finish index position form input (default last index of input)
 
-### ℹ️@UseGuards <a name="UseGuards"></a>
+### ℹ️ @UseGuards <a name="UseGuards"></a>
 
 To guard incoming messages
 
-### ℹ️@Middleware <a name="Middleware"></a>
+### ℹ️ @Middleware <a name="Middleware"></a>
 
 For handling intermediate requests
 
