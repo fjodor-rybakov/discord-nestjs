@@ -26,7 +26,7 @@ export interface DiscordModuleOption extends ClientOptions {
   denyGuilds?: string[];
 
   /**
-   * List of channel identifiers with which the bot will work
+   * Binding channels and user to a command. Can be overridden in the handler decorator
    */
   allowCommands?: DiscordModuleCommandOptions[];
 
