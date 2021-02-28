@@ -27,9 +27,9 @@ NestJS package for discord.js
   - [Creating a handler for receiving messages by a bot](#OnCommand)
   - [Subscribe to event](#SubToEvent)
   - [Getting content and context through a decorator](#ContentContext)
-  - [Using pipes. Transformation and validation](#Pipes)
-  - [Using guards](#Guards)
-  - [Using middleware](#Middleware)
+  - [Pipes. Transformation and validation](#Pipes)
+  - [Guards](#Guards)
+  - [Middleware](#Middleware)
 - [Decorators description](#DecoratorsDescription)
   - [@Client](#Client)
   - [@OnCommand](#OnCommand)
@@ -310,7 +310,7 @@ export class BotGateway {
 }
 ```
 
-### ℹ️ Using pipes. Transformation and validation <a name="Pipes"></a>
+### ℹ️ Pipes. Transformation and validation <a name="Pipes"></a>
 
 To intercept messages before invoking the handler, use the `@UsePipes` decorator.
 Works only with the "message" event.
@@ -494,7 +494,7 @@ export class TransformPipe implements DiscordPipeTransform {
 }
 ```
 
-### ℹ️ Using guards <a name="Guards"></a>
+### ℹ️ Guards <a name="Guards"></a>
 
 To protect commands and events, use. The `canActive` function returns boolean. If one of the guards returns false,
 then the chain will stop there and the handler itself will not be called.
@@ -545,7 +545,7 @@ export class BotGateway {
 }
 ```
 
-### ℹ️ Using middleware <a name="Middleware"></a>
+### ℹ️ Middleware <a name="Middleware"></a>
 
 You can use a middleware to process all incoming messages.
 To do this, you need to implement the `DiscordMiddleware` interface.
