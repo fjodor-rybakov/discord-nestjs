@@ -592,6 +592,8 @@ Inject client provider
 
 Mark as command handler
 
+#### Params
+
 - `name` \* - Command name
 - `prefix` - Command prefix (If set, it overrides the global)
 - `isRemoveCommandName` - Remove command name from input string (Default `true`)
@@ -604,11 +606,15 @@ Mark as command handler
 
 Handle discord events [hint](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
 
+#### Params
+
 - `event` \* - name of the event to listen to
 
 ### ℹ️ @Once <a name="Once"></a>
 
 Handle discord events (only once) [hint](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
+
+#### Params
 
 - `event` \* - name of the event to listen to
 
@@ -624,17 +630,25 @@ Default handler arguments ([hint](https://gist.github.com/koad/316b265a91d933fd1
 
 To intercept incoming messages for some function
 
+#### Params
+
+- list of classes or instances
+
 ### ℹ️ @TransformToUser <a name="TransformToUser"></a>
 
 Transform alias to user class
 
 Works only in conjunction with `@ArgNum` and `@ArgRange` decorator
 
+#### Params
+
 - `throwError` - If an error occurs from Discord APIm it will be thrown (Default `false`)
 
 ### ℹ️ @ArgNum <a name="ArgNum"></a>
 
 Set value by argument number
+
+#### Params
 
 - arguments
   - `last` - last index position
@@ -644,6 +658,8 @@ Set value by argument number
 ### ℹ️ @ArgRange <a name="ArgRange"></a>
 
 Set value by argument number
+
+#### Params
 
 - arguments
   - `last` - last index position
@@ -655,9 +671,15 @@ Set value by argument number
 
 To guard incoming messages
 
+#### Params
+
+- list of classes or instances
+
 ### ℹ️ @Middleware <a name="Middleware"></a>
 
 For handling intermediate requests
+
+#### Params
 
 - `allowEvents` - handled events
 - `denyEvents` - skipped events
