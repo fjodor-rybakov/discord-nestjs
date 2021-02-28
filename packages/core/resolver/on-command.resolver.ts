@@ -11,6 +11,7 @@ import { PipeResolver } from './pipe.resolver';
 import { ParamResolver } from './param.resolver';
 import { MethodResolver } from './interface/method-resolver';
 import { DiscordCatchService } from '../service/discord-catch.service';
+import { DiscordModuleCommandOptions } from '../interface/discord-module-command-options';
 
 @Injectable()
 export class OnCommandResolver implements MethodResolver {
@@ -39,7 +40,8 @@ export class OnCommandResolver implements MethodResolver {
       isIgnoreBotMessage = true,
       isRemoveCommandName = true,
       isRemoveMessage = false,
-      allowChannels
+      allowChannels,
+      allowDirectMessageFor
     } = metadata;
     this.discordService.getClient().on('message', async (message: Message) => {
       //#region check allow handle message
@@ -52,10 +54,6 @@ export class OnCommandResolver implements MethodResolver {
       if (this.discordAccessService.isDenyMessageGuild(message)) {
         return;
       }
-      const channelIsNotAllowed = allowChannels && !allowChannels.includes(message.channel.id); // channels from decorator
-      if (channelIsNotAllowed || !this.discordAccessService.isAllowChannel(name, message.channel.id)) {
-        return;
-      }
       //#endregion
 
       let messageContent = message.content.trim();
@@ -66,6 +64,20 @@ export class OnCommandResolver implements MethodResolver {
       );
       if (messagePrefix !== prefix || commandName !== name) {
         return; // not suitable for handler
+      }
+
+      let allowCommandOptions: DiscordModuleCommandOptions[];
+      if (allowChannels || allowDirectMessageFor) {
+        allowCommandOptions = [{
+          name,
+          channels: allowChannels,
+          directMessageFor: allowDirectMessageFor
+        }];
+      } else {
+        allowCommandOptions = this.discordService.getAllowCommands();
+      }
+      if (!this.discordAccessService.isAllowCommand(commandName, message.channel.id, message.author.id, allowCommandOptions)) {
+        return;
       }
 
       ///#region handle message

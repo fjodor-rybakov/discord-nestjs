@@ -65,9 +65,10 @@ creating a dynamic module through the `forRoot` and `forRootAsync` functions.
 - `commandPrefix` \* - Global prefix for command
 - `allowGuilds` - List of Guild IDs that the bot is allowed to work with
 - `denyGuilds` - List of Guild IDs that the bot is not allowed to work with
-- `allowChannels` - Binding channels to a command. Can be overridden in the handler decorator
-  - `commandName` \* - Command name
-  - `channels` \* - List of channel IDs on which this command will work
+- `allowCommands` - Binding channels and user to a command. Can be overridden in the handler decorator
+  - `name` \* - Command name
+  - `channels` - List of channel IDs with which the command will work
+  - `directMessageFor` - List of user IDs with which the command will work
 - `webhook` - Connecting with webhook
   - `webhookId` \* - Webhook id
   - `webhookToken` \* - Webhook token
@@ -77,11 +78,11 @@ creating a dynamic module through the `forRoot` and `forRootAsync` functions.
   Can be overridden via the `@UseGuards` decorator
 - You can also set all options as for the client from the "discord.js" library
 
-#### 💡 Example
-
 ⚠️**Import `TransformPipe` and `ValidationPipe` from `discord-nestjs` package**
 
 Below is an example of creating a dynamic module using the `forRoot` function
+
+#### 💡 Example
 
 ```typescript
 /*bot.module.ts*/
@@ -97,10 +98,11 @@ import { BotGateway } from './bot-gateway';
       commandPrefix: '!',
       allowGuilds: ['745366351929016363'],
       denyGuilds: ['520622812742811698'],
-      allowChannels: [
+      allowCommands: [
         {
-          commandName: 'some',
+          name: 'some',
           channels: ['745366352386326572'],
+          directMessageFor: ['261863053329563648'],
         },
       ],
       webhook: {
@@ -133,10 +135,11 @@ import { BotGateway } from './bot-gateway';
         commandPrefix: '!',
         allowGuilds: ['745366351929016363'],
         denyGuilds: ['520622812742811698'],
-        allowChannels: [
+        allowCommands: [
           {
-            commandName: 'some',
+            name: 'some',
             channels: ['745366352386326572'],
+            directMessageFor: ['261863053329563648'],
           },
         ],
         webhook: {
@@ -601,8 +604,9 @@ Mark as command handler
 - `isRemoveCommandName` - Remove command name from input string (Default `true`)
 - `isRemovePrefix` - Remove prefix from input string (Default `true`)
 - `isIgnoreBotMessage` - Ignore messages from bots (Default `true`)
-- `allowChannels` - List of channel IDs for command binding (If set, it overrides the global)
+- `allowChannels` - List of channel IDs with which the command will work (If set, it overrides the global)
 - `isRemoveMessage` - Remove message from channel after processing (Default `false`)
+- `allowDirectMessageFor` - List of user IDs with which the command will work (If set, it overrides the global)
 
 ### ℹ️ @On <a name="On"></a>
 

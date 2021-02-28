@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DiscordService } from './discord.service';
-import { DiscordModuleChannelOptions } from '../interface/discord-module-channel-options';
+import { DiscordModuleCommandOptions } from '../interface/discord-module-command-options';
 import { Message } from 'discord.js';
 
 @Injectable()
@@ -10,19 +10,24 @@ export class DiscordAccessService {
   ) {
   }
 
-  isAllowChannel(
+  isAllowCommand(
     commandName: string,
     channelId: string,
+    userId: string,
+    options: DiscordModuleCommandOptions[],
   ): boolean {
-    const allowGlobalChannels = this.discordService.getAllowChannels();
-    if (allowGlobalChannels.length === 0) {
-      return true;
-    }
-    return allowGlobalChannels.some((item: DiscordModuleChannelOptions) => {
-      if (item.commandName !== commandName) {
+    return options.some((item: DiscordModuleCommandOptions) => {
+      if (item.name !== commandName) {
         return true;
       }
-      return item.channels.includes(channelId);
+      let isAllowDirect = true, isAllowChannel = true;
+      if (item.directMessageFor && item.directMessageFor.length !== 0) {
+        isAllowDirect = item.directMessageFor.includes(userId);
+      }
+      if (item.channels && item.channels.length !== 0) {
+        isAllowChannel = item.channels.includes(channelId);
+      }
+      return isAllowDirect && isAllowChannel;
     });
   }
 

@@ -32,7 +32,7 @@ export interface OnCommandDecoratorOptions {
   isIgnoreBotMessage?: boolean;
 
   /**
-   * List of channel identifiers with which the bot will work
+   * List of channel identifiers with which the command will work
    */
   allowChannels?: string[];
 
@@ -41,4 +41,9 @@ export interface OnCommandDecoratorOptions {
    * @default false
    */
   isRemoveMessage?: boolean;
+
+  /**
+   * List of user identifiers with which the command will work
+   */
+  allowDirectMessageFor?: string[];
 }
