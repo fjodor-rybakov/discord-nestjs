@@ -8,4 +8,9 @@ export interface DiscordModuleChannelOptions {
    * Channel identifiers
    */
   channels: string[];
+
+  /**
+   * List of user identifiers with which the bot will work
+   */
+  allowDirectMessageFor?: string[];
 }

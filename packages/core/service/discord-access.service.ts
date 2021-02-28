@@ -13,6 +13,7 @@ export class DiscordAccessService {
   isAllowChannel(
     commandName: string,
     channelId: string,
+    userId: string
   ): boolean {
     const allowGlobalChannels = this.discordService.getAllowChannels();
     if (allowGlobalChannels.length === 0) {
@@ -22,7 +23,13 @@ export class DiscordAccessService {
       if (item.commandName !== commandName) {
         return true;
       }
-      return item.channels.includes(channelId);
+      if (item.allowDirectMessageFor && item.allowDirectMessageFor.length !== 0) {
+        return item.allowDirectMessageFor.includes(userId);
+      }
+      if (item.channels && item.channels.length !== 0) {
+        return item.channels.includes(channelId);
+      }
+      return true;
     });
   }
 

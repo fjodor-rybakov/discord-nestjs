@@ -53,7 +53,7 @@ export class OnCommandResolver implements MethodResolver {
         return;
       }
       const channelIsNotAllowed = allowChannels && !allowChannels.includes(message.channel.id); // channels from decorator
-      if (channelIsNotAllowed || !this.discordAccessService.isAllowChannel(name, message.channel.id)) {
+      if (channelIsNotAllowed || !this.discordAccessService.isAllowChannel(name, message.channel.id, message.author.id)) {
         return;
       }
       //#endregion

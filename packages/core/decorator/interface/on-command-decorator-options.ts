@@ -41,4 +41,9 @@ export interface OnCommandDecoratorOptions {
    * @default false
    */
   isRemoveMessage?: boolean;
+
+  /**
+   * List of user identifiers with which the bot will work
+   */
+  allowDirectMessageFor?: string[];
 }

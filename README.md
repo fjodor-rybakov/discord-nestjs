@@ -67,7 +67,8 @@ creating a dynamic module through the `forRoot` and `forRootAsync` functions.
 - `denyGuilds` - List of Guild IDs that the bot is not allowed to work with
 - `allowChannels` - Binding channels to a command. Can be overridden in the handler decorator
   - `commandName` \* - Command name
-  - `channels` \* - List of channel IDs on which this command will work
+  - `channels` - List of channel IDs on which this command will work
+  - `allowDirectMessageFor` - List of channel IDs on which this command will work
 - `webhook` - Connecting with webhook
   - `webhookId` \* - Webhook id
   - `webhookToken` \* - Webhook token
@@ -77,11 +78,11 @@ creating a dynamic module through the `forRoot` and `forRootAsync` functions.
   Can be overridden via the `@UseGuards` decorator
 - You can also set all options as for the client from the "discord.js" library
 
-#### 💡 Example
-
 ⚠️**Import `TransformPipe` and `ValidationPipe` from `discord-nestjs` package**
 
 Below is an example of creating a dynamic module using the `forRoot` function
+
+#### 💡 Example
 
 ```typescript
 /*bot.module.ts*/
@@ -101,6 +102,7 @@ import { BotGateway } from './bot-gateway';
         {
           commandName: 'some',
           channels: ['745366352386326572'],
+          allowDirectMessageFor: ['261863053329563648'],
         },
       ],
       webhook: {
@@ -137,6 +139,7 @@ import { BotGateway } from './bot-gateway';
           {
             commandName: 'some',
             channels: ['745366352386326572'],
+            allowDirectMessageFor: ['261863053329563648'],
           },
         ],
         webhook: {
