@@ -205,7 +205,7 @@ export class BotGateway {
 }
 ```
 
-### ℹ️Creating a handler for receiving messages by a bot <a name="OnCommand"></a>
+### ℹ️ Creating a handler for receiving messages by a bot <a name="OnCommand"></a>
 
 Use the `@OnCommand` decorator to declare a command handler.
 
@@ -285,7 +285,7 @@ export class BotGateway {
 By default, the library sets the handler arguments on its own, as it was said [above](#SubToEvent),
 but you can manipulate the arguments yourself using the `@Content` and `@Context` decorators
 
-- Content - Message body (applicable only for "message" events)
+- Content - Message body (applicable only for "message" event)
 - Context - Default handler arguments ([hint](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584))
 
 ⚠️**Using decorators overrides the setting of arguments in the handler**
@@ -391,13 +391,13 @@ Transform alias to user class
 #### 💡 Example
 
 ```typescript
-/*some.dto.ts*/
+/*user.dto.ts*/
 
 import { ArgNum, TransformToUser } from 'discord-nestjs';
 import { Expose } from 'class-transformer';
 import { User } from 'discord.js';
 
-export class SomeDto {
+export class UserDto {
   @ArgNum((last: number) => ({ position: 1 }))
   @Expose()
   @TransformToUser()
@@ -414,14 +414,14 @@ You can also use `ValidationPipe` for validate input
 
 import { Message } from 'discord.js';
 import { Content, Context, OnCommand, UsePipes } from 'discord-nestjs';
-import { SomeDto } from './some.dto';
+import { UserDto } from './user.dto';
 import { TransformPipe } from 'discord-nestjs';
 
 @Injectable()
 export class BotGateway {
   @OnCommand({ name: 'avatar' })
   @UsePipes(TransformPipe)
-  async onCommand(@Content() content: SomeDto, @Context() [context]: [Message]): Promise<void> {
+  async onCommand(@Content() content: UserDto, @Context() [context]: [Message]): Promise<void> {
     await context.reply(`User avatar: ${content.user.avatarURL()}`);
   }
 }
@@ -621,7 +621,7 @@ Handle discord events (only once) [hint](https://gist.github.com/koad/316b265a91
 
 ### ℹ️ @Content <a name="Content"></a>
 
-Message content (applicable only for "message" events)
+Message content (applicable only for "message" event)
 
 ### ℹ️ @Context <a name="Context"></a>
 
