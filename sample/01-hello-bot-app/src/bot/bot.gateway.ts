@@ -11,11 +11,12 @@ import {
   Once,
   ValidationPipe,
 } from 'discord-nestjs';
-import { Message, User } from 'discord.js';
+import { Message, MessageEmbed } from 'discord.js';
 import { RegDto } from './dto/reg.dto';
 import { DelDto } from './dto/del.dto';
 import { AdminGuard } from './guard/admin.guard';
 import { MessageDto } from './dto/message.dto';
+import { ValidationError } from 'class-validator';
 
 @Injectable()
 export class BotGateway {
@@ -55,7 +56,11 @@ export class BotGateway {
 
   @OnCommand({name: 'del'})
   @UseGuards(AdminGuard)
-  @UsePipes(TransformPipe, ValidationPipe)
+  @UsePipes(TransformPipe, new ValidationPipe({
+    exceptionFactory: (
+      errors: ValidationError[], message: Message
+    ) => new MessageEmbed().setTitle('Upss!').setDescription(message.content)
+  }))
   async onRemoveUser(
     @Content() content: DelDto,
     @Context() [context]: [Message]
