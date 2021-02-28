@@ -1,5 +1,5 @@
 import { ClientOptions } from 'discord.js';
-import { DiscordModuleChannelOptions } from './discord-module-channel-options';
+import { DiscordModuleCommandOptions } from './discord-module-command-options';
 import { DiscordModuleWebhookOptions } from './discord-module-webhook-options';
 import { PipeType } from '../util/type/pipe-type';
 import { GuardType } from '../util/type/guard-type';
@@ -28,7 +28,7 @@ export interface DiscordModuleOption extends ClientOptions {
   /**
    * List of channel identifiers with which the bot will work
    */
-  allowChannels?: DiscordModuleChannelOptions[];
+  allowCommands?: DiscordModuleCommandOptions[];
 
   /**
    * Use pipes for all handlers

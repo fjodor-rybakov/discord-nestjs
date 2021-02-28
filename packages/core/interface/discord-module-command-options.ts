@@ -1,13 +1,13 @@
-export interface DiscordModuleChannelOptions {
+export interface DiscordModuleCommandOptions {
   /**
    * Command name from gateway
    */
-  commandName: string;
+  name: string;
 
   /**
    * Channel identifiers
    */
-  channels: string[];
+  channels?: string[];
 
   /**
    * List of user identifiers with which the bot will work

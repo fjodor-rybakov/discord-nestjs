@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { Client, WebhookClient } from 'discord.js';
 import { DiscordModuleOption } from '../interface/discord-module-option';
-import { DiscordModuleChannelOptions } from '../interface/discord-module-channel-options';
+import { DiscordModuleCommandOptions } from '../interface/discord-module-command-options';
 import { DiscordModuleWebhookOptions } from '../interface/discord-module-webhook-options';
 import { PipeType } from '../util/type/pipe-type';
 import { GuardType } from '../util/type/guard-type';
@@ -12,7 +12,7 @@ export class DiscordService implements OnApplicationBootstrap {
   private readonly commandPrefix: string;
   private readonly allowGuilds?: string[];
   private readonly denyGuilds?: string[];
-  private readonly allowChannels?: DiscordModuleChannelOptions[];
+  private readonly allowCommands?: DiscordModuleCommandOptions[];
   private readonly pipeList?: PipeType[];
   private readonly guardList?: GuardType[];
 
@@ -26,7 +26,7 @@ export class DiscordService implements OnApplicationBootstrap {
       commandPrefix,
       allowGuilds,
       denyGuilds,
-      allowChannels,
+      allowCommands,
       webhook,
       usePipes,
       useGuards,
@@ -37,7 +37,7 @@ export class DiscordService implements OnApplicationBootstrap {
     this.commandPrefix = commandPrefix;
     this.allowGuilds = allowGuilds;
     this.denyGuilds = denyGuilds;
-    this.allowChannels = allowChannels ?? [];
+    this.allowCommands = allowCommands ?? [];
     this.webhookClient = this.createWebhookClient(webhook);
     this.pipeList = usePipes ?? [];
     this.guardList = useGuards ?? [];
@@ -56,8 +56,8 @@ export class DiscordService implements OnApplicationBootstrap {
     return this.commandPrefix;
   }
 
-  getAllowChannels(): DiscordModuleChannelOptions[] {
-    return this.allowChannels;
+  getAllowCommands(): DiscordModuleCommandOptions[] {
+    return this.allowCommands;
   }
 
   getClient(): Client {

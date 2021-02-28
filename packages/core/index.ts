@@ -1,7 +1,7 @@
 export * from './discord.module';
 
 export * from './interface/discord-module-option';
-export * from './interface/discord-module-channel-options';
+export * from './interface/discord-module-command-options';
 
 export * from './decorator/on.decorator';
 export * from './decorator/once.decorator';
