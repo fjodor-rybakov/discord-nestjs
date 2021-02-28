@@ -29,6 +29,7 @@ export * from './decorator/interface/transform-to-user-options';
 export * from './provider/interface/client-provider.interface';
 export * from './provider/discord-client-provider';
 export * from './provider/transform.provider';
+export * from './provider/validation.provider';
 
 export * from './util/type/constructor-type';
 export * from './util/type/guard-type';
