@@ -102,7 +102,7 @@ import { BotGateway } from './bot-gateway';
         {
           name: 'some',
           channels: ['745366352386326572'],
-          directMessageFor: ['261863053329563648'],
+          users: ['261863053329563648'],
         },
       ],
       webhook: {
@@ -139,7 +139,7 @@ import { BotGateway } from './bot-gateway';
           {
             name: 'some',
             channels: ['745366352386326572'],
-            directMessageFor: ['261863053329563648'],
+            users: ['261863053329563648'],
           },
         ],
         webhook: {
