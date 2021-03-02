@@ -5,10 +5,7 @@ import { Message } from 'discord.js';
 
 @Injectable()
 export class DiscordAccessService {
-  constructor(
-    private readonly discordService: DiscordService
-  ) {
-  }
+  constructor(private readonly discordService: DiscordService) {}
 
   isAllowCommand(
     commandName: string,
@@ -16,24 +13,31 @@ export class DiscordAccessService {
     userId: string,
     options: DiscordModuleCommandOptions[],
   ): boolean {
-    return options.some((item: DiscordModuleCommandOptions) => {
-      if (item.name !== commandName) {
-        return true;
-      }
-      let isAllowDirect = true, isAllowChannel = true;
-      if (item.users && item.users.length !== 0) {
-        isAllowDirect = item.users.includes(userId);
-      }
-      if (item.channels && item.channels.length !== 0) {
-        isAllowChannel = item.channels.includes(channelId);
-      }
-      return isAllowDirect && isAllowChannel;
-    });
+    if (
+      options.find(
+        (item: DiscordModuleCommandOptions) => item.name === commandName,
+      ) === undefined
+    ) {
+      return true;
+    } else {
+      return options.some((item: DiscordModuleCommandOptions) => {
+        if (item.name !== commandName) {
+          return true;
+        }
+        let isAllowDirect = true,
+          isAllowChannel = true;
+        if (item.users && item.users.length !== 0) {
+          isAllowDirect = item.users.includes(userId);
+        }
+        if (item.channels && item.channels.length !== 0) {
+          isAllowChannel = item.channels.includes(channelId);
+        }
+        return isAllowDirect && isAllowChannel;
+      });
+    }
   }
 
-  isAllowMessageGuild(
-    message: Message,
-  ): boolean {
+  isAllowMessageGuild(message: Message): boolean {
     const guildId = message.guild && message.guild.id;
     if (!!guildId) {
       return this.discordService.isAllowGuild(guildId);
