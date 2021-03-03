@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ClientEvents, Message } from 'discord.js';
 import { DiscordService } from '../service/discord.service';
 import { ReflectMetadataProvider } from '../provider/reflect-metadata.provider';
@@ -15,6 +15,8 @@ import { DiscordModuleCommandOptions } from '../interface/discord-module-command
 
 @Injectable()
 export class OnCommandResolver implements MethodResolver {
+  private readonly logger = new Logger();
+
   constructor(
     private readonly guardResolver: GuardResolver,
     private readonly metadataProvider: ReflectMetadataProvider,
@@ -33,6 +35,7 @@ export class OnCommandResolver implements MethodResolver {
     if (!metadata) {
       return;
     }
+    this.logger.setContext(instance.constructor.name);
     const {
       name,
       prefix = this.discordService.getCommandPrefix(),
@@ -43,6 +46,7 @@ export class OnCommandResolver implements MethodResolver {
       allowChannels,
       allowUsers
     } = metadata;
+    this.logger.log(`Initialize command: ${name}`);
     this.discordService.getClient().on('message', async (message: Message) => {
       //#region check allow handle message
       if (isIgnoreBotMessage && message.author.bot) {
