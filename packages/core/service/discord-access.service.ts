@@ -16,18 +16,21 @@ export class DiscordAccessService {
     userId: string,
     options: DiscordModuleCommandOptions[],
   ): boolean {
+    if (options.length === 0) {
+      return true;
+    }
     return options.some((item: DiscordModuleCommandOptions) => {
       if (item.name !== commandName) {
         return true;
       }
-      let isAllowDirect = true, isAllowChannel = true;
+      let isAllowUser = true, isAllowChannel = true;
       if (item.users && item.users.length !== 0) {
-        isAllowDirect = item.users.includes(userId);
+        isAllowUser = item.users.includes(userId);
       }
       if (item.channels && item.channels.length !== 0) {
         isAllowChannel = item.channels.includes(channelId);
       }
-      return isAllowDirect && isAllowChannel;
+      return isAllowUser && isAllowChannel;
     });
   }
 

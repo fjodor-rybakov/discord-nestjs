@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { GuardResolver } from './guard.resolver';
 import { ReflectMetadataProvider } from '../provider/reflect-metadata.provider';
 import { DiscordService } from '../service/discord.service';
@@ -14,6 +14,8 @@ import { DiscordCatchService } from '../service/discord-catch.service';
 
 @Injectable()
 export class OnEventResolver implements MethodResolver {
+  private readonly logger = new Logger();
+
   constructor(
     private readonly guardResolver: GuardResolver,
     private readonly metadataProvider: ReflectMetadataProvider,
@@ -32,7 +34,9 @@ export class OnEventResolver implements MethodResolver {
     if (!metadata) {
       return;
     }
+    this.logger.setContext(instance.constructor.name);
     const {event} = metadata;
+    this.logger.log(`Subscribe to event: ${event} (on)`);
     this.discordService.getClient().on(event, async (...data: ClientEvents[keyof ClientEvents]) => {
       //#region check allow handle message
       if (!this.discordAccessService.isAllowGuild(data)) {
