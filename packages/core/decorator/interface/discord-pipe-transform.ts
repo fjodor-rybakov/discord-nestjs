@@ -1,5 +1,5 @@
 import { ClientEvents } from 'discord.js';
-import { ConstructorType } from '../../util/type/constructor-type';
+import { Type } from '@nestjs/common';
 
 /**
  * Base pipe interface
@@ -9,6 +9,6 @@ export interface DiscordPipeTransform<T = any, D = any> {
     event: keyof ClientEvents,
     context: T,
     content?: D,
-    type?: ConstructorType<D>
+    type?: Type<D>
   ): any | Promise<any>;
 }

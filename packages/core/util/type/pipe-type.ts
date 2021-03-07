@@ -1,7 +1,7 @@
 import { DiscordPipeTransform } from '../../decorator/interface/discord-pipe-transform';
-import { ConstructorType } from './constructor-type';
+import { Type } from '@nestjs/common';
 
 /**
  * Pipe type
  */
-export type PipeType = DiscordPipeTransform | ConstructorType;
+export type PipeType = DiscordPipeTransform | Type;

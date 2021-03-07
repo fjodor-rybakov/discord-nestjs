@@ -1,3 +1,5 @@
+import { TextChannelType } from '../../util/type/text-channel-type';
+
 /**
  * Command options
  */
@@ -46,4 +48,9 @@ export interface OnCommandDecoratorOptions {
    * List of user identifiers with which the command will work
    */
   allowUsers?: string[];
+
+  /**
+   * Filter by text channel type
+   */
+  channelType?: TextChannelType[];
 }

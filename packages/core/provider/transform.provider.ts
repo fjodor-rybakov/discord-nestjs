@@ -1,7 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Type } from '@nestjs/common';
 import { ClassTransformOptions, plainToClass } from 'class-transformer';
 import { ReflectMetadataProvider } from './reflect-metadata.provider';
-import { ConstructorType } from '../util/type/constructor-type';
 import { ArgRangeOptions } from '../decorator/interface/arg-range-options';
 import { TransformParamResolver } from '../resolver/transform-param.resolver';
 import { DiscordService } from '../service/discord.service';
@@ -17,7 +16,7 @@ export class TransformProvider {
   ) {
   }
 
-  async transformContent<T>(classType: ConstructorType<T>, inputData: string, options?: ClassTransformOptions): Promise<T> {
+  async transformContent<T>(classType: Type<T>, inputData: string, options?: ClassTransformOptions): Promise<T> {
     if (!classType || !inputData) {
       return;
     }

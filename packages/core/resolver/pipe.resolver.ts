@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Type } from '@nestjs/common';
 import { ReflectMetadataProvider } from '../provider/reflect-metadata.provider';
 import { ModuleRef } from '@nestjs/core';
 import { MethodResolveOptions } from './interface/method-resolve-options';
@@ -8,7 +8,6 @@ import { DiscordPipeOptions } from './interface/discord-pipe-options';
 import { MethodResolver } from './interface/method-resolver';
 import { PipeType } from '../util/type/pipe-type';
 import { DiscordService } from '../service/discord.service';
-import { ConstructorType } from '../util/type/constructor-type';
 
 @Injectable()
 export class PipeResolver implements MethodResolver {
@@ -60,7 +59,7 @@ export class PipeResolver implements MethodResolver {
     const { instance, methodName } = options;
     const pipeListForMethod: DiscordPipeTransform[] = [];
     for await(const pipe of pipes) {
-      const classType = typeof pipe === 'function' ? pipe : pipe.constructor as ConstructorType;
+      const classType = typeof pipe === 'function' ? pipe : pipe.constructor as Type;
       const newPipeInstance = await this.moduleRef.create(classType);
       if (typeof pipe !== 'function') { // resolve constructor params
         newPipeInstance.validateOptions = pipe['validateOptions'];

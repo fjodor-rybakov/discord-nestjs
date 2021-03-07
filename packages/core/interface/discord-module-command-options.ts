@@ -1,3 +1,5 @@
+import { TextChannelType } from '../util/type/text-channel-type';
+
 export interface DiscordModuleCommandOptions {
   /**
    * Command name from gateway
@@ -13,4 +15,9 @@ export interface DiscordModuleCommandOptions {
    * List of user identifiers with which the command will work
    */
   users?: string[];
+
+  /**
+   * Filter by text channel type
+   */
+  channelType?: TextChannelType[];
 }

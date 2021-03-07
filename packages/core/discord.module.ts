@@ -1,4 +1,4 @@
-import { DynamicModule, Module, Provider } from '@nestjs/common';
+import { DynamicModule, Module, Provider, Type } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
 import { DiscordModuleAsyncOptions } from './interface/discord-module-async-options';
 import { DiscordOptionsFactory } from './interface/discord-options-factory';
@@ -62,10 +62,16 @@ export class DiscordModule {
       },
       inject: [ModuleConstant.DISCORD_MODULE_OPTIONS],
     };
+    const useClass = options.useClass as Type<DiscordOptionsFactory>;
     return {
       module: DiscordModule,
       imports: options.imports || [],
       providers: [
+        {
+          provide: useClass,
+          useClass
+        },
+        this.createConfigAsyncProviders(options),
         MiddlewareResolver,
         GuardResolver,
         PipeResolver,
@@ -78,7 +84,6 @@ export class DiscordModule {
         DiscordHandlerService,
         DiscordAccessService,
         DiscordCatchService,
-        this.createConfigAsyncProviders(options),
         DiscordClientProvider,
         DiscordResolverService,
         connectionProvider,
@@ -125,7 +130,7 @@ export class DiscordModule {
           useFactory: async (
             optionsFactory: DiscordOptionsFactory,
           ): Promise<DiscordModuleOption> =>
-            await optionsFactory.createDiscordOptions(),
+            optionsFactory.createDiscordOptions(),
           inject: [options.useExisting || options.useClass],
         };
       }

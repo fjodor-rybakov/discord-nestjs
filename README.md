@@ -103,6 +103,7 @@ import { BotGateway } from './bot-gateway';
           name: 'some',
           channels: ['745366352386326572'],
           users: ['261863053329563648'],
+          channelType: ['dm']
         },
       ],
       webhook: {
@@ -118,7 +119,7 @@ import { BotGateway } from './bot-gateway';
 export class BotModule {}
 ```
 
-Alternatively, you can create a module via the `forRootAsync` function
+Or via the `forRootAsync` function
 
 ```typescript
 /*bot.module.ts*/
@@ -140,6 +141,7 @@ import { BotGateway } from './bot-gateway';
             name: 'some',
             channels: ['745366352386326572'],
             users: ['261863053329563648'],
+            channelType: ['dm']
           },
         ],
         webhook: {
@@ -154,6 +156,61 @@ import { BotGateway } from './bot-gateway';
   providers: [BotGateway],
 })
 export class BotModule {}
+```
+
+Alternatively, you can use the `useClass` syntax
+
+```typescript
+/*bot.module.ts*/
+
+import { Module } from '@nestjs/common';
+import { DiscordConfigService } from './discord-config-service';
+import { BotGateway } from './bot-gateway';
+
+@Module({
+  imports: [
+    DiscordModule.forRootAsync({
+      useClass: DiscordConfigService
+    }),
+  ],
+  providers: [BotGateway],
+})
+export class BotModule {}
+```
+
+You need to implement the `DiscordOptionsFactory` interface
+
+```typescript
+/*discord-config-service.ts*/
+
+import { Injectable } from '@nestjs/common';
+import { DiscordModuleOption, DiscordOptionsFactory, TransformPipe, ValidationPipe } from 'discord-nestjs';
+
+@Injectable()
+export class DiscordConfigService implements DiscordOptionsFactory {
+  createDiscordOptions(): DiscordModuleOption {
+    return {
+      token: 'Njg2MzI2OTMwNTg4NTY1NTQx.XmVlww.EF_bMXRvYgMUCQhg_jYnieoBW-k',
+      commandPrefix: '!',
+      allowGuilds: ['745366351929016363'],
+      denyGuilds: ['520622812742811698'],
+      allowCommands: [
+        {
+          name: 'some',
+          channels: ['745366352386326572'],
+          users: ['261863053329563648'],
+          channelType: ['dm']
+        },
+      ],
+      webhook: {
+        webhookId: 'your_webhook_id',
+        webhookToken: 'your_webhook_token',
+      },
+      usePipes: [TransformPipe, ValidationPipe],
+      // and other discord options
+    }
+  }
+}
 ```
 
 ## ▶️ Usage <a name="Usage"></a>
@@ -320,7 +377,7 @@ Works only with the "message" event.
 For convenience, the library already has an implementation of `TransformPipe` and `ValidationPipe`.
 
 First thing you need to do is create a DTO class.
-First, each field in the class must be marked with the `@Expose` decorator from the" class-transform "library,
+First, each field in the class must be marked with the `@Expose` decorator from the "class-transform" library,
 secondly, it is necessary to mark how we will enter data into the variable.
 Use the `@ArgNum` and `@ArgRange` decorators for markup.
 `@ArgNum` takes the value at the index. Think of `@ArgRange` as a `slice` function for arrays.
@@ -607,6 +664,7 @@ Mark as command handler
 - `allowChannels` - List of channel IDs with which the command will work (If set, it overrides the global)
 - `isRemoveMessage` - Remove message from channel after processing (Default `false`)
 - `allowUsers` - List of user IDs with which the command will work (If set, it overrides the global)
+- `channelType` - Filter by text channel type (If set, it overrides the global)
 
 ### ℹ️ @On <a name="On"></a>
 

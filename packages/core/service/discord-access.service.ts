@@ -12,26 +12,37 @@ export class DiscordAccessService {
 
   isAllowCommand(
     commandName: string,
-    channelId: string,
-    userId: string,
-    options: DiscordModuleCommandOptions[],
+    message: Message,
+    option: DiscordModuleCommandOptions,
   ): boolean {
-    if (options.length === 0) {
+    if (!option) {
       return true;
     }
-    return options.some((item: DiscordModuleCommandOptions) => {
-      if (item.name !== commandName) {
-        return true;
-      }
-      let isAllowUser = true, isAllowChannel = true;
-      if (item.users && item.users.length !== 0) {
-        isAllowUser = item.users.includes(userId);
-      }
-      if (item.channels && item.channels.length !== 0) {
-        isAllowChannel = item.channels.includes(channelId);
-      }
-      return isAllowUser && isAllowChannel;
-    });
+    if (
+      option.channelType &&
+      option.channelType.length !== 0 &&
+      !option.channelType.includes(message.channel.type)
+    ) {
+      // if channel type not allowed
+      return false;
+    }
+    if (
+      option.users &&
+      option.users.length !== 0 &&
+      !option.users.includes(message.author.id)
+    ) {
+      // if user not allowed
+      return false;
+    }
+    if (
+      option.channels &&
+      option.channels.length !== 0 &&
+      !option.channels.includes(message.channel.id)
+    ) {
+      // if channel not allowed
+      return false;
+    }
+    return true;
   }
 
   isAllowMessageGuild(

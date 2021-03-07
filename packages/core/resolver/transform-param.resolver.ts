@@ -1,7 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Type } from '@nestjs/common';
 import { defaultMetadataStorage } from 'class-transformer/cjs/storage';
 import { TransformParamList } from './interface/transform-param-list';
-import { ConstructorType } from '../util/type/constructor-type';
 import { ReflectMetadataProvider } from '../provider/reflect-metadata.provider';
 import { MethodResolveOptions } from './interface/method-resolve-options';
 import { ParamResolver } from './param.resolver';
@@ -72,12 +71,12 @@ export class TransformParamResolver {
     }
   }
 
-  getTransformParamByTarget(classType: ConstructorType): TransformParamList[] {
+  getTransformParamByTarget(classType: Type): TransformParamList[] {
     return this.transformParamList.filter((item: TransformParamList) => item.instance === classType);
   }
 
   getTransformParamByTargetAndProperty(
-    classType: ConstructorType,
+    classType: Type,
     propertyKey: string
   ): TransformParamList {
     return this.transformParamList.find(

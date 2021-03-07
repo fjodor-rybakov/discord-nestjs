@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Type } from '@nestjs/common';
 import { ReflectMetadataProvider } from '../provider/reflect-metadata.provider';
 import { ModuleRef } from '@nestjs/core';
 import { DiscordGuard } from '../decorator/interface/discord-guard';
@@ -8,7 +8,6 @@ import { MethodResolveOptions } from './interface/method-resolve-options';
 import { MethodResolver } from './interface/method-resolver';
 import { GuardType } from '../util/type/guard-type';
 import { DiscordService } from '../service/discord.service';
-import { ConstructorType } from '../util/type/constructor-type';
 
 @Injectable()
 export class GuardResolver implements MethodResolver {
@@ -52,7 +51,7 @@ export class GuardResolver implements MethodResolver {
     const { instance, methodName } = options;
     const guardListForMethod: DiscordGuard[] = [];
     for await(const guard of guards) {
-      const classType = typeof guard === 'function' ? guard : guard.constructor as ConstructorType;
+      const classType = typeof guard === 'function' ? guard : guard.constructor as Type;
       const newGuardInstance = await this.moduleRef.create(classType);
       guardListForMethod.push(newGuardInstance);
     }

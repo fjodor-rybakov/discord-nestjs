@@ -2,6 +2,7 @@ export * from './discord.module';
 
 export * from './interface/discord-module-option';
 export * from './interface/discord-module-command-options';
+export * from './interface/discord-options-factory';
 
 export * from './decorator/on.decorator';
 export * from './decorator/once.decorator';
@@ -31,6 +32,6 @@ export * from './provider/discord-client-provider';
 export * from './provider/transform.provider';
 export * from './provider/validation.provider';
 
-export * from './util/type/constructor-type';
 export * from './util/type/guard-type';
 export * from './util/type/pipe-type';
+export * from './util/type/text-channel-type';

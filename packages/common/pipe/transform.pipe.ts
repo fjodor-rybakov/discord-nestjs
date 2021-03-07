@@ -1,6 +1,6 @@
 import { ClientEvents } from 'discord.js';
-import { Injectable } from '@nestjs/common';
-import { ConstructorType, DiscordPipeTransform, TransformProvider } from '../../core';
+import { Injectable, Type } from '@nestjs/common';
+import { DiscordPipeTransform, TransformProvider } from '../../core';
 
 @Injectable()
 export class TransformPipe implements DiscordPipeTransform {
@@ -9,7 +9,7 @@ export class TransformPipe implements DiscordPipeTransform {
   ) {
   }
 
-  transform(event: keyof ClientEvents, context: any, content?: any, type?: ConstructorType): any {
+  transform(event: keyof ClientEvents, context: any, content?: any, type?: Type): any {
     return this.transformProvider.transformContent(type, content);
   }
 }
