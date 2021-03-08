@@ -166,6 +166,7 @@ Alternatively, you can use the `useClass` syntax
 import { Module } from '@nestjs/common';
 import { DiscordConfigService } from './discord-config-service';
 import { BotGateway } from './bot-gateway';
+import { DiscordModule } from 'discord-nestjs';
 
 @Module({
   imports: [

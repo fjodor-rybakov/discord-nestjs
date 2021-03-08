@@ -1,10 +1,11 @@
-import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
+import { Inject, Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { Client, WebhookClient } from 'discord.js';
 import { DiscordModuleOption } from '../interface/discord-module-option';
 import { DiscordModuleCommandOptions } from '../interface/discord-module-command-options';
 import { DiscordModuleWebhookOptions } from '../interface/discord-module-webhook-options';
 import { PipeType } from '../util/type/pipe-type';
 import { GuardType } from '../util/type/guard-type';
+import { ModuleConstant } from '../constant/module.constant';
 
 @Injectable()
 export class DiscordService implements OnApplicationBootstrap {
@@ -20,7 +21,10 @@ export class DiscordService implements OnApplicationBootstrap {
   private readonly webhookClient: WebhookClient;
   private readonly logger = new Logger(DiscordService.name);
 
-  constructor(options: DiscordModuleOption) {
+  constructor(
+    @Inject(ModuleConstant.DISCORD_MODULE_OPTIONS)
+    options: DiscordModuleOption
+  ) {
     const {
       token,
       commandPrefix,

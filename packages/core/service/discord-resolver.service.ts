@@ -1,4 +1,4 @@
-import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { DiscoveryService, MetadataScanner } from '@nestjs/core';
 import { GuardResolver } from '../resolver/guard.resolver';
@@ -13,7 +13,7 @@ import { ClientResolver } from '../resolver/client.resolver';
 import { TransformParamResolver } from '../resolver/transform-param.resolver';
 
 @Injectable()
-export class DiscordResolverService implements OnApplicationBootstrap {
+export class DiscordResolverService implements OnModuleInit {
   constructor(
     private readonly discoveryService: DiscoveryService,
     private readonly guardResolver: GuardResolver,
@@ -29,13 +29,13 @@ export class DiscordResolverService implements OnApplicationBootstrap {
   ) {
   }
 
-  async onApplicationBootstrap(): Promise<void> {
+  async onModuleInit(): Promise<void> {
     const providers: InstanceWrapper[] = this.discoveryService.getProviders();
     const controllers: InstanceWrapper[] = this.discoveryService.getControllers();
     await this.resolveDecorators(providers, controllers);
   }
 
-  private resolveDecorators(providers: InstanceWrapper[], controllers: InstanceWrapper[]) {
+  private resolveDecorators(providers: InstanceWrapper[], controllers: InstanceWrapper[]): Promise<void[][]> {
     const methodResolvers = [
       this.guardResolver,
       this.onMessageResolver,
@@ -64,9 +64,7 @@ export class DiscordResolverService implements OnApplicationBootstrap {
     }));
   }
 
-  private scanMetadata(
-    instance: any,
-  ): string[] {
+  private scanMetadata(instance: any): string[] {
     return this.metadataScanner.scanFromPrototype(
       instance,
       Object.getPrototypeOf(instance),
