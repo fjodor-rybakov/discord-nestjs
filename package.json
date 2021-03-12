@@ -63,7 +63,7 @@
     "reflect-metadata": "0.1.13",
     "rimraf": "3.0.2",
     "rxjs": "6.6.6",
-    "ts-loader": "8.0.17",
+    "ts-loader": "8.0.18",
     "ts-node": "9.1.1",
     "tsconfig-paths": "3.9.0",
     "typescript": "4.2.3"
