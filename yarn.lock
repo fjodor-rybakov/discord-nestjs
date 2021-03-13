@@ -160,20 +160,20 @@
     webpack "5.11.0"
     webpack-node-externals "2.5.2"
 
-"@nestjs/common@7.6.13":
-  version "7.6.13"
-  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-7.6.13.tgz#597558afedfddeb5021fe8a154327ee082279ab8"
-  integrity sha512-xijw6so4yA8Ywi8mnrA7Kz97ZC36u20Eyb5/XvmokdLcgTcTyHVdE39r44JYnjHPf8SKZoJ965zdu/fKl4s4GQ==
+"@nestjs/common@7.6.14":
+  version "7.6.14"
+  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-7.6.14.tgz#abdad360ef107482345b111eeee74fbef00620c9"
+  integrity sha512-XJrGoGttCsIOvG2+EXl09pl9iCmYXnhPjx3ndPPigMRdXQGLVpF38OdzroWTD7aYU5rHo3Co21G9cYl8aqdt2Q==
   dependencies:
     axios "0.21.1"
     iterare "1.2.1"
     tslib "2.1.0"
     uuid "8.3.2"
 
-"@nestjs/core@7.6.13":
-  version "7.6.13"
-  resolved "https://registry.yarnpkg.com/@nestjs/core/-/core-7.6.13.tgz#b7518dceb436e6ed2c1fad2cff86ddf69b143e73"
-  integrity sha512-8oY8yZSgri2DngqmvBMtwYw1GIAaXbUXS7Y0mp/iSZ6jP7CQqYCybdcMPneunrt5PG8rtJsq6n+4JNRvxXrVmA==
+"@nestjs/core@7.6.14":
+  version "7.6.14"
+  resolved "https://registry.yarnpkg.com/@nestjs/core/-/core-7.6.14.tgz#b3be15506aee33b847abce993a7371439b292dd9"
+  integrity sha512-iAeQIsC79xcLTpga3he48ROX4g561VFsfbksicqotrFy0k9czKxVtHxevsnwo8KzFsYXQqOCO6XYI8MsuAjMcg==
   dependencies:
     "@nuxtjs/opencollective" "0.3.2"
     fast-safe-stringify "2.0.7"
