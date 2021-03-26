@@ -46,7 +46,7 @@
     "class-validator": "0.13.1"
   },
   "devDependencies": {
-    "@nestjs/cli": "7.5.6",
+    "@nestjs/cli": "7.6.0",
     "@nestjs/common": "7.6.15",
     "@nestjs/core": "7.6.15",
     "@nestjs/schematics": "7.3.1",
