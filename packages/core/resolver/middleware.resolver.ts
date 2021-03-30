@@ -4,9 +4,10 @@ import { ClassResolveOptions } from './interface/class-resolve-options';
 import { DiscordMiddleware } from '../decorator/interface/discord-middleware';
 import { ClientEvents } from 'discord.js';
 import { DiscordMiddlewareInstance } from './interface/discord-middleware-instance';
+import { ClassResolver } from './interface/class-resolver';
 
 @Injectable()
-export class MiddlewareResolver {
+export class MiddlewareResolver implements ClassResolver {
   private readonly middlewareList: DiscordMiddlewareInstance[] = [];
 
   constructor(

@@ -11,6 +11,7 @@ import { OnEventResolver } from '../resolver/on-event.resolver';
 import { OnceEventResolver } from '../resolver/once-event.resolver';
 import { ClientResolver } from '../resolver/client.resolver';
 import { TransformParamResolver } from '../resolver/transform-param.resolver';
+import { ClassResolver } from '../resolver/interface/class-resolver';
 
 @Injectable()
 export class DiscordResolverService implements OnModuleInit {
