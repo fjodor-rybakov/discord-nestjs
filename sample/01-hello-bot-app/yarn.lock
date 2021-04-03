@@ -2067,10 +2067,10 @@ dir-glob@^3.0.1:
   dependencies:
     path-type "^4.0.0"
 
-discord-nestjs@1.1.10:
-  version "1.1.10"
-  resolved "https://registry.yarnpkg.com/discord-nestjs/-/discord-nestjs-1.1.10.tgz#0d06bbc6dedf1646cca3cd9ea5be2c0fc496b0e0"
-  integrity sha512-7HUEbNmCXeku4+NOL/jjUAAtv1sEpqrEOIcHlvPs6ENdxs4dqlA0uYdcsgGgoP9O07uIWZOJVpePEpjcKZR0gA==
+discord-nestjs@1.1.11:
+  version "1.1.11"
+  resolved "https://registry.yarnpkg.com/discord-nestjs/-/discord-nestjs-1.1.11.tgz#a72377825ef14fc2d4999a323abacbb3ac3069e9"
+  integrity sha512-2AitneFJgNLaGx8I3SqlHrtW1a2BCv5RyRnYCMtVtkg6MjSHUqO6Uq5fhJz2qmSY5XwlnVyL+7vS8I0Bq3ztPg==
   dependencies:
     class-transformer "0.4.0"
     class-validator "0.13.1"
