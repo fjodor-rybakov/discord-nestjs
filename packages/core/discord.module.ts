@@ -22,6 +22,8 @@ import { TransformProvider } from './provider/transform.provider';
 import { ValidationProvider } from './provider/validation.provider';
 import { TransformParamResolver } from './resolver/transform-param.resolver';
 import { DiscordCatchService } from './service/discord-catch.service';
+import { GuardClassResolver } from './resolver/guard-class.resolver';
+import { PipeClassResolver } from './resolver/pipe-class.resolver';
 
 @Module({
   imports: [DiscoveryModule],
@@ -50,6 +52,8 @@ export class DiscordModule {
         ClientResolver,
         TransformProvider,
         ValidationProvider,
+        GuardClassResolver,
+        PipeClassResolver
       ],
       exports: [DiscordClientProvider, TransformProvider, ValidationProvider],
     };
@@ -78,7 +82,9 @@ export class DiscordModule {
         DiscordService,
         ClientResolver,
         TransformProvider,
-        ValidationProvider
+        ValidationProvider,
+        GuardClassResolver,
+        PipeClassResolver
       ],
       exports: [DiscordClientProvider, TransformProvider, ValidationProvider],
     };

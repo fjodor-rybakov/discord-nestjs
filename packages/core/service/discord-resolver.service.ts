@@ -11,7 +11,8 @@ import { OnEventResolver } from '../resolver/on-event.resolver';
 import { OnceEventResolver } from '../resolver/once-event.resolver';
 import { ClientResolver } from '../resolver/client.resolver';
 import { TransformParamResolver } from '../resolver/transform-param.resolver';
-import { ClassResolver } from '../resolver/interface/class-resolver';
+import { GuardClassResolver } from '../resolver/guard-class.resolver';
+import { PipeClassResolver } from '../resolver/pipe-class.resolver';
 
 @Injectable()
 export class DiscordResolverService implements OnModuleInit {
@@ -27,6 +28,8 @@ export class DiscordResolverService implements OnModuleInit {
     private readonly onceMessageResolver: OnceEventResolver,
     private readonly clientResolver: ClientResolver,
     private readonly transformParamResolver: TransformParamResolver,
+    private readonly guardClassResolver: GuardClassResolver,
+    private readonly pipeClassResolver: PipeClassResolver,
   ) {
   }
 
@@ -37,6 +40,12 @@ export class DiscordResolverService implements OnModuleInit {
   }
 
   private resolveDecorators(providers: InstanceWrapper[], controllers: InstanceWrapper[]): Promise<void[][]> {
+    const classResolvers = [
+      this.clientResolver,
+      this.middlewareResolver,
+      this.guardClassResolver,
+      this.pipeClassResolver
+    ];
     const methodResolvers = [
       this.guardResolver,
       this.onMessageResolver,
@@ -46,13 +55,14 @@ export class DiscordResolverService implements OnModuleInit {
       this.paramResolver,
       this.transformParamResolver
     ];
-    return Promise.all(providers.concat(controllers).map((instanceWrapper: InstanceWrapper) => {
+    return Promise.all(providers.concat(controllers).map(async (instanceWrapper: InstanceWrapper) => {
       const { instance } = instanceWrapper;
       if (!instance || !IsObject(instance)) {
         return;
       }
-      this.clientResolver.resolve({ instance });
-      this.middlewareResolver.resolve({ instance });
+      for await (const resolver of classResolvers) {
+        await resolver.resolve({ instance });
+      }
       const methodNames = this.scanMetadata(instance);
       return Promise.all(methodNames.map(async (methodName: string) => {
         for await (const resolver of methodResolvers) {

@@ -55,11 +55,11 @@ export class ReflectMetadataProvider implements MetadataProvider {
     return Reflect.getMetadata(DecoratorConstant.ONCE_DECORATOR, instance, methodName);
   }
 
-  getUseGuardsDecoratorMetadata(instance: unknown, methodName: string): GuardType[] {
+  getUseGuardsDecoratorMetadata(instance: unknown, methodName?: string): GuardType[] {
     return Reflect.getMetadata(DecoratorConstant.USE_GUARDS_DECORATOR, instance, methodName);
   }
 
-  getUsePipesDecoratorMetadata(instance: unknown, methodName: string): PipeType[] {
+  getUsePipesDecoratorMetadata(instance: unknown, methodName?: string): PipeType[] {
     return Reflect.getMetadata(DecoratorConstant.USE_PIPES_DECORATOR, instance, methodName);
   }
 

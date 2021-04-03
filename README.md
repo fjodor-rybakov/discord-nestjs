@@ -447,6 +447,8 @@ Output:
 User was created!: Id: 261863053329563648, Ivan-Ivanovich-Ivanov, Age: 22
 ```
 
+You can also set `@UsePipes` decorator on class. In this case, the decorator is applied to all methods in the class.
+
 Transform alias to user class
 
 #### 💡 Example
@@ -606,6 +608,8 @@ export class BotGateway {
   }
 }
 ```
+
+You can also set `@UseGuards` decorator on class. In this case, the decorator is applied to all methods in the class.
 
 ### ℹ️ Middleware <a name="Middleware"></a>
 

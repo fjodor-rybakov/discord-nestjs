@@ -33,12 +33,12 @@ export interface MetadataProvider {
   /**
    * Getting metadata from @UsePipes decorator
    */
-  getUsePipesDecoratorMetadata(instance: unknown, methodName: string): PipeType[];
+  getUsePipesDecoratorMetadata(instance: unknown, methodName?: string): PipeType[];
 
   /**
    * Getting metadata from @UseGuards decorator
    */
-  getUseGuardsDecoratorMetadata(instance: unknown, methodName: string): GuardType[];
+  getUseGuardsDecoratorMetadata(instance: unknown, methodName?: string): GuardType[];
 
   /**
    * Getting metadata from @UseGuards decorator

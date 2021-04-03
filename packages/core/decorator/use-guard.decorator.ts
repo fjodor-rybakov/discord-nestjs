@@ -6,13 +6,17 @@ import { GuardType } from '../util/type/guard-type';
  */
 export const UseGuards = (
   ...guards: GuardType[]
-): MethodDecorator => {
+): MethodDecorator & ClassDecorator => {
   return (
-    target: Record<string, any>,
-    propertyKey: string | symbol,
-    descriptor: PropertyDescriptor,
-  ): PropertyDescriptor => {
-    Reflect.defineMetadata(DecoratorConstant.USE_GUARDS_DECORATOR, guards, target, propertyKey);
-    return descriptor;
+    target: any,
+    propertyKey?: string | symbol,
+    descriptor?: PropertyDescriptor,
+  ) => {
+    if (descriptor) {
+      Reflect.defineMetadata(DecoratorConstant.USE_GUARDS_DECORATOR, guards, target, propertyKey);
+      return descriptor;
+    }
+    Reflect.defineMetadata(DecoratorConstant.USE_GUARDS_DECORATOR, guards, target.prototype);
+    return target;
   };
 };
