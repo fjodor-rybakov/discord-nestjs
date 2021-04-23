@@ -103,7 +103,7 @@ import { BotGateway } from './bot-gateway';
           name: 'some',
           channels: ['745366352386326572'],
           users: ['261863053329563648'],
-          channelType: ['dm']
+          channelType: ['dm'],
         },
       ],
       webhook: {
@@ -141,7 +141,7 @@ import { BotGateway } from './bot-gateway';
             name: 'some',
             channels: ['745366352386326572'],
             users: ['261863053329563648'],
-            channelType: ['dm']
+            channelType: ['dm'],
           },
         ],
         webhook: {
@@ -200,7 +200,7 @@ export class DiscordConfigService implements DiscordOptionsFactory {
           name: 'some',
           channels: ['745366352386326572'],
           users: ['261863053329563648'],
-          channelType: ['dm']
+          channelType: ['dm'],
         },
       ],
       webhook: {
