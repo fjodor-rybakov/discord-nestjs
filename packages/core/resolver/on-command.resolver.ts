@@ -148,8 +148,9 @@ export class OnCommandResolver implements MethodResolver {
   }
 
   private getCommandName(messageContent: string, prefixLength: number): string {
-    const messageParts = messageContent.split(' ')[0];
-    return messageContent.slice(prefixLength, messageParts.length);
+    const messageWithoutPrefix = messageContent.slice(prefixLength);
+    const command = messageWithoutPrefix.split(' ').shift()
+    return command || "";
   }
 
   private async removeMessageFromChannel(message: Message): Promise<void> {
