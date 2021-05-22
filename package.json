@@ -47,7 +47,7 @@
   },
   "devDependencies": {
     "@nestjs/cli": "7.6.0",
-    "@nestjs/common": "7.6.15",
+    "@nestjs/common": "7.6.17",
     "@nestjs/core": "7.6.17",
     "@nestjs/schematics": "7.3.1",
     "@types/node": "15.3.1",
