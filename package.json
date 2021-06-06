@@ -62,7 +62,7 @@
     "prettier": "2.3.1",
     "reflect-metadata": "0.1.13",
     "rimraf": "3.0.2",
-    "rxjs": "6.6.7",
+    "rxjs": "7.1.0",
     "ts-loader": "9.2.3",
     "ts-node": "9.1.1",
     "tsconfig-paths": "3.9.0",
@@ -75,7 +75,7 @@
     "class-validator": "0.13.1",
     "discord.js": "^12.5.1",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^6.6.3"
+    "rxjs": "^6.6.3 || ^7.0.0"
   },
   "husky": {
     "hooks": {
