@@ -12,11 +12,10 @@ export class TransformParamResolver {
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
     private readonly paramResolver: ParamResolver,
-  ) {
-  }
+  ) {}
 
   resolve(options: MethodResolveOptions): void {
-    const {instance, methodName} = options;
+    const { instance, methodName } = options;
     const paramType = this.paramResolver.getContentType({
       instance,
       methodName,
@@ -24,7 +23,10 @@ export class TransformParamResolver {
     if (!paramType) {
       return;
     }
-    const properties = defaultMetadataStorage.getExposedProperties(paramType, 1);
+    const properties = defaultMetadataStorage.getExposedProperties(
+      paramType,
+      1,
+    );
     if (properties.length === 0) {
       return;
     }
@@ -34,37 +36,40 @@ export class TransformParamResolver {
         paramType.prototype,
         propertyKey,
       );
-      const metadataArgRange = this.metadataProvider.getArgRangeDecoratorMetadata(
-        paramType.prototype,
-        propertyKey,
-      );
-      if (metadataArgNum) {
-        const argNum = metadataArgNum(last);
-        const metadataTransformToUser = this.metadataProvider.getTransformToUserDecoratorMetadata(
+      const metadataArgRange =
+        this.metadataProvider.getArgRangeDecoratorMetadata(
           paramType.prototype,
           propertyKey,
         );
+      if (metadataArgNum) {
+        const argNum = metadataArgNum(last);
+        const metadataTransformToUser =
+          this.metadataProvider.getTransformToUserDecoratorMetadata(
+            paramType.prototype,
+            propertyKey,
+          );
         this.transformParamList.push({
           instance: paramType,
           propertyKey,
           last,
           argNum,
-          transformToUser: metadataTransformToUser
+          transformToUser: metadataTransformToUser,
         });
         last = argNum.position;
       }
       if (metadataArgRange) {
         const argRange = metadataArgRange(last);
-        const metadataTransformToUser = this.metadataProvider.getTransformToUserDecoratorMetadata(
-          paramType.prototype,
-          propertyKey,
-        );
+        const metadataTransformToUser =
+          this.metadataProvider.getTransformToUserDecoratorMetadata(
+            paramType.prototype,
+            propertyKey,
+          );
         this.transformParamList.push({
           instance: paramType,
           propertyKey,
           last,
           argRange,
-          transformToUser: metadataTransformToUser
+          transformToUser: metadataTransformToUser,
         });
         last = argRange.toPosition;
       }
@@ -72,15 +77,18 @@ export class TransformParamResolver {
   }
 
   getTransformParamByTarget(classType: Type): TransformParamList[] {
-    return this.transformParamList.filter((item: TransformParamList) => item.instance === classType);
+    return this.transformParamList.filter(
+      (item: TransformParamList) => item.instance === classType,
+    );
   }
 
   getTransformParamByTargetAndProperty(
     classType: Type,
-    propertyKey: string
+    propertyKey: string,
   ): TransformParamList {
     return this.transformParamList.find(
-      (item: TransformParamList) => item.instance === classType && item.propertyKey === propertyKey
+      (item: TransformParamList) =>
+        item.instance === classType && item.propertyKey === propertyKey,
     );
   }
 }

@@ -1,4 +1,9 @@
-import { Inject, Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  Logger,
+  OnApplicationBootstrap,
+} from '@nestjs/common';
 import { Client, WebhookClient } from 'discord.js';
 import { DiscordModuleOption } from '../interface/discord-module-option';
 import { DiscordModuleCommandOptions } from '../interface/discord-module-command-options';
@@ -23,7 +28,7 @@ export class DiscordService implements OnApplicationBootstrap {
 
   constructor(
     @Inject(ModuleConstant.DISCORD_MODULE_OPTIONS)
-    options: DiscordModuleOption
+    options: DiscordModuleOption,
   ) {
     const {
       token,
@@ -51,7 +56,7 @@ export class DiscordService implements OnApplicationBootstrap {
     try {
       await this.client.login(this.clientToken);
     } catch (err) {
-      this.logger.error("Failed to connect to Discord API");
+      this.logger.error('Failed to connect to Discord API');
       this.logger.error(err);
     }
   }
@@ -95,7 +100,7 @@ export class DiscordService implements OnApplicationBootstrap {
   }
 
   private createWebhookClient(
-    webhookOptions: DiscordModuleWebhookOptions
+    webhookOptions: DiscordModuleWebhookOptions,
   ): WebhookClient {
     if (webhookOptions) {
       return new WebhookClient(

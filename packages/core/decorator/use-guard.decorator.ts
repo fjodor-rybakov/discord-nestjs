@@ -13,10 +13,19 @@ export const UseGuards = (
     descriptor?: PropertyDescriptor,
   ) => {
     if (descriptor) {
-      Reflect.defineMetadata(DecoratorConstant.USE_GUARDS_DECORATOR, guards, target, propertyKey);
+      Reflect.defineMetadata(
+        DecoratorConstant.USE_GUARDS_DECORATOR,
+        guards,
+        target,
+        propertyKey,
+      );
       return descriptor;
     }
-    Reflect.defineMetadata(DecoratorConstant.USE_GUARDS_DECORATOR, guards, target.prototype);
+    Reflect.defineMetadata(
+      DecoratorConstant.USE_GUARDS_DECORATOR,
+      guards,
+      target.prototype,
+    );
     return target;
   };
 };

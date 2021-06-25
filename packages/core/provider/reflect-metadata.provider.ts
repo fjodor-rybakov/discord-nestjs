@@ -15,55 +15,137 @@ import { TransformToUserOptions } from '../decorator/interface/transform-to-user
 
 @Injectable()
 export class ReflectMetadataProvider implements MetadataProvider {
-  getArgNumDecoratorMetadata(instance: unknown, propertyKey: string): (last?: number) => ArgNumOptions {
-    return Reflect.getMetadata(DecoratorConstant.ARG_NUM_DECORATOR, instance, propertyKey);
+  getArgNumDecoratorMetadata(
+    instance: unknown,
+    propertyKey: string,
+  ): (last?: number) => ArgNumOptions {
+    return Reflect.getMetadata(
+      DecoratorConstant.ARG_NUM_DECORATOR,
+      instance,
+      propertyKey,
+    );
   }
 
-  getArgRangeDecoratorMetadata(instance: unknown, propertyKey: string): (last?: number) => ArgRangeOptions {
-    return Reflect.getMetadata(DecoratorConstant.ARG_RANGE_DECORATOR, instance, propertyKey);
+  getArgRangeDecoratorMetadata(
+    instance: unknown,
+    propertyKey: string,
+  ): (last?: number) => ArgRangeOptions {
+    return Reflect.getMetadata(
+      DecoratorConstant.ARG_RANGE_DECORATOR,
+      instance,
+      propertyKey,
+    );
   }
 
-  getClientDecoratorMetadata(instance: unknown, propertyKey: string): ClientDecoratorOptions {
-    return Reflect.getMetadata(DecoratorConstant.CLIENT_DECORATOR, instance, propertyKey);
+  getClientDecoratorMetadata(
+    instance: unknown,
+    propertyKey: string,
+  ): ClientDecoratorOptions {
+    return Reflect.getMetadata(
+      DecoratorConstant.CLIENT_DECORATOR,
+      instance,
+      propertyKey,
+    );
   }
 
-  getContentDecoratorMetadata(instance: unknown, methodName: string): DiscordParamDecoratorType {
-    return Reflect.getMetadata(DecoratorConstant.CONTENT_DECORATOR, instance, methodName);
+  getContentDecoratorMetadata(
+    instance: unknown,
+    methodName: string,
+  ): DiscordParamDecoratorType {
+    return Reflect.getMetadata(
+      DecoratorConstant.CONTENT_DECORATOR,
+      instance,
+      methodName,
+    );
   }
 
-  getContextDecoratorMetadata(instance: unknown, methodName: string): DiscordParamDecoratorType {
-    return Reflect.getMetadata(DecoratorConstant.CONTEXT_DECORATOR, instance, methodName);
+  getContextDecoratorMetadata(
+    instance: unknown,
+    methodName: string,
+  ): DiscordParamDecoratorType {
+    return Reflect.getMetadata(
+      DecoratorConstant.CONTEXT_DECORATOR,
+      instance,
+      methodName,
+    );
   }
 
   getParamTypesMetadata(instance: unknown, methodName: string): any[] {
     return Reflect.getMetadata('design:paramtypes', instance, methodName);
   }
 
-  getMiddlewareDecoratorMetadata(instance: DiscordMiddleware): MiddlewareOptions {
-    return Reflect.getMetadata(DecoratorConstant.MIDDLEWARE_DECORATOR, instance);
+  getMiddlewareDecoratorMetadata(
+    instance: DiscordMiddleware,
+  ): MiddlewareOptions {
+    return Reflect.getMetadata(
+      DecoratorConstant.MIDDLEWARE_DECORATOR,
+      instance,
+    );
   }
 
-  getOnCommandDecoratorMetadata(instance: unknown, methodName: string): OnCommandDecoratorOptions {
-    return Reflect.getMetadata(DecoratorConstant.ON_COMMAND_DECORATOR, instance, methodName);
+  getOnCommandDecoratorMetadata(
+    instance: unknown,
+    methodName: string,
+  ): OnCommandDecoratorOptions {
+    return Reflect.getMetadata(
+      DecoratorConstant.ON_COMMAND_DECORATOR,
+      instance,
+      methodName,
+    );
   }
 
-  getOnMessageDecoratorMetadata(instance: unknown, methodName: string): OnDecoratorOptions {
-    return Reflect.getMetadata(DecoratorConstant.ON_DECORATOR, instance, methodName);
+  getOnMessageDecoratorMetadata(
+    instance: unknown,
+    methodName: string,
+  ): OnDecoratorOptions {
+    return Reflect.getMetadata(
+      DecoratorConstant.ON_DECORATOR,
+      instance,
+      methodName,
+    );
   }
 
-  getOnceMessageDecoratorMetadata(instance: unknown, methodName: string): OnDecoratorOptions {
-    return Reflect.getMetadata(DecoratorConstant.ONCE_DECORATOR, instance, methodName);
+  getOnceMessageDecoratorMetadata(
+    instance: unknown,
+    methodName: string,
+  ): OnDecoratorOptions {
+    return Reflect.getMetadata(
+      DecoratorConstant.ONCE_DECORATOR,
+      instance,
+      methodName,
+    );
   }
 
-  getUseGuardsDecoratorMetadata(instance: unknown, methodName?: string): GuardType[] {
-    return Reflect.getMetadata(DecoratorConstant.USE_GUARDS_DECORATOR, instance, methodName);
+  getUseGuardsDecoratorMetadata(
+    instance: unknown,
+    methodName?: string,
+  ): GuardType[] {
+    return Reflect.getMetadata(
+      DecoratorConstant.USE_GUARDS_DECORATOR,
+      instance,
+      methodName,
+    );
   }
 
-  getUsePipesDecoratorMetadata(instance: unknown, methodName?: string): PipeType[] {
-    return Reflect.getMetadata(DecoratorConstant.USE_PIPES_DECORATOR, instance, methodName);
+  getUsePipesDecoratorMetadata(
+    instance: unknown,
+    methodName?: string,
+  ): PipeType[] {
+    return Reflect.getMetadata(
+      DecoratorConstant.USE_PIPES_DECORATOR,
+      instance,
+      methodName,
+    );
   }
 
-  getTransformToUserDecoratorMetadata(instance: unknown, methodName: string): TransformToUserOptions {
-    return Reflect.getMetadata(DecoratorConstant.TRANSFORM_TO_USER_DECORATOR, instance, methodName);
+  getTransformToUserDecoratorMetadata(
+    instance: unknown,
+    methodName: string,
+  ): TransformToUserOptions {
+    return Reflect.getMetadata(
+      DecoratorConstant.TRANSFORM_TO_USER_DECORATOR,
+      instance,
+      methodName,
+    );
   }
 }

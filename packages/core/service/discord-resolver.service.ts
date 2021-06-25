@@ -30,21 +30,24 @@ export class DiscordResolverService implements OnModuleInit {
     private readonly transformParamResolver: TransformParamResolver,
     private readonly guardClassResolver: GuardClassResolver,
     private readonly pipeClassResolver: PipeClassResolver,
-  ) {
-  }
+  ) {}
 
   async onModuleInit(): Promise<void> {
     const providers: InstanceWrapper[] = this.discoveryService.getProviders();
-    const controllers: InstanceWrapper[] = this.discoveryService.getControllers();
+    const controllers: InstanceWrapper[] =
+      this.discoveryService.getControllers();
     await this.resolveDecorators(providers, controllers);
   }
 
-  private resolveDecorators(providers: InstanceWrapper[], controllers: InstanceWrapper[]): Promise<void[][]> {
+  private resolveDecorators(
+    providers: InstanceWrapper[],
+    controllers: InstanceWrapper[],
+  ): Promise<void[][]> {
     const classResolvers = [
       this.clientResolver,
       this.middlewareResolver,
       this.guardClassResolver,
-      this.pipeClassResolver
+      this.pipeClassResolver,
     ];
     const methodResolvers = [
       this.guardResolver,
@@ -53,26 +56,32 @@ export class DiscordResolverService implements OnModuleInit {
       this.onceMessageResolver,
       this.pipeResolver,
       this.paramResolver,
-      this.transformParamResolver
+      this.transformParamResolver,
     ];
-    return Promise.all(providers.concat(controllers).map(async (instanceWrapper: InstanceWrapper) => {
-      const { instance } = instanceWrapper;
-      if (!instance || !IsObject(instance)) {
-        return;
-      }
-      for await (const resolver of classResolvers) {
-        await resolver.resolve({ instance });
-      }
-      const methodNames = this.scanMetadata(instance);
-      return Promise.all(methodNames.map(async (methodName: string) => {
-        for await (const resolver of methodResolvers) {
-          await resolver.resolve({
-            instance,
-            methodName,
-          });
-        }
-      }));
-    }));
+    return Promise.all(
+      providers
+        .concat(controllers)
+        .map(async (instanceWrapper: InstanceWrapper) => {
+          const { instance } = instanceWrapper;
+          if (!instance || !IsObject(instance)) {
+            return;
+          }
+          for await (const resolver of classResolvers) {
+            await resolver.resolve({ instance });
+          }
+          const methodNames = this.scanMetadata(instance);
+          return Promise.all(
+            methodNames.map(async (methodName: string) => {
+              for await (const resolver of methodResolvers) {
+                await resolver.resolve({
+                  instance,
+                  methodName,
+                });
+              }
+            }),
+          );
+        }),
+    );
   }
 
   private scanMetadata(instance: any): string[] {

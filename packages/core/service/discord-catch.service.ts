@@ -5,16 +5,14 @@ import { DiscordAPIError, Message } from 'discord.js';
 
 @Injectable()
 export class DiscordCatchService {
-  constructor(
-    private readonly validationProvider: ValidationProvider
-  ) {
-  }
+  constructor(private readonly validationProvider: ValidationProvider) {}
 
   async pipeExceptionFactory(
     err: Error | ValidationError[] | DiscordAPIError,
-    message: Message
+    message: Message,
   ): Promise<void> {
-    const messageEmbed = this.validationProvider.getErrorMessage() ??
+    const messageEmbed =
+      this.validationProvider.getErrorMessage() ??
       this.validationProvider.getDefaultErrorMessage(err, message.content);
     await message.reply(messageEmbed);
   }

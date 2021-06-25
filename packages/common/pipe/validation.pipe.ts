@@ -12,14 +12,22 @@ export class ValidationPipe implements DiscordPipeTransform {
 
   constructor(
     @Optional()
-    private readonly validateOptions?: ValidationOptionsPipe
-  ) {
-  }
+    private readonly validateOptions?: ValidationOptionsPipe,
+  ) {}
 
-  async transform(event: keyof ClientEvents, [context]: [Message], content?: any): Promise<any> {
-    const result = await validate(content, this.validateOptions?.validatorOptions);
+  async transform(
+    event: keyof ClientEvents,
+    [context]: [Message],
+    content?: any,
+  ): Promise<any> {
+    const result = await validate(
+      content,
+      this.validateOptions?.validatorOptions,
+    );
     if (this.validateOptions && this.validateOptions.exceptionFactory) {
-      this.validationProvider.setErrorMessage(this.validateOptions.exceptionFactory(result, context));
+      this.validationProvider.setErrorMessage(
+        this.validateOptions.exceptionFactory(result, context),
+      );
     }
     if (result.length > 0) {
       throw result;

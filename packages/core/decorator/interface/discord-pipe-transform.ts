@@ -9,6 +9,6 @@ export interface DiscordPipeTransform<T = any, D = any> {
     event: keyof ClientEvents,
     context: T,
     content?: D,
-    type?: Type<D>
+    type?: Type<D>,
   ): any | Promise<any>;
 }

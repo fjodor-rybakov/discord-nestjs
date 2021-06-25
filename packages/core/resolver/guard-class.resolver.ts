@@ -11,21 +11,26 @@ export class GuardClassResolver implements ClassResolver {
     private readonly guardResolver: GuardResolver,
     private readonly metadataProvide: ReflectMetadataProvider,
     private readonly metadataScanner: MetadataScanner,
-  ) {
-  }
+  ) {}
 
   async resolve(options: ClassResolveOptions): Promise<void> {
-    const {instance} = options;
-    const metadata = this.metadataProvide.getUseGuardsDecoratorMetadata(instance);
+    const { instance } = options;
+    const metadata =
+      this.metadataProvide.getUseGuardsDecoratorMetadata(instance);
     if (!metadata) {
       return;
     }
-    const allClassMethods = this.metadataScanner.getAllFilteredMethodNames(Object.getPrototypeOf(instance));
+    const allClassMethods = this.metadataScanner.getAllFilteredMethodNames(
+      Object.getPrototypeOf(instance),
+    );
     for await (const methodName of allClassMethods) {
-      await this.guardResolver.addGuard({
-        instance,
-        methodName
-      }, metadata);
+      await this.guardResolver.addGuard(
+        {
+          instance,
+          methodName,
+        },
+        metadata,
+      );
     }
   }
 }

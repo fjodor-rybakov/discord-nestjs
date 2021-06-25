@@ -13,10 +13,19 @@ export const UsePipes = (
     descriptor?: PropertyDescriptor,
   ) => {
     if (descriptor) {
-      Reflect.defineMetadata(DecoratorConstant.USE_PIPES_DECORATOR, pipes, target, propertyKey);
+      Reflect.defineMetadata(
+        DecoratorConstant.USE_PIPES_DECORATOR,
+        pipes,
+        target,
+        propertyKey,
+      );
       return descriptor;
     }
-    Reflect.defineMetadata(DecoratorConstant.USE_PIPES_DECORATOR, pipes, target.prototype);
+    Reflect.defineMetadata(
+      DecoratorConstant.USE_PIPES_DECORATOR,
+      pipes,
+      target.prototype,
+    );
     return target;
   };
 };

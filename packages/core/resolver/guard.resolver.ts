@@ -17,8 +17,7 @@ export class GuardResolver implements MethodResolver {
     private readonly metadataProvider: ReflectMetadataProvider,
     private readonly moduleRef: ModuleRef,
     private readonly discordService: DiscordService,
-  ) {
-  }
+  ) {}
 
   async resolve(options: MethodResolveOptions): Promise<void> {
     const { instance, methodName } = options;
@@ -27,14 +26,27 @@ export class GuardResolver implements MethodResolver {
       methodName,
     );
     if (!guards) {
-      const onCommandMetadata = this.metadataProvider.getOnCommandDecoratorMetadata(instance, methodName);
-      const onMessageMetadata = this.metadataProvider.getOnMessageDecoratorMetadata(instance, methodName);
-      const onceMessageMetadata = this.metadataProvider.getOnceMessageDecoratorMetadata(instance, methodName);
+      const onCommandMetadata =
+        this.metadataProvider.getOnCommandDecoratorMetadata(
+          instance,
+          methodName,
+        );
+      const onMessageMetadata =
+        this.metadataProvider.getOnMessageDecoratorMetadata(
+          instance,
+          methodName,
+        );
+      const onceMessageMetadata =
+        this.metadataProvider.getOnceMessageDecoratorMetadata(
+          instance,
+          methodName,
+        );
       if (!onCommandMetadata && !onMessageMetadata && !onceMessageMetadata) {
         return;
       }
       const guardsListForMethod = this.guardList.find(
-        (item: DiscordGuardList) => item.methodName === methodName && item.instance === instance,
+        (item: DiscordGuardList) =>
+          item.methodName === methodName && item.instance === instance,
       );
       if (guardsListForMethod) {
         return;
@@ -47,30 +59,35 @@ export class GuardResolver implements MethodResolver {
     await this.addGuard(options, guards);
   }
 
-  async addGuard(options: MethodResolveOptions, guards: GuardType[]): Promise<void> {
+  async addGuard(
+    options: MethodResolveOptions,
+    guards: GuardType[],
+  ): Promise<void> {
     const { instance, methodName } = options;
     const guardListForMethod: DiscordGuard[] = [];
-    for await(const guard of guards) {
-      const classType = typeof guard === 'function' ? guard : guard.constructor as Type;
+    for await (const guard of guards) {
+      const classType =
+        typeof guard === 'function' ? guard : (guard.constructor as Type);
       const newGuardInstance = await this.moduleRef.create(classType);
       guardListForMethod.push(newGuardInstance);
     }
     this.guardList.push({
       instance,
       methodName,
-      guardList: guardListForMethod
+      guardList: guardListForMethod,
     });
   }
 
   async applyGuard(options: DiscordGuardOptions): Promise<boolean> {
     const { instance, methodName, event, context } = options;
     const guardListForMethod = this.guardList.find(
-      (item: DiscordGuardList) => item.methodName === methodName && item.instance === instance
+      (item: DiscordGuardList) =>
+        item.methodName === methodName && item.instance === instance,
     );
     if (!guardListForMethod) {
       return true;
     }
-    for await(const guard of guardListForMethod.guardList) {
+    for await (const guard of guardListForMethod.guardList) {
       const result = await guard.canActive(event, context);
       if (!result) {
         return false;

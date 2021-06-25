@@ -10,7 +10,12 @@ export const On = (options: OnDecoratorOptions): MethodDecorator => {
     propertyKey: string | symbol,
     descriptor: PropertyDescriptor,
   ): PropertyDescriptor => {
-    Reflect.defineMetadata(DecoratorConstant.ON_DECORATOR, options, target, propertyKey);
+    Reflect.defineMetadata(
+      DecoratorConstant.ON_DECORATOR,
+      options,
+      target,
+      propertyKey,
+    );
     return descriptor;
   };
 };

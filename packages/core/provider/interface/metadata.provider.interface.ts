@@ -13,17 +13,26 @@ export interface MetadataProvider {
   /**
    * Getting metadata from @Command decorator
    */
-  getOnCommandDecoratorMetadata(instance: unknown, methodName: string): OnCommandDecoratorOptions;
+  getOnCommandDecoratorMetadata(
+    instance: unknown,
+    methodName: string,
+  ): OnCommandDecoratorOptions;
 
   /**
    * Getting metadata from @On decorator
    */
-  getOnMessageDecoratorMetadata(instance: unknown, methodName: string): OnDecoratorOptions;
+  getOnMessageDecoratorMetadata(
+    instance: unknown,
+    methodName: string,
+  ): OnDecoratorOptions;
 
   /**
    * Getting metadata from @Once decorator
    */
-  getOnceMessageDecoratorMetadata(instance: unknown, methodName: string): OnDecoratorOptions;
+  getOnceMessageDecoratorMetadata(
+    instance: unknown,
+    methodName: string,
+  ): OnDecoratorOptions;
 
   /**
    * Getting metadata from @Middleware decorator
@@ -33,42 +42,66 @@ export interface MetadataProvider {
   /**
    * Getting metadata from @UsePipes decorator
    */
-  getUsePipesDecoratorMetadata(instance: unknown, methodName?: string): PipeType[];
+  getUsePipesDecoratorMetadata(
+    instance: unknown,
+    methodName?: string,
+  ): PipeType[];
 
   /**
    * Getting metadata from @UseGuards decorator
    */
-  getUseGuardsDecoratorMetadata(instance: unknown, methodName?: string): GuardType[];
+  getUseGuardsDecoratorMetadata(
+    instance: unknown,
+    methodName?: string,
+  ): GuardType[];
 
   /**
    * Getting metadata from @UseGuards decorator
    */
-  getClientDecoratorMetadata(instance: unknown, propertyKey: string): ClientDecoratorOptions;
+  getClientDecoratorMetadata(
+    instance: unknown,
+    propertyKey: string,
+  ): ClientDecoratorOptions;
 
   /**
    * Getting metadata from @ArgNum decorator
    */
-  getArgNumDecoratorMetadata(instance: unknown, propertyKey: string): (last: number) => ArgNumOptions;
+  getArgNumDecoratorMetadata(
+    instance: unknown,
+    propertyKey: string,
+  ): (last: number) => ArgNumOptions;
 
   /**
    * Getting metadata from @ArgRange decorator
    */
-  getArgRangeDecoratorMetadata(instance: unknown, propertyKey: string): (last: number) => ArgRangeOptions;
+  getArgRangeDecoratorMetadata(
+    instance: unknown,
+    propertyKey: string,
+  ): (last: number) => ArgRangeOptions;
 
   /**
    * Getting metadata from @Content decorator
    */
-  getTransformToUserDecoratorMetadata(instance: unknown, methodName: string): TransformToUserOptions;
+  getTransformToUserDecoratorMetadata(
+    instance: unknown,
+    methodName: string,
+  ): TransformToUserOptions;
 
   /**
    * Getting metadata from @Content decorator
    */
-  getContentDecoratorMetadata(instance: unknown, methodName: string): DiscordParamDecoratorType;
+  getContentDecoratorMetadata(
+    instance: unknown,
+    methodName: string,
+  ): DiscordParamDecoratorType;
 
   /**
    * Getting metadata from @Context decorator
    */
-  getContextDecoratorMetadata(instance: unknown, methodName: string): DiscordParamDecoratorType;
+  getContextDecoratorMetadata(
+    instance: unknown,
+    methodName: string,
+  ): DiscordParamDecoratorType;
 
   /**
    * Getting metadata from @Context decorator

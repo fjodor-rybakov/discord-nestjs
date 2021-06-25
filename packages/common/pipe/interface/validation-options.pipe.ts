@@ -13,6 +13,6 @@ export interface ValidationOptionsPipe {
    */
   exceptionFactory?: (
     errors: Error | ValidationError[] | DiscordAPIError,
-    message: Message
+    message: Message,
   ) => MessageEmbed;
 }

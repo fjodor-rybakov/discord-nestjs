@@ -32,7 +32,10 @@ export class OnCommandResolver implements MethodResolver {
 
   resolve(options: MethodResolveOptions): void {
     const { instance, methodName } = options;
-    const metadata = this.metadataProvider.getOnCommandDecoratorMetadata(instance, methodName);
+    const metadata = this.metadataProvider.getOnCommandDecoratorMetadata(
+      instance,
+      methodName,
+    );
     if (!metadata) {
       return;
     }
@@ -43,7 +46,7 @@ export class OnCommandResolver implements MethodResolver {
       isRemovePrefix = true,
       isIgnoreBotMessage = true,
       isRemoveCommandName = true,
-      isRemoveMessage = false
+      isRemoveMessage = false,
     } = metadata;
     this.logger.log(`Initialize command: ${name}`);
     this.discordService.getClient().on('message', async (message: Message) => {
@@ -69,7 +72,13 @@ export class OnCommandResolver implements MethodResolver {
         return; // not suitable for handler
       }
       const commandOptions = this.getCommandOptions(metadata);
-      if (!this.discordAccessService.isAllowCommand(commandName, message, commandOptions)) {
+      if (
+        !this.discordAccessService.isAllowCommand(
+          commandName,
+          message,
+          commandOptions,
+        )
+      ) {
         return;
       }
 
@@ -99,7 +108,7 @@ export class OnCommandResolver implements MethodResolver {
         instance,
         methodName,
         event: eventName,
-        context
+        context,
       });
       if (!isAllowFromGuards) {
         return;
@@ -116,7 +125,7 @@ export class OnCommandResolver implements MethodResolver {
           event: eventName,
           context,
           content: message.content,
-          type: paramType
+          type: paramType,
         });
         messageContent = pipeMessageContent ?? messageContent;
       } catch (err) {
@@ -129,13 +138,13 @@ export class OnCommandResolver implements MethodResolver {
         instance,
         methodName,
         context,
-        content: messageContent
+        content: messageContent,
       });
       const handlerArgs = argsFromDecorator ?? context;
       await this.discordHandlerService.callHandler(
         instance,
         methodName,
-        handlerArgs
+        handlerArgs,
       );
       if (isRemoveMessage) {
         await this.removeMessageFromChannel(message);
@@ -149,19 +158,22 @@ export class OnCommandResolver implements MethodResolver {
 
   private getCommandName(messageContent: string, prefixLength: number): string {
     const messageWithoutPrefix = messageContent.slice(prefixLength);
-    const command = messageWithoutPrefix.split(' ').shift()
-    return command || "";
+    const command = messageWithoutPrefix.split(' ').shift();
+    return command || '';
   }
 
   private async removeMessageFromChannel(message: Message): Promise<void> {
     await message.delete();
   }
 
-  private getCommandOptions(metadata: OnCommandDecoratorOptions): DiscordModuleCommandOptions {
-    const {allowChannels, allowUsers, channelType, name} = metadata
+  private getCommandOptions(
+    metadata: OnCommandDecoratorOptions,
+  ): DiscordModuleCommandOptions {
+    const { allowChannels, allowUsers, channelType, name } = metadata;
     let globalCommandOptions = this.discordService.getAllowCommands();
-    let commandOptions = globalCommandOptions
-      .find((options: DiscordModuleCommandOptions) => options.name === name);
+    let commandOptions = globalCommandOptions.find(
+      (options: DiscordModuleCommandOptions) => options.name === name,
+    );
     if (allowChannels || allowUsers || channelType) {
       const sourceObject: DiscordModuleCommandOptions = { name };
       if (allowChannels) {

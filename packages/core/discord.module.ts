@@ -53,7 +53,7 @@ export class DiscordModule {
         TransformProvider,
         ValidationProvider,
         GuardClassResolver,
-        PipeClassResolver
+        PipeClassResolver,
       ],
       exports: [DiscordClientProvider, TransformProvider, ValidationProvider],
     };
@@ -84,7 +84,7 @@ export class DiscordModule {
         TransformProvider,
         ValidationProvider,
         GuardClassResolver,
-        PipeClassResolver
+        PipeClassResolver,
       ],
       exports: [DiscordClientProvider, TransformProvider, ValidationProvider],
     };
@@ -104,11 +104,13 @@ export class DiscordModule {
   ): Provider[] {
     if (options) {
       if (options.useFactory) {
-        return [{
-          provide: ModuleConstant.DISCORD_MODULE_OPTIONS,
-          useFactory: options.useFactory,
-          inject: options.inject || [],
-        }];
+        return [
+          {
+            provide: ModuleConstant.DISCORD_MODULE_OPTIONS,
+            useFactory: options.useFactory,
+            inject: options.inject || [],
+          },
+        ];
       } else {
         // For useClass and useExisting...
         const useClass = options.useClass as Type<DiscordOptionsFactory>;
@@ -120,21 +122,23 @@ export class DiscordModule {
             ): Promise<DiscordModuleOption> =>
               optionsFactory.createDiscordOptions(),
             inject: [options.useExisting || options.useClass],
-          }
+          },
         ];
         if (useClass) {
           providers.push({
             provide: useClass,
-            useClass
+            useClass,
           });
         }
         return providers;
       }
     } else {
-      return [{
-        provide: ModuleConstant.DISCORD_MODULE_OPTIONS,
-        useValue: {},
-      }];
+      return [
+        {
+          provide: ModuleConstant.DISCORD_MODULE_OPTIONS,
+          useValue: {},
+        },
+      ];
     }
   }
 }

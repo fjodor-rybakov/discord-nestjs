@@ -11,12 +11,10 @@ import { MethodResolver } from './interface/method-resolver';
 export class ParamResolver implements MethodResolver {
   private readonly params: DiscordParamList[] = [];
 
-  constructor(
-    private readonly metadataProvider: ReflectMetadataProvider,
-  ) {}
+  constructor(private readonly metadataProvider: ReflectMetadataProvider) {}
 
   resolve(options: MethodResolveOptions): void {
-    const {instance, methodName} = options;
+    const { instance, methodName } = options;
     const contentMetadata = this.metadataProvider.getContentDecoratorMetadata(
       instance,
       methodName,
@@ -38,26 +36,27 @@ export class ParamResolver implements MethodResolver {
     const paramItem: DiscordParamList = {
       instance,
       methodName,
-      args: []
+      args: [],
     };
     if (contentMetadata) {
       paramItem.args[contentMetadata.parameterIndex] = {
         decoratorType: DecoratorParamType.CONTENT,
-        paramType: paramsTypes[contentMetadata.parameterIndex]
+        paramType: paramsTypes[contentMetadata.parameterIndex],
       };
     }
     if (contextMetadata) {
       paramItem.args[contextMetadata.parameterIndex] = {
-        decoratorType: DecoratorParamType.CONTEXT
+        decoratorType: DecoratorParamType.CONTEXT,
       };
     }
     this.params.push(paramItem);
   }
 
   applyParam(options: ApplyPropertyOption): any[] {
-    const {instance, methodName, content, context} = options;
-    const paramsList = this.params.find((item: DiscordParamList) =>
-      item.instance === instance && item.methodName === methodName
+    const { instance, methodName, content, context } = options;
+    const paramsList = this.params.find(
+      (item: DiscordParamList) =>
+        item.instance === instance && item.methodName === methodName,
     );
     if (!paramsList) {
       return;
@@ -73,13 +72,17 @@ export class ParamResolver implements MethodResolver {
   }
 
   getContentType(options: MethodResolveOptions): any {
-    const {instance, methodName} = options;
-    const paramsList = this.params.find((item: DiscordParamList) =>
-      item.instance === instance && item.methodName === methodName
+    const { instance, methodName } = options;
+    const paramsList = this.params.find(
+      (item: DiscordParamList) =>
+        item.instance === instance && item.methodName === methodName,
     );
     if (!paramsList) {
       return;
     }
-    return paramsList.args.find((item: DecoratorTypeArg) => item.decoratorType === DecoratorParamType.CONTENT)?.paramType;
+    return paramsList.args.find(
+      (item: DecoratorTypeArg) =>
+        item.decoratorType === DecoratorParamType.CONTENT,
+    )?.paramType;
   }
 }
