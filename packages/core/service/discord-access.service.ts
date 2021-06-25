@@ -8,7 +8,6 @@ export class DiscordAccessService {
   constructor(private readonly discordService: DiscordService) {}
 
   isAllowCommand(
-    commandName: string,
     message: Message,
     option: DiscordModuleCommandOptions,
   ): boolean {
