@@ -72,13 +72,7 @@ export class OnCommandResolver implements MethodResolver {
         return; // not suitable for handler
       }
       const commandOptions = this.getCommandOptions(metadata);
-      if (
-        !this.discordAccessService.isAllowCommand(
-          commandName,
-          message,
-          commandOptions,
-        )
-      ) {
+      if (!this.discordAccessService.isAllowCommand(message, commandOptions)) {
         return;
       }
 
@@ -170,26 +164,22 @@ export class OnCommandResolver implements MethodResolver {
     metadata: OnCommandDecoratorOptions,
   ): DiscordModuleCommandOptions {
     const { allowChannels, allowUsers, channelType, name } = metadata;
-    let globalCommandOptions = this.discordService.getAllowCommands();
-    let commandOptions = globalCommandOptions.find(
-      (options: DiscordModuleCommandOptions) => options.name === name,
-    );
-    if (allowChannels || allowUsers || channelType) {
-      const sourceObject: DiscordModuleCommandOptions = { name };
-      if (allowChannels) {
-        sourceObject.channels = allowChannels;
-      }
-      if (allowUsers) {
-        sourceObject.users = allowUsers;
-      }
-      if (channelType) {
-        sourceObject.channelType = channelType;
-      }
-      if (commandOptions) {
-        return Object.assign(commandOptions, sourceObject);
-      }
-      return sourceObject;
+    const globalCommandOptions = this.discordService.getAllowCommands();
+    const commandOptions: DiscordModuleCommandOptions =
+      globalCommandOptions.find(
+        (options: DiscordModuleCommandOptions) => options.name === name,
+      ) ?? { name };
+
+    if (allowChannels) {
+      commandOptions.channels = allowChannels;
     }
+    if (allowUsers) {
+      commandOptions.users = allowUsers;
+    }
+    if (channelType) {
+      commandOptions.channelType = channelType;
+    }
+
     return commandOptions;
   }
 }

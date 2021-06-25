@@ -50,7 +50,7 @@ NestJS package for discord.js
 $ npm install discord-nestjs discord.js
 ```
 
-Or via yarn 
+Or via yarn
 
 ```bash
 $ yarn add discord-nestjs discord.js
@@ -171,7 +171,7 @@ import { DiscordModule } from 'discord-nestjs';
 @Module({
   imports: [
     DiscordModule.forRootAsync({
-      useClass: DiscordConfigService
+      useClass: DiscordConfigService,
     }),
   ],
   providers: [BotGateway],
@@ -185,7 +185,12 @@ You need to implement the `DiscordOptionsFactory` interface
 /*discord-config-service.ts*/
 
 import { Injectable } from '@nestjs/common';
-import { DiscordModuleOption, DiscordOptionsFactory, TransformPipe, ValidationPipe } from 'discord-nestjs';
+import {
+  DiscordModuleOption,
+  DiscordOptionsFactory,
+  TransformPipe,
+  ValidationPipe,
+} from 'discord-nestjs';
 
 @Injectable()
 export class DiscordConfigService implements DiscordOptionsFactory {
@@ -209,7 +214,7 @@ export class DiscordConfigService implements DiscordOptionsFactory {
       },
       usePipes: [TransformPipe, ValidationPipe],
       // and other discord options
-    }
+    };
   }
 }
 ```
@@ -236,8 +241,9 @@ export class BotGateway {
 
   @Once({ event: 'ready' })
   onReady(): void {
-    this.logger.log(`Logged in as ${this.discordProvider.getClient().user.tag}!`);
-    this.discordProvider.getWebhookClient().send('hello bot is up!');
+    this.logger.log(
+      `Logged in as ${this.discordProvider.getClient().user.tag}!`,
+    );
   }
 }
 ```
@@ -261,7 +267,9 @@ export class BotGateway {
 
   @Once({ event: 'ready' })
   onReady(): void {
-    this.logger.log(`Logged in as ${this.discordProvider.getClient().user.tag}!`);
+    this.logger.log(
+      `Logged in as ${this.discordProvider.getClient().user.tag}!`,
+    );
   }
 }
 ```
@@ -270,7 +278,7 @@ export class BotGateway {
 
 Use the `@OnCommand` decorator to declare a command handler.
 
-An example of creating a command is shown below. By default, the handler arguments will be the same as if 
+An example of creating a command is shown below. By default, the handler arguments will be the same as if
 you were signing up for an event in the "discord.js" library. ([hint](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584))
 
 The `OnCommand` decorator always subscribes to the "message" event
@@ -365,7 +373,10 @@ export class BotGateway {
   private readonly logger = new Logger(BotGateway.name);
 
   @OnCommand({ name: 'start' })
-  async onCommand(@Content() content: string, @Context() [context]: [Message]): Promise<void> {
+  async onCommand(
+    @Content() content: string,
+    @Context() [context]: [Message],
+  ): Promise<void> {
     await context.reply(`Execute command: ${content}`, `Args: ${context}`);
   }
 }
@@ -419,29 +430,40 @@ Pipes are executed sequentially from left to right. The `@UsePipes` declaration 
 ```typescript
 /*bot.gateway.ts*/
 
-import { UsePipes, Content, Context, OnCommand, TransformPipe, ValidationPipe } from 'discord-nestjs';
+import {
+  UsePipes,
+  Content,
+  Context,
+  OnCommand,
+  TransformPipe,
+  ValidationPipe,
+} from 'discord-nestjs';
 import { Injectable } from '@nestjs/common';
 import { RegistrationDto } from './registration.dto';
 import { Message } from 'discord.js';
 
 @Injectable()
 export class BotGateway {
-  @OnCommand({name: 'reg'})
+  @OnCommand({ name: 'reg' })
   @UsePipes(TransformPipe, ValidationPipe)
   async onSomeEvent(
     @Content() content: RegistrationDto,
-    @Context() [context]: [Message]
+    @Context() [context]: [Message],
   ): Promise<void> {
     await context.reply(
-      `User was created! Id: ${context.author.id}, FIO: ${content.name.join('-')}, Age: ${content.age}`
+      `User was created! Id: ${context.author.id}, FIO: ${content.name.join(
+        '-',
+      )}, Age: ${content.age}`,
     );
   }
 }
 ```
+
 ```
 Input:
 !reg Ivan Ivanovich Ivanov 22
 ```
+
 ```
 Output:
 User was created!: Id: 261863053329563648, Ivan-Ivanovich-Ivanov, Age: 22
@@ -467,6 +489,7 @@ export class UserDto {
   user: User;
 }
 ```
+
 Create command handler
 
 `TransformPipe` required for transform input string to DTO.
@@ -484,15 +507,20 @@ import { TransformPipe } from 'discord-nestjs';
 export class BotGateway {
   @OnCommand({ name: 'avatar' })
   @UsePipes(TransformPipe)
-  async onCommand(@Content() content: UserDto, @Context() [context]: [Message]): Promise<void> {
+  async onCommand(
+    @Content() content: UserDto,
+    @Context() [context]: [Message],
+  ): Promise<void> {
     await context.reply(`User avatar: ${content.user.avatarURL()}`);
   }
 }
 ```
+
 ```
 Input:
 !avatar @Федок
 ```
+
 ```
 Output:
 User avatar: https://cdn.discordapp.com/avatars/261863053329563648/d12c5a04be7bcabea7b9778b7e4fa6d5.webp
@@ -505,7 +533,14 @@ In order to override error handling in `ValidationPipe` you need to create an in
 ```typescript
 /*bot.gateway.ts*/
 
-import { UsePipes, Content, Context, OnCommand, TransformPipe, ValidationPipe } from 'discord-nestjs';
+import {
+  UsePipes,
+  Content,
+  Context,
+  OnCommand,
+  TransformPipe,
+  ValidationPipe,
+} from 'discord-nestjs';
 import { Injectable } from '@nestjs/common';
 import { RegistrationDto } from './registration.dto';
 import { Message, MessageEmbed } from 'discord.js';
@@ -513,18 +548,22 @@ import { ValidationError } from 'class-validator';
 
 @Injectable()
 export class BotGateway {
-  @OnCommand({name: 'reg'})
-  @UsePipes(TransformPipe, new ValidationPipe({
-    exceptionFactory: (
-      errors: ValidationError[], message: Message
-    ) => new MessageEmbed().setTitle('Upss!').setDescription(message.content)
-  }))
+  @OnCommand({ name: 'reg' })
+  @UsePipes(
+    TransformPipe,
+    new ValidationPipe({
+      exceptionFactory: (errors: ValidationError[], message: Message) =>
+        new MessageEmbed().setTitle('Upss!').setDescription(message.content),
+    }),
+  )
   async onSomeEvent(
     @Content() content: RegistrationDto,
-    @Context() [context]: [Message]
+    @Context() [context]: [Message],
   ): Promise<void> {
     await context.reply(
-      `User was created! Id: ${context.author.id}, FIO: ${content.name.join('-')}, Age: ${content.age}`
+      `User was created! Id: ${context.author.id}, FIO: ${content.name.join(
+        '-',
+      )}, Age: ${content.age}`,
     );
   }
 }
@@ -535,22 +574,24 @@ You can also create your own `TransformPipe` or `ValidationPipe` by implementing
 ```typescript
 /*transform.pipe.ts*/
 
-import { TransformProvider, ConstructorType, ValidationPipe, DiscordPipeTransform } from 'discord-nestjs';
+import {
+  TransformProvider,
+  ConstructorType,
+  ValidationPipe,
+  DiscordPipeTransform,
+} from 'discord-nestjs';
 import { ClientEvents, Message } from 'discord.js';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class TransformPipe implements DiscordPipeTransform {
-  constructor(
-    private readonly transformProvider: TransformProvider
-  ) {
-  }
+  constructor(private readonly transformProvider: TransformProvider) {}
 
   transform(
     event: keyof ClientEvents,
     [context]: [Message],
     content?: any,
-    type?: ConstructorType<any>
+    type?: ConstructorType<any>,
   ): any {
     return this.transformProvider.transformContent(type, content);
   }
@@ -629,10 +670,7 @@ import { ClientEvents } from 'discord.js';
 export class BotMiddleware implements DiscordMiddleware {
   private readonly logger = new Logger(BotMiddleware.name);
 
-  use(
-    event: keyof ClientEvents,
-    context: any[],
-  ): void {
+  use(event: keyof ClientEvents, context: any[]): void {
     if (event === 'message') {
       this.logger.log('On message event triggered');
     }
@@ -742,7 +780,7 @@ To guard incoming messages
 
 #### Params
 
-- List of classes or instances that implement the `DiscordGuard` interface 
+- List of classes or instances that implement the `DiscordGuard` interface
 
 ### ℹ️ @Middleware <a name="Middleware"></a>
 
