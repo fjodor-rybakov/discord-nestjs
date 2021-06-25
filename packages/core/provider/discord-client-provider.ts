@@ -5,10 +5,7 @@ import { DiscordService } from '../service/discord.service';
 
 @Injectable()
 export class DiscordClientProvider implements ClientProvider {
-  constructor(
-    private readonly discordService: DiscordService
-  ) {
-  }
+  constructor(private readonly discordService: DiscordService) {}
 
   getClient(): Client {
     return this.discordService.getClient();

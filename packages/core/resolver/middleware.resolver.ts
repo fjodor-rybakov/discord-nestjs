@@ -10,17 +10,15 @@ import { ClassResolver } from './interface/class-resolver';
 export class MiddlewareResolver implements ClassResolver {
   private readonly middlewareList: DiscordMiddlewareInstance[] = [];
 
-  constructor(
-    private readonly metadataProvider: ReflectMetadataProvider,
-  ) {
-  }
+  constructor(private readonly metadataProvider: ReflectMetadataProvider) {}
 
   resolve(options: ClassResolveOptions): void {
     const { instance } = options;
     if (!this.instanceIsMiddleware(instance)) {
       return;
     }
-    const metadata = this.metadataProvider.getMiddlewareDecoratorMetadata(instance);
+    const metadata =
+      this.metadataProvider.getMiddlewareDecoratorMetadata(instance);
     this.middlewareList.push({ instance, metadata });
   }
 
@@ -45,7 +43,9 @@ export class MiddlewareResolver implements ClassResolver {
     );
   }
 
-  private instanceIsMiddleware(instance: any | DiscordMiddleware): instance is DiscordMiddleware {
+  private instanceIsMiddleware(
+    instance: any | DiscordMiddleware,
+  ): instance is DiscordMiddleware {
     return !!instance && !!instance.use;
   }
 }

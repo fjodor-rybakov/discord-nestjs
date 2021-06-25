@@ -10,5 +10,5 @@ export enum DecoratorConstant {
   ARG_RANGE_DECORATOR = '__arg_range_decorator__',
   CONTENT_DECORATOR = '__content_decorator__',
   CONTEXT_DECORATOR = '__context_decorator__',
-  TRANSFORM_TO_USER_DECORATOR = '__transform_to_user_decorator__'
+  TRANSFORM_TO_USER_DECORATOR = '__transform_to_user_decorator__',
 }

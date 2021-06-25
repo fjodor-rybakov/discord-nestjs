@@ -10,7 +10,12 @@ export const Once = (options: OnDecoratorOptions): MethodDecorator => {
     propertyKey: string | symbol,
     descriptor: PropertyDescriptor,
   ): PropertyDescriptor => {
-    Reflect.defineMetadata(DecoratorConstant.ONCE_DECORATOR, options, target, propertyKey);
+    Reflect.defineMetadata(
+      DecoratorConstant.ONCE_DECORATOR,
+      options,
+      target,
+      propertyKey,
+    );
     return descriptor;
   };
 };

@@ -5,10 +5,7 @@ import { Message } from 'discord.js';
 
 @Injectable()
 export class DiscordAccessService {
-  constructor(
-    private readonly discordService: DiscordService
-  ) {
-  }
+  constructor(private readonly discordService: DiscordService) {}
 
   isAllowCommand(
     commandName: string,
@@ -45,9 +42,7 @@ export class DiscordAccessService {
     return true;
   }
 
-  isAllowMessageGuild(
-    message: Message,
-  ): boolean {
+  isAllowMessageGuild(message: Message): boolean {
     const guildId = message.guild && message.guild.id;
     if (!!guildId) {
       return this.discordService.isAllowGuild(guildId);
