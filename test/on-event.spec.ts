@@ -45,7 +45,7 @@ describe('On event', () => {
     });
   });
 
-  it('Function marked with "On" decorator with { event: \'message\' } args must be called at on "message" event', async () => {
+  it('Function marked with "On" decorator with { event: \'message\' } args must be called on "message" event', async () => {
     const testingGuildName = 'test';
     const testChannelName = 'test-text-channel';
     const messageText = 'Some important text';
