@@ -3,6 +3,7 @@ import {
   Injectable,
   Logger,
   OnApplicationBootstrap,
+  OnApplicationShutdown,
 } from '@nestjs/common';
 import { Client, WebhookClient } from 'discord.js';
 import { DiscordModuleOption } from '../interface/discord-module-option';
@@ -13,7 +14,9 @@ import { GuardType } from '../util/type/guard-type';
 import { ModuleConstant } from '../constant/module.constant';
 
 @Injectable()
-export class DiscordService implements OnApplicationBootstrap {
+export class DiscordService
+  implements OnApplicationBootstrap, OnApplicationShutdown
+{
   private readonly clientToken: string;
   private readonly commandPrefix: string;
   private readonly allowGuilds?: string[];
@@ -59,6 +62,10 @@ export class DiscordService implements OnApplicationBootstrap {
       this.logger.error('Failed to connect to Discord API');
       this.logger.error(err);
     }
+  }
+
+  onApplicationShutdown(): void {
+    this.client.destroy();
   }
 
   getCommandPrefix(): string {

@@ -8,13 +8,10 @@
     "target": "es6",
     "sourceMap": false,
     "outDir": "./dist",
-    "rootDir": "./packages",
+    "rootDir": "./",
     "baseUrl": "./",
     "noLib": false
   },
-  "include": [
-    "packages/**/*.ts",
-    ".eslintrc.js"
-  ],
-  "exclude": ["node_modules"]
+  "include": ["**/*.ts", ".eslintrc.js"],
+  "exclude": ["node_modules", "dist"]
 }
