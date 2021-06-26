@@ -27,18 +27,13 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
 
-    - uses: actions/setup-node@v2
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v2.1.5
       with:
         node-version: '14'
 
-    # Install Yarn
-    - uses: borales/actions-yarn@v2.0.0
-      name: Install packages
-      with:
-        cmd: install
+    - name: Install dependencies
+      run: yarn install
 
-    # Run tests
-    - uses: borales/actions-yarn@v2.0.0
-      name: Run tests
-      with:
-        cmd: test
+    - name: Run tests
+      run: yarn test
