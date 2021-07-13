@@ -55,7 +55,7 @@
     "@nestjs/testing": "7.6.18",
     "@types/jest": "26.0.23",
     "@types/node": "15.12.5",
-    "@typescript-eslint/eslint-plugin": "4.28.0",
+    "@typescript-eslint/eslint-plugin": "4.28.3",
     "@typescript-eslint/parser": "4.28.0",
     "discord.js": "12.5.3",
     "eslint": "7.29.0",
