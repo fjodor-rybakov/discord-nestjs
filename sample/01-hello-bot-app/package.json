@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@nestjs/common": "7.6.18",
-    "@nestjs/config": "0.6.3",
+    "@nestjs/config": "1.0.1",
     "@nestjs/core": "7.6.18",
     "@nestjs/platform-express": "7.6.18",
     "class-transformer": "0.4.0",
