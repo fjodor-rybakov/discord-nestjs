@@ -5,7 +5,7 @@ import { IsDefined } from 'class-validator';
 
 export class DelDto {
   @TransformToUser()
-  @ArgNum(() => ({position: 1}))
+  @ArgNum(() => ({ position: 1 }))
   @IsDefined()
   @Expose()
   user: User;

@@ -10,12 +10,11 @@ import { BotGateway } from './bot.gateway';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         token: configService.get('TOKEN'),
-        commandPrefix: configService.get('COMMAND_PREFIX')
+        commandPrefix: configService.get('COMMAND_PREFIX'),
       }),
-      inject: [ConfigService]
-    })
+      inject: [ConfigService],
+    }),
   ],
-  providers: [BotGateway]
+  providers: [BotGateway],
 })
-export class BotModule {
-}
+export class BotModule {}

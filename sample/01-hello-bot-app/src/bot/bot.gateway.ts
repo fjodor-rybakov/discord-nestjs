@@ -23,49 +23,54 @@ export class BotGateway {
   private readonly logger = new Logger(BotGateway.name);
   private readonly users = []; // Only for example
 
-  constructor(
-    private readonly discordProvider: DiscordClientProvider
-  ) {
-  }
+  constructor(private readonly discordProvider: DiscordClientProvider) {}
 
   @Once({ event: 'ready' })
   async onReady(): Promise<void> {
-    this.logger.log(`Logged in as ${this.discordProvider.getClient().user.tag}!`);
+    this.logger.log(
+      `Logged in as ${this.discordProvider.getClient().user.tag}!`,
+    );
   }
 
-  @OnCommand({name: 'hello'})
+  @OnCommand({ name: 'hello' })
   async onHelloCommand(message: Message): Promise<void> {
     await message.reply(`Hello ${message.content}`);
   }
 
-  @OnCommand({name: 'reg'})
+  @OnCommand({ name: 'reg' })
   @UsePipes(TransformPipe, ValidationPipe)
   async onRegCommand(
     @Content() content: RegDto,
-    @Context() [context]: [Message]
+    @Context() [context]: [Message],
   ): Promise<void> {
     this.users.push({
       id: context.author.id,
       name: content.name.join('-'),
-      age: content.age
+      age: content.age,
     });
     await context.reply(
-      `User was created! Id: ${context.author.id}, FIO: ${content.name.join('-')}, Age: ${content.age}`
+      `User was created! Id: ${context.author.id}, FIO: ${content.name.join(
+        '-',
+      )}, Age: ${content.age}`,
     );
   }
 
-  @OnCommand({name: 'del'})
+  @OnCommand({ name: 'del' })
   @UseGuards(AdminGuard)
-  @UsePipes(TransformPipe, new ValidationPipe({
-    exceptionFactory: (
-      errors: ValidationError[], message: Message
-    ) => new MessageEmbed().setTitle('Upss!').setDescription(message.content)
-  }))
+  @UsePipes(
+    TransformPipe,
+    new ValidationPipe({
+      exceptionFactory: (errors: ValidationError[], message: Message) =>
+        new MessageEmbed().setTitle('Upss!').setDescription(message.content),
+    }),
+  )
   async onRemoveUser(
     @Content() content: DelDto,
-    @Context() [context]: [Message]
+    @Context() [context]: [Message],
   ): Promise<Message> {
-    const userIndex = this.users.findIndex((user) => user.id === context.author.id);
+    const userIndex = this.users.findIndex(
+      (user) => user.id === context.author.id,
+    );
     if (userIndex === -1) {
       return context.reply(`User with id ${content.user.id} not found!`);
     }
@@ -73,9 +78,12 @@ export class BotGateway {
     await context.reply(`User success deleted with id: ${content.user.id}!`);
   }
 
-  @On({event: 'message'})
+  @On({ event: 'message' })
   @UsePipes(TransformPipe)
-  async omMessage(@Content() content: MessageDto, @Context() [context]: [Message]): Promise<void> {
+  async omMessage(
+    @Content() content: MessageDto,
+    @Context() [context]: [Message],
+  ): Promise<void> {
     if (!context.author.bot) {
       this.logger.log(`Income message with value: ${content.value}`);
     }
