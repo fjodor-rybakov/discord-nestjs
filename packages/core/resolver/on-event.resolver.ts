@@ -37,9 +37,11 @@ export class OnEventResolver implements MethodResolver {
     if (!metadata) {
       return;
     }
-    this.logger.setContext(instance.constructor.name);
     const { event } = metadata;
-    this.logger.log(`Subscribe to event: ${event} (on)`);
+    this.logger.log(
+      `Subscribe to event: ${event} (on)`,
+      instance.constructor.name,
+    );
     this.discordService
       .getClient()
       .on(event, async (...data: ClientEvents[keyof ClientEvents]) => {

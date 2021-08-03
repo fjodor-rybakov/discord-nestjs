@@ -37,9 +37,11 @@ export class OnceEventResolver implements MethodResolver {
     if (!metadata) {
       return;
     }
-    this.logger.setContext(instance.constructor.name);
     const { event } = metadata;
-    this.logger.log(`Subscribe to event: ${event} (once)`);
+    this.logger.log(
+      `Subscribe to event: ${event} (once)`,
+      instance.constructor.name,
+    );
     this.discordService
       .getClient()
       .once(event, async (...data: ClientEvents[keyof ClientEvents]) => {
