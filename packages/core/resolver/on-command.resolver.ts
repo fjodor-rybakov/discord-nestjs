@@ -39,7 +39,6 @@ export class OnCommandResolver implements MethodResolver {
     if (!metadata) {
       return;
     }
-    this.logger.setContext(instance.constructor.name);
     const {
       name,
       prefix = this.discordService.getCommandPrefix(),
@@ -48,7 +47,7 @@ export class OnCommandResolver implements MethodResolver {
       isRemoveCommandName = true,
       isRemoveMessage = false,
     } = metadata;
-    this.logger.log(`Initialize command: ${name}`);
+    this.logger.log(`Initialize command: ${name}`, instance.constructor.name);
     this.discordService.getClient().on('message', async (message: Message) => {
       //#region check allow handle message
       if (isIgnoreBotMessage && message.author.bot) {
