@@ -1,0 +1,9 @@
+{
+  "name": "@discord-nestjs/common",
+  "version": "0.0.1",
+  "description": "Common module",
+  "author": "fjodor-rybakov",
+  "devDependencies": {
+    "typescript": "^4.4.3"
+  }
+}
