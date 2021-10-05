@@ -53,7 +53,7 @@
     "@types/node": "16.4.13",
     "@typescript-eslint/eslint-plugin": "4.32.0",
     "@typescript-eslint/parser": "4.32.0",
-    "discord.js": "12.5.3",
+    "discord.js": "13.2.0",
     "eslint": "7.32.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-import": "2.23.4",
@@ -75,7 +75,7 @@
     "@nestjs/core": "^8.0.5",
     "class-transformer": "0.4.0",
     "class-validator": "0.13.1",
-    "discord.js": "^12.5.3",
+    "discord.js": "^12.5.3 || ^13.0.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.3.0"
   },
