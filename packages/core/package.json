@@ -11,24 +11,27 @@
   },
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
+  "dependencies": {
+    "class-transformer": "0.4.0"
+  },
   "peerDependencies": {
-    "@nestjs/common": "^8.0.8",
-    "@nestjs/core": "^8.0.8",
+    "@nestjs/common": "^8.0.11",
+    "@nestjs/core": "^8.0.11",
     "reflect-metadata": "^0.1.13",
     "discord.js": "^13.1.0",
     "rxjs": "^7.3.0"
   },
   "devDependencies": {
-    "@nestjs/cli": "^8.1.1",
-    "@nestjs/config": "^1.0.1",
+    "@nestjs/cli": "^8.1.2",
+    "@nestjs/config": "^1.0.2",
     "@nestjs/schematics": "^8.0.3",
-    "@nestjs/testing": "^8.0.8",
+    "@nestjs/testing": "^8.0.11",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.10.1",
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^4.32.0",
     "@typescript-eslint/parser": "^4.32.0",
-    "discord.js": "^13.1.0",
+    "discord.js": "^13.2.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",

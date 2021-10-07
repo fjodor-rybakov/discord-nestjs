@@ -1,10 +1,13 @@
 import { ClientEvents } from 'discord.js';
+import { Type } from '@nestjs/common';
+
+type T = keyof ClientEvents;
 
 export interface DiscordPipeOptions {
   instance: unknown;
   methodName: string;
-  event: keyof ClientEvents;
-  context: ClientEvents[keyof ClientEvents];
-  content?: unknown;
-  type: any;
+  event: T;
+  context: ClientEvents[T];
+  initValue?: unknown;
+  metatype: Type;
 }

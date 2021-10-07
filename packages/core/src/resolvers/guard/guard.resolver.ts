@@ -8,7 +8,6 @@ import { GuardType } from '../../definitions/types/guard.type';
 import { DiscordGuard } from '../../decorators/guard/discord-guard';
 import { DiscordGuardOptions } from './discord-guard-options';
 import { DiscordOptionService } from '../../services/discord-option.service';
-import { ClientEvents } from 'discord.js';
 
 @Injectable()
 export class GuardResolver implements MethodResolver {
@@ -27,27 +26,12 @@ export class GuardResolver implements MethodResolver {
       methodName,
     );
     if (!guards) {
-      const commandMetadata = this.metadataProvider.getCommandDecoratorMetadata(
-        instance,
-        methodName,
-      );
-      const onEventMetadata = this.metadataProvider.getOnEventDecoratorMetadata(
-        instance,
-        methodName,
-      );
-      const onceEventMetadata =
-        this.metadataProvider.getOnceEventDecoratorMetadata(
-          instance,
-          methodName,
-        );
-      if (!commandMetadata && !onEventMetadata && !onceEventMetadata) {
+      const hasMetadataForGuard = this.checkApplyGlobalGuard(options);
+      if (!hasMetadataForGuard) {
         return;
       }
-      const guardsListForMethod = this.guardList.find(
-        (item: DiscordGuardList) =>
-          item.methodName === methodName && item.instance === instance,
-      );
-      if (guardsListForMethod) {
+      const guardAlreadyRegistered = this.getGuardData(options);
+      if (guardAlreadyRegistered) {
         return;
       }
       guards = this.discordOptionService.getClientData().useGuards;
@@ -79,10 +63,7 @@ export class GuardResolver implements MethodResolver {
 
   async applyGuard(options: DiscordGuardOptions): Promise<boolean> {
     const { instance, methodName, event, context } = options;
-    const guardListForMethod = this.guardList.find(
-      (item: DiscordGuardList) =>
-        item.methodName === methodName && item.instance === instance,
-    );
+    const guardListForMethod = this.getGuardData({ instance, methodName });
     if (!guardListForMethod) {
       return true;
     }
@@ -93,5 +74,34 @@ export class GuardResolver implements MethodResolver {
       }
     }
     return true;
+  }
+
+  private checkApplyGlobalGuard({
+    instance,
+    methodName,
+  }: MethodResolveOptions): boolean {
+    const someClassHasMetadata = [
+      this.metadataProvider.getCommandDecoratorMetadata,
+      this.metadataProvider.getSubCommandDecoratorMetadata,
+    ].some((item) => item(instance));
+
+    if (someClassHasMetadata) {
+      return true;
+    }
+
+    return [
+      this.metadataProvider.getOnEventDecoratorMetadata,
+      this.metadataProvider.getOnceEventDecoratorMetadata,
+    ].some((item) => item(instance, methodName));
+  }
+
+  private getGuardData({
+    instance,
+    methodName,
+  }: MethodResolveOptions): DiscordGuardList {
+    return this.guardList.find(
+      (item: DiscordGuardList) =>
+        item.methodName === methodName && item.instance === instance,
+    );
   }
 }

@@ -1,14 +1,13 @@
 import { COMMAND_DECORATOR } from './command.constant';
 import { CommandOptions } from './command-options';
 
-export function Command(options: CommandOptions): MethodDecorator {
-  return (
-    target: Record<string, any>,
-    propertyKey: string | symbol,
-    descriptor: PropertyDescriptor,
-  ): PropertyDescriptor => {
-    Reflect.defineMetadata(COMMAND_DECORATOR, options, target, propertyKey);
+/**
+ * Command decorator
+ */
+export function Command(options: CommandOptions): ClassDecorator {
+  return <TFunction extends Function>(target: TFunction): TFunction | void => {
+    Reflect.defineMetadata(COMMAND_DECORATOR, options, target.prototype);
 
-    return descriptor;
+    return target;
   };
 }

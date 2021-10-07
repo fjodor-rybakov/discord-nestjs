@@ -9,20 +9,28 @@ import { ClassResolveOptions } from '../interfaces/class-resolve-options';
 export class PipeClassResolver implements ClassResolver {
   constructor(
     private readonly pipeResolver: PipeResolver,
-    private readonly metadataProvide: ReflectMetadataProvider,
+    private readonly metadataProvider: ReflectMetadataProvider,
     private readonly metadataScanner: MetadataScanner,
   ) {}
 
   async resolve(options: ClassResolveOptions): Promise<void> {
     const { instance } = options;
     const metadata =
-      this.metadataProvide.getUsePipesDecoratorMetadata(instance);
+      this.metadataProvider.getUsePipesDecoratorMetadata(instance);
     if (!metadata) {
       return;
     }
-    const allClassMethods = this.metadataScanner.getAllFilteredMethodNames(
-      Object.getPrototypeOf(instance),
-    );
+
+    const someClassHasMetadata = [
+      this.metadataProvider.getCommandDecoratorMetadata,
+      this.metadataProvider.getSubCommandDecoratorMetadata,
+    ].some((item) => item(instance));
+
+    const allClassMethods = someClassHasMetadata
+      ? ['handler']
+      : this.metadataScanner.getAllFilteredMethodNames(
+          Object.getPrototypeOf(instance),
+        );
     for await (const methodName of allClassMethods) {
       await this.pipeResolver.addPipe(
         {

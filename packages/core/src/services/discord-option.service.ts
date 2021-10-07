@@ -16,11 +16,12 @@ export class DiscordOptionService {
   }
 
   private setDefault(options: DiscordModuleOption): void {
-    const { useGuards, usePipes } = options;
+    const { useGuards, usePipes, commands } = options;
 
     Object.assign(options, {
       useGuards: useGuards ?? [],
       usePipes: usePipes ?? [],
+      commands: commands ?? [],
     });
   }
 }

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Intents } from 'discord.js';
 import { DiscordModule } from '@discord-nestjs/core';
-import { BotGateway } from './bot.gateway';
+import { RegistrationCommand } from './registration-command';
 
 @Module({
   imports: [
@@ -10,6 +10,7 @@ import { BotGateway } from './bot.gateway';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         token: configService.get('TOKEN'),
+        commands: [RegistrationCommand],
         discordClientOptions: {
           intents: [Intents.FLAGS.GUILDS],
         },
@@ -17,6 +18,5 @@ import { BotGateway } from './bot.gateway';
       inject: [ConfigService],
     }),
   ],
-  providers: [BotGateway],
 })
 export class BotModule {}

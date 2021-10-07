@@ -1,12 +1,18 @@
 import { GuardType } from '../types/guard.type';
 import { ClientOptions, WebhookClientData } from 'discord.js';
 import { PipeType } from '../types/pipe.type';
+import { Type } from '@nestjs/common';
 
 export interface DiscordModuleOption {
   /**
    * Authorization token
    */
   token: string;
+
+  /**
+   * Command classes
+   */
+  commands?: Type[];
 
   /**
    * Use pipes for all handlers

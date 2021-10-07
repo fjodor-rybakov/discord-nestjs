@@ -1,5 +1,7 @@
-export interface SubCommandGroupOptions {
-  name: string;
+import { Type } from '@nestjs/common';
+import { UseGroupOptions } from './use-group-options';
 
-  description: string;
+export interface SubCommandGroupOptions {
+  options: UseGroupOptions;
+  subCommands: Type[];
 }

@@ -1,14 +1,11 @@
-import { ClientEvents } from 'discord.js';
-import { Type } from '@nestjs/common';
+import { DiscordArgumentMetadata } from './discord-argument-metadata';
 
 /**
  * Base pipe interface
  */
-export interface DiscordPipeTransform<T = any, D = any> {
+export interface DiscordPipeTransform<TValue = any, TReturn = any> {
   transform(
-    event: keyof ClientEvents,
-    context: T,
-    content?: D,
-    type?: Type<D>,
-  ): any | Promise<any>;
+    value: TValue,
+    metadata: DiscordArgumentMetadata,
+  ): TReturn | Promise<TReturn>;
 }

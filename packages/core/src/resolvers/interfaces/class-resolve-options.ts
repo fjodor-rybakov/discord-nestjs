@@ -1,3 +1,3 @@
-export interface ClassResolveOptions {
-  instance: any;
+export interface ClassResolveOptions<TInstance = any> {
+  instance: TInstance;
 }

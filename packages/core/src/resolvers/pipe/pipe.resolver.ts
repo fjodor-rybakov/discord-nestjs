@@ -26,27 +26,12 @@ export class PipeResolver implements MethodResolver {
       methodName,
     );
     if (!pipes) {
-      const commandMetadata = this.metadataProvider.getCommandDecoratorMetadata(
-        instance,
-        methodName,
-      );
-      const onEventMetadata = this.metadataProvider.getOnEventDecoratorMetadata(
-        instance,
-        methodName,
-      );
-      const onceEventMetadata =
-        this.metadataProvider.getOnceEventDecoratorMetadata(
-          instance,
-          methodName,
-        );
-      if (!commandMetadata && !onEventMetadata && !onceEventMetadata) {
+      const hasMetadataForPipe = this.checkApplyGlobalPipe(options);
+      if (!hasMetadataForPipe) {
         return;
       }
-      const pipesListForMethod = this.pipeList.find(
-        (item: DiscordPipeList) =>
-          item.methodName === methodName && item.instance === instance,
-      );
-      if (pipesListForMethod) {
+      const guardAlreadyRegistered = this.getPipeData(options);
+      if (guardAlreadyRegistered) {
         return;
       }
       pipes = this.discordOptionService.getClientData().usePipes;
@@ -99,7 +84,8 @@ export class PipeResolver implements MethodResolver {
   }
 
   async applyPipe(options: DiscordPipeOptions): Promise<any> {
-    const { instance, methodName, event, context, content, type } = options;
+    const { instance, methodName, event, context, initValue, metatype } =
+      options;
     const pipesListForMethod = this.pipeList.find(
       (item: DiscordPipeList) =>
         item.methodName === methodName && item.instance === instance,
@@ -110,9 +96,38 @@ export class PipeResolver implements MethodResolver {
     return pipesListForMethod.pipeList.reduce(
       async (prev: Promise<any>, curr: DiscordPipeTransform) => {
         const prevData = await prev;
-        return curr.transform(event, context, prevData, type);
+        return curr.transform(prevData, { event, context, metatype });
       },
-      Promise.resolve(content),
+      Promise.resolve(initValue),
+    );
+  }
+
+  private checkApplyGlobalPipe({
+    instance,
+    methodName,
+  }: MethodResolveOptions): boolean {
+    const someClassHasMetadata = [
+      this.metadataProvider.getCommandDecoratorMetadata,
+      this.metadataProvider.getSubCommandDecoratorMetadata,
+    ].some((item) => item(instance));
+
+    if (someClassHasMetadata) {
+      return true;
+    }
+
+    return [
+      this.metadataProvider.getOnEventDecoratorMetadata,
+      this.metadataProvider.getOnceEventDecoratorMetadata,
+    ].some((item) => item(instance, methodName));
+  }
+
+  private getPipeData({
+    instance,
+    methodName,
+  }: MethodResolveOptions): DiscordPipeList {
+    return this.pipeList.find(
+      (item: DiscordPipeList) =>
+        item.methodName === methodName && item.instance === instance,
     );
   }
 }

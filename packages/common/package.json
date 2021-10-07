@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "description": "Common module",
   "author": "fjodor-rybakov",
+  "peerDependencies": {
+    "class-validator": "^0.13.1",
+    "discord.js": "^13.2.0"
+  },
   "devDependencies": {
     "typescript": "^4.4.3"
   }

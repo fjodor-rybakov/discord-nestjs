@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Type } from '@nestjs/common';
 import { COMMAND_DECORATOR } from '../decorators/command/command.constant';
 import { OnDecoratorOptions } from '../decorators/event/on-decorator-options';
 import { ON_DECORATOR } from '../decorators/event/on/on.constant';
@@ -14,27 +14,19 @@ import { CommandOptions } from '../decorators/command/command-options';
 import { ARG_DECORATOR } from '../decorators/option/arg/arg.constant';
 import { CHOICE_DECORATOR } from '../decorators/option/choice/choice.constant';
 import { ArgOptions } from '../decorators/option/arg/arg-options';
-import { SUB_COMMAND_DECORATOR } from '../decorators/command/sub-command/sub-command.constant';
-import { SUB_COMMAND_GROUP_DECORATOR } from '../decorators/sub-command-group/sub-command-group.constant';
+import { SUB_COMMAND_DECORATOR } from '../decorators/sub-command/sub-command.constant';
+import { SubCommandOptions } from '../decorators/sub-command/sub-command-options';
+import { PAYLOAD_DECORATOR } from '../decorators/param/payload/payload.constant';
+import { ParamTypeOptions } from '../decorators/param/param-type-options';
 
 @Injectable()
 export class ReflectMetadataProvider {
-  getCommandDecoratorMetadata(
-    instance: unknown,
-    methodName: string,
-  ): CommandOptions {
-    return Reflect.getMetadata(COMMAND_DECORATOR, instance, methodName);
+  getCommandDecoratorMetadata(instance: unknown): CommandOptions {
+    return Reflect.getMetadata(COMMAND_DECORATOR, instance);
   }
 
-  getSubCommandDecoratorMetadata(
-    instance: unknown,
-    methodName: string,
-  ): CommandOptions {
-    return Reflect.getMetadata(SUB_COMMAND_DECORATOR, instance, methodName);
-  }
-
-  getSubCommandGroupDecoratorMetadata(instance: unknown): Record<string, any> {
-    return Reflect.getMetadata(SUB_COMMAND_GROUP_DECORATOR, instance);
+  getSubCommandDecoratorMetadata(instance: unknown): SubCommandOptions {
+    return Reflect.getMetadata(SUB_COMMAND_DECORATOR, instance);
   }
 
   getOnEventDecoratorMetadata(
@@ -69,6 +61,21 @@ export class ReflectMetadataProvider {
     methodName?: string,
   ): PipeType[] {
     return Reflect.getMetadata(USE_PIPES_DECORATOR, instance, methodName);
+  }
+
+  getParamTypesMetadata(instance: unknown, methodName: string): Type[] {
+    return Reflect.getMetadata('design:paramtypes', instance, methodName);
+  }
+
+  getPropertyTypeMetadata(instance: unknown, methodName: string): Type {
+    return Reflect.getMetadata('design:type', instance, methodName);
+  }
+
+  getPayloadDecoratorMetadata(
+    instance: unknown,
+    methodName: string,
+  ): ParamTypeOptions {
+    return Reflect.getMetadata(PAYLOAD_DECORATOR, instance, methodName);
   }
 
   getArgDecoratorMetadata(instance: unknown, propertyKey: string): ArgOptions {

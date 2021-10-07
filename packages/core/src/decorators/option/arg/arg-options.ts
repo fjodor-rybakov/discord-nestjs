@@ -1,3 +1,5 @@
+import { ArgType } from '../../../definitions/types/arg.type';
+
 export interface ArgOptions {
   /**
    * Option description
@@ -14,4 +16,9 @@ export interface ArgOptions {
    * Is required option
    */
   required?: boolean;
+
+  /**
+   *
+   */
+  type?: ArgType;
 }

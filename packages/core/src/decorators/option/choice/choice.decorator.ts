@@ -1,10 +1,10 @@
-import { SUB_COMMAND_DECORATOR } from '../../command/sub-command/sub-command.constant';
+import { CHOICE_DECORATOR } from './choice.constant';
 
 /**
  * Choice decorator
  */
-export function Choice(): PropertyDecorator {
+export function Choice(options: Record<string, any>): PropertyDecorator {
   return (target: Record<string, any>, propertyKey: string | symbol): void => {
-    Reflect.defineMetadata(SUB_COMMAND_DECORATOR, {}, target, propertyKey);
+    Reflect.defineMetadata(CHOICE_DECORATOR, options, target, propertyKey);
   };
 }
