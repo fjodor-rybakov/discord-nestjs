@@ -35,6 +35,7 @@ export * from './decorators/sub-command-group/use-group';
 export * from './decorators/param/payload/payload.decorator';
 export * from './decorators/option/arg/arg.decorator';
 export * from './decorators/option/choice/choice.decorator';
+export * from './decorators/option/channel/channel.decorator';
 
 // Providers
 export * from './providers/discord-client.provider';

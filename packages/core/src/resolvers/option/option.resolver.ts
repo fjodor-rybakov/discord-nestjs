@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { OptionMetadata } from './option-metadata';
 import { ArgType } from '../../definitions/types/arg.type';
-import { ApplicationCommandOptionTypes } from 'discord.js/typings/enums';
+import {
+  ApplicationCommandOptionTypes,
+  ChannelTypes,
+} from 'discord.js/typings/enums';
 import { ArgOptions } from '../../decorators/option/arg/arg-options';
 import {
   ApplicationCommandOptionChoice,
@@ -10,6 +13,7 @@ import {
   CommandOptionChoiceResolvableType,
   CommandOptionNonChoiceResolvableType,
 } from 'discord.js';
+import { ExcludeEnum } from '../../definitions/types/exclude-enum.type';
 
 @Injectable()
 export class OptionResolver {
@@ -23,11 +27,14 @@ export class OptionResolver {
         dtoInstance,
         propertyKey,
       );
-      const applicationOptionType = this.getApplicationOptionType(
-        dtoInstance,
-        propertyKey,
-        argDecoratorOptions,
-      );
+      const channelTypes = this.getChannelOptions(dtoInstance, propertyKey);
+      const applicationOptionType = channelTypes
+        ? ApplicationCommandOptionTypes.CHANNEL
+        : this.getApplicationOptionTypeByArg(
+            dtoInstance,
+            propertyKey,
+            argDecoratorOptions,
+          );
       optionMetadata[propertyKey] = {
         arg: {
           name: argDecoratorOptions.name ?? propertyKey,
@@ -36,6 +43,7 @@ export class OptionResolver {
           required: argDecoratorOptions.required,
         },
         choice: this.getChoiceOptions(dtoInstance, propertyKey),
+        channelTypes,
       };
     });
 
@@ -60,7 +68,22 @@ export class OptionResolver {
     return values.map(([name, value]) => ({ name, value }));
   }
 
-  private getApplicationOptionType(
+  private getChannelOptions(
+    dtoInstance: any,
+    propertyKey: string,
+  ): ExcludeEnum<typeof ChannelTypes, 'UNKNOWN'>[] {
+    const channelTypes = this.metadataProvider.getChannelDecoratorMetadata(
+      dtoInstance,
+      propertyKey,
+    );
+    if (!channelTypes) {
+      return;
+    }
+
+    return channelTypes;
+  }
+
+  private getApplicationOptionTypeByArg(
     dtoInstance: any,
     propertyKey: string,
     argDecoratorOptions: ArgOptions,
@@ -73,8 +96,6 @@ export class OptionResolver {
         return ApplicationCommandOptionTypes.STRING;
       case ArgType.BOOLEAN:
         return ApplicationCommandOptionTypes.BOOLEAN;
-      case ArgType.CHANNEL:
-        return ApplicationCommandOptionTypes.CHANNEL;
       case ArgType.INTEGER:
         return ApplicationCommandOptionTypes.INTEGER;
       case ArgType.NUMBER:

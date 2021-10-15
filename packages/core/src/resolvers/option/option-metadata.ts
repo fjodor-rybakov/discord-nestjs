@@ -4,6 +4,8 @@ import {
   CommandOptionChoiceResolvableType,
   CommandOptionNonChoiceResolvableType,
 } from 'discord.js';
+import { ChannelTypes } from 'discord.js/typings/enums';
+import { ExcludeEnum } from '../../definitions/types/exclude-enum.type';
 
 export interface OptionMetadata {
   [property: string]: {
@@ -17,5 +19,6 @@ export interface OptionMetadata {
         | CommandOptionChannelResolvableType;
     };
     choice?: ApplicationCommandOptionChoice[];
+    channelTypes?: ExcludeEnum<typeof ChannelTypes, 'UNKNOWN'>[];
   };
 }

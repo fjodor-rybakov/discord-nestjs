@@ -3,7 +3,6 @@ export enum ArgType {
   INTEGER,
   BOOLEAN,
   USER,
-  CHANNEL,
   ROLE,
   MENTIONABLE,
   NUMBER,

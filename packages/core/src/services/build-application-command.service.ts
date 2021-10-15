@@ -71,6 +71,7 @@ export class BuildApplicationCommandService {
           required,
           type,
           choices: propertyOptions.choice,
+          channelTypes: propertyOptions.channelTypes,
         });
       }
     }
