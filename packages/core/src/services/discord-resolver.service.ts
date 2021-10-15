@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit, Type } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit, Type } from '@nestjs/common';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { DiscoveryService, MetadataScanner, ModuleRef } from '@nestjs/core';
 import { IsObject } from '../utils/function/is-object';
@@ -17,6 +17,8 @@ import { ParamResolver } from '../resolvers/param/param.resolver';
 
 @Injectable()
 export class DiscordResolverService implements OnModuleInit {
+  private readonly logger = new Logger(DiscordResolverService.name);
+
   constructor(
     private readonly discoveryService: DiscoveryService,
     private readonly moduleRef: ModuleRef,
@@ -97,7 +99,7 @@ export class DiscordResolverService implements OnModuleInit {
     const client = await this.discordClientService.getClient();
 
     // TODO: Include late
-    // client.on('ready', () => this.registerCommands(client));
+    client.on('ready', () => this.registerCommands(client));
   }
 
   private scanMetadata(instance: any): string[] {
@@ -110,9 +112,12 @@ export class DiscordResolverService implements OnModuleInit {
 
   private async registerCommands(client: Client): Promise<void> {
     const commandList = this.discordCommandStore.getAllCommands();
+    if (commandList.length === 0) {
+      return;
+    }
 
     await client.application.commands.set(commandList);
 
-    await client.application.commands.fetch();
+    this.logger.log('All commands are registered!');
   }
 }

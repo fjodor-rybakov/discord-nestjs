@@ -100,10 +100,7 @@ export class BuildApplicationCommandService {
   }
 
   private async getSubCommandGroupOptions(
-    {
-      options: { name, description, required = false },
-      subCommands,
-    }: SubCommandGroupOptions,
+    { options: { name, description }, subCommands }: SubCommandGroupOptions,
     commandName: string,
   ): Promise<ApplicationCommandSubGroupData> {
     this.commandTreeService.appendNode([commandName, name], {});
@@ -118,7 +115,6 @@ export class BuildApplicationCommandService {
     return {
       name,
       description,
-      required,
       type: ApplicationCommandOptionTypes.SUB_COMMAND_GROUP,
       options: subCommandOptions,
     };
@@ -150,7 +146,6 @@ export class BuildApplicationCommandService {
     const applicationSubCommandData: ApplicationCommandSubCommandData = {
       name: metadata.name,
       description: metadata.description,
-      required: metadata.required ?? false,
       type: ApplicationCommandOptionTypes.SUB_COMMAND,
       options: [],
     };
@@ -181,10 +176,8 @@ export class BuildApplicationCommandService {
       }
     }
 
-    applicationSubCommandData.options = applicationSubCommandData.options.sort(
-      (first, second) => {
-        return first.required > second.required ? -1 : 1;
-      },
+    applicationSubCommandData.options = this.sortByRequired(
+      applicationSubCommandData.options,
     );
 
     return applicationSubCommandData;
