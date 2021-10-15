@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Intents } from 'discord.js';
 import { DiscordModule } from '@discord-nestjs/core';
-import { RegistrationCommand } from './registration-command';
 
 @Module({
   imports: [
@@ -10,7 +9,7 @@ import { RegistrationCommand } from './registration-command';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         token: configService.get('TOKEN'),
-        commands: [RegistrationCommand],
+        commands: ['**/*.command.js'],
         discordClientOptions: {
           intents: [Intents.FLAGS.GUILDS],
         },

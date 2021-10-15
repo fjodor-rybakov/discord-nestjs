@@ -14,6 +14,7 @@ import { Client } from 'discord.js';
 import { DiscordOptionService } from './discord-option.service';
 import { CommandResolver } from '../resolvers/command/command.resolver';
 import { ParamResolver } from '../resolvers/param/param.resolver';
+import { CommandPathToClassService } from './command-path-to-class.service';
 
 @Injectable()
 export class DiscordResolverService implements OnModuleInit {
@@ -34,6 +35,7 @@ export class DiscordResolverService implements OnModuleInit {
     private readonly discordCommandStore: DiscordCommandStore,
     private readonly discordClientService: DiscordClientService,
     private readonly discordOptionService: DiscordOptionService,
+    private readonly commandPathToClassService: CommandPathToClassService,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -47,7 +49,10 @@ export class DiscordResolverService implements OnModuleInit {
     providers: InstanceWrapper[],
     controllers: InstanceWrapper[],
   ): Promise<void> {
-    const { commands } = this.discordOptionService.getClientData();
+    const commands = await this.commandPathToClassService.resolveCommandsType(
+      this.discordOptionService.getClientData().commands,
+    );
+
     const methodResolvers = [
       this.paramResolver,
       this.eventResolver,

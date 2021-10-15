@@ -21,6 +21,7 @@ import { ParamResolver } from './resolvers/param/param.resolver';
 import { OptionResolver } from './resolvers/option/option.resolver';
 import { BuildApplicationCommandService } from './services/build-application-command.service';
 import { CommandTreeService } from './services/command-tree.service';
+import { CommandPathToClassService } from './services/command-path-to-class.service';
 
 @Module({
   imports: [DiscoveryModule],
@@ -30,6 +31,8 @@ export class DiscordModule {
     return {
       module: DiscordModule,
       providers: [
+        CommandPathToClassService,
+        DiscordOptionService,
         DiscordCommandStore,
         ReflectMetadataProvider,
         OptionResolver,
@@ -45,7 +48,6 @@ export class DiscordModule {
         DiscordModule.createDiscordOptionProvider(options),
         DiscordClientProvider,
         DiscordResolverService,
-        DiscordOptionService,
         DiscordClientService,
         BuildApplicationCommandService,
         CommandTreeService,
@@ -59,6 +61,8 @@ export class DiscordModule {
       module: DiscordModule,
       imports: options.imports || [],
       providers: [
+        CommandPathToClassService,
+        DiscordOptionService,
         DiscordCommandStore,
         ReflectMetadataProvider,
         OptionResolver,
@@ -74,7 +78,6 @@ export class DiscordModule {
         ...DiscordModule.createAsyncDiscordOptionProviders(options),
         DiscordClientProvider,
         DiscordResolverService,
-        DiscordOptionService,
         DiscordClientService,
         BuildApplicationCommandService,
         CommandTreeService,

@@ -12,7 +12,7 @@ export interface DiscordModuleOption {
   /**
    * Command classes
    */
-  commands?: Type[];
+  commands?: (Type | string)[];
 
   /**
    * Use pipes for all handlers
