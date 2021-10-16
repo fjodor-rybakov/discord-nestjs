@@ -10,4 +10,5 @@ export interface DiscordPipeOptions {
   context: ClientEvents[T];
   initValue?: unknown;
   metatype: Type;
+  commandNode: Record<string, any>;
 }

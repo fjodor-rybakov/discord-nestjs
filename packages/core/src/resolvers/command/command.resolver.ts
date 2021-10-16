@@ -39,10 +39,6 @@ export class CommandResolver implements ClassResolver {
     const { name } = metadata;
     const event = 'interactionCreate';
     const methodName = 'handler';
-    const handlerParams = this.paramResolver.getPayloadType({
-      instance,
-      methodName,
-    });
     const applicationCommandData =
       await this.buildApplicationCommandService.resolveCommandOptions(
         instance,
@@ -67,8 +63,6 @@ export class CommandResolver implements ClassResolver {
           subcommand,
         ]);
 
-        const { dtoInstance, instance: commandInstance } = commandNode;
-
         await this.middlewareResolver.applyMiddleware(event, [interaction]);
         const isAllowFromGuards = await this.guardResolver.applyGuard({
           instance,
@@ -78,13 +72,15 @@ export class CommandResolver implements ClassResolver {
         });
         if (!isAllowFromGuards) return;
 
+        const { dtoInstance, instance: commandInstance } = commandNode;
         await this.pipeResolver.applyPipe({
-          instance,
+          instance: commandInstance,
           methodName,
           event,
-          metatype: handlerParams,
+          metatype: dtoInstance.constructor,
           context: [interaction],
           initValue: interaction,
+          commandNode,
         });
 
         const replyResult = await commandInstance[methodName](

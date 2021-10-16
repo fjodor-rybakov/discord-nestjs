@@ -15,6 +15,7 @@ export * from './decorators/middleware/middleware-options';
 export * from './decorators/middleware/discord-middleware';
 export * from './decorators/guard/discord-guard';
 export * from './decorators/pipe/discord-pipe-transform';
+export * from './decorators/pipe/discord-argument-metadata';
 
 // Types
 export * from './definitions/types/guard.type';
@@ -39,3 +40,4 @@ export * from './decorators/option/channel/channel.decorator';
 
 // Providers
 export * from './providers/discord-client.provider';
+export * from './providers/reflect-metadata.provider';

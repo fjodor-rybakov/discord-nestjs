@@ -3,9 +3,22 @@
   "version": "0.0.1",
   "description": "Common module",
   "author": "fjodor-rybakov",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "nest build",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "test": "jest"
+  },
   "peerDependencies": {
+    "@nestjs/common": "^8.0.11",
+    "@nestjs/core": "^8.0.11",
+    "@discord-nestjs/core": "*",
+    "discord.js": "^13.2.0",
     "class-validator": "^0.13.1",
-    "discord.js": "^13.2.0"
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^7.3.0"
   },
   "devDependencies": {
     "typescript": "^4.4.3"

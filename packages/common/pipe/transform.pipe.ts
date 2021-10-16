@@ -1,13 +1,34 @@
-// import { ClientEvents } from 'discord.js';
-// import { Injectable, Type } from '@nestjs/common';
-// import { DiscordPipeTransform, TransformProvider } from '../../core';
-// import { DiscordArgumentMetadata } from '@discord-nestjs/core/dist/decorators/pipe/discord-argument-metadata';
-//
-// @Injectable()
-// export class TransformPipe implements DiscordPipeTransform {
-//   constructor(private readonly transformProvider: TransformProvider) {}
-//
-//   transform(value: any, metadata: DiscordArgumentMetadata): any {
-//     return this.transformProvider.transformContent(value, metadata);
-//   }
-// }
+import {
+  DiscordArgumentMetadata,
+  DiscordPipeTransform,
+  ReflectMetadataProvider,
+} from '@discord-nestjs/core';
+import { CommandInteraction } from 'discord.js';
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class TransformPipe implements DiscordPipeTransform {
+  constructor(private readonly metadataProvider: ReflectMetadataProvider) {}
+
+  transform(
+    interaction: CommandInteraction,
+    metadata: DiscordArgumentMetadata<'interactionCreate'>,
+  ): any {
+    if (!metadata.metatype || !interaction) {
+      return;
+    }
+
+    const { dtoInstance } = metadata.commandNode;
+
+    Object.keys(dtoInstance).map((property: string) => {
+      const argDecoratorOptions = this.metadataProvider.getArgDecoratorMetadata(
+        dtoInstance,
+        property,
+      );
+      dtoInstance[property] = interaction.options.get(
+        argDecoratorOptions.name,
+        argDecoratorOptions.required,
+      ).value;
+    });
+  }
+}

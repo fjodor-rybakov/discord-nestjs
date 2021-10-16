@@ -12,4 +12,6 @@ export interface DiscordArgumentMetadata<
   context: ClientEvents[TEvent];
 
   metatype: Type;
+
+  commandNode: Record<string, any>;
 }

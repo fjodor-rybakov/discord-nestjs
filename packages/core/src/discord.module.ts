@@ -52,7 +52,7 @@ export class DiscordModule {
         BuildApplicationCommandService,
         CommandTreeService,
       ],
-      exports: [DiscordClientProvider],
+      exports: [DiscordClientProvider, ReflectMetadataProvider],
     };
   }
 
@@ -82,7 +82,7 @@ export class DiscordModule {
         BuildApplicationCommandService,
         CommandTreeService,
       ],
-      exports: [DiscordClientProvider],
+      exports: [DiscordClientProvider, ReflectMetadataProvider],
     };
   }
 

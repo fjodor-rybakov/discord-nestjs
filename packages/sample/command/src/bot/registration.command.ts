@@ -1,6 +1,7 @@
 import { Command, UseGroup } from '@discord-nestjs/core';
 import { NumberSubCommand } from './number-sub-command';
 import { EmailSubCommand } from './email-sub-command';
+import { BaseInfoSubCommand } from './base-info-sub-command';
 
 @Command({
   name: 'reg',
@@ -11,6 +12,7 @@ import { EmailSubCommand } from './email-sub-command';
       NumberSubCommand,
       EmailSubCommand,
     ),
+    BaseInfoSubCommand,
   ],
 })
 export class RegistrationCommand {}

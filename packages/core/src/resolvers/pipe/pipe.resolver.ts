@@ -84,8 +84,15 @@ export class PipeResolver implements MethodResolver {
   }
 
   async applyPipe(options: DiscordPipeOptions): Promise<any> {
-    const { instance, methodName, event, context, initValue, metatype } =
-      options;
+    const {
+      instance,
+      methodName,
+      event,
+      context,
+      initValue,
+      metatype,
+      commandNode,
+    } = options;
     const pipesListForMethod = this.pipeList.find(
       (item: DiscordPipeList) =>
         item.methodName === methodName && item.instance === instance,
@@ -96,7 +103,12 @@ export class PipeResolver implements MethodResolver {
     return pipesListForMethod.pipeList.reduce(
       async (prev: Promise<any>, curr: DiscordPipeTransform) => {
         const prevData = await prev;
-        return curr.transform(prevData, { event, context, metatype });
+        return curr.transform(prevData, {
+          event,
+          context,
+          metatype,
+          commandNode,
+        });
       },
       Promise.resolve(initValue),
     );

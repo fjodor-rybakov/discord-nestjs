@@ -15,6 +15,9 @@ import { DiscordOptionService } from './discord-option.service';
 import { CommandResolver } from '../resolvers/command/command.resolver';
 import { ParamResolver } from '../resolvers/param/param.resolver';
 import { CommandPathToClassService } from './command-path-to-class.service';
+import { CommandTreeService } from './command-tree.service';
+import { Group } from '../definitions/types/tree/group';
+import { Leaf } from '../definitions/types/tree/leaf';
 
 @Injectable()
 export class DiscordResolverService implements OnModuleInit {
@@ -36,6 +39,7 @@ export class DiscordResolverService implements OnModuleInit {
     private readonly discordClientService: DiscordClientService,
     private readonly discordOptionService: DiscordOptionService,
     private readonly commandPathToClassService: CommandPathToClassService,
+    private readonly commandTreeService: CommandTreeService,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -53,6 +57,22 @@ export class DiscordResolverService implements OnModuleInit {
       this.discordOptionService.getClientData().commands,
     );
 
+    const commandInstances = await Promise.all(
+      commands.map(async (command: Type) => {
+        const instance = await this.moduleRef.create(command);
+        await this.commandResolver.resolve({ instance });
+        const instances: any[] = [];
+
+        const commandNode = Object.values(
+          this.commandTreeService.getTree(),
+        ).find((node) => node.instance.constructor.name === command.name);
+
+        this.findAllInstancesInTree(commandNode, instances);
+
+        return instances;
+      }),
+    );
+
     const methodResolvers = [
       this.paramResolver,
       this.eventResolver,
@@ -64,24 +84,17 @@ export class DiscordResolverService implements OnModuleInit {
       this.middlewareResolver,
       this.guardClassResolver,
       this.pipeClassResolver,
-      this.commandResolver,
     ];
 
-    const commandInstances = await Promise.all(
-      commands.map((command: Type) => this.moduleRef.create(command)),
-    );
     await Promise.all(
       providers
         .concat(controllers)
-        .concat(commandInstances)
+        .concat(commandInstances.flat())
         .map(async (instanceWrapper: any) => {
           let instance = instanceWrapper;
-          if (instanceWrapper instanceof InstanceWrapper) {
+          if (instanceWrapper instanceof InstanceWrapper)
             instance = instanceWrapper.instance;
-          }
-          if (!instance || !IsObject(instance)) {
-            return;
-          }
+          if (!instance || !IsObject(instance)) return;
 
           const methodNames = this.scanMetadata(instance);
           await Promise.all(
@@ -95,9 +108,8 @@ export class DiscordResolverService implements OnModuleInit {
             }),
           );
 
-          for await (const resolver of classResolvers) {
+          for await (const resolver of classResolvers)
             await resolver.resolve({ instance });
-          }
         }),
     );
 
@@ -117,12 +129,30 @@ export class DiscordResolverService implements OnModuleInit {
 
   private async registerCommands(client: Client): Promise<void> {
     const commandList = this.discordCommandStore.getAllCommands();
-    if (commandList.length === 0) {
-      return;
-    }
+    if (commandList.length === 0) return;
 
     await client.application.commands.set(commandList);
 
     this.logger.log('All commands are registered!');
+  }
+
+  private findAllInstancesInTree(node: Group, instances: any[]) {
+    if (!node) return;
+    if (node.instance) instances.push(node.instance);
+
+    const commandsNames = this.getCommandNamesFromNode(node);
+
+    if (commandsNames.length === 0) return;
+
+    commandsNames.forEach((name: string) =>
+      this.findAllInstancesInTree(node[name], instances),
+    );
+  }
+
+  private getCommandNamesFromNode(node: Group): string[] {
+    const keys = Object.keys(node);
+    const excludeKeys: (keyof Leaf)[] = ['instance', 'dtoInstance'];
+
+    return keys.filter((key: keyof Leaf) => !excludeKeys.includes(key));
   }
 }
