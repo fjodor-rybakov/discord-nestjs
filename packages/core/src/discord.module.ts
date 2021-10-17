@@ -16,7 +16,7 @@ import { GuardClassResolver } from './resolvers/guard/guard-class.resolver';
 import { PipeClassResolver } from './resolvers/pipe/pipe-class.resolver';
 import { ReflectMetadataProvider } from './providers/reflect-metadata.provider';
 import { CommandResolver } from './resolvers/command/command.resolver';
-import { DiscordCommandStore } from './store/discord-command-store';
+import { DiscordCommandProvider } from './providers/discord-command.provider';
 import { ParamResolver } from './resolvers/param/param.resolver';
 import { OptionResolver } from './resolvers/option/option.resolver';
 import { BuildApplicationCommandService } from './services/build-application-command.service';
@@ -33,7 +33,7 @@ export class DiscordModule {
       providers: [
         CommandPathToClassService,
         DiscordOptionService,
-        DiscordCommandStore,
+        DiscordCommandProvider,
         ReflectMetadataProvider,
         OptionResolver,
         MiddlewareResolver,
@@ -52,7 +52,11 @@ export class DiscordModule {
         BuildApplicationCommandService,
         CommandTreeService,
       ],
-      exports: [DiscordClientProvider, ReflectMetadataProvider],
+      exports: [
+        DiscordClientProvider,
+        ReflectMetadataProvider,
+        DiscordCommandProvider,
+      ],
     };
   }
 
@@ -63,7 +67,7 @@ export class DiscordModule {
       providers: [
         CommandPathToClassService,
         DiscordOptionService,
-        DiscordCommandStore,
+        DiscordCommandProvider,
         ReflectMetadataProvider,
         OptionResolver,
         MiddlewareResolver,
@@ -82,7 +86,11 @@ export class DiscordModule {
         BuildApplicationCommandService,
         CommandTreeService,
       ],
-      exports: [DiscordClientProvider, ReflectMetadataProvider],
+      exports: [
+        DiscordClientProvider,
+        ReflectMetadataProvider,
+        DiscordCommandProvider,
+      ],
     };
   }
 

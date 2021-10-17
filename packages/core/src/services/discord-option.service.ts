@@ -22,6 +22,7 @@ export class DiscordOptionService {
       useGuards: useGuards ?? [],
       usePipes: usePipes ?? [],
       commands: commands ?? [],
+      autoRegisterCommands: true,
     });
   }
 }

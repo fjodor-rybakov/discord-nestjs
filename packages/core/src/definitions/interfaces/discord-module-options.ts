@@ -10,17 +10,27 @@ export interface DiscordModuleOption {
   token: string;
 
   /**
-   * Command classes
+   * Automatically register global commands in the Discord API
+   *
+   * @default: true
+   */
+  autoRegisterCommands?: boolean;
+
+  /**
+   * List of command classes
+   * Accepts list of class types or list of search patterns
    */
   commands?: (Type | string)[];
 
   /**
    * Use pipes for all handlers
+   * Takes list of class types or list of instances
    */
   usePipes?: PipeType[];
 
   /**
    * Use guards for all handlers
+   * Takes list of class types or list of instances
    */
   useGuards?: GuardType[];
 

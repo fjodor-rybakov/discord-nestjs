@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { DiscordClientService } from '../../services/discord-client.service';
 import { Interaction } from 'discord.js';
-import { DiscordCommandStore } from '../../store/discord-command-store';
+import { DiscordCommandProvider } from '../../providers/discord-command.provider';
 import { MiddlewareResolver } from '../middleware/middleware.resolver';
 import { GuardResolver } from '../guard/guard.resolver';
 import { ClassResolver } from '../interfaces/class-resolver';
@@ -20,7 +20,7 @@ export class CommandResolver implements ClassResolver {
     private readonly discordClientService: DiscordClientService,
     private readonly metadataProvider: ReflectMetadataProvider,
     private readonly middlewareResolver: MiddlewareResolver,
-    private readonly discordCommandStore: DiscordCommandStore,
+    private readonly discordCommandProvider: DiscordCommandProvider,
     private readonly paramResolver: ParamResolver,
     private readonly guardResolver: GuardResolver,
     private readonly moduleRef: ModuleRef,
@@ -46,7 +46,7 @@ export class CommandResolver implements ClassResolver {
         metadata,
       );
 
-    this.discordCommandStore.addCommand(applicationCommandData);
+    this.discordCommandProvider.addCommand(applicationCommandData);
 
     this.discordClientService
       .getClient()

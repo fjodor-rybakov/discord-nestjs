@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ChatInputApplicationCommandData } from 'discord.js';
 
 @Injectable()
-export class DiscordCommandStore {
+export class DiscordCommandProvider {
   private readonly commandList: ChatInputApplicationCommandData[] = [];
 
   addCommand(command: ChatInputApplicationCommandData) {

@@ -8,7 +8,7 @@ import { PipeResolver } from '../resolvers/pipe/pipe.resolver';
 import { GuardResolver } from '../resolvers/guard/guard.resolver';
 import { GuardClassResolver } from '../resolvers/guard/guard-class.resolver';
 import { PipeClassResolver } from '../resolvers/pipe/pipe-class.resolver';
-import { DiscordCommandStore } from '../store/discord-command-store';
+import { DiscordCommandProvider } from '../providers/discord-command.provider';
 import { DiscordClientService } from './discord-client.service';
 import { Client } from 'discord.js';
 import { DiscordOptionService } from './discord-option.service';
@@ -35,7 +35,7 @@ export class DiscordResolverService implements OnModuleInit {
     private readonly pipeClassResolver: PipeClassResolver,
     private readonly paramResolver: ParamResolver,
     private readonly commandResolver: CommandResolver,
-    private readonly discordCommandStore: DiscordCommandStore,
+    private readonly discordCommandProvider: DiscordCommandProvider,
     private readonly discordClientService: DiscordClientService,
     private readonly discordOptionService: DiscordOptionService,
     private readonly commandPathToClassService: CommandPathToClassService,
@@ -53,8 +53,10 @@ export class DiscordResolverService implements OnModuleInit {
     providers: InstanceWrapper[],
     controllers: InstanceWrapper[],
   ): Promise<void> {
+    const options = this.discordOptionService.getClientData();
+
     const commands = await this.commandPathToClassService.resolveCommandsType(
-      this.discordOptionService.getClientData().commands,
+      options.commands,
     );
 
     const commandInstances = await Promise.all(
@@ -115,8 +117,8 @@ export class DiscordResolverService implements OnModuleInit {
 
     const client = await this.discordClientService.getClient();
 
-    // TODO: Include late
-    client.on('ready', () => this.registerCommands(client));
+    if (options.autoRegisterCommands)
+      client.on('ready', () => this.registerCommands(client));
   }
 
   private scanMetadata(instance: any): string[] {
@@ -128,7 +130,7 @@ export class DiscordResolverService implements OnModuleInit {
   }
 
   private async registerCommands(client: Client): Promise<void> {
-    const commandList = this.discordCommandStore.getAllCommands();
+    const commandList = this.discordCommandProvider.getAllCommands();
     if (commandList.length === 0) return;
 
     await client.application.commands.set(commandList);
@@ -136,7 +138,7 @@ export class DiscordResolverService implements OnModuleInit {
     this.logger.log('All commands are registered!');
   }
 
-  private findAllInstancesInTree(node: Group, instances: any[]) {
+  private findAllInstancesInTree(node: Group, instances: any[]): void {
     if (!node) return;
     if (node.instance) instances.push(node.instance);
 

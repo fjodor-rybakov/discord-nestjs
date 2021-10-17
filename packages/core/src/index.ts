@@ -41,3 +41,4 @@ export * from './decorators/option/channel/channel.decorator';
 // Providers
 export * from './providers/discord-client.provider';
 export * from './providers/reflect-metadata.provider';
+export * from './providers/discord-command.provider';
