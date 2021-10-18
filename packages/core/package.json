@@ -7,36 +7,30 @@
   "typings": "dist/index.d.ts",
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "nest build",
-    "lint": "eslint \"{src,apps,libs}/**/*.ts\" --fix"
+    "build": "nest build"
   },
   "dependencies": {
     "class-transformer": "0.4.0",
     "glob": "^7.2.0"
   },
   "peerDependencies": {
-    "@nestjs/common": "^8.0.11",
-    "@nestjs/core": "^8.0.11",
+    "@nestjs/common": "^8.1.1",
+    "@nestjs/core": "^8.1.1",
     "discord.js": "^13.2.0",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.3.0"
+    "rxjs": "^7.4.0"
   },
   "devDependencies": {
-    "@nestjs/cli": "^8.1.2",
+    "@nestjs/cli": "^8.1.4",
     "@nestjs/config": "^1.0.2",
-    "@nestjs/schematics": "^8.0.3",
+    "@nestjs/schematics": "^8.0.4",
     "@types/glob": "^7.1.4",
-    "@types/node": "^16.10.1",
-    "@typescript-eslint/eslint-plugin": "^4.32.0",
-    "@typescript-eslint/parser": "^4.32.0",
+    "@types/node": "^16.11.1",
     "discord.js": "^13.2.0",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^4.0.0",
     "prettier": "^2.4.1",
     "rimraf": "^3.0.2",
     "ts-loader": "^9.2.6",
-    "ts-node": "^10.2.1",
+    "ts-node": "^10.3.0",
     "tsconfig-paths": "^3.11.0",
     "typescript": "^4.4.4"
   }

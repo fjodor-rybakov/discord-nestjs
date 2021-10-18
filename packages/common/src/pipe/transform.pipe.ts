@@ -4,31 +4,35 @@ import {
   ReflectMetadataProvider,
 } from '@discord-nestjs/core';
 import { Injectable } from '@nestjs/common';
-import { CommandInteraction } from 'discord.js';
+import { Interaction } from 'discord.js';
 
+/**
+ * Transform pipe
+ *
+ * Fills DTO with values from interaction
+ */
 @Injectable()
 export class TransformPipe implements DiscordPipeTransform {
   constructor(private readonly metadataProvider: ReflectMetadataProvider) {}
 
   transform(
-    interaction: CommandInteraction,
+    interaction: Interaction,
     metadata: DiscordArgumentMetadata<'interactionCreate'>,
   ): any {
-    if (!metadata.metatype || !interaction) {
-      return;
-    }
+    if (!metadata.metatype || !interaction || !interaction.isCommand()) return;
 
     const { dtoInstance } = metadata.commandNode;
 
-    Object.keys(dtoInstance).map((property: string) => {
+    Object.keys(dtoInstance).forEach((property: string) => {
       const argDecoratorOptions = this.metadataProvider.getArgDecoratorMetadata(
         dtoInstance,
         property,
       );
-      dtoInstance[property] = interaction.options.get(
-        argDecoratorOptions.name,
-        argDecoratorOptions.required,
-      ).value;
+
+      if (!argDecoratorOptions) return;
+
+      const { name, required } = argDecoratorOptions;
+      dtoInstance[property] = interaction.options.get(name, required).value;
     });
 
     return dtoInstance;
