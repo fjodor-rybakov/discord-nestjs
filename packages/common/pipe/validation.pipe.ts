@@ -1,37 +1,25 @@
-// import { DiscordPipeTransform } from '../../core';
-// import { ClientEvents, Message } from 'discord.js';
-// import { Inject, Injectable, Optional } from '@nestjs/common';
-// import { ValidationOptionsPipe } from './interface/validation-options.pipe';
-// import { validate } from 'class-validator';
-// import { ValidationProvider } from '../../core/provider/validation.provider';
-//
-// @Injectable()
-// export class ValidationPipe implements DiscordPipeTransform {
-//   @Inject(ValidationProvider)
-//   validationProvider: ValidationProvider;
-//
-//   constructor(
-//     @Optional()
-//     private readonly validateOptions?: ValidationOptionsPipe,
-//   ) {}
-//
-//   async transform(
-//     event: keyof ClientEvents,
-//     [context]: [Message],
-//     content?: any,
-//   ): Promise<any> {
-//     const result = await validate(
-//       content,
-//       this.validateOptions?.validatorOptions,
-//     );
-//     if (this.validateOptions && this.validateOptions.exceptionFactory) {
-//       this.validationProvider.setErrorMessage(
-//         this.validateOptions.exceptionFactory(result, context),
-//       );
-//     }
-//     if (result.length > 0) {
-//       throw result;
-//     }
-//     return content;
-//   }
-// }
+import { DiscordPipeTransform } from '../../core';
+import { Injectable, Optional } from '@nestjs/common';
+import { ValidationPipeOptions } from './interfaces/validation-pipe-options';
+import { validate } from 'class-validator';
+
+@Injectable()
+export class ValidationPipe implements DiscordPipeTransform {
+  constructor(
+    @Optional()
+    private readonly validateOptions?: ValidationPipeOptions,
+  ) {}
+
+  async transform(dtoInstance: any): Promise<any> {
+    const result = await validate(
+      dtoInstance,
+      this.validateOptions?.validatorOptions,
+    );
+
+    if (result.length > 0) {
+      throw result;
+    }
+
+    return dtoInstance;
+  }
+}

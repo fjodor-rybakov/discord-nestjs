@@ -16,8 +16,10 @@ import { CommandResolver } from '../resolvers/command/command.resolver';
 import { ParamResolver } from '../resolvers/param/param.resolver';
 import { CommandPathToClassService } from './command-path-to-class.service';
 import { CommandTreeService } from './command-tree.service';
-import { Group } from '../definitions/types/tree/group';
+import { CommandNode } from '../definitions/types/tree/command-node';
 import { Leaf } from '../definitions/types/tree/leaf';
+import { FilterClassResolver } from '../resolvers/filter/filter-class.resolver';
+import { FilterResolver } from '../resolvers/filter/filter.resolver';
 
 @Injectable()
 export class DiscordResolverService implements OnModuleInit {
@@ -27,6 +29,8 @@ export class DiscordResolverService implements OnModuleInit {
     private readonly discoveryService: DiscoveryService,
     private readonly moduleRef: ModuleRef,
     private readonly metadataScanner: MetadataScanner,
+    private readonly filterResolver: FilterResolver,
+    private readonly filterClassResolver: FilterClassResolver,
     private readonly eventResolver: EventResolver,
     private readonly guardResolver: GuardResolver,
     private readonly pipeResolver: PipeResolver,
@@ -76,6 +80,7 @@ export class DiscordResolverService implements OnModuleInit {
     );
 
     const methodResolvers = [
+      this.filterResolver,
       this.paramResolver,
       this.eventResolver,
       this.guardResolver,
@@ -83,6 +88,7 @@ export class DiscordResolverService implements OnModuleInit {
     ];
 
     const classResolvers = [
+      this.filterClassResolver,
       this.middlewareResolver,
       this.guardClassResolver,
       this.pipeClassResolver,
@@ -138,7 +144,7 @@ export class DiscordResolverService implements OnModuleInit {
     this.logger.log('All commands are registered!');
   }
 
-  private findAllInstancesInTree(node: Group, instances: any[]): void {
+  private findAllInstancesInTree(node: CommandNode, instances: any[]): void {
     if (!node) return;
     if (node.instance) instances.push(node.instance);
 
@@ -151,7 +157,7 @@ export class DiscordResolverService implements OnModuleInit {
     );
   }
 
-  private getCommandNamesFromNode(node: Group): string[] {
+  private getCommandNamesFromNode(node: CommandNode): string[] {
     const keys = Object.keys(node);
     const excludeKeys: (keyof Leaf)[] = ['instance', 'dtoInstance'];
 

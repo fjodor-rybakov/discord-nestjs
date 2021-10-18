@@ -1,5 +1,5 @@
-import { Group } from './group';
+import { CommandNode } from './command-node';
 
 export type Tree = {
-  [commandName: string]: Group;
+  [commandName: string]: CommandNode;
 };

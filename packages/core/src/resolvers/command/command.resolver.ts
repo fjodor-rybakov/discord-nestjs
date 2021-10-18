@@ -13,6 +13,7 @@ import { ParamResolver } from '../param/param.resolver';
 import { PipeResolver } from '../pipe/pipe.resolver';
 import { BuildApplicationCommandService } from '../../services/build-application-command.service';
 import { CommandTreeService } from '../../services/command-tree.service';
+import { FilterResolver } from '../filter/filter.resolver';
 
 @Injectable()
 export class CommandResolver implements ClassResolver {
@@ -27,6 +28,7 @@ export class CommandResolver implements ClassResolver {
     private readonly pipeResolver: PipeResolver,
     private readonly buildApplicationCommandService: BuildApplicationCommandService,
     private readonly commandTreeService: CommandTreeService,
+    private readonly filterResolver: FilterResolver,
   ) {}
 
   async resolve({
@@ -63,31 +65,47 @@ export class CommandResolver implements ClassResolver {
           subcommand,
         ]);
 
-        await this.middlewareResolver.applyMiddleware(event, [interaction]);
-        const isAllowFromGuards = await this.guardResolver.applyGuard({
-          instance,
-          methodName,
-          event,
-          context: [interaction],
-        });
-        if (!isAllowFromGuards) return;
-
         const { dtoInstance, instance: commandInstance } = commandNode;
-        await this.pipeResolver.applyPipe({
-          instance: commandInstance,
-          methodName,
-          event,
-          metatype: dtoInstance.constructor,
-          context: [interaction],
-          initValue: interaction,
-          commandNode,
-        });
 
-        const replyResult = await commandInstance[methodName](
-          dtoInstance ?? interaction,
-        );
+        try {
+          await this.middlewareResolver.applyMiddleware(event, [interaction]);
+          const isAllowFromGuards = await this.guardResolver.applyGuard({
+            instance,
+            methodName,
+            event,
+            context: [interaction],
+          });
+          if (!isAllowFromGuards) return;
 
-        if (replyResult) await interaction.reply(replyResult);
+          await this.pipeResolver.applyPipe({
+            instance: commandInstance,
+            methodName,
+            event,
+            metatype: dtoInstance.constructor,
+            context: [interaction],
+            initValue: interaction,
+            commandNode,
+          });
+
+          const handlerArgs = dtoInstance
+            ? [dtoInstance, interaction]
+            : [interaction];
+          const replyResult = await commandInstance[methodName](...handlerArgs);
+
+          if (replyResult) await interaction.reply(replyResult);
+        } catch (exception) {
+          const isTrowException = await this.filterResolver.applyFilter({
+            instance: commandInstance,
+            methodName,
+            event,
+            metatype: dtoInstance.constructor,
+            context: [interaction],
+            exception,
+            commandNode,
+          });
+
+          if (isTrowException) throw exception;
+        }
       });
   }
 }

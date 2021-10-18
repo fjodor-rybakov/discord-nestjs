@@ -30,32 +30,14 @@ export class PipeResolver implements MethodResolver {
       if (!hasMetadataForPipe) {
         return;
       }
-      const guardAlreadyRegistered = this.getPipeData(options);
-      if (guardAlreadyRegistered) {
+      const pipeAlreadyRegistered = this.getPipeData(options);
+      if (pipeAlreadyRegistered) {
         return;
       }
       pipes = this.discordOptionService.getClientData().usePipes;
       if (pipes.length === 0) {
         return;
       }
-      // TODO: Finish up params
-      // const contentInfo = this.metadataProvider.getContentDecoratorMetadata(
-      //   instance,
-      //   methodName,
-      // );
-      // if (!contentInfo) {
-      //   return;
-      // }
-      // const argsTypeList = this.metadataProvider.getParamTypesMetadata(
-      //   instance,
-      //   methodName,
-      // );
-      // if (
-      //   argsTypeList.length === 0 ||
-      //   argsTypeList[contentInfo.parameterIndex] === String
-      // ) {
-      //   return;
-      // }
     }
     await this.addPipe(options, pipes);
   }
@@ -93,10 +75,7 @@ export class PipeResolver implements MethodResolver {
       metatype,
       commandNode,
     } = options;
-    const pipesListForMethod = this.pipeList.find(
-      (item: DiscordPipeList) =>
-        item.methodName === methodName && item.instance === instance,
-    );
+    const pipesListForMethod = this.getPipeData({ instance, methodName });
     if (!pipesListForMethod) {
       return;
     }

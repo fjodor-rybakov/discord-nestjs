@@ -22,6 +22,8 @@ import { OptionResolver } from './resolvers/option/option.resolver';
 import { BuildApplicationCommandService } from './services/build-application-command.service';
 import { CommandTreeService } from './services/command-tree.service';
 import { CommandPathToClassService } from './services/command-path-to-class.service';
+import { FilterResolver } from './resolvers/filter/filter.resolver';
+import { FilterClassResolver } from './resolvers/filter/filter-class.resolver';
 
 @Module({
   imports: [DiscoveryModule],
@@ -36,9 +38,11 @@ export class DiscordModule {
         DiscordCommandProvider,
         ReflectMetadataProvider,
         OptionResolver,
+        FilterResolver,
         MiddlewareResolver,
         PipeResolver,
         GuardResolver,
+        FilterClassResolver,
         GuardClassResolver,
         PipeClassResolver,
         ParamResolver,
@@ -70,9 +74,11 @@ export class DiscordModule {
         DiscordCommandProvider,
         ReflectMetadataProvider,
         OptionResolver,
+        FilterResolver,
         MiddlewareResolver,
         PipeResolver,
         GuardResolver,
+        FilterClassResolver,
         GuardClassResolver,
         PipeClassResolver,
         ParamResolver,

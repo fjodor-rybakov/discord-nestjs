@@ -30,5 +30,7 @@ export class TransformPipe implements DiscordPipeTransform {
         argDecoratorOptions.required,
       ).value;
     });
+
+    return dtoInstance;
   }
 }

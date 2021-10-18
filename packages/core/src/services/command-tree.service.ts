@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Tree } from '../definitions/types/tree/tree';
-import { Group } from '../definitions/types/tree/group';
+import { CommandNode } from '../definitions/types/tree/command-node';
 
 @Injectable()
 export class CommandTreeService {
   private tree: Tree = {};
 
-  appendNode(path: string[], value: Group): void {
+  appendNode(path: string[], value: CommandNode): void {
     const cleanPath = path.filter((item) => !!item);
     let index = 0;
     let parent = this.tree;
@@ -17,7 +17,7 @@ export class CommandTreeService {
     parent[cleanPath[index]] = value;
   }
 
-  getNode(path: string[]): Group {
+  getNode(path: string[]): CommandNode {
     let part = this.tree;
 
     path

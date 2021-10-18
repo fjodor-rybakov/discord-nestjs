@@ -21,6 +21,9 @@ import { CHANNEL_DECORATOR } from '../decorators/option/channel/channel.constant
 import { COMMAND_DECORATOR } from '../decorators/command/command.constant';
 import { ExcludeEnum } from '../definitions/types/exclude-enum.type';
 import { ChannelTypes } from 'discord.js/typings/enums';
+import { USE_FILTER_DECORATOR } from '../decorators/filter/use-filter.constant';
+import { CATCH_EXCEPTION_FILTER_DECORATOR } from '../decorators/filter/catch/catch.constant';
+import { FilterType } from '../definitions/types/filter.type';
 
 @Injectable()
 export class ReflectMetadataProvider {
@@ -64,6 +67,17 @@ export class ReflectMetadataProvider {
     methodName?: string,
   ): PipeType[] {
     return Reflect.getMetadata(USE_PIPES_DECORATOR, instance, methodName);
+  }
+
+  getUseFiltersDecoratorMetadata(
+    instance: unknown,
+    methodName?: string,
+  ): FilterType[] {
+    return Reflect.getMetadata(USE_FILTER_DECORATOR, instance, methodName);
+  }
+
+  getCatchDecoratorMetadata(instance: unknown): Type[] {
+    return Reflect.getMetadata(CATCH_EXCEPTION_FILTER_DECORATOR, instance);
   }
 
   getParamTypesMetadata(instance: unknown, methodName: string): Type[] {
