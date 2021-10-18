@@ -58,9 +58,7 @@ export class OptionResolver {
       dtoInstance,
       propertyKey,
     );
-    if (!choiceData) {
-      return;
-    }
+    if (!choiceData) return;
 
     const rawValues = Object.entries(choiceData);
     const values = rawValues.slice(rawValues.length / 2);
@@ -76,9 +74,7 @@ export class OptionResolver {
       dtoInstance,
       propertyKey,
     );
-    if (!channelTypes) {
-      return;
-    }
+    if (!channelTypes) return;
 
     return channelTypes;
   }
@@ -111,12 +107,11 @@ export class OptionResolver {
           dtoInstance,
           propertyKey,
         );
-        if (metatype.name === 'String') {
+        if (metatype.name === 'String')
           return ApplicationCommandOptionTypes.STRING;
-        }
-        if (metatype.name === 'Boolean') {
+
+        if (metatype.name === 'Boolean')
           return ApplicationCommandOptionTypes.BOOLEAN;
-        }
 
         throw new Error(
           `Could not determine field type ${propertyKey} in class ${dtoInstance.constructor.name}`,

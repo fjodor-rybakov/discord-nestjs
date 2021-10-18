@@ -8,7 +8,7 @@ import { Injectable, Type } from '@nestjs/common';
 
 @Injectable()
 export class ParamResolver implements MethodResolver {
-  private readonly params: ParamOptions[] = []; // TODO: Maybe remove
+  private readonly params: ParamOptions[] = [];
 
   constructor(private readonly metadataProvider: ReflectMetadataProvider) {}
 
@@ -20,9 +20,7 @@ export class ParamResolver implements MethodResolver {
       instance,
       methodName,
     );
-    if (!paramsTypes) {
-      return;
-    }
+    if (!paramsTypes) return;
 
     this.processPayloadData({ instance, methodName }, paramsTypes);
   }
@@ -35,9 +33,7 @@ export class ParamResolver implements MethodResolver {
       instance,
       methodName,
     );
-    if (!payloadMetadata) {
-      return;
-    }
+    if (!payloadMetadata) return;
 
     const paramItem: ParamOptions = {
       instance,
@@ -60,9 +56,8 @@ export class ParamResolver implements MethodResolver {
       (item: ParamOptions) =>
         item.instance === instance && item.methodName === methodName,
     );
-    if (!paramsList) {
-      return;
-    }
+    if (!paramsList) return;
+
     return paramsList.args.find(
       (item: DecoratorTypeArg) =>
         item.decoratorType === DecoratorParamType.PAYLOAD,

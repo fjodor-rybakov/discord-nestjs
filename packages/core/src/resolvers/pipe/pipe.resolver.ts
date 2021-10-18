@@ -27,17 +27,13 @@ export class PipeResolver implements MethodResolver {
     );
     if (!pipes) {
       const hasMetadataForPipe = this.checkApplyGlobalPipe(options);
-      if (!hasMetadataForPipe) {
-        return;
-      }
+      if (!hasMetadataForPipe) return;
+
       const pipeAlreadyRegistered = this.getPipeData(options);
-      if (pipeAlreadyRegistered) {
-        return;
-      }
+      if (pipeAlreadyRegistered) return;
+
       pipes = this.discordOptionService.getClientData().usePipes;
-      if (pipes.length === 0) {
-        return;
-      }
+      if (pipes.length === 0) return;
     }
     await this.addPipe(options, pipes);
   }
@@ -76,9 +72,8 @@ export class PipeResolver implements MethodResolver {
       commandNode,
     } = options;
     const pipesListForMethod = this.getPipeData({ instance, methodName });
-    if (!pipesListForMethod) {
-      return;
-    }
+    if (!pipesListForMethod) return;
+
     return pipesListForMethod.pipeList.reduce(
       async (prev: Promise<any>, curr: DiscordPipeTransform) => {
         const prevData = await prev;
@@ -102,9 +97,7 @@ export class PipeResolver implements MethodResolver {
       this.metadataProvider.getSubCommandDecoratorMetadata,
     ].some((item) => item(instance));
 
-    if (someClassHasMetadata) {
-      return true;
-    }
+    if (someClassHasMetadata) return true;
 
     return [
       this.metadataProvider.getOnEventDecoratorMetadata,

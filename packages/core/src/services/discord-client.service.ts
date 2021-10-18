@@ -48,9 +48,7 @@ export class DiscordClientService
   private createWebhookClient(
     webhookOptions: WebhookClientData,
   ): WebhookClient {
-    if (!webhookOptions) {
-      return;
-    }
+    if (!webhookOptions) return;
 
     return new WebhookClient(webhookOptions);
   }

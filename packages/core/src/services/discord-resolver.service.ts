@@ -149,7 +149,6 @@ export class DiscordResolverService implements OnModuleInit {
     if (node.instance) instances.push(node.instance);
 
     const commandsNames = this.getCommandNamesFromNode(node);
-
     if (commandsNames.length === 0) return;
 
     commandsNames.forEach((name: string) =>

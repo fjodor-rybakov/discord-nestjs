@@ -17,9 +17,7 @@ export class FilterClassResolver implements ClassResolver {
     const { instance } = options;
     const metadata =
       this.metadataProvider.getUseFiltersDecoratorMetadata(instance);
-    if (!metadata) {
-      return;
-    }
+    if (!metadata) return;
 
     const someClassHasMetadata = [
       this.metadataProvider.getCommandDecoratorMetadata,

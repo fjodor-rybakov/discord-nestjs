@@ -27,17 +27,13 @@ export class GuardResolver implements MethodResolver {
     );
     if (!guards) {
       const hasMetadataForGuard = this.checkApplyGlobalGuard(options);
-      if (!hasMetadataForGuard) {
-        return;
-      }
+      if (!hasMetadataForGuard) return;
+
       const guardAlreadyRegistered = this.getGuardData(options);
-      if (guardAlreadyRegistered) {
-        return;
-      }
+      if (guardAlreadyRegistered) return;
+
       guards = this.discordOptionService.getClientData().useGuards;
-      if (guards.length === 0) {
-        return;
-      }
+      if (guards.length === 0) return;
     }
     await this.addGuard(options, guards);
   }
@@ -64,14 +60,11 @@ export class GuardResolver implements MethodResolver {
   async applyGuard(options: DiscordGuardOptions): Promise<boolean> {
     const { instance, methodName, event, context } = options;
     const guardListForMethod = this.getGuardData({ instance, methodName });
-    if (!guardListForMethod) {
-      return true;
-    }
+    if (!guardListForMethod) return true;
+
     for await (const guard of guardListForMethod.guardList) {
       const result = await guard.canActive(event, context);
-      if (!result) {
-        return false;
-      }
+      if (!result) return false;
     }
     return true;
   }
@@ -85,9 +78,7 @@ export class GuardResolver implements MethodResolver {
       this.metadataProvider.getSubCommandDecoratorMetadata,
     ].some((item) => item(instance));
 
-    if (someClassHasMetadata) {
-      return true;
-    }
+    if (someClassHasMetadata) return true;
 
     return [
       this.metadataProvider.getOnEventDecoratorMetadata,

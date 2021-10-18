@@ -9,7 +9,6 @@ import { GuardResolver } from '../guard/guard.resolver';
 import { ClassResolveOptions } from '../interfaces/class-resolve-options';
 import { ClassResolver } from '../interfaces/class-resolver';
 import { MiddlewareResolver } from '../middleware/middleware.resolver';
-import { ParamResolver } from '../param/param.resolver';
 import { PipeResolver } from '../pipe/pipe.resolver';
 import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
@@ -22,7 +21,6 @@ export class CommandResolver implements ClassResolver {
     private readonly metadataProvider: ReflectMetadataProvider,
     private readonly middlewareResolver: MiddlewareResolver,
     private readonly discordCommandProvider: DiscordCommandProvider,
-    private readonly paramResolver: ParamResolver,
     private readonly guardResolver: GuardResolver,
     private readonly moduleRef: ModuleRef,
     private readonly pipeResolver: PipeResolver,
@@ -77,7 +75,7 @@ export class CommandResolver implements ClassResolver {
           });
           if (!isAllowFromGuards) return;
 
-          await this.pipeResolver.applyPipe({
+          const pipeResult = await this.pipeResolver.applyPipe({
             instance: commandInstance,
             methodName,
             event,
@@ -88,7 +86,7 @@ export class CommandResolver implements ClassResolver {
           });
 
           const handlerArgs = dtoInstance
-            ? [dtoInstance, interaction]
+            ? [pipeResult, interaction]
             : [interaction];
           const replyResult = await commandInstance[methodName](...handlerArgs);
 

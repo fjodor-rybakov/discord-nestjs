@@ -14,17 +14,16 @@ export class MiddlewareResolver implements ClassResolver {
 
   resolve(options: ClassResolveOptions): void {
     const { instance } = options;
-    if (!this.instanceIsMiddleware(instance)) {
-      return;
-    }
+    if (!this.instanceIsMiddleware(instance)) return;
+
     const metadata =
       this.metadataProvider.getMiddlewareDecoratorMetadata(instance);
     this.middlewareList.push({ instance, metadata });
   }
 
-  async applyMiddleware<T extends keyof ClientEvents>(
-    event: T,
-    context: ClientEvents[T],
+  async applyMiddleware<TEvent extends keyof ClientEvents>(
+    event: TEvent,
+    context: ClientEvents[TEvent],
   ): Promise<void> {
     const filteredMiddleware = this.middlewareList.filter(
       (item: DiscordMiddlewareInstance) => {

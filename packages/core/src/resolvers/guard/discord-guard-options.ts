@@ -1,10 +1,10 @@
 import { ClientEvents } from 'discord.js';
 
-type T = keyof ClientEvents;
+type TEvent = keyof ClientEvents;
 
 export interface DiscordGuardOptions {
   instance: unknown;
   methodName: string;
-  event: T;
-  context: ClientEvents[T];
+  event: TEvent;
+  context: ClientEvents[TEvent];
 }

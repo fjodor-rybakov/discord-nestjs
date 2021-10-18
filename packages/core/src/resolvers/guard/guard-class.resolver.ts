@@ -17,9 +17,8 @@ export class GuardClassResolver implements ClassResolver {
     const { instance } = options;
     const metadata =
       this.metadataProvide.getUseGuardsDecoratorMetadata(instance);
-    if (!metadata) {
-      return;
-    }
+    if (!metadata) return;
+
     const allClassMethods = this.metadataScanner.getAllFilteredMethodNames(
       Object.getPrototypeOf(instance),
     );

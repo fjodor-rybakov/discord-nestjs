@@ -27,17 +27,13 @@ export class FilterResolver implements MethodResolver {
     );
     if (!filters) {
       const hasMetadataForPipe = this.checkApplyGlobalPipe(options);
-      if (!hasMetadataForPipe) {
-        return;
-      }
+      if (!hasMetadataForPipe) return;
+
       const filterAlreadyRegistered = this.getFilterData(options);
-      if (filterAlreadyRegistered) {
-        return;
-      }
+      if (filterAlreadyRegistered) return;
+
       filters = this.discordOptionService.getClientData().useFilters;
-      if (filters.length === 0) {
-        return;
-      }
+      if (filters.length === 0) return;
     }
     await this.addFilter(options, filters);
   }
@@ -121,9 +117,7 @@ export class FilterResolver implements MethodResolver {
       this.metadataProvider.getSubCommandDecoratorMetadata,
     ].some((item) => item(instance));
 
-    if (someClassHasMetadata) {
-      return true;
-    }
+    if (someClassHasMetadata) return true;
 
     return [
       this.metadataProvider.getOnEventDecoratorMetadata,
