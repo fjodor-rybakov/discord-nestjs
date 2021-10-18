@@ -1,6 +1,6 @@
+import { ExcludeEnum } from '../../../definitions/types/exclude-enum.type';
 import { CHANNEL_DECORATOR } from './channel.constant';
 import { ChannelTypes } from 'discord.js/typings/enums';
-import { ExcludeEnum } from '../../../definitions/types/exclude-enum.type';
 
 /**
  * Channel decorator

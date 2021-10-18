@@ -1,5 +1,14 @@
-import { Injectable, Type } from '@nestjs/common';
 import { CommandOptions } from '../decorators/command/command-options';
+import { isSubCommandGroup } from '../decorators/sub-command-group/is-sub-command-group';
+import { SubCommandGroupOptions } from '../decorators/sub-command-group/sub-command-group-options';
+import { DiscordCommand } from '../definitions/interfaces/discord-command';
+import { TInclude } from '../definitions/types/include.type';
+import { ReflectMetadataProvider } from '../providers/reflect-metadata.provider';
+import { OptionResolver } from '../resolvers/option/option.resolver';
+import { ParamResolver } from '../resolvers/param/param.resolver';
+import { CommandTreeService } from './command-tree.service';
+import { Injectable, Type } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 import {
   ApplicationCommandOptionData,
   ApplicationCommandSubCommandData,
@@ -10,15 +19,6 @@ import {
   ApplicationCommandOptionTypes,
   ApplicationCommandTypes,
 } from 'discord.js/typings/enums';
-import { ParamResolver } from '../resolvers/param/param.resolver';
-import { ModuleRef } from '@nestjs/core';
-import { isSubCommandGroup } from '../decorators/sub-command-group/is-sub-command-group';
-import { SubCommandGroupOptions } from '../decorators/sub-command-group/sub-command-group-options';
-import { ReflectMetadataProvider } from '../providers/reflect-metadata.provider';
-import { TInclude } from '../definitions/types/include.type';
-import { OptionResolver } from '../resolvers/option/option.resolver';
-import { DiscordCommand } from '../definitions/interfaces/discord-command';
-import { CommandTreeService } from './command-tree.service';
 
 @Injectable()
 export class BuildApplicationCommandService {

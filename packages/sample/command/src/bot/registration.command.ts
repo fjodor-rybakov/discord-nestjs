@@ -1,7 +1,7 @@
-import { Command, UseGroup } from '@discord-nestjs/core';
-import { NumberSubCommand } from './number-sub-command';
-import { EmailSubCommand } from './email-sub-command';
 import { BaseInfoSubCommand } from './base-info-sub-command';
+import { EmailSubCommand } from './email-sub-command';
+import { NumberSubCommand } from './number-sub-command';
+import { Command, UseGroup } from '@discord-nestjs/core';
 
 @Command({
   name: 'reg',

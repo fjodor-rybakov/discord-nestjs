@@ -1,8 +1,8 @@
-import { Test } from '@nestjs/testing';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Module } from '@nestjs/common';
-import { Intents } from 'discord.js';
 import { DiscordModule, DiscordClientProvider } from '../../src';
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Test } from '@nestjs/testing';
+import { Intents } from 'discord.js';
 
 describe('Discord module', () => {
   it('define should be success registered discord client', async () => {

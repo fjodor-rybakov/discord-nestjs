@@ -1,5 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
 import { On } from '@discord-nestjs/core';
+import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
 export class BotGateway {

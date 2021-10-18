@@ -1,3 +1,6 @@
+import { NumberDto } from './dto/number.dto';
+import { CommandValidationFilter } from './filter/command-validation.filter';
+import { TransformPipe, ValidationPipe } from '@discord-nestjs/common';
 import {
   DiscordTransformedCommand,
   Payload,
@@ -5,9 +8,6 @@ import {
   UsePipes,
   UseFilters,
 } from '@discord-nestjs/core';
-import { NumberDto } from './dto/number.dto';
-import { TransformPipe, ValidationPipe } from '@discord-nestjs/common';
-import { CommandValidationFilter } from './filter/command-validation.filter';
 
 @UseFilters(CommandValidationFilter)
 @SubCommand({ name: 'number', description: 'Register by phone number' })

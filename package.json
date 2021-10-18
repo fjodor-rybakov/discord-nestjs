@@ -11,6 +11,7 @@
     "format": "prettier --write \"packages/**/*.ts\" --ignore-path .gitignore"
   },
   "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^2.0.4",
     "husky": "^7.0.2",
     "lerna": "^4.0.0",
     "lint-staged": "^11.2.0",

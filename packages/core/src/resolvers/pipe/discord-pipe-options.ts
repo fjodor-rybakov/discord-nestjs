@@ -1,5 +1,5 @@
-import { ClientEvents } from 'discord.js';
 import { Type } from '@nestjs/common';
+import { ClientEvents } from 'discord.js';
 
 type T = keyof ClientEvents;
 

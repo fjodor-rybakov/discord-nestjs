@@ -1,6 +1,6 @@
-import { applyDecorators, Injectable } from '@nestjs/common';
 import { MiddlewareOptions } from './middleware-options';
 import { MIDDLEWARE_DECORATOR } from './middleware.constant';
+import { applyDecorators, Injectable } from '@nestjs/common';
 
 /**
  * Middleware decorator

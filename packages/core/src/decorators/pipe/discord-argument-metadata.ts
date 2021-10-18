@@ -1,6 +1,6 @@
+import { CommandNode } from '../../definitions/types/tree/command-node';
 import { Type } from '@nestjs/common';
 import { ClientEvents } from 'discord.js';
-import { CommandNode } from '../../definitions/types/tree/command-node';
 
 /**
  * Discord argument metadata

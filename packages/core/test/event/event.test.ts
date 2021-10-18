@@ -1,8 +1,8 @@
+import { Once, DiscordModule, On, DiscordClientProvider } from '../../src';
 import { Module, Injectable } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Guild, Intents, Message } from 'discord.js';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Once, DiscordModule, On, DiscordClientProvider } from '../../src';
+import { Guild, Intents, Message } from 'discord.js';
 
 describe('Event decorator', () => {
   let moduleRef: TestingModule;

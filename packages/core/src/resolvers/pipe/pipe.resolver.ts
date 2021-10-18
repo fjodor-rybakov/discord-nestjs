@@ -1,13 +1,13 @@
-import { Injectable, Type } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
+import { DiscordPipeTransform } from '../../decorators/pipe/discord-pipe-transform';
+import { PipeType } from '../../definitions/types/pipe.type';
+import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
+import { DiscordOptionService } from '../../services/discord-option.service';
 import { MethodResolveOptions } from '../interfaces/method-resolve-options';
 import { MethodResolver } from '../interfaces/method-resolver';
 import { DiscordPipeList } from './discord-pipe-list';
-import { DiscordOptionService } from '../../services/discord-option.service';
-import { PipeType } from '../../definitions/types/pipe.type';
-import { DiscordPipeTransform } from '../../decorators/pipe/discord-pipe-transform';
 import { DiscordPipeOptions } from './discord-pipe-options';
-import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
+import { Injectable, Type } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 
 @Injectable()
 export class PipeResolver implements MethodResolver {

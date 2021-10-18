@@ -1,5 +1,5 @@
-import { COMMAND_DECORATOR } from './command.constant';
 import { CommandOptions } from './command-options';
+import { COMMAND_DECORATOR } from './command.constant';
 
 /**
  * Command decorator

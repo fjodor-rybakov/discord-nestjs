@@ -1,25 +1,25 @@
-import { Injectable, Logger, OnModuleInit, Type } from '@nestjs/common';
-import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
-import { DiscoveryService, MetadataScanner, ModuleRef } from '@nestjs/core';
-import { IsObject } from '../utils/function/is-object';
-import { EventResolver } from '../resolvers/event/event.resolver';
-import { MiddlewareResolver } from '../resolvers/middleware/middleware.resolver';
-import { PipeResolver } from '../resolvers/pipe/pipe.resolver';
-import { GuardResolver } from '../resolvers/guard/guard.resolver';
-import { GuardClassResolver } from '../resolvers/guard/guard-class.resolver';
-import { PipeClassResolver } from '../resolvers/pipe/pipe-class.resolver';
-import { DiscordCommandProvider } from '../providers/discord-command.provider';
-import { DiscordClientService } from './discord-client.service';
-import { Client } from 'discord.js';
-import { DiscordOptionService } from './discord-option.service';
-import { CommandResolver } from '../resolvers/command/command.resolver';
-import { ParamResolver } from '../resolvers/param/param.resolver';
-import { CommandPathToClassService } from './command-path-to-class.service';
-import { CommandTreeService } from './command-tree.service';
 import { CommandNode } from '../definitions/types/tree/command-node';
 import { Leaf } from '../definitions/types/tree/leaf';
+import { DiscordCommandProvider } from '../providers/discord-command.provider';
+import { CommandResolver } from '../resolvers/command/command.resolver';
+import { EventResolver } from '../resolvers/event/event.resolver';
 import { FilterClassResolver } from '../resolvers/filter/filter-class.resolver';
 import { FilterResolver } from '../resolvers/filter/filter.resolver';
+import { GuardClassResolver } from '../resolvers/guard/guard-class.resolver';
+import { GuardResolver } from '../resolvers/guard/guard.resolver';
+import { MiddlewareResolver } from '../resolvers/middleware/middleware.resolver';
+import { ParamResolver } from '../resolvers/param/param.resolver';
+import { PipeClassResolver } from '../resolvers/pipe/pipe-class.resolver';
+import { PipeResolver } from '../resolvers/pipe/pipe.resolver';
+import { IsObject } from '../utils/function/is-object';
+import { CommandPathToClassService } from './command-path-to-class.service';
+import { CommandTreeService } from './command-tree.service';
+import { DiscordClientService } from './discord-client.service';
+import { DiscordOptionService } from './discord-option.service';
+import { Injectable, Logger, OnModuleInit, Type } from '@nestjs/common';
+import { DiscoveryService, MetadataScanner, ModuleRef } from '@nestjs/core';
+import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
+import { Client } from 'discord.js';
 
 @Injectable()
 export class DiscordResolverService implements OnModuleInit {

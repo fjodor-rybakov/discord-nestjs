@@ -1,5 +1,5 @@
-import { USE_GUARDS_DECORATOR } from './guard.constant';
 import { GuardType } from '../../definitions/types/guard.type';
+import { USE_GUARDS_DECORATOR } from './guard.constant';
 
 /**
  * UseGuards decorator

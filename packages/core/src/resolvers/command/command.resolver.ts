@@ -1,19 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
-import { DiscordClientService } from '../../services/discord-client.service';
-import { Interaction } from 'discord.js';
-import { DiscordCommandProvider } from '../../providers/discord-command.provider';
-import { MiddlewareResolver } from '../middleware/middleware.resolver';
-import { GuardResolver } from '../guard/guard.resolver';
-import { ClassResolver } from '../interfaces/class-resolver';
-import { ClassResolveOptions } from '../interfaces/class-resolve-options';
 import { DiscordCommand } from '../../definitions/interfaces/discord-command';
-import { ModuleRef } from '@nestjs/core';
-import { ParamResolver } from '../param/param.resolver';
-import { PipeResolver } from '../pipe/pipe.resolver';
+import { DiscordCommandProvider } from '../../providers/discord-command.provider';
+import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { BuildApplicationCommandService } from '../../services/build-application-command.service';
 import { CommandTreeService } from '../../services/command-tree.service';
+import { DiscordClientService } from '../../services/discord-client.service';
 import { FilterResolver } from '../filter/filter.resolver';
+import { GuardResolver } from '../guard/guard.resolver';
+import { ClassResolveOptions } from '../interfaces/class-resolve-options';
+import { ClassResolver } from '../interfaces/class-resolver';
+import { MiddlewareResolver } from '../middleware/middleware.resolver';
+import { ParamResolver } from '../param/param.resolver';
+import { PipeResolver } from '../pipe/pipe.resolver';
+import { Injectable } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
+import { Interaction } from 'discord.js';
 
 @Injectable()
 export class CommandResolver implements ClassResolver {

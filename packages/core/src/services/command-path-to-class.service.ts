@@ -1,6 +1,6 @@
 import { Injectable, Type } from '@nestjs/common';
-import * as path from 'path';
 import { glob } from 'glob';
+import * as path from 'path';
 
 @Injectable()
 export class CommandPathToClassService {

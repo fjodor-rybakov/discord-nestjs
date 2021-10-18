@@ -1,6 +1,6 @@
+import { EmailDto } from './dto/email.dto';
 import { Payload, SubCommand } from '@discord-nestjs/core';
 import { DiscordTransformedCommand } from '@discord-nestjs/core/src';
-import { EmailDto } from './dto/email.dto';
 
 @SubCommand({ name: 'email', description: 'Register by email' })
 export class EmailSubCommand implements DiscordTransformedCommand<EmailDto> {

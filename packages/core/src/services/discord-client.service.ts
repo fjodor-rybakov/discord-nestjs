@@ -1,3 +1,4 @@
+import { DiscordOptionService } from './discord-option.service';
 import {
   Injectable,
   Logger,
@@ -5,7 +6,6 @@ import {
   OnApplicationShutdown,
 } from '@nestjs/common';
 import { Client, WebhookClient, WebhookClientData } from 'discord.js';
-import { DiscordOptionService } from './discord-option.service';
 
 @Injectable()
 export class DiscordClientService

@@ -1,5 +1,5 @@
-import { SUB_COMMAND_DECORATOR } from './sub-command.constant';
 import { SubCommandOptions } from './sub-command-options';
+import { SUB_COMMAND_DECORATOR } from './sub-command.constant';
 
 /**
  * SubCommand decorator

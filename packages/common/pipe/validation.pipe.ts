@@ -1,6 +1,6 @@
 import { DiscordPipeTransform } from '../../core';
-import { Injectable, Optional } from '@nestjs/common';
 import { ValidationPipeOptions } from './interfaces/validation-pipe-options';
+import { Injectable, Optional } from '@nestjs/common';
 import { validate } from 'class-validator';
 
 @Injectable()

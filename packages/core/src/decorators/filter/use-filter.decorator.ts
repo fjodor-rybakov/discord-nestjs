@@ -1,5 +1,5 @@
-import { USE_FILTER_DECORATOR } from './use-filter.constant';
 import { FilterType } from '../../definitions/types/filter.type';
+import { USE_FILTER_DECORATOR } from './use-filter.constant';
 
 /**
  * Use filters decorator

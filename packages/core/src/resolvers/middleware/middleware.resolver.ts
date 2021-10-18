@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { ClientEvents } from 'discord.js';
-import { ClassResolver } from '../interfaces/class-resolver';
-import { DiscordMiddlewareInstance } from './discord-middleware-instance';
+import { DiscordMiddleware } from '../../decorators/middleware/discord-middleware';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { ClassResolveOptions } from '../interfaces/class-resolve-options';
-import { DiscordMiddleware } from '../../decorators/middleware/discord-middleware';
+import { ClassResolver } from '../interfaces/class-resolver';
+import { DiscordMiddlewareInstance } from './discord-middleware-instance';
+import { Injectable } from '@nestjs/common';
+import { ClientEvents } from 'discord.js';
 
 @Injectable()
 export class MiddlewareResolver implements ClassResolver {

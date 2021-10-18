@@ -1,5 +1,5 @@
-import { ClientEvents } from 'discord.js';
 import { ON_DECORATOR } from './on.constant';
+import { ClientEvents } from 'discord.js';
 
 /**
  * On event decorator

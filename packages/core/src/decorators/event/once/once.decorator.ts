@@ -1,5 +1,5 @@
-import { ClientEvents } from 'discord.js';
 import { ONCE_DECORATOR } from './once.constant';
+import { ClientEvents } from 'discord.js';
 
 /**
  * Once handle event decorator

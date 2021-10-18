@@ -1,19 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { ArgOptions } from '../../decorators/option/arg/arg-options';
+import { ArgType } from '../../definitions/types/arg.type';
+import { ExcludeEnum } from '../../definitions/types/exclude-enum.type';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { OptionMetadata } from './option-metadata';
-import { ArgType } from '../../definitions/types/arg.type';
-import {
-  ApplicationCommandOptionTypes,
-  ChannelTypes,
-} from 'discord.js/typings/enums';
-import { ArgOptions } from '../../decorators/option/arg/arg-options';
+import { Injectable } from '@nestjs/common';
 import {
   ApplicationCommandOptionChoice,
   CommandOptionChannelResolvableType,
   CommandOptionChoiceResolvableType,
   CommandOptionNonChoiceResolvableType,
 } from 'discord.js';
-import { ExcludeEnum } from '../../definitions/types/exclude-enum.type';
+import {
+  ApplicationCommandOptionTypes,
+  ChannelTypes,
+} from 'discord.js/typings/enums';
 
 @Injectable()
 export class OptionResolver {

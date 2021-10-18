@@ -1,11 +1,11 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { ClientEvents } from 'discord.js';
-import { MethodResolver } from '../interfaces/method-resolver';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { DiscordClientService } from '../../services/discord-client.service';
-import { MethodResolveOptions } from '../interfaces/method-resolve-options';
-import { MiddlewareResolver } from '../middleware/middleware.resolver';
 import { GuardResolver } from '../guard/guard.resolver';
+import { MethodResolveOptions } from '../interfaces/method-resolve-options';
+import { MethodResolver } from '../interfaces/method-resolver';
+import { MiddlewareResolver } from '../middleware/middleware.resolver';
+import { Injectable, Logger } from '@nestjs/common';
+import { ClientEvents } from 'discord.js';
 
 @Injectable()
 export class EventResolver implements MethodResolver {

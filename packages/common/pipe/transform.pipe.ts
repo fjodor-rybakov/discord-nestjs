@@ -3,8 +3,8 @@ import {
   DiscordPipeTransform,
   ReflectMetadataProvider,
 } from '@discord-nestjs/core';
-import { CommandInteraction } from 'discord.js';
 import { Injectable } from '@nestjs/common';
+import { CommandInteraction } from 'discord.js';
 
 @Injectable()
 export class TransformPipe implements DiscordPipeTransform {
