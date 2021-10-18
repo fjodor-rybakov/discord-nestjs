@@ -7,8 +7,6 @@ import { Injectable } from '@nestjs/common';
 import { Interaction } from 'discord.js';
 
 /**
- * Transform pipe
- *
  * Fills DTO with values from interaction
  */
 @Injectable()

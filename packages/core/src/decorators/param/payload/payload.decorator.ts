@@ -1,5 +1,8 @@
 import { PAYLOAD_DECORATOR } from './payload.constant';
 
+/**
+ * Payload decorator
+ */
 export function Payload(): ParameterDecorator {
   return (
     target: Record<string, any>,

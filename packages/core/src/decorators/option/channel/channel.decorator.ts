@@ -4,6 +4,7 @@ import { ChannelTypes } from 'discord.js/typings/enums';
 
 /**
  * Channel decorator
+ *
  * Sets the list of channel types that can be selected
  */
 export function Channel(

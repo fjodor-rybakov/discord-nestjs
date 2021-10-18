@@ -3,6 +3,8 @@ import { USE_GUARDS_DECORATOR } from './guard.constant';
 
 /**
  * UseGuards decorator
+ *
+ * Takes list of guards that are used to filter user requests
  */
 export function UseGuards(
   ...guards: GuardType[]

@@ -1,7 +1,9 @@
 import { DiscordArgumentMetadata } from '../pipe/discord-argument-metadata';
 
 /**
- * Exception filter
+ * Exception filter interface
+ *
+ * Filters should be implemented on its basis
  */
 export interface DiscordExceptionFilter<TException = any> {
   catch(

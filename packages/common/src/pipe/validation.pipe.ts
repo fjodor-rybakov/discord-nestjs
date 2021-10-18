@@ -3,8 +3,6 @@ import { Injectable, Optional } from '@nestjs/common';
 import { validate, ValidatorOptions } from 'class-validator';
 
 /**
- * Validation pipe
- *
  * Validates DTO with class-validator
  */
 @Injectable()

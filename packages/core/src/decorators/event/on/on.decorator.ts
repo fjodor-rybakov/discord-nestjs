@@ -3,6 +3,8 @@ import { ClientEvents } from 'discord.js';
 
 /**
  * On event decorator
+ *
+ * Subscribe to Discord event
  */
 export function On(event: keyof ClientEvents): MethodDecorator {
   return (

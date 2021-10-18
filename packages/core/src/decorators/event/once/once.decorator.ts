@@ -3,6 +3,8 @@ import { ClientEvents } from 'discord.js';
 
 /**
  * Once handle event decorator
+ *
+ * Subscribe only once to Discord event
  */
 export function Once(event: keyof ClientEvents): MethodDecorator {
   return (

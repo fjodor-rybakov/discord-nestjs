@@ -3,6 +3,8 @@ import { COMMAND_DECORATOR } from './command.constant';
 
 /**
  * Command decorator
+ *
+ * Register new slash command
  */
 export function Command(options: CommandOptions): ClassDecorator {
   return <TFunction extends Function>(target: TFunction): TFunction | void => {

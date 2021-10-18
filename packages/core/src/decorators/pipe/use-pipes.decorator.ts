@@ -3,6 +3,8 @@ import { USE_PIPES_DECORATOR } from './pipe.constant';
 
 /**
  * UsePipes decorator
+ *
+ * Takes list of pipes that transform values in turn
  */
 export function UsePipes(
   ...pipes: PipeType[]

@@ -3,6 +3,9 @@ import { SubCommandGroupOptions } from './sub-command-group-options';
 import { UseGroupOptions } from './use-group-options';
 import { Type } from '@nestjs/common';
 
+/**
+ * Combines sub commands into a group
+ */
 export function UseGroup(
   options: UseGroupOptions,
   ...subCommands: Type[]
