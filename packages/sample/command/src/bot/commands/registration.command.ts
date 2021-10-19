@@ -1,6 +1,6 @@
-import { BaseInfoSubCommand } from './base-info-sub-command';
-import { EmailSubCommand } from './email-sub-command';
-import { NumberSubCommand } from './number-sub-command';
+import { BaseInfoSubCommand } from './sub-commands/base-info-sub-command';
+import { EmailSubCommand } from './sub-commands/email-sub-command';
+import { NumberSubCommand } from './sub-commands/number-sub-command';
 import { Command, UseGroup } from '@discord-nestjs/core';
 
 @Command({

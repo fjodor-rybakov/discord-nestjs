@@ -1,6 +1,6 @@
 import { DiscordGuard } from '../../decorators/guard/discord-guard';
 
-export interface DiscordGuardList {
+export interface ResolvedGuardInfo {
   instance: unknown;
   methodName: string;
   guardList: DiscordGuard[];

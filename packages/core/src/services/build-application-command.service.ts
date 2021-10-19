@@ -46,7 +46,7 @@ export class BuildApplicationCommandService {
       description,
       defaultPermission,
     };
-    applicationCommandData.options = await this.resolveSubCommandOptions(
+    const applicationCommandOptions = await this.resolveSubCommandOptions(
       name,
       include,
     );
@@ -65,7 +65,7 @@ export class BuildApplicationCommandService {
           type,
         } = propertyOptions.arg;
 
-        applicationCommandData.options.push({
+        applicationCommandOptions.push({
           name,
           description,
           required,
@@ -76,9 +76,10 @@ export class BuildApplicationCommandService {
       }
     }
 
-    applicationCommandData.options = this.sortByRequired(
-      applicationCommandData.options,
-    );
+    if (applicationCommandOptions.length !== 0)
+      applicationCommandData.options = this.sortByRequired(
+        applicationCommandOptions,
+      );
 
     return applicationCommandData;
   }
@@ -147,8 +148,8 @@ export class BuildApplicationCommandService {
       name: metadata.name,
       description: metadata.description,
       type: ApplicationCommandOptionTypes.SUB_COMMAND,
-      options: [],
     };
+    const applicationSubCommandOptions = [];
 
     if (payloadType) {
       const dtoInstance = await this.moduleRef.create(payloadType);
@@ -166,7 +167,7 @@ export class BuildApplicationCommandService {
           type,
         } = propertyOptions.arg;
 
-        applicationSubCommandData.options.push({
+        applicationSubCommandOptions.push({
           name,
           description,
           required,
@@ -176,9 +177,10 @@ export class BuildApplicationCommandService {
       }
     }
 
-    applicationSubCommandData.options = this.sortByRequired(
-      applicationSubCommandData.options,
-    );
+    if (applicationSubCommandOptions.length !== 0)
+      applicationSubCommandData.options = this.sortByRequired(
+        applicationSubCommandOptions,
+      );
 
     return applicationSubCommandData;
   }

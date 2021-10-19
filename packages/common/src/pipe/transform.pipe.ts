@@ -30,7 +30,10 @@ export class TransformPipe implements DiscordPipeTransform {
       if (!argDecoratorOptions) return;
 
       const { name, required } = argDecoratorOptions;
-      dtoInstance[property] = interaction.options.get(name, required).value;
+      dtoInstance[property] = interaction.options.get(
+        name ?? property,
+        required,
+      )?.value;
     });
 
     return dtoInstance;

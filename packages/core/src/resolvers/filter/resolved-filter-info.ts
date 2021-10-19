@@ -1,6 +1,6 @@
 import { DiscordExceptionFilter } from '../../decorators/filter/discord-exception-filter';
 
-export interface DiscordFilter {
+export interface ResolvedFilterInfo {
   instance: unknown;
   methodName: string;
   exceptionFilters: DiscordExceptionFilter[];

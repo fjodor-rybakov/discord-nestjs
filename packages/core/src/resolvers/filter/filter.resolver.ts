@@ -4,14 +4,14 @@ import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provid
 import { DiscordOptionService } from '../../services/discord-option.service';
 import { MethodResolveOptions } from '../interfaces/method-resolve-options';
 import { MethodResolver } from '../interfaces/method-resolver';
-import { DiscordFilter } from './discord-filter';
 import { DiscordFilterOptions } from './discord-filter-options';
+import { ResolvedFilterInfo } from './resolved-filter-info';
 import { Injectable, Type } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 
 @Injectable()
 export class FilterResolver implements MethodResolver {
-  private readonly filterList: DiscordFilter[] = [];
+  private readonly filterInfos: ResolvedFilterInfo[] = [];
 
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
@@ -50,7 +50,7 @@ export class FilterResolver implements MethodResolver {
       const newFilterInstance = await this.moduleRef.create(classType);
       exceptionFilters.push(newFilterInstance);
     }
-    this.filterList.push({
+    this.filterInfos.push({
       instance,
       methodName,
       exceptionFilters,
@@ -128,9 +128,9 @@ export class FilterResolver implements MethodResolver {
   private getFilterData({
     instance,
     methodName,
-  }: MethodResolveOptions): DiscordFilter {
-    return this.filterList.find(
-      (item: DiscordFilter) =>
+  }: MethodResolveOptions): ResolvedFilterInfo {
+    return this.filterInfos.find(
+      (item: ResolvedFilterInfo) =>
         item.methodName === methodName && item.instance === instance,
     );
   }

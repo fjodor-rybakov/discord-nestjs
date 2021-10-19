@@ -23,6 +23,9 @@ export * from './definitions/types/guard.type';
 export * from './definitions/types/pipe.type';
 export * from './definitions/types/arg.type';
 export * from './definitions/types/filter.type';
+export * from './definitions/types/tree/tree';
+export * from './definitions/types/tree/command-node';
+export * from './definitions/types/tree/leaf';
 
 // Decorators
 export * from './decorators/command/command.decorator';

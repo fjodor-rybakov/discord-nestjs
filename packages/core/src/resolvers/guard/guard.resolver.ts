@@ -4,14 +4,14 @@ import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provid
 import { DiscordOptionService } from '../../services/discord-option.service';
 import { MethodResolveOptions } from '../interfaces/method-resolve-options';
 import { MethodResolver } from '../interfaces/method-resolver';
-import { DiscordGuardList } from './discord-guard-list';
 import { DiscordGuardOptions } from './discord-guard-options';
+import { ResolvedGuardInfo } from './resolved-guard-info';
 import { Injectable, Type } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 
 @Injectable()
 export class GuardResolver implements MethodResolver {
-  private readonly guardList: DiscordGuardList[] = [];
+  private readonly guardInfos: ResolvedGuardInfo[] = [];
 
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
@@ -50,7 +50,7 @@ export class GuardResolver implements MethodResolver {
       const newGuardInstance = await this.moduleRef.create(classType);
       guardListForMethod.push(newGuardInstance);
     }
-    this.guardList.push({
+    this.guardInfos.push({
       instance,
       methodName,
       guardList: guardListForMethod,
@@ -89,9 +89,9 @@ export class GuardResolver implements MethodResolver {
   private getGuardData({
     instance,
     methodName,
-  }: MethodResolveOptions): DiscordGuardList {
-    return this.guardList.find(
-      (item: DiscordGuardList) =>
+  }: MethodResolveOptions): ResolvedGuardInfo {
+    return this.guardInfos.find(
+      (item: ResolvedGuardInfo) =>
         item.methodName === methodName && item.instance === instance,
     );
   }
