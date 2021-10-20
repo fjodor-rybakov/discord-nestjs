@@ -38,7 +38,10 @@ export class EventResolver implements MethodResolver {
       if (!metadata) return;
     }
     const { event } = metadata;
-    this.logger.log(`Subscribe to event: ${event}`, instance.constructor.name);
+    this.logger.log(
+      `Subscribe to event(${eventMethod}): ${event}`,
+      instance.constructor.name,
+    );
 
     this.discordClientService
       .getClient()
@@ -63,6 +66,7 @@ export class EventResolver implements MethodResolver {
               context,
               initValue: context,
             });
+
             //#endregion
 
             await instance[methodName](...(pipeResult || context));

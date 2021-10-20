@@ -66,6 +66,7 @@ export class CommandResolver implements ClassResolver {
         const { dtoInstance, instance: commandInstance } = commandNode;
 
         try {
+          //#region apply middleware, guard, pipe
           await this.middlewareResolver.applyMiddleware(event, [interaction]);
           const isAllowFromGuards = await this.guardResolver.applyGuard({
             instance,
@@ -84,6 +85,7 @@ export class CommandResolver implements ClassResolver {
             initValue: interaction,
             commandNode,
           });
+          //#endregion
 
           const handlerArgs = dtoInstance
             ? [pipeResult, interaction]

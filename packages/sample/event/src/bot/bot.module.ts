@@ -11,7 +11,7 @@ import { Intents } from 'discord.js';
       useFactory: (configService: ConfigService) => ({
         token: configService.get('TOKEN'),
         discordClientOptions: {
-          intents: [Intents.FLAGS.GUILDS],
+          intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
         },
       }),
       inject: [ConfigService],
