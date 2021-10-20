@@ -68,7 +68,7 @@ export class FilterResolver implements MethodResolver {
       commandNode,
     } = options;
     const filterListForMethod = this.getFilterData({ instance, methodName });
-    if (!filterListForMethod) return;
+    if (!filterListForMethod) return true;
 
     let indexOfAnyException: number;
     const matchedFilters = filterListForMethod.exceptionFilters.filter(
