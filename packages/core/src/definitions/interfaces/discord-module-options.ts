@@ -11,17 +11,22 @@ export interface DiscordModuleOption {
   token: string;
 
   /**
-   * Automatically register global commands in the Discord API
-   *
-   * @default: true
+   * Client options from discord.js library
    */
-  autoRegisterCommands?: boolean;
+  discordClientOptions: ClientOptions;
 
   /**
    * List of command classes
    * Accepts list of class types or list of search patterns
    */
   commands?: (Type | string)[];
+
+  /**
+   * Automatically register global commands in the Discord API
+   *
+   * @default: true
+   */
+  autoRegisterCommands?: boolean;
 
   /**
    * Use pipes for all handlers
@@ -45,9 +50,4 @@ export interface DiscordModuleOption {
    * Webhook for the bot
    */
   webhook?: WebhookClientData;
-
-  /**
-   * Client options from discord.js library
-   */
-  discordClientOptions: ClientOptions;
 }
