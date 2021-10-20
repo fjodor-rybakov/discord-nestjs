@@ -165,13 +165,16 @@ export class RegistrationCommand implements DiscordCommand {
 If your command accepts parameters, you need to already implement the `DiscordTransformedCommand` interface.
 The `handler` method of the `DiscordTransformedCommand` interface takes a DTO marked with `@Payload` decorator as the first parameter.
 
+> ⚠️**Important! For fields to be filled in `DTO` from `CommandInteraction`, you must use `TransformPipe` from `@discord-nestjs/common`**
+
 #### 💡 Example
 
 ```typescript
 /* registration.command.ts */
 
 import { RegistrationDto } from './registration.dto';
-import { Command } from '@discord-nestjs/core';
+import { Command, UsePipes, Payload } from '@discord-nestjs/core';
+import { TransformPipe } from '@discord-nestjs/common';
 import { DiscordTransformedCommand } from '@discord-nestjs/core/src';
 import { CommandInteraction } from 'discord.js';
 
@@ -179,9 +182,10 @@ import { CommandInteraction } from 'discord.js';
   name: 'reg',
   description: 'User registration',
 })
+@UsePipes(TransformPipe)
 export class BaseInfoCommand implements DiscordTransformedCommand<RegistrationDto>
 {
-  handler(dto: RegistrationDto, interaction: CommandInteraction): string {
+  handler(@Payload() dto: RegistrationDto, interaction: CommandInteraction): string {
     return `User was registered with name: ${dto.name}, age ${dto.age} and city ${dto.city}`;
   }
 }
@@ -258,6 +262,8 @@ Subcommands are declared similarly to commands and implement the same interfaces
 To do this, you need to create a class, mark it with the `SubCommand` decorator and
 specify which interface they implement(`DiscordCommand` or `DiscordTransformedCommand`)
 
+#### 💡 Example
+
 ```typescript
 /* email-sub-command.ts */
 
@@ -266,8 +272,11 @@ import {
   Payload,
   SubCommand,
   DiscordTransformedCommand,
+  UsePipes,
 } from '@discord-nestjs/core';
+import { TransformPipe } from '@discord-nestjs/common';
 
+@UsePipes(TransformPipe)
 @SubCommand({ name: 'email', description: 'Register by email' })
 export class EmailSubCommand implements DiscordTransformedCommand<EmailDto> {
   handler(@Payload() dto: EmailDto): string {
@@ -284,8 +293,11 @@ import {
   DiscordTransformedCommand,
   Payload,
   SubCommand,
+  UsePipes,
 } from '@discord-nestjs/core';
+import { TransformPipe } from '@discord-nestjs/common';
 
+@UsePipes(TransformPipe)
 @SubCommand({ name: 'number', description: 'Register by phone number' })
 export class NumberSubCommand implements DiscordTransformedCommand<NumberDto> {
   handler(@Payload() dto: NumberDto): string {
@@ -319,3 +331,224 @@ export class BaseInfoSubCommand implements DiscordCommand {
   }
 }
 ```
+
+### ℹ️ Subscribe to event <a name="SubToEvent"></a>
+
+Subscription to incoming events ([hint](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584))
+
+Use the `@On` decorator to subscribe to an event. `BotGateway` must be added to providers.
+
+#### 💡 Example
+
+```typescript
+/* bot.gateway.ts */
+
+import { Injectable } from '@nestjs/common';
+import { On } from 'discord-nestjs';
+import { Message } from 'discord.js';
+
+@Injectable()
+export class BotGateway {
+  @On('messageCreate')
+  async onMessage(message: Message): Promise<void> {
+    if (!message.author.bot) {
+      await message.reply("I'm watching you");
+    }
+  }
+}
+```
+
+You can also subscribe to an event once using the `@Once` decorator
+
+#### 💡 Example
+
+```typescript
+/* bot.gateway.ts */
+
+import { Injectable, Logger } from '@nestjs/common';
+import { Once } from 'discord-nestjs';
+import { Message } from 'discord.js';
+
+@Injectable()
+export class BotGateway {
+  private readonly logger = new Logger(BotGateway.name);
+
+  @Once('ready')
+  onReady() {
+    this.logger.log('Bot was started!');
+  }
+}
+```
+
+### ℹ️ Pipes. Transformation and validation <a name="Pipes"></a>
+
+To intercept and transform messages before invoking the handler, use the `@UsePipes` decorator. Works with all event.
+For convenience, the `@discord-nestjs/common` package already has an implementation of `TransformPipe` and `ValidationPipe`.
+
+* `TransformPipe` - As mentioned above, transform pipe fills in the fields `DTO` from `CommandInteraction`
+* `ValidationPipe` - Validates the resulting `DTO` from class-validator
+
+You must attach the decorator `@UsePipes` to the handler or class and 
+pass `TransformPipe` and `ValidationPipe` or your custom pipe to arguments.
+Pipes are executed sequentially from left to right.
+
+`@UsePipes` for slash commands are set only on the class
+
+⚠️**Import `@UsePipes` from the `@discord-nestjs/core` package**
+
+#### 💡 Example
+
+```typescript
+/* email-sub-command.ts */
+
+import { EmailDto } from '../../dto/email.dto';
+import { CommandValidationFilter } from '../../filter/command-validation.filter';
+import { TransformPipe, ValidationPipe } from '@discord-nestjs/common';
+import {
+  Payload,
+  SubCommand,
+  DiscordTransformedCommand,
+  UseFilters,
+  UsePipes,
+} from '@discord-nestjs/core';
+
+@UsePipes(TransformPipe, ValidationPipe)
+@SubCommand({ name: 'email', description: 'Register by email' })
+export class EmailSubCommand implements DiscordTransformedCommand<EmailDto> {
+  handler(@Payload() dto: EmailDto): string {
+    return `Success register user: ${dto.email}, ${dto.name}, ${dto.age}, ${dto.city}`;
+  }
+}
+
+```
+
+You can also create your custom pipe by implementing the `DiscordPipeTransform` interface.
+
+#### 💡 Example
+
+```typescript
+/* message-to-upper.pipe.ts */
+
+import { DiscordPipeTransform } from '@discord-nestjs/core';
+import { Message } from 'discord.js';
+
+export class MessageToUpperPipe implements DiscordPipeTransform {
+  transform([message]: [Message]): [Message] {
+    message.content = message.content.toUpperCase();
+
+    return [message];
+  }
+}
+```
+
+> For events, you must return an array of arguments that will be set to the handler
+
+```typescript
+/* bot.gateway.ts */
+
+import { MessageToUpperPipe } from './pipes/message-to-upper.pipe';
+import { On, UsePipes } from '@discord-nestjs/core';
+import { Injectable, Logger } from '@nestjs/common';
+import { Message } from 'discord.js';
+
+@Injectable()
+export class BotGateway {
+  private readonly logger = new Logger(BotGateway.name);
+
+  @On('messageCreate')
+  @UsePipes(MessageToUpperPipe)
+  async onMessage(message: Message): Promise<void> {
+    if (message.author.bot) return;
+
+    this.logger.log(`Incoming message: ${message.content}`);
+
+    await message.reply('Message processed successfully');
+  }
+}
+```
+
+You can also set `@UsePipes` decorator on class. In this case, the decorator is applied to all methods in the class. 
+Excluding command classes.
+
+### ℹ️ Guards <a name="Guards"></a>
+
+To protect commands and events, use. The `canActive` function returns boolean. If one of the guards returns false,
+then the chain will stop there and the handler itself will not be called.
+
+`@UseGuards` for slash commands are set only on the class
+
+⚠️**Import `@UseGuards` from the `@discord-nestjs/core` package**
+
+You need to implement the `DiscordGuard` interface
+
+#### 💡 Example
+
+```typescript
+/* message-from-user.guard.ts */
+
+import { DiscordGuard } from '@discord-nestjs/core';
+import { Message } from 'discord.js';
+
+export class MessageFromUserGuard implements DiscordGuard {
+  canActive(event: 'messageCreate', [message]: [Message]): boolean {
+    return !message.author.bot;
+  }
+}
+
+```
+
+```typescript
+/* bot.gateway.ts */
+
+import { MessageFromUserGuard } from './guards/message-from-user.guard';
+import { MessageToUpperPipe } from './pipes/message-to-upper.pipe';
+import { On, UsePipes, UseGuards } from '@discord-nestjs/core';
+import { Injectable, Logger } from '@nestjs/common';
+import { Message } from 'discord.js';
+
+@Injectable()
+export class BotGateway {
+  private readonly logger = new Logger(BotGateway.name);
+
+  @On('messageCreate')
+  @UseGuards(MessageFromUserGuard)
+  @UsePipes(MessageToUpperPipe)
+  async onMessage(message: Message): Promise<void> {
+    this.logger.log(`Incoming message: ${message.content}`);
+
+    await message.reply('Message processed successfully');
+  }
+}
+
+```
+
+You can also set `@UseGuards` decorator on class. In this case, the decorator is applied to all methods in the class.
+Excluding command classes.
+
+### ℹ️ Middleware <a name="Middleware"></a>
+
+You can use a middleware to process all incoming messages.
+To do this, you need to implement the `DiscordMiddleware` interface.
+
+#### 💡 Example
+
+```typescript
+/* bot.middleware.ts */
+
+import { Middleware, DiscordMiddleware } from 'discord-nestjs';
+import { Logger } from '@nestjs/common';
+import { ClientEvents } from 'discord.js';
+
+@Middleware()
+export class BotMiddleware implements DiscordMiddleware {
+  private readonly logger = new Logger(BotMiddleware.name);
+
+  use(event: keyof ClientEvents, context: any[]): void {
+    if (event === 'message') {
+      this.logger.log('On message event triggered');
+    }
+  }
+}
+```
+
+Also don't forget to add your middleware to the providers.
