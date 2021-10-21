@@ -9,10 +9,11 @@
     "clean": "lerna run clean",
     "build": "lerna run build",
     "format": "prettier --write \"packages/**/*.ts\" --ignore-path .gitignore",
-    "lint": "eslint \"packages/{common,core}/src/**/*.ts\" --fix"
+    "lint": "eslint \"packages/{common,core}/src/**/*.ts\" --fix",
+    "prepare": "husky install"
   },
   "devDependencies": {
-    "husky": "^7.0.2",
+    "husky": "^7.0.4",
     "lerna": "^4.0.0",
     "lint-staged": "^11.2.3",
     "prettier": "^2.4.1",
