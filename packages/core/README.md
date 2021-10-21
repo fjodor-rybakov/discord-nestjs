@@ -12,7 +12,7 @@ NestJS package for discord.js
   - [Pipes](#Pipes)
   - [Guards](#Guards)
   - [Exception filters](#Filters)
-  - [Middleware](#Middleware)
+  - [Middleware](#MiddlewareUsage)
 - [Decorators description](#DecoratorsDescription)
   - [@Command](#Command)
   - [@SubCommand](#SubCommand)
@@ -628,7 +628,7 @@ export class EmailSubCommand implements DiscordTransformedCommand<EmailDto> {
 
 > You can also define filter globally by passing it as `useFilters` option in the module settings.
 
-### ℹ️ Middleware <a name="Middleware"></a>
+### ℹ️ Middleware <a name="MiddlewareUsage"></a>
 
 You can use a middleware to process all incoming messages.
 To do this, you need to implement the `DiscordMiddleware` interface.
@@ -670,6 +670,15 @@ Mark class as command
 - `description` \* - Command description
 - `include` - Include subgroups and subcommands
 - `defaultPermission` - Set default permission
+
+### ℹ️ @SubCommand <a name="SubCommand"></a>
+
+Mark class as subcommand
+
+#### Params
+
+- `name` \* - Command name
+- `description` \* - Command description
 
 ### ℹ️ @On <a name="On"></a>
 
