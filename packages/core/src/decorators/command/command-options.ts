@@ -15,7 +15,7 @@ export interface CommandOptions {
   description: string;
 
   /**
-   * Include sub groups and sub commands
+   * Include subgroups and subcommands
    */
   include?: TInclude[];
 

@@ -35,3 +35,5 @@ This monorepo consists of several packages.
 * Samples
   * [@discord-nestjs/sample-command](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/command) - Example of bot with slash commands
   * [@discord-nestjs/sample-event](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/event) - Example of bot with events
+
+Any questions or suggestions? Discord Федок#3051

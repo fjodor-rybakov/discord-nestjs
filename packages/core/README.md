@@ -1,5 +1,32 @@
 # Core module
 
+## 🧾 Description
+
+NestJS package for discord.js
+
+- [Installation](#Installation)
+- [Overview](#Overview)
+- [Usage](#Usage)
+  - [Creating slash commands](#Command)
+  - [Subscribe to event](#SubToEvent)
+  - [Pipes](#Pipes)
+  - [Guards](#Guards)
+  - [Exception filters](#Filters)
+  - [Middleware](#Middleware)
+- [Decorators description](#DecoratorsDescription)
+  - [@Command](#Command)
+  - [@SubCommand](#SubCommand)
+  - [@On](#On)
+  - [@Once](#Once)
+  - [@Payload](#Payload)
+  - [@UsePipes](#UsePipes)
+  - [@UseGuards](#UseGuards)
+  - [@UseFilters](#UseFilters)
+  - [@Arg](#@Arg)
+  - [@Choice](#Choice)
+  - [@Channel](#Channel)
+  - [@Middleware](#Middleware)
+
 ## 👨🏻‍💻 Installation <a name="Installation"></a>
 
 ```bash
@@ -217,8 +244,9 @@ export class RegistrationDto {
 }
 ```
 
-* `Arg` decorator defines command parameter.
-* `Choice` decorator marks command parameter as dropdown(**Accepts enum**).
+* `@Arg` decorator defines command parameter.
+* `@Choice` decorator marks command parameter as dropdown(**Accepts enum**).
+* `@Channel` decorator marks command parameter as channel select.
 
 > By default, if `name` is not passed to the decorator parameters, 
 > then the name of the marked property will be taken. 
@@ -380,7 +408,7 @@ export class BotGateway {
 }
 ```
 
-### ℹ️ Pipes. Transformation and validation <a name="Pipes"></a>
+### ℹ️ Pipes <a name="Pipes"></a>
 
 To intercept and transform messages before invoking the handler, use the `@UsePipes` decorator. Works with all event.
 For convenience, the `@discord-nestjs/common` package already has an implementation of `TransformPipe` and `ValidationPipe`.
@@ -419,7 +447,6 @@ export class EmailSubCommand implements DiscordTransformedCommand<EmailDto> {
     return `Success register user: ${dto.email}, ${dto.name}, ${dto.age}, ${dto.city}`;
   }
 }
-
 ```
 
 You can also create your custom pipe by implementing the `DiscordPipeTransform` interface.
@@ -496,7 +523,6 @@ export class MessageFromUserGuard implements DiscordGuard {
     return !message.author.bot;
   }
 }
-
 ```
 
 ```typescript
@@ -629,3 +655,98 @@ export class BotMiddleware implements DiscordMiddleware {
 ```
 
 Also don't forget to add your middleware to the providers.
+
+
+
+## 🗂 Decorators description <a name="DecoratorsDescription"></a>
+
+### ℹ️ @Command <a name="Command"></a>
+
+Mark class as command
+
+#### Params
+
+- `name` \* - Command name
+- `description` \* - Command description
+- `include` - Include subgroups and subcommands
+- `defaultPermission` - Set default permission
+
+### ℹ️ @On <a name="On"></a>
+
+Handle discord events [hint](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
+
+#### Params
+
+`event` \* - Name of the event to listen to
+
+### ℹ️ @Once <a name="Once"></a>
+
+Handle discord events (only once) [hint](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
+
+#### Params
+
+`event` \* - Name of the event to listen to
+
+### ℹ️ @Payload <a name="Payload"></a>
+
+Marks the parameter as DTO
+
+### ℹ️ @UsePipes <a name="UsePipes"></a>
+
+To intercept and transform incoming messages for some function
+
+#### Params
+
+- List of classes or instances that implement the `DiscordPipeTransform` interface
+
+### ℹ️ @UseGuards <a name="UseGuards"></a>
+
+To guard incoming messages
+
+#### Params
+
+- List of classes or instances that implement the `DiscordGuard` interface
+
+### ℹ️ @UseFilters <a name="UseFilters"></a>
+
+To catch exceptions from command handlers, events, pipes, guards and middleware
+
+#### Params
+
+- List of classes or instances that implement the `DiscordExceptionFilter` interface
+
+### ℹ️ @Arg <a name="Arg"></a>
+
+Sets the command parameter
+
+#### Params
+
+- `description` \* - Command description
+- `name` - Command name
+- `required` - The parameter is required
+- `type` - Specifies the type of the parameter
+
+### ℹ️ @Choice <a name="Choice"></a>
+
+Marks command parameter as dropdown.
+
+#### Params
+
+(**Accepts enum**)
+
+### ℹ️ @Channel <a name="Channel"></a>
+
+Marks command parameter as channel select.
+
+#### Params
+
+`channelType` - list of channel types
+
+### ℹ️ @Middleware <a name="Middleware"></a>
+
+For handling intermediate requests
+
+#### Params
+
+- `allowEvents` - Handled events
+- `denyEvents` - Skipped events
