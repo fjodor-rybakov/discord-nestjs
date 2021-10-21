@@ -1,6 +1,6 @@
-import { ArgType } from '../../../definitions/types/arg.type';
+import { ParamType } from '../../../definitions/types/param.type';
 
-export interface ArgOptions {
+export interface ParamOptions {
   /**
    * Option description
    */
@@ -20,5 +20,5 @@ export interface ArgOptions {
   /**
    *
    */
-  type?: ArgType;
+  type?: ParamType;
 }

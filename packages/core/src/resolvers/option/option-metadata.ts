@@ -9,7 +9,7 @@ import { ChannelTypes } from 'discord.js/typings/enums';
 
 export interface OptionMetadata {
   [property: string]: {
-    arg: {
+    param: {
       description: string;
       name: string;
       required?: boolean;

@@ -1,6 +1,6 @@
-import { ArgOptions } from '../../decorators/option/arg/arg-options';
-import { ArgType } from '../../definitions/types/arg.type';
+import { ParamOptions } from '../../decorators/option/param/param-options';
 import { ExcludeEnum } from '../../definitions/types/exclude-enum.type';
+import { ParamType } from '../../definitions/types/param.type';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { OptionMetadata } from './option-metadata';
 import { Injectable } from '@nestjs/common';
@@ -23,24 +23,25 @@ export class OptionResolver {
     const optionMetadata: OptionMetadata = {};
 
     Object.keys(dtoInstance).map((propertyKey: string) => {
-      const argDecoratorOptions = this.metadataProvider.getArgDecoratorMetadata(
-        dtoInstance,
-        propertyKey,
-      );
+      const paramDecoratorMetadata =
+        this.metadataProvider.getParamDecoratorMetadata(
+          dtoInstance,
+          propertyKey,
+        );
       const channelTypes = this.getChannelOptions(dtoInstance, propertyKey);
       const applicationOptionType = channelTypes
         ? ApplicationCommandOptionTypes.CHANNEL
         : this.getApplicationOptionTypeByArg(
             dtoInstance,
             propertyKey,
-            argDecoratorOptions,
+            paramDecoratorMetadata,
           );
       optionMetadata[propertyKey] = {
-        arg: {
-          name: argDecoratorOptions.name ?? propertyKey,
-          description: argDecoratorOptions.description,
+        param: {
+          name: paramDecoratorMetadata.name ?? propertyKey,
+          description: paramDecoratorMetadata.description,
           type: applicationOptionType,
-          required: argDecoratorOptions.required,
+          required: paramDecoratorMetadata.required,
         },
         choice: this.getChoiceOptions(dtoInstance, propertyKey),
         channelTypes,
@@ -82,25 +83,25 @@ export class OptionResolver {
   private getApplicationOptionTypeByArg(
     dtoInstance: any,
     propertyKey: string,
-    argDecoratorOptions: ArgOptions,
+    argDecoratorOptions: ParamOptions,
   ):
     | CommandOptionChoiceResolvableType
     | CommandOptionNonChoiceResolvableType
     | CommandOptionChannelResolvableType {
     switch (argDecoratorOptions.type) {
-      case ArgType.STRING:
+      case ParamType.STRING:
         return ApplicationCommandOptionTypes.STRING;
-      case ArgType.BOOLEAN:
+      case ParamType.BOOLEAN:
         return ApplicationCommandOptionTypes.BOOLEAN;
-      case ArgType.INTEGER:
+      case ParamType.INTEGER:
         return ApplicationCommandOptionTypes.INTEGER;
-      case ArgType.NUMBER:
+      case ParamType.NUMBER:
         return ApplicationCommandOptionTypes.NUMBER;
-      case ArgType.ROLE:
+      case ParamType.ROLE:
         return ApplicationCommandOptionTypes.ROLE;
-      case ArgType.MENTIONABLE:
+      case ParamType.MENTIONABLE:
         return ApplicationCommandOptionTypes.MENTIONABLE;
-      case ArgType.USER:
+      case ParamType.USER:
         return ApplicationCommandOptionTypes.USER;
       default: {
         const metatype = this.metadataProvider.getPropertyTypeMetadata(

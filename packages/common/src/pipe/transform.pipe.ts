@@ -22,14 +22,12 @@ export class TransformPipe implements DiscordPipeTransform {
     const { dtoInstance } = metadata.commandNode;
 
     Object.keys(dtoInstance).forEach((property: string) => {
-      const argDecoratorOptions = this.metadataProvider.getArgDecoratorMetadata(
-        dtoInstance,
-        property,
-      );
+      const paramDecoratorMetadata =
+        this.metadataProvider.getParamDecoratorMetadata(dtoInstance, property);
 
-      if (!argDecoratorOptions) return;
+      if (!paramDecoratorMetadata) return;
 
-      const { name, required } = argDecoratorOptions;
+      const { name, required } = paramDecoratorMetadata;
       dtoInstance[property] = interaction.options.get(
         name ?? property,
         required,

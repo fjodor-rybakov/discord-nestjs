@@ -1,8 +1,8 @@
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { MethodResolveOptions } from '../interfaces/method-resolve-options';
 import { MethodResolver } from '../interfaces/method-resolver';
+import { DecoratorParamInfo } from './decorator-param-info';
 import { DecoratorParamType } from './decorator-param-type';
-import { DecoratorTypeArg } from './decorator-type-arg';
 import { ParamOptions } from './param-options';
 import { Injectable, Type } from '@nestjs/common';
 
@@ -38,11 +38,11 @@ export class ParamResolver implements MethodResolver {
     const paramItem: ParamOptions = {
       instance,
       methodName,
-      args: [],
+      params: [],
     };
 
     const { parameterIndex } = payloadMetadata;
-    paramItem.args[parameterIndex] = {
+    paramItem.params[parameterIndex] = {
       decoratorType: DecoratorParamType.PAYLOAD,
       paramType: paramsTypes[parameterIndex],
     };
@@ -58,8 +58,8 @@ export class ParamResolver implements MethodResolver {
     );
     if (!paramsList) return;
 
-    return paramsList.args.find(
-      (item: DecoratorTypeArg) =>
+    return paramsList.params.find(
+      (item: DecoratorParamInfo) =>
         item.decoratorType === DecoratorParamType.PAYLOAD,
     )?.paramType;
   }

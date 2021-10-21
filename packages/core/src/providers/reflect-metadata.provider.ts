@@ -9,10 +9,10 @@ import { USE_GUARDS_DECORATOR } from '../decorators/guard/guard.constant';
 import { DiscordMiddleware } from '../decorators/middleware/discord-middleware';
 import { MiddlewareOptions } from '../decorators/middleware/middleware-options';
 import { MIDDLEWARE_DECORATOR } from '../decorators/middleware/middleware.constant';
-import { ArgOptions } from '../decorators/option/arg/arg-options';
-import { ARG_DECORATOR } from '../decorators/option/arg/arg.constant';
 import { CHANNEL_DECORATOR } from '../decorators/option/channel/channel.constant';
 import { CHOICE_DECORATOR } from '../decorators/option/choice/choice.constant';
+import { ParamOptions } from '../decorators/option/param/param-options';
+import { PARAM_DECORATOR } from '../decorators/option/param/param.constant';
 import { ParamTypeOptions } from '../decorators/param/param-type-options';
 import { PAYLOAD_DECORATOR } from '../decorators/param/payload/payload.constant';
 import { USE_PIPES_DECORATOR } from '../decorators/pipe/pipe.constant';
@@ -95,8 +95,11 @@ export class ReflectMetadataProvider {
     return Reflect.getMetadata(PAYLOAD_DECORATOR, instance, methodName);
   }
 
-  getArgDecoratorMetadata(instance: unknown, propertyKey: string): ArgOptions {
-    return Reflect.getMetadata(ARG_DECORATOR, instance, propertyKey);
+  getParamDecoratorMetadata(
+    instance: unknown,
+    propertyKey: string,
+  ): ParamOptions {
+    return Reflect.getMetadata(PARAM_DECORATOR, instance, propertyKey);
   }
 
   getChoiceDecoratorMetadata(

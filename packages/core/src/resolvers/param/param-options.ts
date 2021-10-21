@@ -1,9 +1,9 @@
-import { DecoratorTypeArg } from './decorator-type-arg';
+import { DecoratorParamInfo } from './decorator-param-info';
 
 export interface ParamOptions {
   instance: unknown;
 
   methodName: string;
 
-  args: DecoratorTypeArg[];
+  params: DecoratorParamInfo[];
 }

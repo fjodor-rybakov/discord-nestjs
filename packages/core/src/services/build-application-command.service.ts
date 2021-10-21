@@ -63,7 +63,7 @@ export class BuildApplicationCommandService {
           description,
           required = false,
           type,
-        } = propertyOptions.arg;
+        } = propertyOptions.param;
 
         applicationCommandOptions.push({
           name,
@@ -165,7 +165,7 @@ export class BuildApplicationCommandService {
           description,
           required = false,
           type,
-        } = propertyOptions.arg;
+        } = propertyOptions.param;
 
         applicationSubCommandOptions.push({
           name,

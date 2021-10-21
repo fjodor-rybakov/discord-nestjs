@@ -22,7 +22,7 @@ NestJS package for discord.js
   - [@UsePipes](#UsePipes)
   - [@UseGuards](#UseGuards)
   - [@UseFilters](#UseFilters)
-  - [@Arg](#@Arg)
+  - [@Param](#@Param)
   - [@Choice](#Choice)
   - [@Channel](#Channel)
   - [@Middleware](#Middleware)
@@ -223,7 +223,7 @@ This is declared as follows:
 ```typescript
 /* registration.dto.ts */
 
-import { Arg, Choice, ArgType } from '@discord-nestjs/core';
+import { Param, Choice, ParamType } from '@discord-nestjs/core';
 
 enum City {
   Moscow,
@@ -232,19 +232,19 @@ enum City {
 }
 
 export class RegistrationDto {
-  @Arg({ description: 'User name', required: true })
+  @Param({ description: 'User name', required: true })
   name: string;
 
-  @Arg({ description: 'User old', required: true, type: ArgType.INTEGER })
+  @Param({ description: 'User old', required: true, type: ParamType.INTEGER })
   age: number;
 
   @Choice(City)
-  @Arg({ description: 'User city', type: ArgType.INTEGER })
+  @Param({ description: 'User city', type: ParamType.INTEGER })
   city: City;
 }
 ```
 
-* `@Arg` decorator defines command parameter.
+* `@Param` decorator defines command parameter.
 * `@Choice` decorator marks command parameter as dropdown(**Accepts enum**).
 * `@Channel` decorator marks command parameter as channel select.
 
@@ -715,7 +715,7 @@ To catch exceptions from command handlers, events, pipes, guards and middleware
 
 - List of classes or instances that implement the `DiscordExceptionFilter` interface
 
-### ℹ️ @Arg <a name="Arg"></a>
+### ℹ️ @Param <a name="Param"></a>
 
 Sets the command parameter
 

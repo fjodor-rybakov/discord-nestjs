@@ -1,4 +1,4 @@
-export enum ArgType {
+export enum ParamType {
   STRING,
   INTEGER,
   BOOLEAN,
