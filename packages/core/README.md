@@ -394,7 +394,7 @@ Pipes are executed sequentially from left to right.
 
 `@UsePipes` for slash commands are set only on the class
 
-⚠️**Import `@UsePipes` from the `@discord-nestjs/core` package**
+> ⚠️**Import `@UsePipes` from the `@discord-nestjs/core` package**
 
 #### 💡 Example
 
@@ -470,6 +470,8 @@ export class BotGateway {
 You can also set `@UsePipes` decorator on class. In this case, the decorator is applied to all methods in the class. 
 Excluding command classes.
 
+> You can define pipe globally by passing it as `usePipes` option in the module settings.
+
 ### ℹ️ Guards <a name="Guards"></a>
 
 To protect commands and events, use. The `canActive` function returns boolean. If one of the guards returns false,
@@ -477,7 +479,7 @@ then the chain will stop there and the handler itself will not be called.
 
 `@UseGuards` for slash commands are set only on the class
 
-⚠️**Import `@UseGuards` from the `@discord-nestjs/core` package**
+> ⚠️**Import `@UseGuards` from the `@discord-nestjs/core` package**
 
 You need to implement the `DiscordGuard` interface
 
@@ -519,11 +521,86 @@ export class BotGateway {
     await message.reply('Message processed successfully');
   }
 }
-
 ```
 
 You can also set `@UseGuards` decorator on class. In this case, the decorator is applied to all methods in the class.
 Excluding command classes.
+
+> You can define guard globally by passing it as `useGuards` option in the module settings.
+
+### ℹ️ Exception filters <a name="Filters"></a>
+
+In order to catch exceptions in the handler of a command, event or pipe, you can use the exception filter.
+Filters work in the same way as in the `NestJS` framework. The first thing you need to do is create a class that will 
+implement the `DiscordExceptionFilter` interface and mark the class with `@Catch` decorator. `@Catch` decorator accepts a list of exception types.
+If there are no parameters, then the filter will react to any exception.
+
+> ⚠️**Import `DiscordExceptionFilter` and `@Catch` from the `@discord-nestjs/core` package**
+
+#### 💡 Example
+
+```typescript
+/* command-validation-filter.ts */
+
+import {
+  DiscordArgumentMetadata,
+  DiscordExceptionFilter,
+  Catch,
+} from '@discord-nestjs/core';
+import { ValidationError } from 'class-validator';
+import { MessageEmbed } from 'discord.js';
+
+@Catch(ValidationError)
+export class CommandValidationFilter implements DiscordExceptionFilter {
+  async catch(
+    exceptionList: ValidationError[],
+    metadata: DiscordArgumentMetadata<'interactionCreate'>,
+  ): Promise<void> {
+    const [interaction] = metadata.context;
+
+    const embeds = exceptionList.map((exception) =>
+      new MessageEmbed().addFields(
+        Object.values(exception.constraints).map((value) => ({
+          name: exception.property,
+          value,
+        })),
+      ),
+    );
+
+    if (interaction.isCommand()) await interaction.reply({ embeds });
+  }
+}
+```
+
+After that, you just need to pass the filter to `@UseFilters` decorator.
+
+> ⚠️**Import `UseFilters` from the `@discord-nestjs/core` package**
+
+```typescript
+/* email-sub-command.ts */
+
+import { EmailDto } from '../../dto/email.dto';
+import { CommandValidationFilter } from '../../filter/command-validation.filter';
+import { TransformPipe, ValidationPipe } from '@discord-nestjs/common';
+import {
+  Payload,
+  SubCommand,
+  DiscordTransformedCommand,
+  UseFilters,
+  UsePipes,
+} from '@discord-nestjs/core';
+
+@UseFilters(CommandValidationFilter)
+@UsePipes(TransformPipe, ValidationPipe)
+@SubCommand({ name: 'email', description: 'Register by email' })
+export class EmailSubCommand implements DiscordTransformedCommand<EmailDto> {
+  handler(@Payload() dto: EmailDto): string {
+    return `Success register user: ${dto.email}, ${dto.name}, ${dto.age}, ${dto.city}`;
+  }
+}
+```
+
+> You can also define filter globally by passing it as `useFilters` option in the module settings.
 
 ### ℹ️ Middleware <a name="Middleware"></a>
 
