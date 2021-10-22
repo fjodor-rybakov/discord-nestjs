@@ -50,7 +50,7 @@
     "@nestjs/schematics": "8.0.2",
     "@nestjs/testing": "8.0.8",
     "@types/jest": "26.0.24",
-    "@types/node": "16.4.13",
+    "@types/node": "16.11.2",
     "@typescript-eslint/eslint-plugin": "4.32.0",
     "@typescript-eslint/parser": "4.32.0",
     "discord.js": "12.5.3",
