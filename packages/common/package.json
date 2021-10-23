@@ -5,6 +5,21 @@
   "author": "fjodor-rybakov",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fjodor-rybakov/discord-nestjs"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "nestjs",
+    "discord",
+    "decorator",
+    "bot",
+    "nest",
+    "typescript"
+  ],
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build"
@@ -19,6 +34,7 @@
     "rxjs": "^7.4.0"
   },
   "devDependencies": {
-    "typescript": "^4.4.4"
+    "typescript": "^4.4.4",
+    "@discord-nestjs/core": "*"
   }
 }
