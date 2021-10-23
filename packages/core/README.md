@@ -13,6 +13,10 @@ NestJS package for discord.js
   - [Guards](#Guards)
   - [Exception filters](#Filters)
   - [Middleware](#MiddlewareUsage)
+- [Exported providers](#Providers)
+  - [DiscordClientProvider](#DiscordClientProvider)
+  - [DiscordCommandProvider](#DiscordCommandProvider)
+  - [ReflectMetadataProvider](#ReflectMetadataProvider)
 - [Decorators description](#DecoratorsDescription)
   - [@Command](#Command)
   - [@SubCommand](#SubCommand)
@@ -27,6 +31,10 @@ NestJS package for discord.js
   - [@Channel](#Channel)
   - [@Middleware](#Middleware)
 
+
+
+
+
 ## 👨🏻‍💻 Installation <a name="Installation"></a>
 
 ```bash
@@ -38,6 +46,10 @@ Or via yarn
 ```bash
 $ yarn add @discord-nestjs/core discord.js
 ```
+
+
+
+
 
 ## 📑 Overview <a name="Overview"></a>
 
@@ -625,6 +637,29 @@ export class BotMiddleware implements DiscordMiddleware {
 ```
 
 Also don't forget to add your middleware to the providers.
+
+
+
+
+
+## 🛠️ Exported providers <a name="Providers"></a>
+
+`DiscordModule` currently exports only three providers.
+
+### ℹ️ DiscordClientProvider <a name="DiscordClientProvider"></a>
+
+Provides the discord client or webhook client.
+
+### ℹ️ @DiscordCommandProvider <a name="DiscordCommandProvider"></a>
+
+`discord-nestjs` package builds slash command object based on all decorators and DiscordCommandProvider provides it.
+For example, this is useful when you need to lazily register commands or register commands for a specific guild.
+
+### ℹ️ @ReflectMetadataProvider <a name="ReflectMetadataProvider"></a>
+
+Provides methods for getting metadata for decorators.
+
+
 
 
 
