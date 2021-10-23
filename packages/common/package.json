@@ -29,6 +29,9 @@
     "prebuild": "rimraf dist",
     "build": "nest build"
   },
+  "dependencies": {
+    "class-validator": "^0.13.1"
+  },
   "peerDependencies": {
     "@discord-nestjs/core": "*",
     "@nestjs/common": "^8.1.1",
@@ -39,7 +42,6 @@
   },
   "devDependencies": {
     "@discord-nestjs/core": "^2.0.0",
-    "class-validator": "^0.13.1",
     "typescript": "^4.4.4"
   }
 }
