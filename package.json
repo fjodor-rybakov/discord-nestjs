@@ -9,6 +9,7 @@
     "clean": "lerna run clean",
     "build": "lerna run build --no-private",
     "format": "prettier --write \"packages/**/*.ts\" --ignore-path .gitignore",
+    "publish": "npm run build && lerna publish -m \"chore: Publish release\" --no-private",
     "publish:beta": "npm run build && lerna publish --canary --preid beta -m \"chore: Publish beta release\" --no-private",
     "lint": "eslint \"packages/{common,core}/src/**/*.ts\" --fix",
     "prepare": "husky install"
