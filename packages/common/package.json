@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Common module",
   "author": "fjodor-rybakov",
+  "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "repository": {
