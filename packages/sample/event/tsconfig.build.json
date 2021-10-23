@@ -1,4 +1,4 @@
 {
-  "extends": "@discord-nestjs/sample-command/tsconfig.json",
+  "extends": "./tsconfig.json",
   "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
 }
