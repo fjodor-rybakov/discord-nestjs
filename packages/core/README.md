@@ -245,7 +245,7 @@ export class RegistrationDto {
   @Param({ description: 'User name', required: true })
   name: string;
 
-  @Param({ description: 'User old', required: true, type: ParamType.INTEGER })
+  @Param({ description: 'User age', required: true, type: ParamType.INTEGER })
   age: number;
 
   @Choice(City)
