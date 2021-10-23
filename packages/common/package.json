@@ -1,0 +1,45 @@
+{
+  "name": "@discord-nestjs/common",
+  "version": "0.0.1",
+  "description": "Common module",
+  "author": "fjodor-rybakov",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist/**/*",
+    "*.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fjodor-rybakov/discord-nestjs"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "nestjs",
+    "discord",
+    "decorator",
+    "bot",
+    "nest",
+    "typescript"
+  ],
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "nest build"
+  },
+  "peerDependencies": {
+    "@discord-nestjs/core": "*",
+    "@nestjs/common": "^8.1.1",
+    "@nestjs/core": "^8.1.1",
+    "discord.js": "^13.2.0",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^7.4.0"
+  },
+  "devDependencies": {
+    "@discord-nestjs/core": "*",
+    "typescript": "^4.4.4",
+    "class-validator": "^0.13.1"
+  }
+}

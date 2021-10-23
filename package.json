@@ -1,101 +1,35 @@
 {
   "name": "discord-nestjs",
-  "version": "1.2.1",
-  "description": "NestJS package for discord.js",
-  "author": "fjodor-rybakov",
-  "license": "MIT",
-  "readmeFilename": "README.md",
-  "publishConfig": {
-    "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/fjodor-rybakov/discord-nestjs"
-  },
-  "main": "dist/packages/index.js",
-  "typings": "dist/packages/index.d.ts",
-  "files": [
-    "dist/**/*",
-    "*.md"
-  ],
-  "keywords": [
-    "nestjs",
-    "discord",
-    "decorator",
-    "bot",
-    "nest",
-    "typescript"
+  "private": true,
+  "workspaces": [
+    "packages/**/*"
   ],
   "scripts": {
-    "prebuild": "rimraf dist",
-    "build": "nest build",
-    "format": "prettier --write \"packages/**/*.ts\" ",
-    "lint": "eslint \"{lib,apps,libs,test}/**/*.ts\" --fix",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "bootstrap": "lerna bootstrap",
+    "clean": "lerna run clean",
+    "build": "lerna run build --no-private",
+    "format": "prettier --write \"packages/**/*.ts\" --ignore-path .gitignore",
+    "publish": "npm run build && lerna publish -m \"chore: Publish release\" --no-private",
+    "publish:beta": "npm run build && lerna publish --canary --preid beta -m \"chore: Publish beta release\" --no-private",
+    "lint": "eslint \"packages/{common,core}/src/**/*.ts\" --fix",
     "prepare": "husky install"
   },
-  "dependencies": {
-    "class-transformer": "0.4.0",
-    "class-validator": "0.13.1"
-  },
   "devDependencies": {
-    "@nestjs/cli": "8.1.2",
-    "@nestjs/common": "8.0.8",
-    "@nestjs/config": "1.0.1",
-    "@nestjs/core": "8.0.8",
-    "@nestjs/schematics": "8.0.2",
-    "@nestjs/testing": "8.0.8",
-    "@types/jest": "26.0.24",
-    "@types/node": "16.4.13",
-    "@typescript-eslint/eslint-plugin": "4.32.0",
-    "@typescript-eslint/parser": "4.32.0",
-    "discord.js": "12.5.3",
-    "eslint": "7.32.0",
-    "eslint-config-prettier": "8.3.0",
-    "eslint-plugin-import": "2.23.4",
-    "husky": "7.0.1",
-    "jest": "27.0.6",
-    "lint-staged": "11.1.2",
-    "prettier": "2.4.1",
-    "reflect-metadata": "0.1.13",
-    "rimraf": "3.0.2",
-    "rxjs": "7.3.0",
-    "ts-jest": "27.0.4",
-    "ts-loader": "9.2.6",
-    "ts-node": "10.1.0",
-    "tsconfig-paths": "3.10.1",
-    "typescript": "4.4.3"
-  },
-  "peerDependencies": {
-    "@nestjs/common": "^8.0.5",
-    "@nestjs/core": "^8.0.5",
-    "class-transformer": "0.4.0",
-    "class-validator": "0.13.1",
-    "discord.js": "^12.5.3",
-    "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.3.0"
+    "husky": "^7.0.4",
+    "lerna": "^4.0.0",
+    "lint-staged": "^11.2.3",
+    "prettier": "^2.4.1",
+    "typescript": "^4.4.4",
+    "@trivago/prettier-plugin-sort-imports": "^2.0.4",
+    "@typescript-eslint/eslint-plugin": "^5.1.0",
+    "@typescript-eslint/parser": "^5.1.0",
+    "eslint": "^8.0.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0"
   },
   "lint-staged": {
     "*.ts": [
       "prettier --write"
     ]
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": ".",
-    "testRegex": ".spec.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
   }
 }

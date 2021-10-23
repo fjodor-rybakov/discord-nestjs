@@ -1,0 +1,53 @@
+import { FilterType } from '../types/filter.type';
+import { GuardType } from '../types/guard.type';
+import { PipeType } from '../types/pipe.type';
+import { Type } from '@nestjs/common';
+import { ClientOptions, WebhookClientData } from 'discord.js';
+
+export interface DiscordModuleOption {
+  /**
+   * Authorization token
+   */
+  token: string;
+
+  /**
+   * Client options from discord.js library
+   */
+  discordClientOptions: ClientOptions;
+
+  /**
+   * List of command classes
+   * Accepts list of class types or list of search patterns
+   */
+  commands?: (Type | string)[];
+
+  /**
+   * Automatically register global commands in the Discord API
+   *
+   * @default: true
+   */
+  autoRegisterCommands?: boolean;
+
+  /**
+   * Use pipes for all handlers
+   * Takes list of class types or list of instances
+   */
+  usePipes?: PipeType[];
+
+  /**
+   * Use guards for all handlers
+   * Takes list of class types or list of instances
+   */
+  useGuards?: GuardType[];
+
+  /**
+   * Use filters for all handlers
+   * Takes list of class types or list of instances
+   */
+  useFilters?: FilterType[];
+
+  /**
+   * Webhook for the bot
+   */
+  webhook?: WebhookClientData;
+}
