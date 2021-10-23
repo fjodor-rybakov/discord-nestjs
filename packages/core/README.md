@@ -174,8 +174,7 @@ Command decorator accepts a `name` and `description` as parameters.
 ```typescript
 /* registration.command.ts */
 
-import { Command } from '@discord-nestjs/core';
-import { DiscordCommand } from '@discord-nestjs/core/src';
+import { Command, DiscordCommand } from '@discord-nestjs/core';
 import { CommandInteraction } from 'discord.js';
 
 @Command({
@@ -200,9 +199,8 @@ The `handler` method of the `DiscordTransformedCommand` interface takes a DTO ma
 /* registration.command.ts */
 
 import { RegistrationDto } from './registration.dto';
-import { Command, UsePipes, Payload } from '@discord-nestjs/core';
+import { Command, UsePipes, Payload, DiscordTransformedCommand } from '@discord-nestjs/core';
 import { TransformPipe } from '@discord-nestjs/common';
-import { DiscordTransformedCommand } from '@discord-nestjs/core/src';
 import { CommandInteraction } from 'discord.js';
 
 @Command({
@@ -218,7 +216,7 @@ export class BaseInfoCommand implements DiscordTransformedCommand<RegistrationDt
 }
 ```
 
-This is declared as follows:
+`DTO` is declared as follows:
 
 ```typescript
 /* registration.dto.ts */
@@ -411,45 +409,13 @@ export class BotGateway {
 ### ℹ️ Pipes <a name="Pipes"></a>
 
 To intercept and transform messages before invoking the handler, use the `@UsePipes` decorator. Works with all event.
-For convenience, the `@discord-nestjs/common` package already has an implementation of `TransformPipe` and `ValidationPipe`.
+Pipes are often used for validation. For example `@discord-nestjs/common` package already has ready-made `ValidationPipe` template.
 
-* `TransformPipe` - As mentioned above, transform pipe fills in the fields `DTO` from `CommandInteraction`
-* `ValidationPipe` - Validates the resulting `DTO` from class-validator
-
-You must attach the decorator `@UsePipes` to the handler or class and 
-pass `TransformPipe` and `ValidationPipe` or your custom pipe to arguments.
 Pipes are executed sequentially from left to right.
-
-`@UsePipes` for slash commands are set only on the class
 
 > ⚠️**Import `@UsePipes` from the `@discord-nestjs/core` package**
 
-#### 💡 Example
-
-```typescript
-/* email-sub-command.ts */
-
-import { EmailDto } from '../../dto/email.dto';
-import { CommandValidationFilter } from '../../filter/command-validation.filter';
-import { TransformPipe, ValidationPipe } from '@discord-nestjs/common';
-import {
-  Payload,
-  SubCommand,
-  DiscordTransformedCommand,
-  UseFilters,
-  UsePipes,
-} from '@discord-nestjs/core';
-
-@UsePipes(TransformPipe, ValidationPipe)
-@SubCommand({ name: 'email', description: 'Register by email' })
-export class EmailSubCommand implements DiscordTransformedCommand<EmailDto> {
-  handler(@Payload() dto: EmailDto): string {
-    return `Success register user: ${dto.email}, ${dto.name}, ${dto.age}, ${dto.city}`;
-  }
-}
-```
-
-You can also create your custom pipe by implementing the `DiscordPipeTransform` interface.
+You can create your custom pipe by implementing the `DiscordPipeTransform` interface.
 
 #### 💡 Example
 
@@ -469,6 +435,8 @@ export class MessageToUpperPipe implements DiscordPipeTransform {
 ```
 
 > For events, you must return an array of arguments that will be set to the handler
+
+> `@UsePipes` for slash commands are set only on the class
 
 ```typescript
 /* bot.gateway.ts */
@@ -504,11 +472,9 @@ Excluding command classes.
 To protect commands and events, use. The `canActive` function returns boolean. If one of the guards returns false,
 then the chain will stop there and the handler itself will not be called.
 
-`@UseGuards` for slash commands are set only on the class
+> `@UseGuards` for slash commands are set only on the class
 
-> ⚠️**Import `@UseGuards` from the `@discord-nestjs/core` package**
-
-You need to implement the `DiscordGuard` interface
+For create guard you need to implement the `DiscordGuard` interface
 
 #### 💡 Example
 
@@ -525,12 +491,15 @@ export class MessageFromUserGuard implements DiscordGuard {
 }
 ```
 
+And mark method or class with `@UseGuards` decorator
+
+> ⚠️**Import `@UseGuards` from the `@discord-nestjs/core` package**
+
 ```typescript
 /* bot.gateway.ts */
 
 import { MessageFromUserGuard } from './guards/message-from-user.guard';
-import { MessageToUpperPipe } from './pipes/message-to-upper.pipe';
-import { On, UsePipes, UseGuards } from '@discord-nestjs/core';
+import { On, UseGuards } from '@discord-nestjs/core';
 import { Injectable, Logger } from '@nestjs/common';
 import { Message } from 'discord.js';
 
@@ -540,7 +509,6 @@ export class BotGateway {
 
   @On('messageCreate')
   @UseGuards(MessageFromUserGuard)
-  @UsePipes(MessageToUpperPipe)
   async onMessage(message: Message): Promise<void> {
     this.logger.log(`Incoming message: ${message.content}`);
 
@@ -599,6 +567,8 @@ export class CommandValidationFilter implements DiscordExceptionFilter {
 ```
 
 After that, you just need to pass the filter to `@UseFilters` decorator.
+
+> `@UseFilters` for slash commands are set only on the class
 
 > ⚠️**Import `UseFilters` from the `@discord-nestjs/core` package**
 
