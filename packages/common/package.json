@@ -6,6 +6,10 @@
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
+  "files": [
+    "dist/**/*",
+    "*.md"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/fjodor-rybakov/discord-nestjs"
