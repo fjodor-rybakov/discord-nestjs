@@ -4,32 +4,32 @@
 
 NestJS package for discord.js
 
-- [Installation](#Installation)
-- [Overview](#Overview)
-- [Usage](#Usage)
-  - [Creating slash commands](#Command)
-  - [Subscribe to event](#SubToEvent)
-  - [Pipes](#Pipes)
-  - [Guards](#Guards)
-  - [Exception filters](#Filters)
-  - [Middleware](#MiddlewareUsage)
-- [Exported providers](#Providers)
-  - [DiscordClientProvider](#DiscordClientProvider)
-  - [DiscordCommandProvider](#DiscordCommandProvider)
-  - [ReflectMetadataProvider](#ReflectMetadataProvider)
-- [Decorators description](#DecoratorsDescription)
-  - [@Command](#Command)
-  - [@SubCommand](#SubCommand)
-  - [@On](#On)
-  - [@Once](#Once)
-  - [@Payload](#Payload)
-  - [@UsePipes](#UsePipes)
-  - [@UseGuards](#UseGuards)
-  - [@UseFilters](#UseFilters)
-  - [@Param](#@Param)
-  - [@Choice](#Choice)
-  - [@Channel](#Channel)
-  - [@Middleware](#Middleware)
+- [👨🏻‍💻 Installation](#Installation)
+- [📑 Overview](#Overview)
+- [▶️ Usage](#Usage)
+  - [ℹ️ Creating slash commands](#Command)
+  - [ℹ️ Subscribe to event](#SubToEvent)
+  - [ℹ️ Pipes](#Pipes)
+  - [ℹ️ Guards](#Guards)
+  - [ℹ️ Exception filters](#Filters)
+  - [ℹ️ Middleware](#MiddlewareUsage)
+- [🛠️ Exported providers](#Providers)
+  - [ℹ️ DiscordClientProvider](#DiscordClientProvider)
+  - [ℹ️ DiscordCommandProvider](#DiscordCommandProvider)
+  - [ℹ️ ReflectMetadataProvider](#ReflectMetadataProvider)
+- [🗂 Decorators description](#DecoratorsDescription)
+  - [ℹ️ @Command](#Command)
+  - [ℹ️ @SubCommand](#SubCommand)
+  - [ℹ️ @On](#On)
+  - [ℹ️ @Once](#Once)
+  - [ℹ️ @Payload](#Payload)
+  - [ℹ️ @UsePipes](#UsePipes)
+  - [ℹ️ @UseGuards](#UseGuards)
+  - [ℹ️ @UseFilters](#UseFilters)
+  - [ℹ️ @Param](#Param)
+  - [ℹ️ @Choice](#Choice)
+  - [ℹ️ @Channel](#Channel)
+  - [ℹ️ @Middleware](#Middleware)
 
 
 
@@ -650,12 +650,12 @@ Also don't forget to add your middleware to the providers.
 
 Provides the discord client or webhook client.
 
-### ℹ️ @DiscordCommandProvider <a name="DiscordCommandProvider"></a>
+### ℹ️ DiscordCommandProvider <a name="DiscordCommandProvider"></a>
 
 `discord-nestjs` package builds slash command object based on all decorators and DiscordCommandProvider provides it.
 For example, this is useful when you need to lazily register commands or register commands for a specific guild.
 
-### ℹ️ @ReflectMetadataProvider <a name="ReflectMetadataProvider"></a>
+### ℹ️ ReflectMetadataProvider <a name="ReflectMetadataProvider"></a>
 
 Provides methods for getting metadata for decorators.
 
