@@ -26,16 +26,16 @@
     "build": "nest build"
   },
   "peerDependencies": {
+    "@discord-nestjs/core": "*",
     "@nestjs/common": "^8.1.1",
     "@nestjs/core": "^8.1.1",
-    "@discord-nestjs/core": "*",
-    "discord.js": "^13.2.0",
     "class-validator": "^0.13.1",
+    "discord.js": "^13.2.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.4.0"
   },
   "devDependencies": {
-    "typescript": "^4.4.4",
-    "@discord-nestjs/core": "*"
+    "@discord-nestjs/core": "*",
+    "typescript": "^4.4.4"
   }
 }
