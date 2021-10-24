@@ -8,6 +8,7 @@ NestJS package for discord.js
 - [📑 Overview](#Overview)
 - [▶️ Usage](#Usage)
   - [ℹ️ Creating slash commands](#Command)
+    - [ℹ️ Automatic registration of slash commands](#AutoRegCommand)
   - [ℹ️ Subscribe to event](#SubToEvent)
   - [ℹ️ Pipes](#Pipes)
   - [ℹ️ Guards](#Guards)
@@ -59,7 +60,11 @@ creating a dynamic module through the `forRoot` and `forRootAsync` functions.
 - `token` \* - Your discord bot token. You can get [here](https://discord.com/developers/applications)
 - `discordClientOptions` \* - Client options from discord.js library
 - `commands` - List of class types or list of search patterns
-- `autoRegisterCommands` - Automatically register global commands in the Discord API
+- `autoRegisterGlobalCommands` - Automatically register global commands in the Discord API `(default: false)`. 
+If `true` then overlaps `registerCommandOptions`
+- `registerCommandOptions` - Specific registration of slash commands
+    - `forGuild` - For which guild to register a slash command
+    - `allowFactory` - Based on what criteria will slash commands be registered
 - `webhook` - Connecting with webhook
     - `webhookId` \* - Webhook id
     - `webhookToken` \* - Webhook token
@@ -368,6 +373,51 @@ export class BaseInfoSubCommand implements DiscordCommand {
     };
   }
 }
+```
+
+### ℹ️ Automatic registration of slash commands <a name="AutoRegCommand"></a>
+
+By default, automatic command registration is disabled. You can enable it by setting the `autoRegisterGlobalCommands` parameter to true.
+The globals are cached and updated once an hour. [More info](https://discordjs.guide/interactions/registering-slash-commands.html#global-commands)
+The most optimal way is to update the slash commands for a specific guild. This can be configured via `registerCommandOptions`.
+
+* `registerCommandOptions` - takes an array of objects. 
+
+If `allowFactory` and `forGuild` are specified, then commands for a specific guild will be registered according to the condition from `allowFactory`
+If `allowFactory` is specified then commands will be registered globally by condition from `allowFactory`
+If `forGuild` is specified, then commands for a specific guild will be registered without conditions
+
+#### 💡 Example
+
+```typescript
+import { DiscordModule } from '@discord-nestjs/core';
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Intents, Message } from 'discord.js';
+
+@Module({
+  imports: [
+    DiscordModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        token: configService.get('TOKEN'),
+        commands: ['**/*.command.js'],
+        discordClientOptions: {
+          intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+        },
+        registerCommandOptions: [
+          {
+            forGuild: configService.get('GUILD_ID_WITH_COMMANDS'),
+            allowFactory: (message: Message) =>
+              !message.author.bot && message.content === '!deploy',
+          },
+        ],
+      }),
+      inject: [ConfigService],
+    }),
+  ],
+})
+export class BotModule {}
 ```
 
 ### ℹ️ Subscribe to event <a name="SubToEvent"></a>

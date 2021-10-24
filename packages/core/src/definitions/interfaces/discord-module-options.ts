@@ -1,6 +1,7 @@
 import { FilterType } from '../types/filter.type';
 import { GuardType } from '../types/guard.type';
 import { PipeType } from '../types/pipe.type';
+import { RegisterCommandOptions } from './register-command-options';
 import { Type } from '@nestjs/common';
 import { ClientOptions, WebhookClientData } from 'discord.js';
 
@@ -24,9 +25,16 @@ export interface DiscordModuleOption {
   /**
    * Automatically register global commands in the Discord API
    *
-   * @default: true
+   * If true then overlaps registerCommandOptions
+   *
+   * @default: false
    */
-  autoRegisterCommands?: boolean;
+  autoRegisterGlobalCommands?: boolean;
+
+  /**
+   * Specific registration of slash commands
+   */
+  registerCommandOptions?: RegisterCommandOptions[];
 
   /**
    * Use pipes for all handlers

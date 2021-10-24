@@ -1,3 +1,5 @@
+import { DiscordModuleOption } from '../definitions/interfaces/discord-module-options';
+import { RegisterCommandOptions } from '../definitions/interfaces/register-command-options';
 import { CommandNode } from '../definitions/types/tree/command-node';
 import { Leaf } from '../definitions/types/tree/leaf';
 import { DiscordCommandProvider } from '../providers/discord-command.provider';
@@ -19,7 +21,7 @@ import { DiscordOptionService } from './discord-option.service';
 import { Injectable, Logger, OnModuleInit, Type } from '@nestjs/common';
 import { DiscoveryService, MetadataScanner, ModuleRef } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
-import { Client } from 'discord.js';
+import { Client, Message } from 'discord.js';
 
 @Injectable()
 export class DiscordResolverService implements OnModuleInit {
@@ -123,8 +125,12 @@ export class DiscordResolverService implements OnModuleInit {
 
     const client = await this.discordClientService.getClient();
 
-    if (options.autoRegisterCommands)
-      client.on('ready', () => this.registerCommands(client));
+    if (
+      (options.registerCommandOptions &&
+        options.registerCommandOptions.length !== 0) ||
+      options.autoRegisterGlobalCommands
+    )
+      client.on('ready', () => this.registerCommands(client, options));
   }
 
   private scanMetadata(instance: any): string[] {
@@ -135,13 +141,49 @@ export class DiscordResolverService implements OnModuleInit {
     );
   }
 
-  private async registerCommands(client: Client): Promise<void> {
+  private async registerCommands(
+    client: Client,
+    { registerCommandOptions, autoRegisterGlobalCommands }: DiscordModuleOption,
+  ): Promise<void> {
     const commandList = this.discordCommandProvider.getAllCommands();
     if (commandList.length === 0) return;
 
-    await client.application.commands.set(commandList);
+    if (autoRegisterGlobalCommands) {
+      await client.application.commands.set(commandList);
 
-    this.logger.log('All commands are registered!');
+      this.logger.log('All global commands are registered!');
+    } else {
+      await Promise.all(
+        registerCommandOptions.map(async ({ forGuild, allowFactory }) => {
+          if (allowFactory) {
+            if (forGuild) {
+              // Registering commands for specific guild
+              client.on('messageCreate', async (message: Message) => {
+                if (!allowFactory(message, commandList)) return;
+
+                await client.application.commands.set(commandList, forGuild);
+
+                this.logger.log('All guild commands are registered!');
+              });
+            } else {
+              // Registering global commands
+              client.on('messageCreate', async (message: Message) => {
+                if (!allowFactory(message, commandList)) return;
+
+                await client.application.commands.set(commandList);
+
+                this.logger.log('All global commands are registered!');
+              });
+            }
+          } else if (forGuild) {
+            // Registering commands for specific guild
+            await client.application.commands.set(commandList, forGuild);
+
+            this.logger.log('All guild commands are registered!');
+          }
+        }),
+      );
+    }
   }
 
   private findAllInstancesInTree(node: CommandNode, instances: any[]): void {
