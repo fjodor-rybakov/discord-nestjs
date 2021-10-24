@@ -23,7 +23,7 @@ export class DiscordOptionService {
       usePipes: usePipes ?? [],
       useFilters: useFilters ?? [],
       commands: commands ?? [],
-      autoRegisterCommands: true,
+      autoRegisterGlobalCommands: false,
     });
   }
 }

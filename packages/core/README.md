@@ -59,7 +59,11 @@ creating a dynamic module through the `forRoot` and `forRootAsync` functions.
 - `token` \* - Your discord bot token. You can get [here](https://discord.com/developers/applications)
 - `discordClientOptions` \* - Client options from discord.js library
 - `commands` - List of class types or list of search patterns
-- `autoRegisterCommands` - Automatically register global commands in the Discord API
+- `autoRegisterGlobalCommands` - Automatically register global commands in the Discord API `(default: false)`. 
+If `true` then overlaps `registerCommandOptions`
+- `registerCommandOptions` - Specific registration of slash commands
+    - `forGuild` - For which guild to register a slash command
+    - `allowFactory` - Based on what criteria will slash commands be registered
 - `webhook` - Connecting with webhook
     - `webhookId` \* - Webhook id
     - `webhookToken` \* - Webhook token
