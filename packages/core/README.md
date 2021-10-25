@@ -189,18 +189,18 @@ Command decorator accepts a `name` and `description` as parameters.
 #### 💡 Example
 
 ```typescript
-/* registration.command.ts */
+/* playlist.command.ts */
 
 import { Command, DiscordCommand } from '@discord-nestjs/core';
 import { CommandInteraction } from 'discord.js';
 
 @Command({
-  name: 'name',
-  description: 'Get user name',
+  name: 'playlist',
+  description: 'Get current playlist',
 })
-export class RegistrationCommand implements DiscordCommand {
+export class PlaylistCommand implements DiscordCommand {
   handler(interaction: CommandInteraction): string {
-    return interaction.user.username;
+    return 'List with music...';
   }
 }
 ```
