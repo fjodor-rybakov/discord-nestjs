@@ -35,6 +35,7 @@ export class BuildApplicationCommandService {
     methodName: string,
     { name, description, include = [], defaultPermission }: CommandOptions,
   ): Promise<ChatInputApplicationCommandData> {
+    this.paramResolver.resolve({ instance, methodName });
     const payloadType = this.paramResolver.getPayloadType({
       instance,
       methodName,
