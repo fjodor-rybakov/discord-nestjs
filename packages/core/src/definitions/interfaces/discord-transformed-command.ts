@@ -14,8 +14,9 @@ export interface DiscordTransformedCommand<DTOType> {
     dto: DTOType,
     interaction: CommandInteraction,
   ):
-    | Promise<string | MessagePayload | InteractionReplyOptions>
+    | Promise<string | MessagePayload | InteractionReplyOptions | void>
     | string
     | MessagePayload
-    | InteractionReplyOptions;
+    | InteractionReplyOptions
+    | void;
 }

@@ -13,8 +13,9 @@ export interface DiscordCommand {
   handler(
     interaction: CommandInteraction,
   ):
-    | Promise<string | MessagePayload | InteractionReplyOptions>
+    | Promise<string | MessagePayload | InteractionReplyOptions | void>
     | string
     | MessagePayload
-    | InteractionReplyOptions;
+    | InteractionReplyOptions
+    | void;
 }
