@@ -51,7 +51,7 @@ export class RegistrationEmailDto {
 ```
 
 ```typescript
-/* registration.command.ts */
+/* play.command.ts */
 
 import { RegistrationDto } from './registration.dto';
 import { Command, UsePipes, Payload } from '@discord-nestjs/core';
@@ -106,7 +106,7 @@ export class RegistrationEmailDto {
 ```
 
 ```typescript
-/* registration.command.ts */
+/* play.command.ts */
 
 import { RegistrationDto } from './registration.dto';
 import { Command, UsePipes, Payload, DiscordTransformedCommand } from '@discord-nestjs/core';

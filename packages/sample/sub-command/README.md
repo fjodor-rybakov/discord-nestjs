@@ -15,7 +15,7 @@
 
 ## Description
 
-Sample with events
+Sample with slash sub-commands and sub-group
 
 ## Installation
 
