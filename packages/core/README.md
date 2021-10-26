@@ -72,6 +72,8 @@ If `true` then overlaps `registerCommandOptions`
 - `usePipes` - List of pipes that will apply to all handlers
 - `useGuards` - List of guards that will apply to all handlers
 
+> ⚠️**Important! For the bot to work correctly, you need to set up intentions in `discordClientOptions` param. [More info](https://discordjs.guide/popular-topics/intents.html#privileged-intents)**
+
 Below is an example of creating a dynamic module using the `forRoot` function
 
 #### 💡 Example
@@ -378,14 +380,15 @@ export class BaseInfoSubCommand implements DiscordCommand {
 ### ℹ️ Automatic registration of slash commands <a name="AutoRegCommand"></a>
 
 By default, automatic command registration is disabled. You can enable it by setting the `autoRegisterGlobalCommands` parameter to true.
-The globals are cached and updated once an hour. [More info](https://discordjs.guide/interactions/registering-slash-commands.html#global-commands)
+The globals are cached and updated once an hour. [More info](https://discordjs.guide/interactions/registering-slash-commands.html#global-commands). 
 The most optimal way is to update the slash commands for a specific guild. This can be configured via `registerCommandOptions`.
 
 * `registerCommandOptions` - takes an array of objects. 
 
-If `allowFactory` and `forGuild` are specified, then commands for a specific guild will be registered according to the condition from `allowFactory`
-If `allowFactory` is specified then commands will be registered globally by condition from `allowFactory`
-If `forGuild` is specified, then commands for a specific guild will be registered without conditions
+
+* If `allowFactory` and `forGuild` are specified, then commands for a specific guild will be registered according to the condition from `allowFactory`
+* If `allowFactory` is specified then commands will be registered globally by condition from `allowFactory`
+* If `forGuild` is specified, then commands for a specific guild will be registered without conditions
 
 #### 💡 Example
 
