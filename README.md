@@ -35,6 +35,7 @@ This monorepo consists of several packages.
 * Samples
   * [@discord-nestjs/sample-command](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/command) - Example of bot with slash commands
   * [@discord-nestjs/sample-sub-command](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/sub-command) - Example of bot with slash sub-commands and sub-groups
+  * [@discord-nestjs/sample-validation](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/validation) - Example of bot with slash commands validation
   * [@discord-nestjs/sample-event](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/event) - Example of bot with events
 
 Any questions or suggestions? Discord Федок#3051

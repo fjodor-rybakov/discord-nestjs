@@ -1,9 +1,7 @@
 import { City } from '../definitions/city';
 import { Param, ParamType, Choice } from '@discord-nestjs/core';
-import { IsPhoneNumber } from 'class-validator';
 
 export class NumberDto {
-  @IsPhoneNumber()
   @Param({
     name: 'phone-number',
     description: 'Phone number',

@@ -14,7 +14,7 @@ import { CommandInteraction } from 'discord.js';
 })
 @UsePipes(TransformPipe)
 export class PlayCommand implements DiscordTransformedCommand<PlayDto> {
-  handler(@Payload() dto: PlayDto, interaction: CommandInteraction) {
+  handler(@Payload() dto: PlayDto, interaction: CommandInteraction): string {
     console.log('DTO', dto);
     console.log('Interaction', interaction);
 

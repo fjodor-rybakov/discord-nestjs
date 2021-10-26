@@ -15,7 +15,7 @@ export class CommandValidationFilter implements DiscordExceptionFilter {
     const [interaction] = metadata.context;
 
     const embeds = exceptionList.map((exception) =>
-      new MessageEmbed().addFields(
+      new MessageEmbed().setColor('RED').addFields(
         Object.values(exception.constraints).map((value) => ({
           name: exception.property,
           value,
