@@ -22,6 +22,7 @@ import { CommandTreeService } from './services/command-tree.service';
 import { DiscordClientService } from './services/discord-client.service';
 import { DiscordOptionService } from './services/discord-option.service';
 import { DiscordResolverService } from './services/discord-resolver.service';
+import { RegisterCommandService } from './services/register-command.service';
 import { DynamicModule, Module, Provider, Type } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
 
@@ -34,6 +35,7 @@ export class DiscordModule {
       module: DiscordModule,
       providers: [
         CommandPathToClassService,
+        RegisterCommandService,
         DiscordOptionService,
         DiscordCommandProvider,
         ReflectMetadataProvider,
@@ -70,6 +72,7 @@ export class DiscordModule {
       imports: options.imports || [],
       providers: [
         CommandPathToClassService,
+        RegisterCommandService,
         DiscordOptionService,
         DiscordCommandProvider,
         ReflectMetadataProvider,

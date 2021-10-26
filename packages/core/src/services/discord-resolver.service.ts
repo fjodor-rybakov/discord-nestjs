@@ -1,8 +1,6 @@
 import { DiscordModuleOption } from '../definitions/interfaces/discord-module-options';
-import { RegisterCommandOptions } from '../definitions/interfaces/register-command-options';
 import { CommandNode } from '../definitions/types/tree/command-node';
 import { Leaf } from '../definitions/types/tree/leaf';
-import { DiscordCommandProvider } from '../providers/discord-command.provider';
 import { CommandResolver } from '../resolvers/command/command.resolver';
 import { EventResolver } from '../resolvers/event/event.resolver';
 import { FilterClassResolver } from '../resolvers/filter/filter-class.resolver';
@@ -16,17 +14,14 @@ import { PipeResolver } from '../resolvers/pipe/pipe.resolver';
 import { IsObject } from '../utils/function/is-object';
 import { CommandPathToClassService } from './command-path-to-class.service';
 import { CommandTreeService } from './command-tree.service';
-import { DiscordClientService } from './discord-client.service';
 import { DiscordOptionService } from './discord-option.service';
-import { Injectable, Logger, OnModuleInit, Type } from '@nestjs/common';
+import { RegisterCommandService } from './register-command.service';
+import { Injectable, OnModuleInit, Type } from '@nestjs/common';
 import { DiscoveryService, MetadataScanner, ModuleRef } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
-import { Client, Message } from 'discord.js';
 
 @Injectable()
 export class DiscordResolverService implements OnModuleInit {
-  private readonly logger = new Logger(DiscordResolverService.name);
-
   constructor(
     private readonly discoveryService: DiscoveryService,
     private readonly moduleRef: ModuleRef,
@@ -41,11 +36,10 @@ export class DiscordResolverService implements OnModuleInit {
     private readonly pipeClassResolver: PipeClassResolver,
     private readonly paramResolver: ParamResolver,
     private readonly commandResolver: CommandResolver,
-    private readonly discordCommandProvider: DiscordCommandProvider,
-    private readonly discordClientService: DiscordClientService,
     private readonly discordOptionService: DiscordOptionService,
     private readonly commandPathToClassService: CommandPathToClassService,
     private readonly commandTreeService: CommandTreeService,
+    private readonly registerCommandService: RegisterCommandService,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -60,26 +54,7 @@ export class DiscordResolverService implements OnModuleInit {
     controllers: InstanceWrapper[],
   ): Promise<void> {
     const options = this.discordOptionService.getClientData();
-
-    const commands = await this.commandPathToClassService.resolveCommandsType(
-      options.commands,
-    );
-
-    const commandInstances = await Promise.all(
-      commands.map(async (command: Type) => {
-        const instance = await this.moduleRef.create(command);
-        await this.commandResolver.resolve({ instance });
-        const instances: any[] = [];
-
-        const commandNode = Object.values(
-          this.commandTreeService.getTree(),
-        ).find((node) => node.instance.constructor.name === command.name);
-
-        this.findAllInstancesInTree(commandNode, instances);
-
-        return instances;
-      }),
-    );
+    const commandInstances = await this.instantiateCommands(options);
 
     const methodResolvers = [
       this.filterResolver,
@@ -123,14 +98,34 @@ export class DiscordResolverService implements OnModuleInit {
         }),
     );
 
-    const client = await this.discordClientService.getClient();
+    await this.registerCommandService.register(options);
+  }
 
-    if (
-      (options.registerCommandOptions &&
-        options.registerCommandOptions.length !== 0) ||
-      options.autoRegisterGlobalCommands
-    )
-      client.on('ready', () => this.registerCommands(client, options));
+  private async instantiateCommands(
+    options: DiscordModuleOption,
+  ): Promise<any[]> {
+    const commandTypes =
+      await this.commandPathToClassService.resolveCommandsType(
+        options.commands,
+      );
+
+    const commandInstances = await Promise.all(
+      commandTypes.map(async (command: Type) => {
+        const instance = await this.moduleRef.create(command);
+        await this.commandResolver.resolve({ instance });
+        const instances: any[] = [];
+
+        const commandNode = Object.values(
+          this.commandTreeService.getTree(),
+        ).find((node) => node.instance.constructor.name === command.name);
+
+        this.findAllInstancesInTree(commandNode, instances);
+
+        return instances;
+      }),
+    );
+
+    return commandInstances.flat();
   }
 
   private scanMetadata(instance: any): string[] {
@@ -139,51 +134,6 @@ export class DiscordResolverService implements OnModuleInit {
       Object.getPrototypeOf(instance),
       (methodName) => methodName,
     );
-  }
-
-  private async registerCommands(
-    client: Client,
-    { registerCommandOptions, autoRegisterGlobalCommands }: DiscordModuleOption,
-  ): Promise<void> {
-    const commandList = this.discordCommandProvider.getAllCommands();
-    if (commandList.length === 0) return;
-
-    if (autoRegisterGlobalCommands) {
-      await client.application.commands.set(commandList);
-
-      this.logger.log('All global commands are registered!');
-    } else {
-      await Promise.all(
-        registerCommandOptions.map(async ({ forGuild, allowFactory }) => {
-          if (allowFactory) {
-            if (forGuild) {
-              // Registering commands for specific guild
-              client.on('messageCreate', async (message: Message) => {
-                if (!allowFactory(message, commandList)) return;
-
-                await client.application.commands.set(commandList, forGuild);
-
-                this.logger.log('All guild commands are registered!');
-              });
-            } else {
-              // Registering global commands
-              client.on('messageCreate', async (message: Message) => {
-                if (!allowFactory(message, commandList)) return;
-
-                await client.application.commands.set(commandList);
-
-                this.logger.log('All global commands are registered!');
-              });
-            }
-          } else if (forGuild) {
-            // Registering commands for specific guild
-            await client.application.commands.set(commandList, forGuild);
-
-            this.logger.log('All guild commands are registered!');
-          }
-        }),
-      );
-    }
   }
 
   private findAllInstancesInTree(node: CommandNode, instances: any[]): void {
