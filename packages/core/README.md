@@ -271,6 +271,9 @@ export class RegistrationDto {
 > If the command parameter is a `string` or a `number`, then it is not necessary 
 > to pass the type. The type will resolve **automatically**.
 
+> You can also transform and validate the parameters to match your DTO by using the [common](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/common) package's 
+> TransformPipe and ValidationPipe, or by using custom [Pipes](#Pipes).
+
 If your command is more complex, you can add subgroups of commands or subcommands to it. 
 To do this, you need to add your subgroups and subcommands to the `include` option. The `include` parameter accepts 
 list of class types or `UseGroup` function, which in turn accepts group parameters and list of subcommands.

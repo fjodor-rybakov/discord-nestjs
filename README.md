@@ -134,8 +134,7 @@ export class PlayCommand implements DiscordCommand {
   constructor(private readonly playService: PlayService) {}
 
   handler(interaction: CommandInteraction): string {
-    this.playService.play();
-    return 'Nice.';
+    return this.playService.play();
   }
 }
 ```
