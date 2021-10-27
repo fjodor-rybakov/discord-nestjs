@@ -48,14 +48,27 @@ This monorepo consists of several packages.
 
 ### The bot starts up, but the slash commands and events do not work
 
+<details>
+  <summary>Click to expand</summary>
+
 Check your intent is passed to the `discordClientOptions` of the module. [More info](https://discordjs.guide/popular-topics/intents.html#privileged-intents)
 
+</details>
+
 ### I created DTO and added `TransformPipe`, but when I receive response to the command, the DTO fields are missing
+
+<details>
+  <summary>Click to expand</summary>
 
 Check what your `target` version from `tsconfig.json`. Now is the minimal version of `ESNext`.
 Also check that the `Palyoad` and `UsePipes` decorators are imported from `@discord-nestjs/core`.
 
-### How to inject provider into your command, pipe, guard or filter
+</details>
+
+### How to inject dependencies into your command, pipe, guard or filter
+
+<details>
+  <summary>Click to expand</summary>
 
 At the moment, this is only possible if the module is declared using `forRootAsync`.
 First, you need to declare a separate module and set the necessary providers, as well as set them for export.
@@ -105,6 +118,8 @@ import { Intents, Message } from 'discord.js';
 export class BotModule {}
 ```
 
+And then you can inject your dependencies
+
 ```typescript
 import { PlayService } from '../services/play.serivce';
 import { Command } from '@discord-nestjs/core';
@@ -124,6 +139,8 @@ export class PlayCommand implements DiscordCommand {
   }
 }
 ```
+
+</details>
 
 
 
