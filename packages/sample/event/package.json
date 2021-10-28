@@ -19,29 +19,29 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@nestjs/common": "^8.1.1",
-    "@nestjs/config": "^1.0.2",
-    "@nestjs/core": "^8.1.1",
-    "discord.js": "^13.2.0",
-    "reflect-metadata": "^0.1.13",
-    "rimraf": "^3.0.2",
-    "rxjs": "^7.4.0",
+    "@nestjs/common": "8.1.2",
+    "@nestjs/config": "1.0.2",
+    "@nestjs/core": "8.1.2",
+    "discord.js": "13.2.0",
+    "reflect-metadata": "0.1.13",
+    "rimraf": "3.0.2",
+    "rxjs": "7.4.0",
     "@discord-nestjs/core": "*"
   },
   "devDependencies": {
-    "@nestjs/cli": "^8.1.4",
-    "@nestjs/schematics": "^8.0.4",
-    "@types/node": "^16.11.1",
-    "@typescript-eslint/eslint-plugin": "^5.1.0",
-    "@typescript-eslint/parser": "^5.1.0",
-    "eslint": "^8.0.1",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "prettier": "^2.4.1",
-    "ts-loader": "^9.2.6",
+    "@nestjs/cli": "8.1.4",
+    "@nestjs/schematics": "8.0.4",
+    "@types/node": "16.11.1",
+    "@typescript-eslint/eslint-plugin": "5.2.0",
+    "@typescript-eslint/parser": "5.2.0",
+    "eslint": "8.1.0",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-plugin-prettier": "4.0.0",
+    "prettier": "2.4.1",
+    "ts-loader": "9.2.6",
     "ts-node": "10.4.0",
-    "tsconfig-paths": "^3.11.0",
-    "typescript": "^4.4.4"
+    "tsconfig-paths": "3.11.0",
+    "typescript": "4.4.4"
   },
   "jest": {
     "moduleFileExtensions": [
