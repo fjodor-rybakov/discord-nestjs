@@ -10,6 +10,9 @@ import { CommandTreeService } from './command-tree.service';
 import { Injectable, Type } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import {
+  ApplicationCommandChannelOptionData,
+  ApplicationCommandChoicesData,
+  ApplicationCommandNonOptionsData,
   ApplicationCommandOptionData,
   ApplicationCommandSubCommandData,
   ApplicationCommandSubGroupData,
@@ -19,6 +22,11 @@ import {
   ApplicationCommandOptionTypes,
   ApplicationCommandTypes,
 } from 'discord.js/typings/enums';
+
+type NonCommandData =
+  | ApplicationCommandNonOptionsData
+  | ApplicationCommandChannelOptionData
+  | ApplicationCommandChoicesData;
 
 @Injectable()
 export class BuildApplicationCommandService {
@@ -57,6 +65,7 @@ export class BuildApplicationCommandService {
       dtoInstance = await this.moduleRef.create(payloadType);
       this.commandTreeService.appendNode([name, 'dtoInstance'], dtoInstance);
       const optionMetadata = this.optionResolver.resolve(dtoInstance);
+      const commandOptions: NonCommandData[] = [];
       for (const property in optionMetadata) {
         const propertyOptions = optionMetadata[property];
         const {
@@ -66,7 +75,7 @@ export class BuildApplicationCommandService {
           type,
         } = propertyOptions.param;
 
-        applicationCommandOptions.push({
+        commandOptions.push({
           name,
           description,
           required,
@@ -75,12 +84,10 @@ export class BuildApplicationCommandService {
           channelTypes: propertyOptions.channelTypes,
         });
       }
-    }
 
-    if (applicationCommandOptions.length !== 0)
-      applicationCommandData.options = this.sortByRequired(
-        applicationCommandOptions,
-      );
+      if (applicationCommandOptions.length !== 0)
+        applicationCommandOptions.concat(this.sortByRequired(commandOptions));
+    }
 
     return applicationCommandData;
   }
