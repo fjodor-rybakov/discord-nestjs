@@ -25,7 +25,7 @@
     "@nestjs/config": "1.0.3",
     "@nestjs/core": "8.1.2",
     "class-validator": "0.13.1",
-    "discord.js": "13.2.0",
+    "discord.js": "13.3.0",
     "reflect-metadata": "0.1.13",
     "rimraf": "3.0.2",
     "rxjs": "7.4.0"
