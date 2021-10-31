@@ -115,7 +115,7 @@ export class OptionResolver {
           return ApplicationCommandOptionTypes.BOOLEAN;
 
         throw new Error(
-          `Could not determine field type ${propertyKey} in class ${dtoInstance.constructor.name}`,
+          `Could not determine field type "${propertyKey}" in class "${dtoInstance.constructor.name}"`,
         );
       }
     }

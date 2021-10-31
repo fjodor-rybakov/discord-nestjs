@@ -268,7 +268,7 @@ export class RegistrationDto {
 > By default, if `name` is not passed to the decorator parameters, 
 > then the name of the marked property will be taken. 
 
-> If the command parameter is a `string` or a `number`, then it is not necessary 
+> If the command parameter is a `string` or a `boolean`, then it is not necessary 
 > to pass the type. The type will resolve **automatically**.
 
 > You can also transform and validate the parameters to match your DTO by using the [common](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/common) package's 
