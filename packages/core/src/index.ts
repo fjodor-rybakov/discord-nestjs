@@ -26,6 +26,7 @@ export * from './definitions/types/filter.type';
 export * from './definitions/types/tree/tree';
 export * from './definitions/types/tree/command-node';
 export * from './definitions/types/tree/leaf';
+export * from './definitions/types/event.type';
 
 // Decorators
 export * from './decorators/command/command.decorator';
@@ -44,6 +45,9 @@ export * from './decorators/option/choice/choice.decorator';
 export * from './decorators/option/channel/channel.decorator';
 export * from './decorators/filter/use-filter.decorator';
 export * from './decorators/filter/catch/catch.decorator';
+export * from './decorators/collector/reaction-collector/reaction-collector.decorator';
+export * from './decorators/collector/use-collectors/use-collectors.decorator';
+export * from './decorators/collector/filter/filter.decorator';
 
 // Providers
 export * from './providers/discord-client.provider';

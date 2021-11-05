@@ -1,5 +1,6 @@
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { DiscordClientService } from '../../services/discord-client.service';
+import { CollectorResolver } from '../collector/use-collectors/collector.resolver';
 import { FilterResolver } from '../filter/filter.resolver';
 import { GuardResolver } from '../guard/guard.resolver';
 import { MethodResolveOptions } from '../interfaces/method-resolve-options';
@@ -20,11 +21,12 @@ export class EventResolver implements MethodResolver {
     private readonly guardResolver: GuardResolver,
     private readonly filterResolver: FilterResolver,
     private readonly pipeResolver: PipeResolver,
+    private readonly collectorsResolver: CollectorResolver,
   ) {}
 
-  resolve(options: MethodResolveOptions): void {
+  async resolve(options: MethodResolveOptions): Promise<void> {
     const { instance, methodName } = options;
-    let eventMethod = 'on';
+    let eventMethod: 'on' | 'once' = 'on';
     let metadata = this.metadataProvider.getOnEventDecoratorMetadata(
       instance,
       methodName,
@@ -68,6 +70,12 @@ export class EventResolver implements MethodResolver {
             });
 
             //#endregion
+            this.collectorsResolver.applyCollector({
+              instance,
+              methodName,
+              event,
+              context,
+            });
 
             await instance[methodName](...(pipeResult || context));
           } catch (exception) {

@@ -1,5 +1,5 @@
-import { ClientEvents } from 'discord.js';
+import { BaseEvents } from '../../definitions/types/event.type';
 
 export interface OnDecoratorOptions {
-  event: keyof ClientEvents;
+  event: BaseEvents;
 }

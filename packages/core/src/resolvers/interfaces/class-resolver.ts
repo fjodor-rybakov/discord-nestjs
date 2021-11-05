@@ -1,5 +1,7 @@
 import { ClassResolveOptions } from './class-resolve-options';
 
-export interface ClassResolver {
-  resolve(options: ClassResolveOptions): Promise<void> | void;
+export interface ClassResolver<TReturn = unknown> {
+  resolve(
+    options: ClassResolveOptions,
+  ): Promise<void | TReturn> | void | TReturn;
 }

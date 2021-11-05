@@ -4,7 +4,7 @@ import { ClientEvents } from 'discord.js';
 type TEvent = keyof ClientEvents;
 
 export interface DiscordFilterOptions<TException extends Error = any> {
-  instance: unknown;
+  instance: InstanceType<any>;
   methodName: string;
   event: TEvent;
   context: ClientEvents[TEvent];
