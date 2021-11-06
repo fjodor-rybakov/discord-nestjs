@@ -5,7 +5,7 @@ import { DiscordOptionsFactory } from './definitions/interfaces/discord-options-
 import { DiscordClientProvider } from './providers/discord-client.provider';
 import { DiscordCommandProvider } from './providers/discord-command.provider';
 import { ReflectMetadataProvider } from './providers/reflect-metadata.provider';
-import { ReactionCollectorResolver } from './resolvers/collector/reaction-collector/reaction-collector.resolver';
+import { BaseCollectorResolver } from './resolvers/collector/base-collector.resolver';
 import { CollectorResolver } from './resolvers/collector/use-collectors/collector.resolver';
 import { CommandResolver } from './resolvers/command/command.resolver';
 import { EventResolver } from './resolvers/event/event.resolver';
@@ -59,7 +59,7 @@ export class DiscordModule {
         DiscordClientService,
         BuildApplicationCommandService,
         CommandTreeService,
-        ReactionCollectorResolver,
+        BaseCollectorResolver,
         CollectorResolver,
       ],
       exports: [
@@ -98,7 +98,7 @@ export class DiscordModule {
         DiscordClientService,
         BuildApplicationCommandService,
         CommandTreeService,
-        ReactionCollectorResolver,
+        BaseCollectorResolver,
         CollectorResolver,
       ],
       exports: [

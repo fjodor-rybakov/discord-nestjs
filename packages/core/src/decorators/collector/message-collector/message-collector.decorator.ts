@@ -1,11 +1,11 @@
+import { DiscordMessageCollectorOptions } from './message-collector-options';
 import { MESSAGE_COLLECTOR_METADATA } from './message-collector.constant';
-import { MessageCollectorOptions } from 'discord.js';
 
 /**
  * Message collector decorator
  */
 export function MessageCollector(
-  options: MessageCollectorOptions,
+  options: DiscordMessageCollectorOptions,
 ): ClassDecorator {
   return <TFunction extends Function>(target: TFunction): TFunction | void => {
     Reflect.defineMetadata(

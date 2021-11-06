@@ -46,6 +46,8 @@ export * from './decorators/option/channel/channel.decorator';
 export * from './decorators/filter/use-filter.decorator';
 export * from './decorators/filter/catch/catch.decorator';
 export * from './decorators/collector/reaction-collector/reaction-collector.decorator';
+export * from './decorators/collector/message-collector/message-collector.decorator';
+export * from './decorators/collector/interaction-collector/interaction-collector.decorator';
 export * from './decorators/collector/use-collectors/use-collectors.decorator';
 export * from './decorators/collector/filter/filter.decorator';
 

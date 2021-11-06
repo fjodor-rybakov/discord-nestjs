@@ -1,4 +1,4 @@
-import { DiscordReactionCollectorOptions } from '../../../definitions/types/reaction-collector.type';
+import { DiscordReactionCollectorOptions } from './reaction-collector-options';
 import { REACTION_COLLECTOR_METADATA } from './reaction-collector.constant';
 
 /**

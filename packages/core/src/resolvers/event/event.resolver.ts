@@ -21,7 +21,7 @@ export class EventResolver implements MethodResolver {
     private readonly guardResolver: GuardResolver,
     private readonly filterResolver: FilterResolver,
     private readonly pipeResolver: PipeResolver,
-    private readonly collectorsResolver: CollectorResolver,
+    private readonly collectorResolver: CollectorResolver,
   ) {}
 
   async resolve(options: MethodResolveOptions): Promise<void> {
@@ -70,7 +70,7 @@ export class EventResolver implements MethodResolver {
             });
 
             //#endregion
-            this.collectorsResolver.applyCollector({
+            this.collectorResolver.applyCollector({
               instance,
               methodName,
               event,

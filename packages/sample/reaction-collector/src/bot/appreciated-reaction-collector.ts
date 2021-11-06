@@ -4,7 +4,7 @@ import { MessageReaction, User } from 'discord.js';
 @ReactionCollector({ time: 15000 })
 export class AppreciatedReactionCollector {
   @Filter()
-  filter(reaction: MessageReaction, user: User): boolean {
+  isLikeFromAuthor(reaction: MessageReaction, user: User): boolean {
     return (
       reaction.emoji.name === '👍' && user.id === reaction.message.author.id
     );

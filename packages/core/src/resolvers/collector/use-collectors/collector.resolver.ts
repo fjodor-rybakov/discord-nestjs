@@ -1,19 +1,25 @@
 import { ReflectMetadataProvider } from '../../../providers/reflect-metadata.provider';
 import { MethodResolveOptions } from '../../interfaces/method-resolve-options';
 import { MethodResolver } from '../../interfaces/method-resolver';
-import { ReactionCollectorResolver } from '../reaction-collector/reaction-collector.resolver';
+import { BaseCollectorResolver } from '../base-collector.resolver';
+import { CollectorType } from '../collector-type';
 import { ResolvedCollectorInfos } from './resolved-collector-infos';
 import { UseCollectorApplyOptions } from './use-collector-apply-options';
 import { Injectable, Type } from '@nestjs/common';
 import { MetadataScanner, ModuleRef } from '@nestjs/core';
-import { ClientEvents } from 'discord.js';
+import {
+  ClientEvents,
+  InteractionCollectorOptions,
+  MessageCollectorOptions,
+  ReactionCollectorOptions,
+} from 'discord.js';
 
 @Injectable()
 export class CollectorResolver implements MethodResolver {
   private readonly collectorInfos: ResolvedCollectorInfos[] = [];
 
   constructor(
-    private readonly reactCollectorResolver: ReactionCollectorResolver,
+    private readonly baseCollectorResolver: BaseCollectorResolver,
     private readonly metadataProvider: ReflectMetadataProvider,
     private readonly metadataScanner: MetadataScanner,
     private readonly moduleRef: ModuleRef,
@@ -41,7 +47,7 @@ export class CollectorResolver implements MethodResolver {
     );
 
     const collectors = collectorClassInstances.map((classInstance: string) =>
-      this.reactCollectorResolver.resolve({ instance: classInstance }),
+      this.baseCollectorResolver.resolve({ instance: classInstance }),
     );
 
     this.collectorInfos.push({
@@ -62,9 +68,78 @@ export class CollectorResolver implements MethodResolver {
     if (!methodCollectors) return;
 
     methodCollectors.collectors.map((collector) => {
-      if (this.isMessageEvent(event, context)) {
-        const [message] = context;
-        this.reactCollectorResolver.applyReactionCollector(message, collector);
+      const { type, metadata, filterMethodName, classInstance, events } =
+        collector;
+      switch (type) {
+        case CollectorType.REACTION: {
+          if (!this.isMessageEvent(event, context)) return;
+
+          const [message] = context;
+          const reactionCollectorOptions: ReactionCollectorOptions = {
+            ...metadata,
+          };
+          this.baseCollectorResolver.applyFilter(
+            reactionCollectorOptions,
+            filterMethodName,
+            classInstance,
+          );
+          const reactionCollector = message.createReactionCollector(
+            reactionCollectorOptions,
+          );
+          this.baseCollectorResolver.subscribeToEvents(
+            reactionCollector,
+            events,
+            classInstance,
+          );
+
+          break;
+        }
+        case CollectorType.MESSAGE: {
+          if (!this.isInteractionEvent(event, context)) return;
+          const [interaction] = context;
+          const messageCollectorOptions: MessageCollectorOptions = {
+            ...metadata,
+          };
+          this.baseCollectorResolver.applyFilter(
+            messageCollectorOptions,
+            filterMethodName,
+            classInstance,
+          );
+          const messageCollector = interaction.channel.createMessageCollector(
+            messageCollectorOptions,
+          );
+          this.baseCollectorResolver.subscribeToEvents(
+            messageCollector,
+            events,
+            classInstance,
+          );
+
+          break;
+        }
+        case CollectorType.INTERACTION: {
+          if (!this.isInteractionEvent(event, context)) return;
+          const [interaction] = context;
+          const interactionCollectorOptions: InteractionCollectorOptions<any> =
+            {
+              ...metadata,
+            };
+          this.baseCollectorResolver.applyFilter(
+            interactionCollectorOptions,
+            filterMethodName,
+            classInstance,
+          );
+          const interactionCollector =
+            interaction.channel.createMessageComponentCollector(
+              interactionCollectorOptions,
+            );
+          this.baseCollectorResolver.subscribeToEvents(
+            interactionCollector,
+            events,
+            classInstance,
+          );
+
+          break;
+        }
       }
     });
   }
@@ -74,6 +149,13 @@ export class CollectorResolver implements MethodResolver {
     context: ClientEvents[keyof ClientEvents],
   ): context is ClientEvents['messageCreate'] {
     return event === 'messageCreate';
+  }
+
+  private isInteractionEvent(
+    event: keyof ClientEvents,
+    context: ClientEvents[keyof ClientEvents],
+  ): context is ClientEvents['interactionCreate'] {
+    return event === 'interactionCreate';
   }
 
   private getCollectorData({

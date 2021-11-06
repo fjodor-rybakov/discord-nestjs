@@ -1,6 +1,7 @@
 import { FILTER_METADATA } from '../decorators/collector/filter/filter.constant';
 import { INTERACTION_COLLECTOR_METADATA } from '../decorators/collector/interaction-collector/interaction-collector.constant';
 import { MESSAGE_COLLECTOR_METADATA } from '../decorators/collector/message-collector/message-collector.constant';
+import { DiscordReactionCollectorOptions } from '../decorators/collector/reaction-collector/reaction-collector-options';
 import { REACTION_COLLECTOR_METADATA } from '../decorators/collector/reaction-collector/reaction-collector.constant';
 import { USE_COLLECTORS_METADATA } from '../decorators/collector/use-collectors/use-collectors.constant';
 import { CommandOptions } from '../decorators/command/command-options';
@@ -34,7 +35,6 @@ import { ExcludeEnum } from '../definitions/types/exclude-enum.type';
 import { FilterType } from '../definitions/types/filter.type';
 import { GuardType } from '../definitions/types/guard.type';
 import { PipeType } from '../definitions/types/pipe.type';
-import { DiscordReactionCollectorOptions } from '../definitions/types/reaction-collector.type';
 import { Injectable, Type } from '@nestjs/common';
 import {
   Interaction,
