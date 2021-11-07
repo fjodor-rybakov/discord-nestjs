@@ -12,7 +12,7 @@ export class CommandValidationFilter implements DiscordExceptionFilter {
     exceptionList: ValidationError[],
     metadata: DiscordArgumentMetadata<'interactionCreate'>,
   ): Promise<void> {
-    const [interaction] = metadata.context;
+    const [interaction] = metadata.eventArgs;
 
     const embeds = exceptionList.map((exception) =>
       new MessageEmbed().setColor('RED').addFields(
