@@ -6,5 +6,5 @@ export interface DiscordGuardOptions {
   instance: unknown;
   methodName: string;
   event: TEvent;
-  context: ClientEvents[TEvent];
+  eventArgs: ClientEvents[TEvent];
 }

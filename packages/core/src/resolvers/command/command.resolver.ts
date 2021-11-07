@@ -1,6 +1,5 @@
 import { CommandExecutionContext } from '../../definitions/interfaces/command-execution-context';
 import { DiscordCommand } from '../../definitions/interfaces/discord-command';
-import { ExecutionContext } from '../../definitions/interfaces/execution-context';
 import { TransformedCommandExecutionContext } from '../../definitions/interfaces/transformed-command-execution-context';
 import { DiscordCommandProvider } from '../../providers/discord-command.provider';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
@@ -17,7 +16,7 @@ import { PipeResolver } from '../pipe/pipe.resolver';
 import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import {
-  Interaction,
+  ClientEvents,
   InteractionCollector,
   MessageCollector,
 } from 'discord.js';
@@ -59,7 +58,8 @@ export class CommandResolver implements ClassResolver {
 
     this.discordClientService
       .getClient()
-      .on(event, async (interaction: Interaction) => {
+      .on(event, async (...eventArgs: ClientEvents['interactionCreate']) => {
+        const [interaction] = eventArgs;
         if (!interaction.isCommand() || interaction.commandName !== name)
           return;
 
@@ -76,12 +76,12 @@ export class CommandResolver implements ClassResolver {
 
         try {
           //#region apply middleware, guard, pipe
-          await this.middlewareResolver.applyMiddleware(event, [interaction]);
+          await this.middlewareResolver.applyMiddleware(event, eventArgs);
           const isAllowFromGuards = await this.guardResolver.applyGuard({
             instance,
             methodName,
             event,
-            context: [interaction],
+            eventArgs,
           });
           if (!isAllowFromGuards) return;
 
@@ -90,16 +90,17 @@ export class CommandResolver implements ClassResolver {
             methodName,
             event,
             metatype: dtoInstance?.constructor,
-            eventArgs: [interaction],
+            eventArgs,
             initValue: interaction,
             commandNode,
           });
           //#endregion
+
           const collectors = this.collectorResolver.applyCollector({
             instance,
             methodName,
             event,
-            eventArgs: [interaction],
+            eventArgs,
           }) as (MessageCollector | InteractionCollector<any>)[];
 
           const transformedExecutionContext: TransformedCommandExecutionContext =
@@ -123,7 +124,7 @@ export class CommandResolver implements ClassResolver {
             methodName,
             event,
             metatype: dtoInstance?.constructor,
-            eventArgs: [interaction],
+            eventArgs,
             exception,
             commandNode,
           });

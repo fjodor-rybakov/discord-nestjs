@@ -58,12 +58,12 @@ export class GuardResolver implements MethodResolver {
   }
 
   async applyGuard(options: DiscordGuardOptions): Promise<boolean> {
-    const { instance, methodName, event, context } = options;
+    const { instance, methodName, event, eventArgs } = options;
     const guardListForMethod = this.getGuardData({ instance, methodName });
     if (!guardListForMethod) return true;
 
     for await (const guard of guardListForMethod.guardList) {
-      const result = await guard.canActive(event, context);
+      const result = await guard.canActive(event, eventArgs);
       if (!result) return false;
     }
     return true;

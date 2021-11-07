@@ -58,7 +58,7 @@ export class EventResolver implements MethodResolver {
               instance,
               methodName,
               event,
-              context: eventArgs,
+              eventArgs,
             });
             if (!isAllowFromGuards) return;
 
@@ -69,8 +69,8 @@ export class EventResolver implements MethodResolver {
               eventArgs,
               initValue: eventArgs,
             });
-
             //#endregion
+
             const collectors = this.collectorResolver.applyCollector({
               instance,
               methodName,

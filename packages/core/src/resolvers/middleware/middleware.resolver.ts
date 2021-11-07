@@ -23,7 +23,7 @@ export class MiddlewareResolver implements ClassResolver {
 
   async applyMiddleware<TEvent extends keyof ClientEvents>(
     event: TEvent,
-    context: ClientEvents[TEvent],
+    eventArgs: ClientEvents[TEvent],
   ): Promise<void> {
     const filteredMiddleware = this.middlewareList.filter(
       (item: DiscordMiddlewareInstance) => {
@@ -37,7 +37,7 @@ export class MiddlewareResolver implements ClassResolver {
     );
     await Promise.all(
       filteredMiddleware.map((item: DiscordMiddlewareInstance) =>
-        item.instance.use(event, context),
+        item.instance.use(event, eventArgs),
       ),
     );
   }

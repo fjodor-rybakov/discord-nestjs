@@ -8,6 +8,6 @@ import { ClientEvents } from 'discord.js';
 export interface DiscordGuard<TEvent extends keyof ClientEvents = any> {
   canActive(
     event: TEvent,
-    context: ClientEvents[TEvent],
+    eventArgs: ClientEvents[TEvent],
   ): boolean | Promise<boolean>;
 }
