@@ -30,6 +30,7 @@ export * from './definitions/types/tree/tree';
 export * from './definitions/types/tree/command-node';
 export * from './definitions/types/tree/leaf';
 export * from './definitions/types/event.type';
+export * from './definitions/types/collector-args.type';
 
 // Decorators
 export * from './decorators/command/command.decorator';

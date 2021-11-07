@@ -5,6 +5,7 @@ import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { DiscordModuleOption } from '../definitions/interfaces/discord-module-options';
 import { CommandNode } from '../definitions/types/tree/command-node';
 import { Leaf } from '../definitions/types/tree/leaf';
+import { BaseCollectorResolver } from '../resolvers/collector/base-collector.resolver';
 import { CollectorClassResolver } from '../resolvers/collector/collector-class.resolver';
 import { CollectorResolver } from '../resolvers/collector/use-collectors/collector.resolver';
 import { CommandResolver } from '../resolvers/command/command.resolver';
@@ -45,6 +46,7 @@ export class DiscordResolverService implements OnModuleInit {
     private readonly registerCommandService: RegisterCommandService,
     private readonly collectorResolver: CollectorResolver,
     private readonly collectorClassResolver: CollectorClassResolver,
+    private readonly baseCollectorResolver: BaseCollectorResolver,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -72,6 +74,7 @@ export class DiscordResolverService implements OnModuleInit {
 
     const classResolvers = [
       this.filterClassResolver,
+      this.baseCollectorResolver,
       this.middlewareResolver,
       this.guardClassResolver,
       this.pipeClassResolver,
@@ -88,6 +91,9 @@ export class DiscordResolverService implements OnModuleInit {
             instance = instanceWrapper.instance;
           if (!instance || !IsObject(instance)) return;
 
+          for await (const resolver of classResolvers)
+            await resolver.resolve({ instance });
+
           const methodNames = this.scanMetadata(instance);
           await Promise.all(
             methodNames.map(async (methodName: string) => {
@@ -99,9 +105,6 @@ export class DiscordResolverService implements OnModuleInit {
               }
             }),
           );
-
-          for await (const resolver of classResolvers)
-            await resolver.resolve({ instance });
         }),
     );
 

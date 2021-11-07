@@ -1,13 +1,15 @@
 import { Type } from '@nestjs/common';
-import { ClientEvents } from 'discord.js';
 
-type TEvent = keyof ClientEvents;
+import { EventArgs, EventType } from '../../definitions/types/event.type';
 
-export interface DiscordFilterOptions<TException extends Error = any> {
+export interface DiscordFilterOptions<
+  TException extends Error = any,
+  TEvent extends EventType = any,
+> {
   instance: InstanceType<any>;
   methodName: string;
   event: TEvent;
-  eventArgs: ClientEvents[TEvent];
+  eventArgs: EventArgs<TEvent>;
   exception?: TException;
   metatype?: Type;
   commandNode?: Record<string, any>;

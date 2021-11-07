@@ -1,5 +1,6 @@
 import { InjectableOptions } from '@nestjs/common';
-import { ClientEvents } from 'discord.js';
+
+import { EventType } from '../../definitions/types/event.type';
 
 /**
  * Middleware options
@@ -8,10 +9,10 @@ export interface MiddlewareOptions extends InjectableOptions {
   /**
    * Take events
    */
-  allowEvents?: Array<keyof ClientEvents>;
+  allowEvents?: Array<EventType>;
 
   /**
    * Skip events
    */
-  denyEvents?: Array<keyof ClientEvents>;
+  denyEvents?: Array<EventType>;
 }

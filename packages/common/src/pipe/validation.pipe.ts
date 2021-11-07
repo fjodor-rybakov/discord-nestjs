@@ -12,7 +12,7 @@ export class ValidationPipe implements DiscordPipeTransform {
     private readonly validatorOptions?: ValidatorOptions,
   ) {}
 
-  async transform(dtoInstance: any): Promise<any> {
+  async transform(dtoInstance: object): Promise<any> {
     const result = await validate(dtoInstance, this.validatorOptions);
 
     if (result.length > 0) throw result;

@@ -1,10 +1,8 @@
-import { ClientEvents } from 'discord.js';
+import { EventArgs, EventType } from '../../definitions/types/event.type';
 
-type TEvent = keyof ClientEvents;
-
-export interface DiscordGuardOptions {
+export interface DiscordGuardOptions<TEvent extends EventType = any> {
   instance: unknown;
   methodName: string;
   event: TEvent;
-  eventArgs: ClientEvents[TEvent];
+  eventArgs: EventArgs<TEvent>;
 }

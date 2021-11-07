@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Intents } from 'discord.js';
 
 import { BotGateway } from './bot.gateway';
+import { QuizMessageCollector } from './quiz-message-collector';
 
 @Module({
   imports: [
@@ -22,6 +23,6 @@ import { BotGateway } from './bot.gateway';
       inject: [ConfigService],
     }),
   ],
-  providers: [BotGateway],
+  providers: [BotGateway, QuizMessageCollector],
 })
 export class BotModule {}

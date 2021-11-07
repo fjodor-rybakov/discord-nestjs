@@ -1,5 +1,4 @@
 import { Injectable, Type } from '@nestjs/common';
-import { MetadataScanner, ModuleRef } from '@nestjs/core';
 import {
   ClientEvents,
   InteractionCollector,
@@ -25,8 +24,6 @@ export class CollectorResolver implements MethodResolver {
   constructor(
     private readonly baseCollectorResolver: BaseCollectorResolver,
     private readonly metadataProvider: ReflectMetadataProvider,
-    private readonly metadataScanner: MetadataScanner,
-    private readonly moduleRef: ModuleRef,
   ) {}
 
   async resolve({ instance, methodName }: MethodResolveOptions): Promise<void> {
@@ -46,13 +43,10 @@ export class CollectorResolver implements MethodResolver {
     { instance, methodName }: MethodResolveOptions,
     collectorTypes: Type[],
   ): Promise<void> {
-    const collectorClassInstances = await Promise.all(
-      collectorTypes.map((type) => this.moduleRef.create(type)),
-    );
-
-    const collectors = collectorClassInstances.map((classInstance: string) =>
-      this.baseCollectorResolver.resolve({ instance: classInstance }),
-    );
+    const collectors =
+      collectorTypes.map((type) =>
+        this.baseCollectorResolver.getCollectorMetadata(type),
+      ) ?? [];
 
     this.collectorInfos.push({
       instance,
@@ -103,8 +97,12 @@ export class CollectorResolver implements MethodResolver {
           return reactionCollector;
         }
         case CollectorType.MESSAGE: {
-          if (!this.isInteractionEvent(event, eventArgs)) return;
-          const [interaction] = eventArgs;
+          if (
+            !this.isMessageEvent(event, eventArgs) &&
+            !this.isInteractionEvent(event, eventArgs)
+          )
+            return;
+          const [messageOrInteraction] = eventArgs;
           const messageCollectorOptions: MessageCollectorOptions = {
             ...metadata,
           };
@@ -113,9 +111,10 @@ export class CollectorResolver implements MethodResolver {
             filterMethodName,
             classInstance,
           );
-          const messageCollector = interaction.channel.createMessageCollector(
-            messageCollectorOptions,
-          );
+          const messageCollector =
+            messageOrInteraction.channel.createMessageCollector(
+              messageCollectorOptions,
+            );
           this.baseCollectorResolver.subscribeToEvents(
             messageCollector,
             events,
@@ -125,8 +124,12 @@ export class CollectorResolver implements MethodResolver {
           return messageCollector;
         }
         case CollectorType.INTERACTION: {
-          if (!this.isInteractionEvent(event, eventArgs)) return;
-          const [interaction] = eventArgs;
+          if (
+            !this.isMessageEvent(event, eventArgs) &&
+            !this.isInteractionEvent(event, eventArgs)
+          )
+            return;
+          const [messageOrInteraction] = eventArgs;
           const interactionCollectorOptions: InteractionCollectorOptions<any> =
             {
               ...metadata,
@@ -137,7 +140,7 @@ export class CollectorResolver implements MethodResolver {
             classInstance,
           );
           const interactionCollector =
-            interaction.channel.createMessageComponentCollector(
+            messageOrInteraction.channel.createMessageComponentCollector(
               interactionCollectorOptions,
             );
           this.baseCollectorResolver.subscribeToEvents(
