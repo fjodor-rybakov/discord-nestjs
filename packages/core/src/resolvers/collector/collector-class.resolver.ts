@@ -1,14 +1,14 @@
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { ClassResolveOptions } from '../interfaces/class-resolve-options';
 import { ClassResolver } from '../interfaces/class-resolver';
-import { PipeResolver } from './pipe.resolver';
+import { CollectorResolver } from './use-collectors/collector.resolver';
 import { Injectable } from '@nestjs/common';
 import { MetadataScanner } from '@nestjs/core';
 
 @Injectable()
-export class PipeClassResolver implements ClassResolver {
+export class CollectorClassResolver implements ClassResolver {
   constructor(
-    private readonly pipeResolver: PipeResolver,
+    private readonly collectorResolver: CollectorResolver,
     private readonly metadataProvider: ReflectMetadataProvider,
     private readonly metadataScanner: MetadataScanner,
   ) {}
@@ -16,7 +16,7 @@ export class PipeClassResolver implements ClassResolver {
   async resolve(options: ClassResolveOptions): Promise<void> {
     const { instance } = options;
     const metadata =
-      this.metadataProvider.getUsePipesDecoratorMetadata(instance);
+      this.metadataProvider.getUseCollectorsDecoratorMetadata(instance);
     if (!metadata) return;
 
     const someClassHasMetadata = [
@@ -30,7 +30,7 @@ export class PipeClassResolver implements ClassResolver {
           Object.getPrototypeOf(instance),
         );
     for await (const methodName of allClassMethods) {
-      await this.pipeResolver.addPipe(
+      await this.collectorResolver.addCollector(
         {
           instance,
           methodName,

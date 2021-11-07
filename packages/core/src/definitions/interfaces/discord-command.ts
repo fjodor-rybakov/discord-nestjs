@@ -1,3 +1,4 @@
+import { CommandExecutionContext } from './command-execution-context';
 import {
   CommandInteraction,
   InteractionReplyOptions,
@@ -12,6 +13,7 @@ import {
 export interface DiscordCommand {
   handler(
     interaction: CommandInteraction,
+    executionContext: CommandExecutionContext,
   ):
     | Promise<string | MessagePayload | InteractionReplyOptions | void>
     | string

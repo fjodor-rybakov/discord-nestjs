@@ -1,6 +1,7 @@
 import { DiscordModuleOption } from '../definitions/interfaces/discord-module-options';
 import { CommandNode } from '../definitions/types/tree/command-node';
 import { Leaf } from '../definitions/types/tree/leaf';
+import { CollectorClassResolver } from '../resolvers/collector/collector-class.resolver';
 import { CollectorResolver } from '../resolvers/collector/use-collectors/collector.resolver';
 import { CommandResolver } from '../resolvers/command/command.resolver';
 import { EventResolver } from '../resolvers/event/event.resolver';
@@ -42,6 +43,7 @@ export class DiscordResolverService implements OnModuleInit {
     private readonly commandTreeService: CommandTreeService,
     private readonly registerCommandService: RegisterCommandService,
     private readonly collectorResolver: CollectorResolver,
+    private readonly collectorClassResolver: CollectorClassResolver,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -62,9 +64,9 @@ export class DiscordResolverService implements OnModuleInit {
       this.filterResolver,
       this.paramResolver,
       this.collectorResolver,
-      this.eventResolver,
       this.guardResolver,
       this.pipeResolver,
+      this.eventResolver,
     ];
 
     const classResolvers = [
@@ -72,6 +74,7 @@ export class DiscordResolverService implements OnModuleInit {
       this.middlewareResolver,
       this.guardClassResolver,
       this.pipeClassResolver,
+      this.collectorClassResolver,
     ];
 
     await Promise.all(

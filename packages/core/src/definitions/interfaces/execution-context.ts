@@ -1,16 +1,11 @@
 import {
-  ClientEvents,
   Interaction,
   InteractionCollector,
   MessageCollector,
   ReactionCollector,
 } from 'discord.js';
 
-export interface ExecutionContext<
-  EventName extends keyof ClientEvents,
-  TInteraction extends Interaction = any,
-> {
-  eventArgs: ClientEvents[EventName];
+export interface ExecutionContext<TInteraction extends Interaction = any> {
   collectors: (
     | ReactionCollector
     | MessageCollector

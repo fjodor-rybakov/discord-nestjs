@@ -78,8 +78,7 @@ export class EventResolver implements MethodResolver {
               eventArgs,
             });
 
-            const executionContext: ExecutionContext<any> = {
-              eventArgs,
+            const executionContext: ExecutionContext = {
               collectors,
             };
 

@@ -6,6 +6,7 @@ import { DiscordClientProvider } from './providers/discord-client.provider';
 import { DiscordCommandProvider } from './providers/discord-command.provider';
 import { ReflectMetadataProvider } from './providers/reflect-metadata.provider';
 import { BaseCollectorResolver } from './resolvers/collector/base-collector.resolver';
+import { CollectorClassResolver } from './resolvers/collector/collector-class.resolver';
 import { CollectorResolver } from './resolvers/collector/use-collectors/collector.resolver';
 import { CommandResolver } from './resolvers/command/command.resolver';
 import { EventResolver } from './resolvers/event/event.resolver';
@@ -60,6 +61,7 @@ export class DiscordModule {
         BuildApplicationCommandService,
         CommandTreeService,
         BaseCollectorResolver,
+        CollectorClassResolver,
         CollectorResolver,
       ],
       exports: [
@@ -99,6 +101,7 @@ export class DiscordModule {
         BuildApplicationCommandService,
         CommandTreeService,
         BaseCollectorResolver,
+        CollectorClassResolver,
         CollectorResolver,
       ],
       exports: [

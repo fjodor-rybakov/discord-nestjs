@@ -1,9 +1,13 @@
+import { CommandExecutionContext } from '../../definitions/interfaces/command-execution-context';
 import { DiscordCommand } from '../../definitions/interfaces/discord-command';
+import { ExecutionContext } from '../../definitions/interfaces/execution-context';
+import { TransformedCommandExecutionContext } from '../../definitions/interfaces/transformed-command-execution-context';
 import { DiscordCommandProvider } from '../../providers/discord-command.provider';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { BuildApplicationCommandService } from '../../services/build-application-command.service';
 import { CommandTreeService } from '../../services/command-tree.service';
 import { DiscordClientService } from '../../services/discord-client.service';
+import { CollectorResolver } from '../collector/use-collectors/collector.resolver';
 import { FilterResolver } from '../filter/filter.resolver';
 import { GuardResolver } from '../guard/guard.resolver';
 import { ClassResolveOptions } from '../interfaces/class-resolve-options';
@@ -12,7 +16,11 @@ import { MiddlewareResolver } from '../middleware/middleware.resolver';
 import { PipeResolver } from '../pipe/pipe.resolver';
 import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
-import { Interaction } from 'discord.js';
+import {
+  Interaction,
+  InteractionCollector,
+  MessageCollector,
+} from 'discord.js';
 
 @Injectable()
 export class CommandResolver implements ClassResolver {
@@ -27,6 +35,7 @@ export class CommandResolver implements ClassResolver {
     private readonly buildApplicationCommandService: BuildApplicationCommandService,
     private readonly commandTreeService: CommandTreeService,
     private readonly filterResolver: FilterResolver,
+    private readonly collectorResolver: CollectorResolver,
   ) {}
 
   async resolve({
@@ -86,10 +95,25 @@ export class CommandResolver implements ClassResolver {
             commandNode,
           });
           //#endregion
+          const collectors = this.collectorResolver.applyCollector({
+            instance,
+            methodName,
+            event,
+            eventArgs: [interaction],
+          }) as (MessageCollector | InteractionCollector<any>)[];
+
+          const transformedExecutionContext: TransformedCommandExecutionContext =
+            {
+              interaction,
+              collectors,
+            };
+          const executionContext: CommandExecutionContext = {
+            collectors,
+          };
 
           const handlerArgs = dtoInstance
-            ? [pipeResult, interaction]
-            : [interaction];
+            ? [pipeResult, transformedExecutionContext]
+            : [interaction, executionContext];
           const replyResult = await commandInstance[methodName](...handlerArgs);
 
           if (replyResult) await interaction.reply(replyResult);

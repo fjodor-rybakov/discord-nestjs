@@ -183,7 +183,7 @@ export class ReflectMetadataProvider {
 
   getUseCollectorsDecoratorMetadata(
     instance: InstanceType<any>,
-    methodName: string,
+    methodName?: string,
   ): Type[] {
     return Reflect.getMetadata(USE_COLLECTORS_METADATA, instance, methodName);
   }
