@@ -1,6 +1,7 @@
+import { Injectable } from '@nestjs/common';
+
 import { CommandNode } from '../definitions/types/tree/command-node';
 import { Tree } from '../definitions/types/tree/tree';
-import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class CommandTreeService {

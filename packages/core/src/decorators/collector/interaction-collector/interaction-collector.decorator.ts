@@ -1,6 +1,7 @@
+import { Interaction } from 'discord.js';
+
 import { DiscordInteractionCollectorOptions } from './interaction-collector-options';
 import { INTERACTION_COLLECTOR_METADATA } from './interaction-collector.constant';
-import { Interaction } from 'discord.js';
 
 /**
  * Interaction collector decorator

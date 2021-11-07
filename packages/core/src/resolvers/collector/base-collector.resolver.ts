@@ -1,12 +1,3 @@
-import { DiscordMessageCollectorOptions } from '../../decorators/collector/message-collector/message-collector-options';
-import { DiscordReactionCollectorOptions } from '../../decorators/collector/reaction-collector/reaction-collector-options';
-import { BaseCollectorMetadata } from '../../definitions/types/base-collector-metadata';
-import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
-import { ClassResolveOptions } from '../interfaces/class-resolve-options';
-import { ClassResolver } from '../interfaces/class-resolver';
-import { CollectMethodEventsInfo } from './collect-method-events-info';
-import { CollectorMetadata } from './collector-metadata';
-import { CollectorType } from './collector-type';
 import { Injectable } from '@nestjs/common';
 import { MetadataScanner } from '@nestjs/core';
 import {
@@ -17,6 +8,16 @@ import {
   ReactionCollector,
   ReactionCollectorOptions,
 } from 'discord.js';
+
+import { DiscordMessageCollectorOptions } from '../../decorators/collector/message-collector/message-collector-options';
+import { DiscordReactionCollectorOptions } from '../../decorators/collector/reaction-collector/reaction-collector-options';
+import { BaseCollectorMetadata } from '../../definitions/types/base-collector-metadata';
+import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
+import { ClassResolveOptions } from '../interfaces/class-resolve-options';
+import { ClassResolver } from '../interfaces/class-resolver';
+import { CollectMethodEventsInfo } from './collect-method-events-info';
+import { CollectorMetadata } from './collector-metadata';
+import { CollectorType } from './collector-type';
 
 @Injectable()
 export class BaseCollectorResolver implements ClassResolver {

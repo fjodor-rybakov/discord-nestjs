@@ -1,5 +1,6 @@
-import { USE_COLLECTORS_METADATA } from './use-collectors.constant';
 import { Type } from '@nestjs/common';
+
+import { USE_COLLECTORS_METADATA } from './use-collectors.constant';
 
 /**
  * Use collectors decorator

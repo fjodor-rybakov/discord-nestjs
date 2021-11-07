@@ -1,8 +1,9 @@
-import { MessageFromUserGuard } from './guards/message-from-user.guard';
-import { PostInteractionCollector } from './post-interaction-collector';
-import { On, UseCollectors, UseGuards, Once } from '@discord-nestjs/core';
+import { On, Once, UseCollectors, UseGuards } from '@discord-nestjs/core';
 import { Injectable, Logger } from '@nestjs/common';
 import { Interaction } from 'discord.js';
+
+import { MessageFromUserGuard } from './guards/message-from-user.guard';
+import { PostInteractionCollector } from './post-interaction-collector';
 
 @Injectable()
 export class BotGateway {

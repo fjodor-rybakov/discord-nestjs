@@ -1,9 +1,10 @@
+import { Injectable } from '@nestjs/common';
+import { MetadataScanner } from '@nestjs/core';
+
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { ClassResolveOptions } from '../interfaces/class-resolve-options';
 import { ClassResolver } from '../interfaces/class-resolver';
 import { PipeResolver } from './pipe.resolver';
-import { Injectable } from '@nestjs/common';
-import { MetadataScanner } from '@nestjs/core';
 
 @Injectable()
 export class PipeClassResolver implements ClassResolver {

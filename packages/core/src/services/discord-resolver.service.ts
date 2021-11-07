@@ -1,3 +1,7 @@
+import { Injectable, OnModuleInit, Type } from '@nestjs/common';
+import { DiscoveryService, MetadataScanner, ModuleRef } from '@nestjs/core';
+import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
+
 import { DiscordModuleOption } from '../definitions/interfaces/discord-module-options';
 import { CommandNode } from '../definitions/types/tree/command-node';
 import { Leaf } from '../definitions/types/tree/leaf';
@@ -18,9 +22,6 @@ import { CommandPathToClassService } from './command-path-to-class.service';
 import { CommandTreeService } from './command-tree.service';
 import { DiscordOptionService } from './discord-option.service';
 import { RegisterCommandService } from './register-command.service';
-import { Injectable, OnModuleInit, Type } from '@nestjs/common';
-import { DiscoveryService, MetadataScanner, ModuleRef } from '@nestjs/core';
-import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 
 @Injectable()
 export class DiscordResolverService implements OnModuleInit {

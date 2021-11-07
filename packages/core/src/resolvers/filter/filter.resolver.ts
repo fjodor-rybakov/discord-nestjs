@@ -1,3 +1,6 @@
+import { Injectable, Type } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
+
 import { DiscordExceptionFilter } from '../../decorators/filter/discord-exception-filter';
 import { FilterType } from '../../definitions/types/filter.type';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
@@ -6,8 +9,6 @@ import { MethodResolveOptions } from '../interfaces/method-resolve-options';
 import { MethodResolver } from '../interfaces/method-resolver';
 import { DiscordFilterOptions } from './discord-filter-options';
 import { ResolvedFilterInfo } from './resolved-filter-info';
-import { Injectable, Type } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
 
 @Injectable()
 export class FilterResolver implements MethodResolver {

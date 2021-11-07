@@ -1,8 +1,9 @@
-import { MessageFromUserGuard } from './guards/message-from-user.guard';
-import { MessageToUpperPipe } from './pipes/message-to-upper.pipe';
-import { On, Once, UsePipes, UseGuards } from '@discord-nestjs/core';
+import { On, Once, UseGuards, UsePipes } from '@discord-nestjs/core';
 import { Injectable, Logger } from '@nestjs/common';
 import { Message } from 'discord.js';
+
+import { MessageFromUserGuard } from './guards/message-from-user.guard';
+import { MessageToUpperPipe } from './pipes/message-to-upper.pipe';
 
 @Injectable()
 export class BotGateway {

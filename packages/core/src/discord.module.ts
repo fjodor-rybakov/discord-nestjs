@@ -1,3 +1,6 @@
+import { DynamicModule, Module, Provider, Type } from '@nestjs/common';
+import { DiscoveryModule } from '@nestjs/core';
+
 import { DISCORD_MODULE_OPTIONS } from './definitions/constants/discord-module.contant';
 import { DiscordModuleAsyncOptions } from './definitions/interfaces/discord-module-async-options';
 import { DiscordModuleOption } from './definitions/interfaces/discord-module-options';
@@ -26,8 +29,6 @@ import { DiscordClientService } from './services/discord-client.service';
 import { DiscordOptionService } from './services/discord-option.service';
 import { DiscordResolverService } from './services/discord-resolver.service';
 import { RegisterCommandService } from './services/register-command.service';
-import { DynamicModule, Module, Provider, Type } from '@nestjs/common';
-import { DiscoveryModule } from '@nestjs/core';
 
 @Module({
   imports: [DiscoveryModule],

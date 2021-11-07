@@ -1,10 +1,11 @@
+import { Injectable, Type } from '@nestjs/common';
+
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { MethodResolveOptions } from '../interfaces/method-resolve-options';
 import { MethodResolver } from '../interfaces/method-resolver';
 import { DecoratorParamInfo } from './decorator-param-info';
 import { DecoratorParamType } from './decorator-param-type';
 import { ParamOptions } from './param-options';
-import { Injectable, Type } from '@nestjs/common';
 
 @Injectable()
 export class ParamResolver implements MethodResolver {

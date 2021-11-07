@@ -1,9 +1,10 @@
-import { MessageFromUserGuard } from './guards/message-from-user.guard';
-import { PostMessageCollector } from './post-message-collector';
-import { On, UseCollectors, UseGuards, Once } from '@discord-nestjs/core';
+import { On, Once, UseCollectors, UseGuards } from '@discord-nestjs/core';
 import { ExecutionContext } from '@discord-nestjs/core/src/definitions/interfaces/execution-context';
 import { Injectable, Logger } from '@nestjs/common';
 import { Interaction } from 'discord.js';
+
+import { MessageFromUserGuard } from './guards/message-from-user.guard';
+import { PostMessageCollector } from './post-message-collector';
 
 @Injectable()
 export class BotGateway {
@@ -19,6 +20,6 @@ export class BotGateway {
   @UseCollectors(PostMessageCollector)
   async onMessage(
     interaction: Interaction,
-    ctx: ExecutionContext<'interactionCreate'>,
+    ctx: ExecutionContext,
   ): Promise<void> {}
 }

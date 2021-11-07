@@ -1,6 +1,6 @@
 import { DiscordPipeTransform } from '@discord-nestjs/core';
 import { Injectable, Optional } from '@nestjs/common';
-import { validate, ValidatorOptions } from 'class-validator';
+import { ValidatorOptions, validate } from 'class-validator';
 
 /**
  * Validates DTO with class-validator

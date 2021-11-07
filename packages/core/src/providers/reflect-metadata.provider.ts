@@ -1,3 +1,11 @@
+import { Injectable, Type } from '@nestjs/common';
+import {
+  Interaction,
+  InteractionCollectorOptions,
+  MessageCollectorOptions,
+} from 'discord.js';
+import { ChannelTypes } from 'discord.js/typings/enums';
+
 import { FILTER_METADATA } from '../decorators/collector/filter/filter.constant';
 import { INTERACTION_COLLECTOR_METADATA } from '../decorators/collector/interaction-collector/interaction-collector.constant';
 import { MESSAGE_COLLECTOR_METADATA } from '../decorators/collector/message-collector/message-collector.constant';
@@ -35,13 +43,6 @@ import { ExcludeEnum } from '../definitions/types/exclude-enum.type';
 import { FilterType } from '../definitions/types/filter.type';
 import { GuardType } from '../definitions/types/guard.type';
 import { PipeType } from '../definitions/types/pipe.type';
-import { Injectable, Type } from '@nestjs/common';
-import {
-  Interaction,
-  InteractionCollectorOptions,
-  MessageCollectorOptions,
-} from 'discord.js';
-import { ChannelTypes } from 'discord.js/typings/enums';
 
 @Injectable()
 export class ReflectMetadataProvider {

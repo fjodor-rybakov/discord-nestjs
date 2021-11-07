@@ -1,8 +1,9 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { Client, Message } from 'discord.js';
+
 import { DiscordModuleOption } from '../definitions/interfaces/discord-module-options';
 import { DiscordCommandProvider } from '../providers/discord-command.provider';
 import { DiscordClientService } from './discord-client.service';
-import { Injectable, Logger } from '@nestjs/common';
-import { Client, Message } from 'discord.js';
 
 @Injectable()
 export class RegisterCommandService {

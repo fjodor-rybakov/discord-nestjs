@@ -1,8 +1,9 @@
-import { AppreciatedReactionCollector } from './appreciated-reaction-collector';
-import { MessageFromUserGuard } from './guards/message-from-user.guard';
-import { On, UseCollectors, UseGuards, Once } from '@discord-nestjs/core';
+import { On, Once, UseCollectors, UseGuards } from '@discord-nestjs/core';
 import { Injectable, Logger } from '@nestjs/common';
 import { Message } from 'discord.js';
+
+import { AppreciatedReactionCollector } from './appreciated-reaction-collector';
+import { MessageFromUserGuard } from './guards/message-from-user.guard';
 
 @Injectable()
 export class BotGateway {

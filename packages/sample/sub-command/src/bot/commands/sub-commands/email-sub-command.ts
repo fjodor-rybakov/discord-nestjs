@@ -1,11 +1,12 @@
-import { EmailDto } from '../../dto/email.dto';
 import { TransformPipe } from '@discord-nestjs/common';
 import {
+  DiscordTransformedCommand,
   Payload,
   SubCommand,
-  DiscordTransformedCommand,
   UsePipes,
 } from '@discord-nestjs/core';
+
+import { EmailDto } from '../../dto/email.dto';
 
 @UsePipes(TransformPipe)
 @SubCommand({ name: 'email', description: 'Register by email' })

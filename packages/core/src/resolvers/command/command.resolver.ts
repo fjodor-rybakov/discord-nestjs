@@ -1,3 +1,11 @@
+import { Injectable } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
+import {
+  ClientEvents,
+  InteractionCollector,
+  MessageCollector,
+} from 'discord.js';
+
 import { CommandExecutionContext } from '../../definitions/interfaces/command-execution-context';
 import { DiscordCommand } from '../../definitions/interfaces/discord-command';
 import { TransformedCommandExecutionContext } from '../../definitions/interfaces/transformed-command-execution-context';
@@ -13,13 +21,6 @@ import { ClassResolveOptions } from '../interfaces/class-resolve-options';
 import { ClassResolver } from '../interfaces/class-resolver';
 import { MiddlewareResolver } from '../middleware/middleware.resolver';
 import { PipeResolver } from '../pipe/pipe.resolver';
-import { Injectable } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
-import {
-  ClientEvents,
-  InteractionCollector,
-  MessageCollector,
-} from 'discord.js';
 
 @Injectable()
 export class CommandResolver implements ClassResolver {

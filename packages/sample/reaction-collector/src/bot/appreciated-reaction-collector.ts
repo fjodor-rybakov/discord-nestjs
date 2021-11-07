@@ -1,4 +1,4 @@
-import { ReactionCollector, On, Once, Filter } from '@discord-nestjs/core';
+import { Filter, On, Once, ReactionCollector } from '@discord-nestjs/core';
 import { MessageReaction, User } from 'discord.js';
 
 @ReactionCollector({ time: 15000 })

@@ -1,3 +1,6 @@
+import { Injectable, Type } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
+
 import { DiscordGuard } from '../../decorators/guard/discord-guard';
 import { GuardType } from '../../definitions/types/guard.type';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
@@ -6,8 +9,6 @@ import { MethodResolveOptions } from '../interfaces/method-resolve-options';
 import { MethodResolver } from '../interfaces/method-resolver';
 import { DiscordGuardOptions } from './discord-guard-options';
 import { ResolvedGuardInfo } from './resolved-guard-info';
-import { Injectable, Type } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
 
 @Injectable()
 export class GuardResolver implements MethodResolver {

@@ -1,10 +1,3 @@
-import { ReflectMetadataProvider } from '../../../providers/reflect-metadata.provider';
-import { MethodResolveOptions } from '../../interfaces/method-resolve-options';
-import { MethodResolver } from '../../interfaces/method-resolver';
-import { BaseCollectorResolver } from '../base-collector.resolver';
-import { CollectorType } from '../collector-type';
-import { ResolvedCollectorInfos } from './resolved-collector-infos';
-import { UseCollectorApplyOptions } from './use-collector-apply-options';
 import { Injectable, Type } from '@nestjs/common';
 import { MetadataScanner, ModuleRef } from '@nestjs/core';
 import {
@@ -16,6 +9,14 @@ import {
   ReactionCollector,
   ReactionCollectorOptions,
 } from 'discord.js';
+
+import { ReflectMetadataProvider } from '../../../providers/reflect-metadata.provider';
+import { MethodResolveOptions } from '../../interfaces/method-resolve-options';
+import { MethodResolver } from '../../interfaces/method-resolver';
+import { BaseCollectorResolver } from '../base-collector.resolver';
+import { CollectorType } from '../collector-type';
+import { ResolvedCollectorInfos } from './resolved-collector-infos';
+import { UseCollectorApplyOptions } from './use-collector-apply-options';
 
 @Injectable()
 export class CollectorResolver implements MethodResolver {

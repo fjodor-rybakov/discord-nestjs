@@ -1,13 +1,14 @@
-import { StatsDto } from '../dto/stats.dto';
-import { CommandValidationFilter } from '../filter/command-validation.filter';
 import { TransformPipe, ValidationPipe } from '@discord-nestjs/common';
 import {
   Command,
   DiscordTransformedCommand,
   Payload,
-  UsePipes,
   UseFilters,
+  UsePipes,
 } from '@discord-nestjs/core';
+
+import { StatsDto } from '../dto/stats.dto';
+import { CommandValidationFilter } from '../filter/command-validation.filter';
 
 @Command({
   name: 'player-stats',

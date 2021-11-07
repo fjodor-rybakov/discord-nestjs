@@ -1,5 +1,6 @@
-import { CATCH_EXCEPTION_FILTER_DECORATOR } from './catch.constant';
 import { Type } from '@nestjs/common/interfaces';
+
+import { CATCH_EXCEPTION_FILTER_DECORATOR } from './catch.constant';
 
 /**
  * Catch decorator

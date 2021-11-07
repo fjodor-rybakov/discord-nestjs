@@ -1,5 +1,6 @@
-import { FILTER_METADATA } from './filter.constant';
 import { Type } from '@nestjs/common';
+
+import { FILTER_METADATA } from './filter.constant';
 
 /**
  * Filter decorator

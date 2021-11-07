@@ -1,7 +1,7 @@
 import {
+  Catch,
   DiscordArgumentMetadata,
   DiscordExceptionFilter,
-  Catch,
 } from '@discord-nestjs/core';
 import { ValidationError } from 'class-validator';
 import { MessageEmbed } from 'discord.js';

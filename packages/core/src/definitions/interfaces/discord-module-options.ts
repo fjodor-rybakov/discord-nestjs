@@ -1,9 +1,10 @@
+import { Type } from '@nestjs/common';
+import { ClientOptions, WebhookClientData } from 'discord.js';
+
 import { FilterType } from '../types/filter.type';
 import { GuardType } from '../types/guard.type';
 import { PipeType } from '../types/pipe.type';
 import { RegisterCommandOptions } from './register-command-options';
-import { Type } from '@nestjs/common';
-import { ClientOptions, WebhookClientData } from 'discord.js';
 
 export interface DiscordModuleOption {
   /**
