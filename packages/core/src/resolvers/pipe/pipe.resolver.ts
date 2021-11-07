@@ -66,7 +66,7 @@ export class PipeResolver implements MethodResolver {
       instance,
       methodName,
       event,
-      context,
+      eventArgs,
       initValue,
       metatype,
       commandNode,
@@ -79,7 +79,7 @@ export class PipeResolver implements MethodResolver {
         const prevData = await prev;
         return curr.transform(prevData, {
           event,
-          context,
+          eventArgs: eventArgs,
           metatype,
           commandNode,
         });

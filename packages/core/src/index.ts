@@ -6,6 +6,7 @@ export * from './definitions/interfaces/discord-module-async-options';
 export * from './definitions/interfaces/discord-options-factory';
 export * from './definitions/interfaces/discord-command';
 export * from './definitions/interfaces/discord-transformed-command';
+export * from './definitions/interfaces/execution-context';
 
 export * from './decorators/command/command-options';
 export * from './decorators/sub-command/sub-command-options';

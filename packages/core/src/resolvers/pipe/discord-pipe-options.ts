@@ -7,7 +7,7 @@ export interface DiscordPipeOptions {
   instance: unknown;
   methodName: string;
   event: TEvent;
-  context: ClientEvents[TEvent];
+  eventArgs: ClientEvents[TEvent];
   initValue?: unknown;
   metatype?: Type;
   commandNode?: Record<string, any>;

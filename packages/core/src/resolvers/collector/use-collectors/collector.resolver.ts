@@ -9,8 +9,11 @@ import { Injectable, Type } from '@nestjs/common';
 import { MetadataScanner, ModuleRef } from '@nestjs/core';
 import {
   ClientEvents,
+  InteractionCollector,
   InteractionCollectorOptions,
+  MessageCollector,
   MessageCollectorOptions,
+  ReactionCollector,
   ReactionCollectorOptions,
 } from 'discord.js';
 
@@ -61,20 +64,24 @@ export class CollectorResolver implements MethodResolver {
     instance,
     methodName,
     event,
-    context,
-  }: UseCollectorApplyOptions) {
+    eventArgs,
+  }: UseCollectorApplyOptions): (
+    | ReactionCollector
+    | MessageCollector
+    | InteractionCollector<any>
+  )[] {
     const methodCollectors = this.getCollectorData({ instance, methodName });
 
     if (!methodCollectors) return;
 
-    methodCollectors.collectors.map((collector) => {
+    return methodCollectors.collectors.map((collector) => {
       const { type, metadata, filterMethodName, classInstance, events } =
         collector;
       switch (type) {
         case CollectorType.REACTION: {
-          if (!this.isMessageEvent(event, context)) return;
+          if (!this.isMessageEvent(event, eventArgs)) return;
 
-          const [message] = context;
+          const [message] = eventArgs;
           const reactionCollectorOptions: ReactionCollectorOptions = {
             ...metadata,
           };
@@ -92,11 +99,11 @@ export class CollectorResolver implements MethodResolver {
             classInstance,
           );
 
-          break;
+          return reactionCollector;
         }
         case CollectorType.MESSAGE: {
-          if (!this.isInteractionEvent(event, context)) return;
-          const [interaction] = context;
+          if (!this.isInteractionEvent(event, eventArgs)) return;
+          const [interaction] = eventArgs;
           const messageCollectorOptions: MessageCollectorOptions = {
             ...metadata,
           };
@@ -114,11 +121,11 @@ export class CollectorResolver implements MethodResolver {
             classInstance,
           );
 
-          break;
+          return messageCollector;
         }
         case CollectorType.INTERACTION: {
-          if (!this.isInteractionEvent(event, context)) return;
-          const [interaction] = context;
+          if (!this.isInteractionEvent(event, eventArgs)) return;
+          const [interaction] = eventArgs;
           const interactionCollectorOptions: InteractionCollectorOptions<any> =
             {
               ...metadata,
@@ -138,7 +145,7 @@ export class CollectorResolver implements MethodResolver {
             classInstance,
           );
 
-          break;
+          return interactionCollector;
         }
       }
     });

@@ -6,5 +6,5 @@ export interface UseCollectorApplyOptions {
   instance: InstanceType<any>;
   methodName: string;
   event: TEvent;
-  context: ClientEvents[TEvent];
+  eventArgs: ClientEvents[TEvent];
 }

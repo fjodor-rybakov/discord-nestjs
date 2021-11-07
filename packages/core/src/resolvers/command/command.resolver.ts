@@ -81,7 +81,7 @@ export class CommandResolver implements ClassResolver {
             methodName,
             event,
             metatype: dtoInstance?.constructor,
-            context: [interaction],
+            eventArgs: [interaction],
             initValue: interaction,
             commandNode,
           });
@@ -99,7 +99,7 @@ export class CommandResolver implements ClassResolver {
             methodName,
             event,
             metatype: dtoInstance?.constructor,
-            context: [interaction],
+            eventArgs: [interaction],
             exception,
             commandNode,
           });

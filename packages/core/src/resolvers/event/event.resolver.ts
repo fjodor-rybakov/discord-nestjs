@@ -1,3 +1,4 @@
+import { ExecutionContext } from '../../definitions/interfaces/execution-context';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { DiscordClientService } from '../../services/discord-client.service';
 import { CollectorResolver } from '../collector/use-collectors/collector.resolver';
@@ -49,15 +50,15 @@ export class EventResolver implements MethodResolver {
       .getClient()
       [eventMethod](
         event,
-        async (...context: ClientEvents[keyof ClientEvents]) => {
+        async (...eventArgs: ClientEvents[keyof ClientEvents]) => {
           try {
             //#region apply middleware, guard, pipe
-            await this.middlewareResolver.applyMiddleware(event, context);
+            await this.middlewareResolver.applyMiddleware(event, eventArgs);
             const isAllowFromGuards = await this.guardResolver.applyGuard({
               instance,
               methodName,
               event,
-              context,
+              context: eventArgs,
             });
             if (!isAllowFromGuards) return;
 
@@ -65,25 +66,33 @@ export class EventResolver implements MethodResolver {
               instance,
               methodName,
               event,
-              context,
-              initValue: context,
+              eventArgs,
+              initValue: eventArgs,
             });
 
             //#endregion
-            this.collectorResolver.applyCollector({
+            const collectors = this.collectorResolver.applyCollector({
               instance,
               methodName,
               event,
-              context,
+              eventArgs,
             });
 
-            await instance[methodName](...(pipeResult || context));
+            const executionContext: ExecutionContext<any> = {
+              eventArgs,
+              collectors,
+            };
+
+            await instance[methodName](
+              ...(pipeResult || eventArgs),
+              executionContext,
+            );
           } catch (exception) {
             const isTrowException = await this.filterResolver.applyFilter({
               instance,
               methodName,
               event,
-              context,
+              eventArgs,
               exception,
             });
 

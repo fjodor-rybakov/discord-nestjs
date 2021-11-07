@@ -10,7 +10,7 @@ export interface DiscordArgumentMetadata<
 > {
   event: TEvent;
 
-  context: ClientEvents[TEvent];
+  eventArgs: ClientEvents[TEvent];
 
   metatype: Type;
 

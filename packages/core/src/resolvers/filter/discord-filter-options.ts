@@ -7,7 +7,7 @@ export interface DiscordFilterOptions<TException extends Error = any> {
   instance: InstanceType<any>;
   methodName: string;
   event: TEvent;
-  context: ClientEvents[TEvent];
+  eventArgs: ClientEvents[TEvent];
   exception?: TException;
   metatype?: Type;
   commandNode?: Record<string, any>;
