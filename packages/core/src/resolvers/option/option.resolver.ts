@@ -62,10 +62,15 @@ export class OptionResolver {
     );
     if (!choiceData) return;
 
-    const rawValues = Object.entries(choiceData);
-    const values = rawValues.slice(rawValues.length / 2);
+    const isMap = choiceData instanceof Map;
 
-    return values.map(([name, value]) => ({ name, value }));
+    const entries = isMap
+      ? Array.from(choiceData)
+      : Object.entries(choiceData).filter(
+          ([key]) => !(key in Object.keys(choiceData)),
+        );
+
+    return entries.map(([name, value]) => ({ name, value }));
   }
 
   private getChannelOptions(

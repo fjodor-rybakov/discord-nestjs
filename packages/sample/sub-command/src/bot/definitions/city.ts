@@ -1,5 +1,5 @@
 export enum City {
-  Moscow,
-  'New York',
-  Tokyo,
+  MOSCOW,
+  NEW_YORK,
+  TOKYO,
 }

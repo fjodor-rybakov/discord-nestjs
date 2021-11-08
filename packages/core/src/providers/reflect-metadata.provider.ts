@@ -153,7 +153,7 @@ export class ReflectMetadataProvider {
   getChoiceDecoratorMetadata(
     instance: InstanceType<any>,
     propertyKey: string,
-  ): Record<string, any> {
+  ): Record<string, any> | Map<string, string | number> {
     return Reflect.getMetadata(CHOICE_DECORATOR, instance, propertyKey);
   }
 

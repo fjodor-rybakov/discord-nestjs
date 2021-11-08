@@ -56,7 +56,7 @@ export class BuildApplicationCommandService {
       description,
       defaultPermission,
     };
-    const applicationCommandOptions = await this.resolveSubCommandOptions(
+    applicationCommandData.options = await this.resolveSubCommandOptions(
       name,
       include,
     );
@@ -86,8 +86,10 @@ export class BuildApplicationCommandService {
         });
       }
 
-      if (applicationCommandOptions.length !== 0)
-        applicationCommandOptions.concat(this.sortByRequired(commandOptions));
+      if (applicationCommandData.options.length !== 0)
+        applicationCommandData.options = applicationCommandData.options.concat(
+          this.sortByRequired(commandOptions),
+        );
     }
 
     return applicationCommandData;

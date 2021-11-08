@@ -264,7 +264,7 @@ export class RegistrationDto {
 ```
 
 * `@Param` decorator defines command parameter.
-* `@Choice` decorator marks command parameter as dropdown(**Accepts enum**).
+* `@Choice` decorator marks command parameter as dropdown(**Accepts `enum` or `Map`**).
 * `@Channel` decorator marks command parameter as channel select.
 
 > By default, if `name` is not passed to the decorator parameters, 
@@ -804,7 +804,7 @@ Marks command parameter as dropdown.
 
 #### Params
 
-(**Accepts enum**)
+(**Accepts `enum` or `Map`**)
 
 ### ℹ️ @Channel <a name="Channel"></a>
 

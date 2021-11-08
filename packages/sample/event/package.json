@@ -19,9 +19,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@nestjs/common": "8.1.2",
+    "@nestjs/common": "8.2.0",
     "@nestjs/config": "1.1.0",
-    "@nestjs/core": "8.1.2",
+    "@nestjs/core": "8.2.0",
     "discord.js": "13.3.1",
     "reflect-metadata": "0.1.13",
     "rimraf": "3.0.2",
