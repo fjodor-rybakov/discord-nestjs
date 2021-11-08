@@ -61,11 +61,15 @@ export class OptionResolver {
     );
     if (!choiceData) return;
 
-    const enumEntries = Object.entries(choiceData).filter(
-      ([key]) => !(key in Object.keys(choiceData)),
-    );
+    const isMap = choiceData instanceof Map;
 
-    return enumEntries.map(([name, value]) => ({ name, value }));
+    const entries = isMap
+      ? Array.from(choiceData)
+      : Object.entries(choiceData).filter(
+          ([key]) => !(key in Object.keys(choiceData)),
+        );
+
+    return entries.map(([name, value]) => ({ name, value }));
   }
 
   private getChannelOptions(
