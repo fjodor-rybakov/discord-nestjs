@@ -46,6 +46,8 @@ export class CommandResolver implements ClassResolver {
         metadata,
       );
 
+    console.log(JSON.stringify(applicationCommandData, null, 2));
+
     this.discordCommandProvider.addCommand(applicationCommandData);
 
     this.discordClientService

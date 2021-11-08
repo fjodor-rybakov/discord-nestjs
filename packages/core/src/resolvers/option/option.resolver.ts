@@ -61,10 +61,11 @@ export class OptionResolver {
     );
     if (!choiceData) return;
 
-    const rawValues = Object.entries(choiceData);
-    const values = rawValues.slice(rawValues.length / 2);
+    const enumEntries = Object.entries(choiceData).filter(
+      ([key]) => !(key in Object.keys(choiceData)),
+    );
 
-    return values.map(([name, value]) => ({ name, value }));
+    return enumEntries.map(([name, value]) => ({ name, value }));
   }
 
   private getChannelOptions(
