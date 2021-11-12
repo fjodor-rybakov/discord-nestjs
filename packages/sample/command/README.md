@@ -20,6 +20,7 @@ Sample with slash commands
 ## Installation
 
 ```bash
+# In root project
 $ npm install
 ```
 
@@ -33,12 +34,9 @@ GUILD_ID_WITH_COMMANDS=YourGuildId
 ## Running the app
 
 ```bash
-# development
-$ npm run start
+# In root project
+$ npm run build
 
-# watch mode
+# In this sample
 $ npm run start:dev
-
-# production mode
-$ npm run start:prod
 ```
