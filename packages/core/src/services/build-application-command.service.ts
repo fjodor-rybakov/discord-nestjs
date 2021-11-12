@@ -1,12 +1,3 @@
-import { CommandOptions } from '../decorators/command/command-options';
-import { isSubCommandGroup } from '../decorators/sub-command-group/is-sub-command-group';
-import { SubCommandGroupOptions } from '../decorators/sub-command-group/sub-command-group-options';
-import { DiscordCommand } from '../definitions/interfaces/discord-command';
-import { TInclude } from '../definitions/types/include.type';
-import { ReflectMetadataProvider } from '../providers/reflect-metadata.provider';
-import { OptionResolver } from '../resolvers/option/option.resolver';
-import { ParamResolver } from '../resolvers/param/param.resolver';
-import { CommandTreeService } from './command-tree.service';
 import { Injectable, Type } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import {
@@ -22,6 +13,16 @@ import {
   ApplicationCommandOptionTypes,
   ApplicationCommandTypes,
 } from 'discord.js/typings/enums';
+
+import { CommandOptions } from '../decorators/command/command-options';
+import { isSubCommandGroup } from '../decorators/sub-command-group/is-sub-command-group';
+import { SubCommandGroupOptions } from '../decorators/sub-command-group/sub-command-group-options';
+import { DiscordCommand } from '../definitions/interfaces/discord-command';
+import { TInclude } from '../definitions/types/include.type';
+import { ReflectMetadataProvider } from '../providers/reflect-metadata.provider';
+import { OptionResolver } from '../resolvers/option/option.resolver';
+import { ParamResolver } from '../resolvers/param/param.resolver';
+import { CommandTreeService } from './command-tree.service';
 
 type NonCommandData =
   | ApplicationCommandNonOptionsData
@@ -85,10 +86,9 @@ export class BuildApplicationCommandService {
         });
       }
 
-      if (applicationCommandData.options.length !== 0)
-        applicationCommandData.options = applicationCommandData.options.concat(
-          this.sortByRequired(commandOptions),
-        );
+      applicationCommandData.options = applicationCommandData.options.concat(
+        this.sortByRequired(commandOptions),
+      );
     }
 
     return applicationCommandData;

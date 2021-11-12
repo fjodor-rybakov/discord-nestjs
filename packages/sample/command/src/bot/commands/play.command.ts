@@ -1,4 +1,3 @@
-import { PlayDto } from '../dto/play.dto';
 import { TransformPipe } from '@discord-nestjs/common';
 import {
   Command,
@@ -7,6 +6,8 @@ import {
   UsePipes,
 } from '@discord-nestjs/core';
 import { CommandInteraction } from 'discord.js';
+
+import { PlayDto } from '../dto/play.dto';
 
 @Command({
   name: 'play',
