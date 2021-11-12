@@ -1,3 +1,7 @@
+import { Injectable } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
+import { Interaction } from 'discord.js';
+
 import { DiscordCommand } from '../../definitions/interfaces/discord-command';
 import { DiscordCommandProvider } from '../../providers/discord-command.provider';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
@@ -10,9 +14,6 @@ import { ClassResolveOptions } from '../interfaces/class-resolve-options';
 import { ClassResolver } from '../interfaces/class-resolver';
 import { MiddlewareResolver } from '../middleware/middleware.resolver';
 import { PipeResolver } from '../pipe/pipe.resolver';
-import { Injectable } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
-import { Interaction } from 'discord.js';
 
 @Injectable()
 export class CommandResolver implements ClassResolver {
@@ -69,7 +70,7 @@ export class CommandResolver implements ClassResolver {
           //#region apply middleware, guard, pipe
           await this.middlewareResolver.applyMiddleware(event, [interaction]);
           const isAllowFromGuards = await this.guardResolver.applyGuard({
-            instance,
+            instance: commandInstance,
             methodName,
             event,
             context: [interaction],
