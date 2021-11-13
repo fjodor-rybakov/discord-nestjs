@@ -3,9 +3,9 @@ import {
   Command,
   DiscordTransformedCommand,
   Payload,
+  TransformedCommandExecutionContext,
   UsePipes,
 } from '@discord-nestjs/core';
-import { TransformedCommandExecutionContext } from '@discord-nestjs/core/src';
 
 import { PlayDto } from '../dto/play.dto';
 

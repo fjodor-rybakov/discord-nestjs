@@ -79,7 +79,7 @@ export class CommandResolver implements ClassResolver {
           //#region apply middleware, guard, pipe
           await this.middlewareResolver.applyMiddleware(event, eventArgs);
           const isAllowFromGuards = await this.guardResolver.applyGuard({
-            instance,
+            instance: commandInstance,
             methodName,
             event,
             eventArgs,

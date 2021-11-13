@@ -86,10 +86,9 @@ export class BuildApplicationCommandService {
         });
       }
 
-      if (applicationCommandData.options.length !== 0)
-        applicationCommandData.options = applicationCommandData.options.concat(
-          this.sortByRequired(commandOptions),
-        );
+      applicationCommandData.options = applicationCommandData.options.concat(
+        this.sortByRequired(commandOptions),
+      );
     }
 
     return applicationCommandData;
