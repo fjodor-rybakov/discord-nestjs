@@ -2,24 +2,15 @@ import { TransformPipe } from '@discord-nestjs/common';
 import {
   Command,
   DiscordTransformedCommand,
-  Param,
   Payload,
   UsePipes,
 } from '@discord-nestjs/core';
 import { CommandInteraction } from 'discord.js';
 
-export class PlayDto {
-  @Param({
-    name: 'song',
-    description:
-      'Name or URL of song/playlist. Could be from (Youtube, Spotify, SoundCloud)',
-    required: true,
-  })
-  song: string;
-}
+import { PlayDto } from '../dto/play.dto';
 
 @Command({
-  name: 'test',
+  name: 'play',
   description: 'Plays a song',
 })
 @UsePipes(TransformPipe)
