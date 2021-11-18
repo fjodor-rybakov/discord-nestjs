@@ -3,6 +3,7 @@ import { glob } from 'glob';
 import * as path from 'path';
 
 import { COMMAND_DECORATOR } from '../decorators/command/command.constant';
+import { IsObject } from '../utils/function/is-object';
 
 @Injectable()
 export class CommandPathToClassService {
@@ -18,8 +19,10 @@ export class CommandPathToClassService {
                 const types = (await this.getClasses(pathToFiles)).flat();
 
                 return resolve(
-                  types.filter((type) =>
-                    Reflect.hasOwnMetadata(COMMAND_DECORATOR, type.prototype),
+                  types.filter(
+                    (type) =>
+                      IsObject(type) &&
+                      Reflect.hasOwnMetadata(COMMAND_DECORATOR, type.prototype),
                   ),
                 );
               }),

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { Interaction } from 'discord.js';
 
@@ -46,6 +46,11 @@ export class CommandResolver implements ClassResolver {
         methodName,
         metadata,
       );
+
+    if (Logger.isLevelEnabled('debug')) {
+      Logger.debug('Slash command options', CommandResolver.name);
+      Logger.debug(applicationCommandData, CommandResolver.name);
+    }
 
     this.discordCommandProvider.addCommand(applicationCommandData);
 
