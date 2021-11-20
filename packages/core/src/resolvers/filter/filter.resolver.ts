@@ -80,11 +80,13 @@ export class FilterResolver implements MethodResolver {
         const isAnyException = catchExceptionTypes.length === 0;
         if (isAnyException && !indexOfAnyException) indexOfAnyException = index;
 
-        const hasConcreteType = catchExceptionTypes.some((expectException) =>
-          Array.isArray(exception)
-            ? expectException === exception[0].constructor
-            : expectException === exception.constructor,
-        );
+        const hasConcreteType = catchExceptionTypes.some((expectException) => {
+          const exceptionType = this.getExceptionConstructor(exception);
+
+          return this.getAllParents(exceptionType)
+            .concat([exceptionType])
+            .includes(expectException);
+        });
 
         return hasConcreteType || isAnyException;
       },
@@ -134,5 +136,21 @@ export class FilterResolver implements MethodResolver {
       (item: ResolvedFilterInfo) =>
         item.methodName === methodName && item.instance === instance,
     );
+  }
+
+  private getExceptionConstructor(exception: any): Type {
+    return Array.isArray(exception)
+      ? exception[0].constructor
+      : exception.constructor;
+  }
+
+  private getAllParents(error: any): Type[] {
+    const classes = [];
+    while ((error = Object.getPrototypeOf(error)))
+      !Object.getOwnPropertyNames(error).includes('constructor') &&
+        error.name !== 'Error' &&
+        classes.push(error);
+
+    return classes;
   }
 }

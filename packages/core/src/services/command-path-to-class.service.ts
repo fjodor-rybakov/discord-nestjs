@@ -2,6 +2,9 @@ import { Injectable, Type } from '@nestjs/common';
 import { glob } from 'glob';
 import * as path from 'path';
 
+import { COMMAND_DECORATOR } from '../decorators/command/command.constant';
+import { IsObject } from '../utils/function/is-object';
+
 @Injectable()
 export class CommandPathToClassService {
   async resolveCommandsType(commands: (Type | string)[]): Promise<Type[]> {
@@ -13,7 +16,15 @@ export class CommandPathToClassService {
               glob(regexPath, async (err, pathToFiles) => {
                 if (err) return reject(err);
 
-                return resolve(this.getClasses(pathToFiles));
+                const types = (await this.getClasses(pathToFiles)).flat();
+
+                return resolve(
+                  types.filter(
+                    (type) =>
+                      IsObject(type) &&
+                      Reflect.hasOwnMetadata(COMMAND_DECORATOR, type.prototype),
+                  ),
+                );
               }),
             ),
         ),
@@ -31,13 +42,13 @@ export class CommandPathToClassService {
     return typeof commands[0] === 'string';
   }
 
-  private getClasses(pathToFiles: string[]): Promise<Type[]> {
+  private getClasses(pathToFiles: string[]): Promise<Type[][]> {
     return Promise.all(
       pathToFiles.map(async (pathToFile: string) => {
         const resolvedPath = path.resolve(process.cwd(), pathToFile);
         const commandClass = await import(resolvedPath);
 
-        return Object.values<Type>(commandClass)[0];
+        return Object.values<Type>(commandClass);
       }),
     );
   }
