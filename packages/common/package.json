@@ -1,6 +1,6 @@
 {
   "name": "@discord-nestjs/common",
-  "version": "2.0.10",
+  "version": "2.0.11",
   "description": "Common module",
   "author": "fjodor-rybakov",
   "license": "MIT",
