@@ -17,14 +17,22 @@ export class DiscordOptionService {
   }
 
   private setDefault(options: DiscordModuleOption): void {
-    const { useGuards, usePipes, useFilters, commands } = options;
+    const {
+      useGuards,
+      usePipes,
+      useFilters,
+      commands,
+      autoRegisterGlobalCommands,
+      removeGlobalCommands,
+    } = options;
 
     Object.assign(options, {
       useGuards: useGuards ?? [],
       usePipes: usePipes ?? [],
       useFilters: useFilters ?? [],
       commands: commands ?? [],
-      autoRegisterGlobalCommands: false,
+      autoRegisterGlobalCommands: autoRegisterGlobalCommands || false,
+      removeGlobalCommands: removeGlobalCommands || false,
     });
   }
 }

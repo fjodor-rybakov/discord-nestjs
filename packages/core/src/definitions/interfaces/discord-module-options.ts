@@ -33,6 +33,15 @@ export interface DiscordModuleOption {
   autoRegisterGlobalCommands?: boolean;
 
   /**
+   * Automatically remove global commands
+   *
+   * Start before `autoRegisterGlobalCommands`
+   *
+   * @default: false
+   */
+  removeGlobalCommands?: boolean;
+
+  /**
    * Specific registration of slash commands
    */
   registerCommandOptions?: RegisterCommandOptions[];
