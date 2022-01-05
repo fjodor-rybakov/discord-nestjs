@@ -23,6 +23,7 @@ export class DiscordOptionService {
       useFilters,
       commands,
       autoRegisterGlobalCommands,
+      removeGlobalCommands,
     } = options;
 
     Object.assign(options, {
@@ -31,6 +32,7 @@ export class DiscordOptionService {
       useFilters: useFilters ?? [],
       commands: commands ?? [],
       autoRegisterGlobalCommands: autoRegisterGlobalCommands || false,
+      removeGlobalCommands: removeGlobalCommands || false,
     });
   }
 }

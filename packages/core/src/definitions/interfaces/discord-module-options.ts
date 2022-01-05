@@ -1,9 +1,10 @@
+import { Type } from '@nestjs/common';
+import { ClientOptions, WebhookClientData } from 'discord.js';
+
 import { FilterType } from '../types/filter.type';
 import { GuardType } from '../types/guard.type';
 import { PipeType } from '../types/pipe.type';
 import { RegisterCommandOptions } from './register-command-options';
-import { Type } from '@nestjs/common';
-import { ClientOptions, WebhookClientData } from 'discord.js';
 
 export interface DiscordModuleOption {
   /**
@@ -30,6 +31,15 @@ export interface DiscordModuleOption {
    * @default: false
    */
   autoRegisterGlobalCommands?: boolean;
+
+  /**
+   * Automatically remove global commands
+   *
+   * Start before `autoRegisterGlobalCommands`
+   *
+   * @default: false
+   */
+  removeGlobalCommands?: boolean;
 
   /**
    * Specific registration of slash commands

@@ -17,4 +17,11 @@ export interface RegisterCommandOptions {
     message: Message,
     commandList: ChatInputApplicationCommandData[],
   ) => boolean;
+
+  /**
+   * Remove commands before
+   *
+   * @default: false
+   */
+  removeCommandsBefore?: boolean;
 }
