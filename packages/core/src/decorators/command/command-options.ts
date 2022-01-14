@@ -29,5 +29,5 @@ export interface CommandOptions {
   /**
    * Command Type (Slash or Context Menu)
    */
-  type: ApplicationCommandTypes;
+  type?: ApplicationCommandTypes;
 }

@@ -42,7 +42,7 @@ export class BuildApplicationCommandService {
   async resolveCommandOptions(
     instance: DiscordCommand,
     methodName: string,
-    { name, description, include = [], defaultPermission, type }: CommandOptions,
+    { name, description, include = [], defaultPermission, type = ApplicationCommandTypes.CHAT_INPUT }: CommandOptions,
   ): Promise<ApplicationCommandData> {
     this.paramResolver.resolve({ instance, methodName });
     const payloadType = this.paramResolver.getPayloadType({
