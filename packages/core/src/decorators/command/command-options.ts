@@ -28,6 +28,8 @@ export interface CommandOptions {
 
   /**
    * Command Type (Slash or Context Menu)
+   *
+   * @default CHAT_INPUT
    */
   type?: ApplicationCommandTypes;
 }
