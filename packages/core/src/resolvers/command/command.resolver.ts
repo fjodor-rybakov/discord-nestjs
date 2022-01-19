@@ -57,11 +57,20 @@ export class CommandResolver implements ClassResolver {
     this.discordClientService
       .getClient()
       .on(event, async (interaction: Interaction) => {
-        if (!interaction.isCommand() || interaction.commandName !== name)
+        if (
+          (!interaction.isCommand() && !interaction.isContextMenu()) ||
+          interaction.commandName !== name
+        ) {
           return;
+        }
 
-        const subcommand = interaction.options.getSubcommand(false);
-        const subcommandGroup = interaction.options.getSubcommandGroup(false);
+        let subcommand: string = null;
+        let subcommandGroup: string = null;
+
+        if (interaction.isCommand()) {
+          subcommand = interaction.options.getSubcommand(false);
+          subcommandGroup = interaction.options.getSubcommandGroup(false);
+        }
 
         const commandNode = this.commandTreeService.getNode([
           interaction.commandName,
