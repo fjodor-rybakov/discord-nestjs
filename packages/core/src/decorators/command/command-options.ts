@@ -12,7 +12,7 @@ export interface CommandOptions {
   name: string;
 
   /**
-   * Command description
+   * Command description (Must be a blank string for context menu commands)
    */
   description: string;
 
