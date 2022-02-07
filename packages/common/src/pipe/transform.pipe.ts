@@ -3,15 +3,23 @@ import {
   DiscordPipeTransform,
   ReflectMetadataProvider,
 } from '@discord-nestjs/core';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Optional } from '@nestjs/common';
+import { ClassTransformOptions, instanceToInstance } from 'class-transformer';
 import { Interaction } from 'discord.js';
+
+import { TRANSFORMER_OPTION } from '../transformer-options.constant';
 
 /**
  * Fills DTO with values from interaction
  */
 @Injectable()
 export class TransformPipe implements DiscordPipeTransform {
-  constructor(private readonly metadataProvider: ReflectMetadataProvider) {}
+  constructor(
+    private readonly metadataProvider: ReflectMetadataProvider,
+    @Optional()
+    @Inject(TRANSFORMER_OPTION)
+    private readonly classTransformerOptions?: ClassTransformOptions,
+  ) {}
 
   transform(
     interaction: Interaction,
@@ -40,6 +48,6 @@ export class TransformPipe implements DiscordPipeTransform {
         originalInstance[property];
     });
 
-    return newInstance;
+    return instanceToInstance(newInstance, this.classTransformerOptions);
   }
 }

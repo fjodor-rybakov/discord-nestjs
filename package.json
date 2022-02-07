@@ -6,7 +6,7 @@
   ],
   "scripts": {
     "bootstrap": "lerna bootstrap",
-    "clean": "lerna run clean",
+    "clean": "lerna clean",
     "build": "lerna run build --no-private",
     "format": "prettier --write \"packages/**/*.ts\" --ignore-path .gitignore",
     "publish": "npm run build && lerna publish -m \"chore: Publish release\" --no-private",

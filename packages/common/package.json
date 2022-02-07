@@ -30,7 +30,8 @@
     "build": "nest build"
   },
   "dependencies": {
-    "class-validator": "^0.13.1"
+    "class-transformer": "0.5.1",
+    "class-validator": "0.13.1"
   },
   "peerDependencies": {
     "@discord-nestjs/core": "*",
