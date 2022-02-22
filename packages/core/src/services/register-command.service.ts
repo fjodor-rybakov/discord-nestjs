@@ -1,7 +1,15 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { Client, Message } from 'discord.js';
+import { Collection } from '@discordjs/collection';
+import { Injectable, Logger, Type } from '@nestjs/common';
+import { Snowflake } from 'discord-api-types';
+import {
+  ApplicationCommand,
+  ApplicationCommandData,
+  Client,
+  Message,
+} from 'discord.js';
 
 import { DiscordModuleOption } from '../definitions/interfaces/discord-module-options';
+import { SlashCommandPermissions } from '../definitions/interfaces/slash-command-permissions';
 import { DiscordCommandProvider } from '../providers/discord-command.provider';
 import { DiscordClientService } from './discord-client.service';
 
@@ -32,15 +40,30 @@ export class RegisterCommandService {
       registerCommandOptions,
       autoRegisterGlobalCommands,
       removeGlobalCommands,
+      slashCommandsPermissions,
     }: DiscordModuleOption,
   ): Promise<void> {
-    const commandList = this.discordCommandProvider.getAllCommands();
-    if (commandList.length === 0) return;
+    const commands = this.discordCommandProvider.getAllCommands();
+
+    if (commands.size === 0) return;
+
+    const commandList = Array.from(commands.values());
+
+    if (!client.application?.owner) await client.application?.fetch();
 
     if (removeGlobalCommands) await this.dropGlobalCommands(client);
 
     if (autoRegisterGlobalCommands) {
-      await client.application.commands.set(commandList);
+      const registeredCommands = await client.application.commands.set(
+        commandList,
+      );
+
+      if (slashCommandsPermissions)
+        await this.setPermissions(
+          registeredCommands,
+          commands,
+          slashCommandsPermissions,
+        );
 
       this.logger.log('All global commands are registered!');
     } else {
@@ -56,7 +79,18 @@ export class RegisterCommandService {
                   if (removeCommandsBefore)
                     await this.dropLocalCommands(client, forGuild);
 
-                  await client.application.commands.set(commandList, forGuild);
+                  const registeredCommands =
+                    await client.application.commands.set(
+                      commandList,
+                      forGuild,
+                    );
+
+                  if (slashCommandsPermissions)
+                    await this.setPermissions(
+                      registeredCommands,
+                      commands,
+                      slashCommandsPermissions,
+                    );
 
                   this.logger.log('All guild commands are registered!');
                 });
@@ -68,7 +102,15 @@ export class RegisterCommandService {
                   if (removeCommandsBefore)
                     await this.dropGlobalCommands(client);
 
-                  await client.application.commands.set(commandList);
+                  const registeredCommands =
+                    await client.application.commands.set(commandList);
+
+                  if (slashCommandsPermissions)
+                    await this.setPermissions(
+                      registeredCommands,
+                      commands,
+                      slashCommandsPermissions,
+                    );
 
                   this.logger.log('All global commands are registered!');
                 });
@@ -78,7 +120,17 @@ export class RegisterCommandService {
                 await this.dropLocalCommands(client, forGuild);
 
               // Registering commands for specific guild
-              await client.application.commands.set(commandList, forGuild);
+              const registeredCommands = await client.application.commands.set(
+                commandList,
+                forGuild,
+              );
+
+              if (slashCommandsPermissions)
+                await this.setPermissions(
+                  registeredCommands,
+                  commands,
+                  slashCommandsPermissions,
+                );
 
               this.logger.log('All guild commands are registered!');
             }
@@ -103,5 +155,31 @@ export class RegisterCommandService {
     await Promise.all(localCommands.map((command) => command.delete()));
 
     this.logger.log('All local commands removed!');
+  }
+
+  private async setPermissions(
+    registeredCommands: Collection<Snowflake, ApplicationCommand>,
+    rowCommandsData: Map<Type, ApplicationCommandData>,
+    slashCommandsPermissions: SlashCommandPermissions[],
+  ) {
+    await Promise.all(
+      slashCommandsPermissions.map(
+        async ({ commandClassType, permissionOptions }) => {
+          const commandData = rowCommandsData.get(commandClassType);
+          const command = registeredCommands.find(
+            (command) => command.name === commandData.name,
+          );
+
+          await command.permissions.set({
+            fullPermissions: permissionOptions.map(
+              ({ guildId, permissions }) => ({
+                id: guildId,
+                permissions,
+              }),
+            ),
+          });
+        },
+      ),
+    );
   }
 }
