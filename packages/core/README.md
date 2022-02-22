@@ -54,7 +54,7 @@ $ yarn add @discord-nestjs/core discord.js
 
 ## 📑 Overview <a name="Overview"></a>
 
-> ⚠️**Before you start using, set `target` in `tsconfig.json` on `ESNEXT`.**
+> ⚠️**Before you start using, set `useDefineForClassFields` to `true` in your `tsconfig.json`.**
 
 The module declaration proceeds in the same way as it is done in NestJS by means
 creating a dynamic module through the `forRoot` and `forRootAsync` functions.
