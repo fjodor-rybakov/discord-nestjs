@@ -3,7 +3,7 @@ import { ApplicationCommandPermissionData } from 'discord.js';
 
 export interface SlashCommandPermissions {
   /**
-   * Command class type
+   * Class type that describes the command
    */
   commandClassType: Type;
 
