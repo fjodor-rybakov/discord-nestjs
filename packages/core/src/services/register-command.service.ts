@@ -23,7 +23,7 @@ export class RegisterCommandService {
   ) {}
 
   async register(options: DiscordModuleOption): Promise<void> {
-    const client = await this.discordClientService.getClient();
+    const client = this.discordClientService.getClient();
 
     if (
       (options.registerCommandOptions &&
@@ -164,20 +164,13 @@ export class RegisterCommandService {
   ) {
     await Promise.all(
       slashCommandsPermissions.map(
-        async ({ commandClassType, permissionOptions }) => {
+        async ({ commandClassType, permissions }) => {
           const commandData = rowCommandsData.get(commandClassType);
           const command = registeredCommands.find(
             (command) => command.name === commandData.name,
           );
 
-          await command.permissions.set({
-            fullPermissions: permissionOptions.map(
-              ({ guildId, permissions }) => ({
-                id: guildId,
-                permissions,
-              }),
-            ),
-          });
+          await command.permissions.set({ permissions });
         },
       ),
     );

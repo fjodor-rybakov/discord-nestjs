@@ -2,6 +2,9 @@ import { DiscordModule } from '@discord-nestjs/core';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Intents, Message } from 'discord.js';
+import { ApplicationCommandPermissionTypes } from 'discord.js/typings/enums';
+
+import { PlaylistCommand } from './commands/playlist.command';
 
 @Module({
   imports: [
@@ -20,6 +23,18 @@ import { Intents, Message } from 'discord.js';
             allowFactory: (message: Message) =>
               !message.author.bot && message.content === '!deploy',
             removeCommandsBefore: true,
+          },
+        ],
+        slashCommandsPermissions: [
+          {
+            commandClassType: PlaylistCommand,
+            permissions: [
+              {
+                id: configService.get('ROLE_WITHOUT_PLAYLIST_PERMISSION'),
+                type: ApplicationCommandPermissionTypes.ROLE,
+                permission: false,
+              },
+            ],
           },
         ],
       }),
