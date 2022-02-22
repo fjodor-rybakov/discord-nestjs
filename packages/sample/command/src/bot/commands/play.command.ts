@@ -19,6 +19,6 @@ export class PlayCommand implements DiscordTransformedCommand<PlayDto> {
     console.log('DTO', dto);
     console.log('Interaction', interaction);
 
-    return 'Nice.';
+    return `Start playing ${dto.song}.`;
   }
 }

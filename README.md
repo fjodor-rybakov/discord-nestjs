@@ -60,7 +60,7 @@ Check your intent is passed to the `discordClientOptions` of the module. [More i
 <details>
   <summary>Click to expand</summary>
 
-Check what your `target` version from `tsconfig.json`. Now is the minimal version of `ESNext`.
+Set `useDefineForClassFields` to `true` in your `tsconfig.json`.
 Also check that the `Palyoad` and `UsePipes` decorators are imported from `@discord-nestjs/core`.
 
 </details>

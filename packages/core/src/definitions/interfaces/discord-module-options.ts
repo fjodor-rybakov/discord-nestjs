@@ -5,6 +5,7 @@ import { FilterType } from '../types/filter.type';
 import { GuardType } from '../types/guard.type';
 import { PipeType } from '../types/pipe.type';
 import { RegisterCommandOptions } from './register-command-options';
+import { SlashCommandPermissions } from './slash-command-permissions';
 
 export interface DiscordModuleOption {
   /**
@@ -22,6 +23,11 @@ export interface DiscordModuleOption {
    * Accepts list of class types or list of search patterns
    */
   commands?: (Type | string)[];
+
+  /**
+   * Slash command permission which allow you to control who has access to use
+   */
+  slashCommandsPermissions?: SlashCommandPermissions[];
 
   /**
    * Automatically register global commands in the Discord API

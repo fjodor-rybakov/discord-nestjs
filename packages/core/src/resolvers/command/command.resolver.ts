@@ -30,9 +30,7 @@ export class CommandResolver implements ClassResolver {
     private readonly filterResolver: FilterResolver,
   ) {}
 
-  async resolve({
-    instance,
-  }: ClassResolveOptions<DiscordCommand>): Promise<void> {
+  async resolve({ instance }: ClassResolveOptions): Promise<void> {
     const metadata =
       this.metadataProvider.getCommandDecoratorMetadata(instance);
     if (!metadata) return;
@@ -52,7 +50,10 @@ export class CommandResolver implements ClassResolver {
       Logger.debug(applicationCommandData, CommandResolver.name);
     }
 
-    this.discordCommandProvider.addCommand(applicationCommandData);
+    this.discordCommandProvider.addCommand(
+      instance.constructor,
+      applicationCommandData,
+    );
 
     this.discordClientService
       .getClient()

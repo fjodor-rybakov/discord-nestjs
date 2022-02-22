@@ -6,7 +6,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "target": "ESNext",
+    "target": "ES2016",
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
@@ -16,6 +16,7 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "useDefineForClassFields": true
   }
 }

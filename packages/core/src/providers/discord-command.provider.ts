@@ -1,15 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Type } from '@nestjs/common';
 import { ApplicationCommandData } from 'discord.js';
 
 @Injectable()
 export class DiscordCommandProvider {
-  private readonly commandList: ApplicationCommandData[] = [];
+  private readonly commands = new Map<Type, ApplicationCommandData>();
 
-  addCommand(command: ApplicationCommandData) {
-    this.commandList.push(command);
+  addCommand(type: Type, command: ApplicationCommandData) {
+    this.commands.set(type, command);
   }
 
-  getAllCommands(): ApplicationCommandData[] {
-    return this.commandList;
+  getAllCommands(): Map<Type, ApplicationCommandData> {
+    return this.commands;
   }
 }
