@@ -70,21 +70,7 @@ Also check that the `Palyoad` and `UsePipes` decorators are imported from `@disc
 <details>
   <summary>Click to expand</summary>
 
-At the moment, this is only possible if the module is declared using `forRootAsync`.
-First, you need to declare a separate module and set the necessary providers, as well as set them for export.
-
-```typescript
-import { PlayService } from './play.serivce';
-import { Module } from '@nestjs/common';
-
-@Module({
-  providers: [PlayService],
-  exports: [PlayService],
-})
-export class PlayModule {}
-```
-
-And then add this module to the `DiscordModule` imports
+Add the required providers to the `extraProviders` option.
 
 ```typescript
 import { PlayModule } from './services/play.module';
@@ -96,7 +82,7 @@ import { Intents, Message } from 'discord.js';
 @Module({
   imports: [
     DiscordModule.forRootAsync({
-      imports: [ConfigModule, PlayModule],
+      imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         token: configService.get('TOKEN'),
         commands: ['**/*.command.js'],
@@ -111,6 +97,7 @@ import { Intents, Message } from 'discord.js';
           },
         ],
       }),
+      extraProviders: [PlayService],
       inject: [ConfigService],
     }),
   ],

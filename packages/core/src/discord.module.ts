@@ -1,3 +1,6 @@
+import { DynamicModule, Module, Provider, Type } from '@nestjs/common';
+import { DiscoveryModule } from '@nestjs/core';
+
 import { DISCORD_MODULE_OPTIONS } from './definitions/constants/discord-module.contant';
 import { DiscordModuleAsyncOptions } from './definitions/interfaces/discord-module-async-options';
 import { DiscordModuleOption } from './definitions/interfaces/discord-module-options';
@@ -23,50 +26,14 @@ import { DiscordClientService } from './services/discord-client.service';
 import { DiscordOptionService } from './services/discord-option.service';
 import { DiscordResolverService } from './services/discord-resolver.service';
 import { RegisterCommandService } from './services/register-command.service';
-import { DynamicModule, Module, Provider, Type } from '@nestjs/common';
-import { DiscoveryModule } from '@nestjs/core';
 
 @Module({
   imports: [DiscoveryModule],
 })
 export class DiscordModule {
-  static forRoot(options: DiscordModuleOption): DynamicModule {
-    return {
-      module: DiscordModule,
-      providers: [
-        CommandPathToClassService,
-        RegisterCommandService,
-        DiscordOptionService,
-        DiscordCommandProvider,
-        ReflectMetadataProvider,
-        OptionResolver,
-        FilterResolver,
-        MiddlewareResolver,
-        PipeResolver,
-        GuardResolver,
-        FilterClassResolver,
-        GuardClassResolver,
-        PipeClassResolver,
-        ParamResolver,
-        CommandResolver,
-        EventResolver,
-        DiscordResolverService,
-        DiscordModule.createDiscordOptionProvider(options),
-        DiscordClientProvider,
-        DiscordResolverService,
-        DiscordClientService,
-        BuildApplicationCommandService,
-        CommandTreeService,
-      ],
-      exports: [
-        DiscordClientProvider,
-        ReflectMetadataProvider,
-        DiscordCommandProvider,
-      ],
-    };
-  }
-
   static forRootAsync(options: DiscordModuleAsyncOptions): DynamicModule {
+    const extraProviders = options.extraProviders || [];
+
     return {
       module: DiscordModule,
       imports: options.imports || [],
@@ -94,21 +61,13 @@ export class DiscordModule {
         DiscordClientService,
         BuildApplicationCommandService,
         CommandTreeService,
+        ...extraProviders,
       ],
       exports: [
         DiscordClientProvider,
         ReflectMetadataProvider,
         DiscordCommandProvider,
       ],
-    };
-  }
-
-  private static createDiscordOptionProvider(
-    options: DiscordModuleOption,
-  ): Provider {
-    return {
-      provide: DISCORD_MODULE_OPTIONS,
-      useValue: options || {},
     };
   }
 
