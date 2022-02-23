@@ -57,7 +57,7 @@ $ yarn add @discord-nestjs/core discord.js
 > ⚠️**Before you start using, set `useDefineForClassFields` to `true` in your `tsconfig.json`.**
 
 The module declaration proceeds in the same way as it is done in NestJS by means
-creating a dynamic module through the `forRoot` and `forRootAsync` functions.
+creating a dynamic module through the `forRootAsync` functions.
 
 - `token` \* - Your discord bot token. You can get [here](https://discord.com/developers/applications)
 - `discordClientOptions` \* - Client options from discord.js library
@@ -79,33 +79,7 @@ If `true` then overlaps `registerCommandOptions`
 
 > ⚠️**Important! For the bot to work correctly, you need to set up intentions in `discordClientOptions` param. [More info](https://discordjs.guide/popular-topics/intents.html#privileged-intents)**
 
-Below is an example of creating a dynamic module using the `forRoot` function
-
-#### 💡 Example
-
-```typescript
-/* bot.module.ts */
-
-import { DiscordModule } from '@discord-nestjs/core';
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Intents } from 'discord.js';
-
-@Module({
-  imports: [
-    DiscordModule.forRoot({
-      token: 'TOKEN',
-      commands: ['**/*.command.js'],
-      discordClientOptions: {
-        intents: [Intents.FLAGS.GUILDS],
-      },
-    }),
-  ],
-})
-export class BotModule {}
-```
-
-Or via the `forRootAsync` function
+Below is an example of creating a dynamic module using the `forRootAsync` function
 
 ```typescript
 /* bot.module.ts */
