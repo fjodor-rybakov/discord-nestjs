@@ -124,3 +124,44 @@ export class BaseInfoCommand implements DiscordTransformedCommand<RegistrationEm
   }
 }
 ```
+
+### ℹ️ Mapped types
+
+Intersection type allows you to infer a new type 
+
+#### 💡 Example
+
+```typescript
+import { Param } from '@discord-nestjs/core';
+
+class FullName {
+  @Param({
+    description: 'Your full name'
+  })
+  name: string;
+}
+```
+
+```typescript
+import { Param } from '@discord-nestjs/core';
+
+class ResidencePlace {
+  @Param({
+    description: 'City of residence'
+  })
+  city: string;
+
+  @Param({
+    description: 'The street where your house is located'
+  })
+  street: string;
+}
+```
+
+```typescript
+import { DiscordIntersectionType } from '@discord-nestjs/common';
+
+// Must have properties name, city and street
+class Profile extends DiscordIntersectionType(FullName, ResidencePlace) {
+}
+```
