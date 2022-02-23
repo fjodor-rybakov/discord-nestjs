@@ -4,7 +4,7 @@ import { MESSAGE_COLLECTOR_METADATA } from './message-collector.constant';
 /**
  * Message collector decorator
  */
-export function MessageCollector(
+export function MessageEventCollector(
   options: DiscordMessageCollectorOptions,
 ): ClassDecorator {
   return <TFunction extends Function>(target: TFunction): TFunction | void => {

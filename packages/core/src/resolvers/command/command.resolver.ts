@@ -7,7 +7,6 @@ import {
 } from 'discord.js';
 
 import { CommandExecutionContext } from '../../definitions/interfaces/command-execution-context';
-import { DiscordCommand } from '../../definitions/interfaces/discord-command';
 import { TransformedCommandExecutionContext } from '../../definitions/interfaces/transformed-command-execution-context';
 import { DiscordCommandProvider } from '../../providers/discord-command.provider';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
@@ -112,12 +111,12 @@ export class CommandResolver implements ClassResolver {
           });
           //#endregion
 
-          const collectors = this.collectorResolver.applyCollector({
+          const collectors = (await this.collectorResolver.applyCollector({
             instance,
             methodName,
             event,
             eventArgs,
-          }) as (MessageCollector | InteractionCollector<any>)[];
+          })) as (MessageCollector | InteractionCollector<any>)[];
 
           const transformedExecutionContext: TransformedCommandExecutionContext =
             {

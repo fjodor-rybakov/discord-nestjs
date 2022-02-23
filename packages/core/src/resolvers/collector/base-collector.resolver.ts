@@ -127,21 +127,6 @@ export class BaseCollectorResolver implements ClassResolver {
     );
   }
 
-  applyFilter(
-    collectorOptions:
-      | ReactionCollectorOptions
-      | MessageCollectorOptions
-      | InteractionCollectorOptions<any>,
-    filterMethodName: string,
-    classInstance: InstanceType<any>,
-  ): void {
-    if (filterMethodName) {
-      collectorOptions.filter = (...filterArgs) => {
-        return classInstance[filterMethodName](...filterArgs);
-      };
-    }
-  }
-
   private resolveBaseInfo(instance: InstanceType<any>): BaseCollectorMetadata {
     let filterMethodName;
     const events: CollectMethodEventsInfo = {};

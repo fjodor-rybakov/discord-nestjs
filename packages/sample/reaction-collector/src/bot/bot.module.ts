@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Intents } from 'discord.js';
 
+import { AppreciatedReactionCollector } from './appreciated-reaction-collector';
 import { BotGateway } from './bot.gateway';
 
 @Module({
@@ -19,6 +20,7 @@ import { BotGateway } from './bot.gateway';
           ],
         },
       }),
+      extraProviders: [AppreciatedReactionCollector],
       inject: [ConfigService],
     }),
   ],

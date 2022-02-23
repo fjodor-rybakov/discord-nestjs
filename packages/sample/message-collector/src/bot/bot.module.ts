@@ -20,9 +20,10 @@ import { QuizMessageCollector } from './quiz-message-collector';
           ],
         },
       }),
+      extraProviders: [QuizMessageCollector],
       inject: [ConfigService],
     }),
   ],
-  providers: [BotGateway, QuizMessageCollector],
+  providers: [BotGateway],
 })
 export class BotModule {}

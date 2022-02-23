@@ -6,7 +6,7 @@ import { INTERACTION_COLLECTOR_METADATA } from './interaction-collector.constant
 /**
  * Interaction collector decorator
  */
-export function InteractionCollector<TInteraction extends Interaction>(
+export function InteractionEventCollector<TInteraction extends Interaction>(
   options: DiscordInteractionCollectorOptions<TInteraction>,
 ): ClassDecorator {
   return <TFunction extends Function>(target: TFunction): TFunction | void => {

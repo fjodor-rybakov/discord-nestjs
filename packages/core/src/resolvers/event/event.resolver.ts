@@ -72,7 +72,7 @@ export class EventResolver implements MethodResolver {
             });
             //#endregion
 
-            const collectors = this.collectorResolver.applyCollector({
+            const collectors = await this.collectorResolver.applyCollector({
               instance,
               methodName,
               event,

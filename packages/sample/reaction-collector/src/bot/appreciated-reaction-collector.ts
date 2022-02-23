@@ -1,8 +1,15 @@
-import { Filter, On, Once, ReactionCollector } from '@discord-nestjs/core';
-import { MessageReaction, User } from 'discord.js';
+import { Filter, On, Once, ReactionEventCollector } from '@discord-nestjs/core';
+import { Inject } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
+import { MessageReaction, ReactionCollector, User } from 'discord.js';
 
-@ReactionCollector({ time: 15000 })
+@ReactionEventCollector({ time: 15000 })
 export class AppreciatedReactionCollector {
+  constructor(
+    @Inject(REQUEST)
+    private readonly collector: ReactionCollector,
+  ) {}
+
   @Filter()
   isLikeFromAuthor(reaction: MessageReaction, user: User): boolean {
     return (

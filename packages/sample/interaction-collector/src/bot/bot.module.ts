@@ -3,7 +3,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Intents } from 'discord.js';
 
-import { BotGateway } from './bot.gateway';
+import { PlayCommand } from './command/play.command';
+import { PostInteractionCollector } from './post-interaction-collector';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { BotGateway } from './bot.gateway';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         token: configService.get('TOKEN'),
+        commands: [PlayCommand],
         discordClientOptions: {
           intents: [
             Intents.FLAGS.GUILDS,
@@ -19,9 +21,9 @@ import { BotGateway } from './bot.gateway';
           ],
         },
       }),
+      extraProviders: [PostInteractionCollector],
       inject: [ConfigService],
     }),
   ],
-  providers: [BotGateway],
 })
 export class BotModule {}

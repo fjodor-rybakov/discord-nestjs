@@ -1,10 +1,14 @@
-import { InteractionCollector, On, Once } from '@discord-nestjs/core';
+import { InteractionEventCollector, On, Once } from '@discord-nestjs/core';
+import { ButtonInteraction } from 'discord.js';
 
-@InteractionCollector({ time: 15000 })
+@InteractionEventCollector({ time: 15000 })
 export class PostInteractionCollector {
   @On('collect')
-  onCollect(): void {
-    console.log('collect');
+  async onCollect(interaction: ButtonInteraction): Promise<void> {
+    await interaction.update({
+      content: 'A button was clicked!',
+      components: [],
+    });
   }
 
   @Once('end')
