@@ -1,6 +1,7 @@
 import { Injectable, Type } from '@nestjs/common';
 import { MetadataScanner } from '@nestjs/core';
 import {
+  Collector,
   Interaction,
   InteractionCollector,
   InteractionCollectorOptions,
@@ -82,7 +83,7 @@ export class BaseCollectorResolver implements ClassResolver {
   }
 
   subscribeToEvents(
-    collector: ReactionCollector | MessageCollector | InteractionCollector<any>,
+    collector: Collector<any, any, any>,
     events: CollectMethodEventsInfo,
     classInstance: InstanceType<any>,
   ): void {

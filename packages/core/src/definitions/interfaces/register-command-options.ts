@@ -1,8 +1,4 @@
-import {
-  ChatInputApplicationCommandData,
-  Message,
-  Snowflake,
-} from 'discord.js';
+import { ApplicationCommandData, Message, Snowflake } from 'discord.js';
 
 export interface RegisterCommandOptions {
   /**
@@ -15,7 +11,7 @@ export interface RegisterCommandOptions {
    */
   allowFactory?: (
     message: Message,
-    commandList: ChatInputApplicationCommandData[],
+    commandList: ApplicationCommandData[],
   ) => boolean;
 
   /**

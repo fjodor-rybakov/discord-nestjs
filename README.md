@@ -37,10 +37,11 @@ This monorepo consists of several packages.
 * [@discord-nestjs/core](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/core) - Main package containing decorators, basic types and module declaration.
 * [@discord-nestjs/common](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/common) - Contains optional common templates. For example TransformPipe or ValidationPipe.
 * Samples
-  * [@discord-nestjs/sample-command](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/command) - Example of bot with slash commands
-  * [@discord-nestjs/sample-sub-command](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/sub-command) - Example of bot with slash sub-commands and sub-groups
-  * [@discord-nestjs/sample-validation](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/validation) - Example of bot with slash commands validation
-  * [@discord-nestjs/sample-event](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/event) - Example of bot with events
+  * [@discord-nestjs/sample-command](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/command) - Bot example with slash commands
+  * [@discord-nestjs/sample-sub-command](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/sub-command) - Bot example with slash sub-commands and sub-groups
+  * [@discord-nestjs/sample-validation](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/validation) - Bot example with slash commands validation
+  * [@discord-nestjs/sample-event](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/event) - Bot example with events
+  * [@discord-nestjs/sample-dependency-injection](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/dependency-injection) - Bot example with dependency injection
 
 
 
@@ -60,7 +61,7 @@ Check your intent is passed to the `discordClientOptions` of the module. [More i
 <details>
   <summary>Click to expand</summary>
 
-Check what your `target` version from `tsconfig.json`. Now is the minimal version of `ESNext`.
+Set `useDefineForClassFields` to `true` in your `tsconfig.json`.
 Also check that the `Palyoad` and `UsePipes` decorators are imported from `@discord-nestjs/core`.
 
 </details>
@@ -70,21 +71,7 @@ Also check that the `Palyoad` and `UsePipes` decorators are imported from `@disc
 <details>
   <summary>Click to expand</summary>
 
-At the moment, this is only possible if the module is declared using `forRootAsync`.
-First, you need to declare a separate module and set the necessary providers, as well as set them for export.
-
-```typescript
-import { PlayService } from './play.serivce';
-import { Module } from '@nestjs/common';
-
-@Module({
-  providers: [PlayService],
-  exports: [PlayService],
-})
-export class PlayModule {}
-```
-
-And then add this module to the `DiscordModule` imports
+Add the required providers to the `extraProviders` option.
 
 ```typescript
 import { PlayModule } from './services/play.module';
@@ -96,7 +83,7 @@ import { Intents, Message } from 'discord.js';
 @Module({
   imports: [
     DiscordModule.forRootAsync({
-      imports: [ConfigModule, PlayModule],
+      imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         token: configService.get('TOKEN'),
         commands: ['**/*.command.js'],
@@ -111,6 +98,7 @@ import { Intents, Message } from 'discord.js';
           },
         ],
       }),
+      extraProviders: [PlayService],
       inject: [ConfigService],
     }),
   ],

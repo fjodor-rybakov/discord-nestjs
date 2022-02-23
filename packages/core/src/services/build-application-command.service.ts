@@ -3,11 +3,11 @@ import { ModuleRef } from '@nestjs/core';
 import {
   ApplicationCommandChannelOptionData,
   ApplicationCommandChoicesData,
+  ApplicationCommandData,
   ApplicationCommandNonOptionsData,
   ApplicationCommandOptionData,
   ApplicationCommandSubCommandData,
   ApplicationCommandSubGroupData,
-  ChatInputApplicationCommandData,
 } from 'discord.js';
 import {
   ApplicationCommandOptionTypes,
@@ -42,24 +42,33 @@ export class BuildApplicationCommandService {
   async resolveCommandOptions(
     instance: DiscordCommand,
     methodName: string,
-    { name, description, include = [], defaultPermission }: CommandOptions,
-  ): Promise<ChatInputApplicationCommandData> {
+    {
+      name,
+      description,
+      include = [],
+      defaultPermission,
+      type = ApplicationCommandTypes.CHAT_INPUT,
+    }: CommandOptions,
+  ): Promise<ApplicationCommandData> {
     this.paramResolver.resolve({ instance, methodName });
     const payloadType = this.paramResolver.getPayloadType({
       instance,
       methodName,
     });
     this.commandTreeService.appendNode([name], { instance });
-    const applicationCommandData: ChatInputApplicationCommandData = {
-      type: ApplicationCommandTypes.CHAT_INPUT,
+    const applicationCommandData: ApplicationCommandData = {
+      type,
       name,
       description,
       defaultPermission,
     };
-    applicationCommandData.options = await this.resolveSubCommandOptions(
-      name,
-      include,
-    );
+
+    if (applicationCommandData.type === ApplicationCommandTypes.CHAT_INPUT) {
+      applicationCommandData.options = await this.resolveSubCommandOptions(
+        name,
+        include,
+      );
+    }
 
     let dtoInstance: any;
     if (payloadType) {
@@ -86,9 +95,11 @@ export class BuildApplicationCommandService {
         });
       }
 
-      applicationCommandData.options = applicationCommandData.options.concat(
-        this.sortByRequired(commandOptions),
-      );
+      if (applicationCommandData.type === ApplicationCommandTypes.CHAT_INPUT) {
+        applicationCommandData.options = applicationCommandData.options.concat(
+          this.sortByRequired(commandOptions),
+        );
+      }
     }
 
     return applicationCommandData;

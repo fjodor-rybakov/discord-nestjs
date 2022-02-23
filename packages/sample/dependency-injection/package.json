@@ -1,5 +1,5 @@
 {
-  "name": "@discord-nestjs/sample-event",
+  "name": "@discord-nestjs/sample-dependency-injection",
   "version": "0.0.1",
   "private": true,
   "license": "UNLICENSED",
@@ -19,14 +19,16 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@discord-nestjs/common": "*",
+    "@discord-nestjs/core": "*",
     "@nestjs/common": "8.3.1",
     "@nestjs/config": "1.2.0",
     "@nestjs/core": "8.3.1",
+    "class-transformer": "0.5.1",
     "discord.js": "13.6.0",
     "reflect-metadata": "0.1.13",
     "rimraf": "3.0.2",
-    "rxjs": "7.5.4",
-    "@discord-nestjs/core": "*"
+    "rxjs": "7.5.4"
   },
   "devDependencies": {
     "@nestjs/cli": "8.2.1",

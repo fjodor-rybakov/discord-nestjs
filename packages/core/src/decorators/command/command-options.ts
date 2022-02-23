@@ -1,3 +1,5 @@
+import { ApplicationCommandTypes } from 'discord.js/typings/enums';
+
 import { TInclude } from '../../definitions/types/include.type';
 
 /**
@@ -10,7 +12,7 @@ export interface CommandOptions {
   name: string;
 
   /**
-   * Command description
+   * Command description (Must be a blank string for context menu commands)
    */
   description: string;
 
@@ -23,4 +25,11 @@ export interface CommandOptions {
    * Set default permission
    */
   defaultPermission?: boolean;
+
+  /**
+   * Command Type (Slash or Context Menu)
+   *
+   * @default CHAT_INPUT
+   */
+  type?: ApplicationCommandTypes;
 }

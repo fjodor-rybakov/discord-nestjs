@@ -3,11 +3,12 @@ import {
   Command,
   DiscordTransformedCommand,
   Payload,
-  TransformedCommandExecutionContext,
   UsePipes,
 } from '@discord-nestjs/core';
+import { CommandInteraction } from 'discord.js';
 
 import { PlayDto } from '../dto/play.dto';
+import { PlayService } from '../services/play.service';
 
 @Command({
   name: 'play',
@@ -15,13 +16,9 @@ import { PlayDto } from '../dto/play.dto';
 })
 @UsePipes(TransformPipe)
 export class PlayCommand implements DiscordTransformedCommand<PlayDto> {
-  handler(
-    @Payload() dto: PlayDto,
-    { interaction }: TransformedCommandExecutionContext,
-  ): string {
-    console.log('DTO', dto);
-    console.log('Interaction', interaction);
+  constructor(private readonly playService: PlayService) {}
 
-    return `Start playing ${dto.song}.`;
+  handler(@Payload() dto: PlayDto, interaction: CommandInteraction): string {
+    return this.playService.play(dto.song);
   }
 }

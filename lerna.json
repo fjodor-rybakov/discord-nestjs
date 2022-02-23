@@ -8,5 +8,6 @@
       "hoist": true
     }
   },
+  "useWorkspaces": true,
   "version": "independent"
 }

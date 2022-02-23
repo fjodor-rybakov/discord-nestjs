@@ -34,46 +34,9 @@ import { RegisterCommandService } from './services/register-command.service';
   imports: [DiscoveryModule],
 })
 export class DiscordModule {
-  static forRoot(options: DiscordModuleOption): DynamicModule {
-    return {
-      module: DiscordModule,
-      providers: [
-        CommandPathToClassService,
-        RegisterCommandService,
-        DiscordOptionService,
-        DiscordCommandProvider,
-        ReflectMetadataProvider,
-        OptionResolver,
-        FilterResolver,
-        MiddlewareResolver,
-        PipeResolver,
-        GuardResolver,
-        FilterClassResolver,
-        GuardClassResolver,
-        PipeClassResolver,
-        ParamResolver,
-        CommandResolver,
-        EventResolver,
-        DiscordResolverService,
-        DiscordModule.createDiscordOptionProvider(options),
-        DiscordClientProvider,
-        DiscordResolverService,
-        DiscordClientService,
-        BuildApplicationCommandService,
-        CommandTreeService,
-        BaseCollectorResolver,
-        CollectorClassResolver,
-        CollectorResolver,
-      ],
-      exports: [
-        DiscordClientProvider,
-        ReflectMetadataProvider,
-        DiscordCommandProvider,
-      ],
-    };
-  }
-
   static forRootAsync(options: DiscordModuleAsyncOptions): DynamicModule {
+    const extraProviders = options.extraProviders || [];
+
     return {
       module: DiscordModule,
       imports: options.imports || [],
@@ -104,21 +67,13 @@ export class DiscordModule {
         BaseCollectorResolver,
         CollectorClassResolver,
         CollectorResolver,
+        ...extraProviders,
       ],
       exports: [
         DiscordClientProvider,
         ReflectMetadataProvider,
         DiscordCommandProvider,
       ],
-    };
-  }
-
-  private static createDiscordOptionProvider(
-    options: DiscordModuleOption,
-  ): Provider {
-    return {
-      provide: DISCORD_MODULE_OPTIONS,
-      useValue: options || {},
     };
   }
 
