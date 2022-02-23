@@ -10,6 +10,9 @@ export interface DiscordModuleAsyncOptions
   useFactory?: (
     ...args: any[]
   ) => Promise<DiscordModuleOption> | DiscordModuleOption;
+  /**
+   * Add the necessary providers for dependency injection in your commands, pipe, filters etc.
+   */
   extraProviders?: Provider[];
   inject?: any[];
 }
