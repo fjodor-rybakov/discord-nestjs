@@ -1,15 +1,6 @@
 import { Injectable, Type } from '@nestjs/common';
 import { MetadataScanner } from '@nestjs/core';
-import {
-  Collector,
-  Interaction,
-  InteractionCollector,
-  InteractionCollectorOptions,
-  MessageCollector,
-  MessageCollectorOptions,
-  ReactionCollector,
-  ReactionCollectorOptions,
-} from 'discord.js';
+import { Collector, Interaction } from 'discord.js';
 
 import { DiscordInteractionCollectorOptions } from '../../decorators/collector/interaction-collector/interaction-collector-options';
 import { DiscordMessageCollectorOptions } from '../../decorators/collector/message-collector/message-collector-options';

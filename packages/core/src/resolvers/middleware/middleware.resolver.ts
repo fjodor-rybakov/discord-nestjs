@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ClientEvents } from 'discord.js';
 
 import { DiscordMiddleware } from '../../decorators/middleware/discord-middleware';
 import { EventArgs, EventType } from '../../definitions/types/event.type';
