@@ -3,7 +3,7 @@ import { Type } from '@nestjs/common';
 import { FILTER_METADATA } from './filter.constant';
 
 /**
- * Filter decorator
+ * Filter decorator for collector
  */
 export function Filter(...collectors: Type[]): MethodDecorator {
   return (

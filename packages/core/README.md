@@ -32,6 +32,12 @@ NestJS package for discord.js
   - [ℹ️ @Choice](#Choice)
   - [ℹ️ @Channel](#Channel)
   - [ℹ️ @Middleware](#Middleware)
+  - [ℹ️ @InteractionEventCollector](#InteractionEventCollector)
+  - [ℹ️ @MessageEventCollector](#MessageEventCollector)
+  - [ℹ️ @ReactionEventCollector](#ReactionEventCollector)
+  - [ℹ️ @UseCollectors](#UseCollectors)
+  - [ℹ️ @InjectCollector](#InjectCollector)
+  - [ℹ️ @Filter](#Filter)
 
 
 
@@ -881,7 +887,7 @@ Mark class as subcommand
 
 ### ℹ️ @On <a name="On"></a>
 
-Handle discord events [hint](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
+Handle discord and collector events [hint](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
 
 #### Params
 
@@ -889,7 +895,7 @@ Handle discord events [hint](https://gist.github.com/koad/316b265a91d933fd1b62dd
 
 ### ℹ️ @Once <a name="Once"></a>
 
-Handle discord events (only once) [hint](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
+Handle discord and collector events (only once) [hint](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
 
 #### Params
 
@@ -958,3 +964,44 @@ For handling intermediate requests
 
 - `allowEvents` - Handled events
 - `denyEvents` - Skipped events
+
+### ℹ️ @InteractionEventCollector <a name="InteractionEventCollector"></a>
+
+Create interaction collector
+
+#### Params
+
+See [here](https://discord.js.org/#/docs/main/stable/typedef/MessageComponentCollectorOptions)
+
+### ℹ️ @MessageEventCollector <a name="MessageEventCollector"></a>
+
+Create message collector
+
+#### Params
+
+See [here](https://discord.js.org/#/docs/main/stable/typedef/MessageCollectorOptions)
+
+### ℹ️ @ReactionEventCollector <a name="ReactionEventCollector"></a>
+
+Create reaction collector
+
+
+#### Params
+
+See [here](https://discord.js.org/#/docs/main/stable/typedef/ReactionCollectorOptions)
+
+### ℹ️ @UseCollectors <a name="UseCollectors"></a>
+
+Apply collector
+
+#### Params
+
+- List of collector classes
+
+### ℹ️ @InjectCollector <a name="InjectCollector"></a>
+
+Inject collector in constructor (only in class collector)
+
+### ℹ️ @Filter <a name="Filter"></a>
+
+Add filter to collector
