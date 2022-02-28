@@ -1,4 +1,3 @@
-import { NumberDto } from '../../dto/number.dto';
 import { TransformPipe } from '@discord-nestjs/common';
 import {
   DiscordTransformedCommand,
@@ -6,6 +5,8 @@ import {
   SubCommand,
   UsePipes,
 } from '@discord-nestjs/core';
+
+import { NumberDto } from '../../dto/number.dto';
 
 @UsePipes(TransformPipe)
 @SubCommand({ name: 'number', description: 'Register by phone number' })

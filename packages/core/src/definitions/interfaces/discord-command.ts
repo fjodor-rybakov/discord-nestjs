@@ -4,6 +4,8 @@ import {
   MessagePayload,
 } from 'discord.js';
 
+import { CommandExecutionContext } from './command-execution-context';
+
 /**
  * Discord command
  *
@@ -12,6 +14,7 @@ import {
 export interface DiscordCommand {
   handler(
     interaction: CommandInteraction,
+    executionContext: CommandExecutionContext,
   ):
     | Promise<string | MessagePayload | InteractionReplyOptions | void>
     | string

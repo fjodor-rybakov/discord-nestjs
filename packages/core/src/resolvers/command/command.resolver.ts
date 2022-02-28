@@ -1,13 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
-import { Interaction } from 'discord.js';
+import {
+  ClientEvents,
+  InteractionCollector,
+  MessageCollector,
+} from 'discord.js';
 
-import { DiscordCommand } from '../../definitions/interfaces/discord-command';
+import { CommandExecutionContext } from '../../definitions/interfaces/command-execution-context';
+import { TransformedCommandExecutionContext } from '../../definitions/interfaces/transformed-command-execution-context';
 import { DiscordCommandProvider } from '../../providers/discord-command.provider';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { BuildApplicationCommandService } from '../../services/build-application-command.service';
 import { CommandTreeService } from '../../services/command-tree.service';
 import { DiscordClientService } from '../../services/discord-client.service';
+import { CollectorResolver } from '../collector/use-collectors/collector.resolver';
 import { FilterResolver } from '../filter/filter.resolver';
 import { GuardResolver } from '../guard/guard.resolver';
 import { ClassResolveOptions } from '../interfaces/class-resolve-options';
@@ -28,6 +34,7 @@ export class CommandResolver implements ClassResolver {
     private readonly buildApplicationCommandService: BuildApplicationCommandService,
     private readonly commandTreeService: CommandTreeService,
     private readonly filterResolver: FilterResolver,
+    private readonly collectorResolver: CollectorResolver,
   ) {}
 
   async resolve({ instance }: ClassResolveOptions): Promise<void> {
@@ -57,7 +64,8 @@ export class CommandResolver implements ClassResolver {
 
     this.discordClientService
       .getClient()
-      .on(event, async (interaction: Interaction) => {
+      .on(event, async (...eventArgs: ClientEvents['interactionCreate']) => {
+        const [interaction] = eventArgs;
         if (
           (!interaction.isCommand() && !interaction.isContextMenu()) ||
           interaction.commandName !== name
@@ -83,12 +91,12 @@ export class CommandResolver implements ClassResolver {
 
         try {
           //#region apply middleware, guard, pipe
-          await this.middlewareResolver.applyMiddleware(event, [interaction]);
+          await this.middlewareResolver.applyMiddleware(event, eventArgs);
           const isAllowFromGuards = await this.guardResolver.applyGuard({
             instance: commandInstance,
             methodName,
             event,
-            context: [interaction],
+            eventArgs,
           });
           if (!isAllowFromGuards) return;
 
@@ -97,15 +105,31 @@ export class CommandResolver implements ClassResolver {
             methodName,
             event,
             metatype: dtoInstance?.constructor,
-            context: [interaction],
+            eventArgs,
             initValue: interaction,
             commandNode,
           });
           //#endregion
 
+          const collectors = (await this.collectorResolver.applyCollector({
+            instance,
+            methodName,
+            event,
+            eventArgs,
+          })) as (MessageCollector | InteractionCollector<any>)[];
+
+          const transformedExecutionContext: TransformedCommandExecutionContext =
+            {
+              interaction,
+              collectors,
+            };
+          const executionContext: CommandExecutionContext = {
+            collectors,
+          };
+
           const handlerArgs = dtoInstance
-            ? [pipeResult, interaction]
-            : [interaction];
+            ? [pipeResult, transformedExecutionContext]
+            : [interaction, executionContext];
           const replyResult = await commandInstance[methodName](...handlerArgs);
 
           if (replyResult) await interaction.reply(replyResult);
@@ -115,7 +139,7 @@ export class CommandResolver implements ClassResolver {
             methodName,
             event,
             metatype: dtoInstance?.constructor,
-            context: [interaction],
+            eventArgs,
             exception,
             commandNode,
           });

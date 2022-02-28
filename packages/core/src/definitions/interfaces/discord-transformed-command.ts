@@ -1,8 +1,6 @@
-import {
-  CommandInteraction,
-  InteractionReplyOptions,
-  MessagePayload,
-} from 'discord.js';
+import { InteractionReplyOptions, MessagePayload } from 'discord.js';
+
+import { TransformedCommandExecutionContext } from './transformed-command-execution-context';
 
 /**
  * Discord transformed command
@@ -12,7 +10,7 @@ import {
 export interface DiscordTransformedCommand<DTOType> {
   handler(
     dto: DTOType,
-    interaction: CommandInteraction,
+    executionContext: TransformedCommandExecutionContext,
   ):
     | Promise<string | MessagePayload | InteractionReplyOptions | void>
     | string

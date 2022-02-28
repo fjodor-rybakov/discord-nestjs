@@ -1,9 +1,10 @@
+import { Injectable } from '@nestjs/common';
+import { MetadataScanner } from '@nestjs/core';
+
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { ClassResolveOptions } from '../interfaces/class-resolve-options';
 import { ClassResolver } from '../interfaces/class-resolver';
 import { GuardResolver } from './guard.resolver';
-import { Injectable } from '@nestjs/common';
-import { MetadataScanner } from '@nestjs/core';
 
 @Injectable()
 export class GuardClassResolver implements ClassResolver {

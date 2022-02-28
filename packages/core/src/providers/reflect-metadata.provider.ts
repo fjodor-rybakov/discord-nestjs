@@ -1,8 +1,29 @@
+import { Injectable, Type } from '@nestjs/common';
+import {
+  Interaction,
+  InteractionCollectorOptions,
+  MessageCollectorOptions,
+} from 'discord.js';
+import { ChannelTypes } from 'discord.js/typings/enums';
+
+import { FILTER_METADATA } from '../decorators/collector/filter/filter.constant';
+import { INTERACTION_COLLECTOR_METADATA } from '../decorators/collector/interaction-collector/interaction-collector.constant';
+import { MESSAGE_COLLECTOR_METADATA } from '../decorators/collector/message-collector/message-collector.constant';
+import { DiscordReactionCollectorOptions } from '../decorators/collector/reaction-collector/reaction-collector-options';
+import { REACTION_COLLECTOR_METADATA } from '../decorators/collector/reaction-collector/reaction-collector.constant';
+import { USE_COLLECTORS_METADATA } from '../decorators/collector/use-collectors/use-collectors.constant';
 import { CommandOptions } from '../decorators/command/command-options';
 import { COMMAND_DECORATOR } from '../decorators/command/command.constant';
+import { OnCollectDecoratorOptions } from '../decorators/event/on-collect-decorator-options';
 import { OnDecoratorOptions } from '../decorators/event/on-decorator-options';
-import { ON_DECORATOR } from '../decorators/event/on/on.constant';
-import { ONCE_DECORATOR } from '../decorators/event/once/once.constant';
+import {
+  ON_COLLECT_DECORATOR,
+  ON_DECORATOR,
+} from '../decorators/event/on/on.constant';
+import {
+  ONCE_COLLECT_DECORATOR,
+  ONCE_DECORATOR,
+} from '../decorators/event/once/once.constant';
 import { CATCH_EXCEPTION_FILTER_DECORATOR } from '../decorators/filter/catch/catch.constant';
 import { USE_FILTER_DECORATOR } from '../decorators/filter/use-filter.constant';
 import { USE_GUARDS_DECORATOR } from '../decorators/guard/guard.constant';
@@ -22,31 +43,52 @@ import { ExcludeEnum } from '../definitions/types/exclude-enum.type';
 import { FilterType } from '../definitions/types/filter.type';
 import { GuardType } from '../definitions/types/guard.type';
 import { PipeType } from '../definitions/types/pipe.type';
-import { Injectable, Type } from '@nestjs/common';
-import { ChannelTypes } from 'discord.js/typings/enums';
 
 @Injectable()
 export class ReflectMetadataProvider {
-  getCommandDecoratorMetadata(instance: unknown): CommandOptions {
+  getCommandDecoratorMetadata(instance: InstanceType<any>): CommandOptions {
     return Reflect.getMetadata(COMMAND_DECORATOR, instance);
   }
 
-  getSubCommandDecoratorMetadata(instance: unknown): SubCommandOptions {
+  getSubCommandDecoratorMetadata(
+    instance: InstanceType<any>,
+  ): SubCommandOptions {
     return Reflect.getMetadata(SUB_COMMAND_DECORATOR, instance);
   }
 
   getOnEventDecoratorMetadata(
-    instance: unknown,
+    instance: InstanceType<any>,
     methodName: string,
   ): OnDecoratorOptions {
     return Reflect.getMetadata(ON_DECORATOR, instance, methodName);
   }
 
   getOnceEventDecoratorMetadata(
-    instance: unknown,
+    instance: InstanceType<any>,
     methodName: string,
   ): OnDecoratorOptions {
     return Reflect.getMetadata(ONCE_DECORATOR, instance, methodName);
+  }
+
+  getOnCollectEventDecoratorMetadata(
+    instance: InstanceType<any>,
+    methodName: string,
+  ): OnCollectDecoratorOptions {
+    return Reflect.getMetadata(ON_COLLECT_DECORATOR, instance, methodName);
+  }
+
+  getOnceCollectEventDecoratorMetadata(
+    instance: InstanceType<any>,
+    methodName: string,
+  ): OnCollectDecoratorOptions {
+    return Reflect.getMetadata(ONCE_COLLECT_DECORATOR, instance, methodName);
+  }
+
+  getFilterDecoratorMetadata(
+    instance: InstanceType<any>,
+    methodName: string,
+  ): Record<string, any> {
+    return Reflect.getMetadata(FILTER_METADATA, instance, methodName);
   }
 
   getMiddlewareDecoratorMetadata(
@@ -56,63 +98,94 @@ export class ReflectMetadataProvider {
   }
 
   getUseGuardsDecoratorMetadata(
-    instance: unknown,
+    instance: InstanceType<any>,
     methodName?: string,
   ): GuardType[] {
     return Reflect.getMetadata(USE_GUARDS_DECORATOR, instance, methodName);
   }
 
   getUsePipesDecoratorMetadata(
-    instance: unknown,
+    instance: InstanceType<any>,
     methodName?: string,
   ): PipeType[] {
     return Reflect.getMetadata(USE_PIPES_DECORATOR, instance, methodName);
   }
 
   getUseFiltersDecoratorMetadata(
-    instance: unknown,
+    instance: InstanceType<any>,
     methodName?: string,
   ): FilterType[] {
     return Reflect.getMetadata(USE_FILTER_DECORATOR, instance, methodName);
   }
 
-  getCatchDecoratorMetadata(instance: unknown): Type[] {
+  getCatchDecoratorMetadata(instance: InstanceType<any>): Type[] {
     return Reflect.getMetadata(CATCH_EXCEPTION_FILTER_DECORATOR, instance);
   }
 
-  getParamTypesMetadata(instance: unknown, methodName: string): Type[] {
+  getParamTypesMetadata(
+    instance: InstanceType<any>,
+    methodName: string,
+  ): Type[] {
     return Reflect.getMetadata('design:paramtypes', instance, methodName);
   }
 
-  getPropertyTypeMetadata(instance: unknown, methodName: string): Type {
+  getPropertyTypeMetadata(
+    instance: InstanceType<any>,
+    methodName: string,
+  ): Type {
     return Reflect.getMetadata('design:type', instance, methodName);
   }
 
   getPayloadDecoratorMetadata(
-    instance: unknown,
+    instance: InstanceType<any>,
     methodName: string,
   ): ParamTypeOptions {
     return Reflect.getMetadata(PAYLOAD_DECORATOR, instance, methodName);
   }
 
   getParamDecoratorMetadata(
-    instance: unknown,
+    instance: InstanceType<any>,
     propertyKey: string,
   ): ParamOptions {
     return Reflect.getMetadata(PARAM_DECORATOR, instance, propertyKey);
   }
 
   getChoiceDecoratorMetadata(
-    instance: unknown,
+    instance: InstanceType<any>,
     propertyKey: string,
   ): Record<string, any> | Map<string, string | number> {
     return Reflect.getMetadata(CHOICE_DECORATOR, instance, propertyKey);
   }
 
   getChannelDecoratorMetadata(
-    instance: unknown,
+    instance: InstanceType<any>,
     propertyKey: string,
   ): ExcludeEnum<typeof ChannelTypes, 'UNKNOWN'>[] {
     return Reflect.getMetadata(CHANNEL_DECORATOR, instance, propertyKey);
+  }
+
+  getReactionCollectorDecoratorMetadata(
+    instance: InstanceType<any>,
+  ): DiscordReactionCollectorOptions {
+    return Reflect.getMetadata(REACTION_COLLECTOR_METADATA, instance);
+  }
+
+  getMessageCollectorDecoratorMetadata(
+    instance: InstanceType<any>,
+  ): MessageCollectorOptions {
+    return Reflect.getMetadata(MESSAGE_COLLECTOR_METADATA, instance);
+  }
+
+  getInteractionCollectorDecoratorMetadata(
+    instance: InstanceType<any>,
+  ): InteractionCollectorOptions<Interaction> {
+    return Reflect.getMetadata(INTERACTION_COLLECTOR_METADATA, instance);
+  }
+
+  getUseCollectorsDecoratorMetadata(
+    instance: InstanceType<any>,
+    methodName?: string,
+  ): Type[] {
+    return Reflect.getMetadata(USE_COLLECTORS_METADATA, instance, methodName);
   }
 }

@@ -3,11 +3,11 @@ import { ModuleRef } from '@nestjs/core';
 import {
   ApplicationCommandChannelOptionData,
   ApplicationCommandChoicesData,
+  ApplicationCommandData,
   ApplicationCommandNonOptionsData,
   ApplicationCommandOptionData,
   ApplicationCommandSubCommandData,
   ApplicationCommandSubGroupData,
-  ApplicationCommandData,
 } from 'discord.js';
 import {
   ApplicationCommandOptionTypes,
@@ -42,7 +42,13 @@ export class BuildApplicationCommandService {
   async resolveCommandOptions(
     instance: DiscordCommand,
     methodName: string,
-    { name, description, include = [], defaultPermission, type = ApplicationCommandTypes.CHAT_INPUT }: CommandOptions,
+    {
+      name,
+      description,
+      include = [],
+      defaultPermission,
+      type = ApplicationCommandTypes.CHAT_INPUT,
+    }: CommandOptions,
   ): Promise<ApplicationCommandData> {
     this.paramResolver.resolve({ instance, methodName });
     const payloadType = this.paramResolver.getPayloadType({
@@ -57,7 +63,7 @@ export class BuildApplicationCommandService {
       defaultPermission,
     };
 
-    if(applicationCommandData.type === ApplicationCommandTypes.CHAT_INPUT) {
+    if (applicationCommandData.type === ApplicationCommandTypes.CHAT_INPUT) {
       applicationCommandData.options = await this.resolveSubCommandOptions(
         name,
         include,
@@ -89,7 +95,7 @@ export class BuildApplicationCommandService {
         });
       }
 
-      if(applicationCommandData.type === ApplicationCommandTypes.CHAT_INPUT) {
+      if (applicationCommandData.type === ApplicationCommandTypes.CHAT_INPUT) {
         applicationCommandData.options = applicationCommandData.options.concat(
           this.sortByRequired(commandOptions),
         );

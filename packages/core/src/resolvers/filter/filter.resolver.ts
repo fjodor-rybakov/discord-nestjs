@@ -63,7 +63,7 @@ export class FilterResolver implements MethodResolver {
       instance,
       methodName,
       event,
-      context,
+      eventArgs,
       exception,
       metatype,
       commandNode,
@@ -96,14 +96,14 @@ export class FilterResolver implements MethodResolver {
     if (concreteMatchedFilter)
       await concreteMatchedFilter.catch(exception, {
         event,
-        context,
+        eventArgs,
         metatype,
         commandNode,
       });
     else if (indexOfAnyException)
       await matchedFilters[indexOfAnyException].catch(exception, {
         event,
-        context,
+        eventArgs,
         metatype,
         commandNode,
       });

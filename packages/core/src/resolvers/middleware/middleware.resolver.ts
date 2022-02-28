@@ -1,10 +1,11 @@
+import { Injectable } from '@nestjs/common';
+
 import { DiscordMiddleware } from '../../decorators/middleware/discord-middleware';
+import { EventArgs, EventType } from '../../definitions/types/event.type';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { ClassResolveOptions } from '../interfaces/class-resolve-options';
 import { ClassResolver } from '../interfaces/class-resolver';
 import { DiscordMiddlewareInstance } from './discord-middleware-instance';
-import { Injectable } from '@nestjs/common';
-import { ClientEvents } from 'discord.js';
 
 @Injectable()
 export class MiddlewareResolver implements ClassResolver {
@@ -21,9 +22,9 @@ export class MiddlewareResolver implements ClassResolver {
     this.middlewareList.push({ instance, metadata });
   }
 
-  async applyMiddleware<TEvent extends keyof ClientEvents>(
+  async applyMiddleware<TEvent extends EventType = any>(
     event: TEvent,
-    context: ClientEvents[TEvent],
+    eventArgs: EventArgs<TEvent>,
   ): Promise<void> {
     const filteredMiddleware = this.middlewareList.filter(
       (item: DiscordMiddlewareInstance) => {
@@ -37,7 +38,7 @@ export class MiddlewareResolver implements ClassResolver {
     );
     await Promise.all(
       filteredMiddleware.map((item: DiscordMiddlewareInstance) =>
-        item.instance.use(event, context),
+        item.instance.use(event, eventArgs),
       ),
     );
   }

@@ -1,5 +1,6 @@
-import { DiscordExceptionFilter } from '../../decorators/filter/discord-exception-filter';
 import { Type } from '@nestjs/common';
+
+import { DiscordExceptionFilter } from '../../decorators/filter/discord-exception-filter';
 
 /**
  * Filter type

@@ -1,5 +1,6 @@
+import { Choice, Param, ParamType } from '@discord-nestjs/core';
+
 import { City } from '../definitions/city';
-import { Param, ParamType, Choice } from '@discord-nestjs/core';
 
 export class EmailDto {
   @Param({

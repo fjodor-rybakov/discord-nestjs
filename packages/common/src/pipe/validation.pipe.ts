@@ -1,6 +1,6 @@
 import { DiscordPipeTransform } from '@discord-nestjs/core';
 import { Injectable, Optional } from '@nestjs/common';
-import { validate, ValidatorOptions } from 'class-validator';
+import { ValidatorOptions, validate } from 'class-validator';
 
 /**
  * Validates DTO with class-validator
@@ -12,7 +12,7 @@ export class ValidationPipe implements DiscordPipeTransform {
     private readonly validatorOptions?: ValidatorOptions,
   ) {}
 
-  async transform(dtoInstance: any): Promise<any> {
+  async transform(dtoInstance: object): Promise<any> {
     const result = await validate(dtoInstance, this.validatorOptions);
 
     if (result.length > 0) throw result;

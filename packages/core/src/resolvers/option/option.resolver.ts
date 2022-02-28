@@ -1,8 +1,3 @@
-import { ParamOptions } from '../../decorators/option/param/param-options';
-import { ExcludeEnum } from '../../definitions/types/exclude-enum.type';
-import { ParamType } from '../../definitions/types/param.type';
-import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
-import { OptionMetadata } from './option-metadata';
 import { Injectable } from '@nestjs/common';
 import {
   ApplicationCommandOptionChoice,
@@ -14,6 +9,12 @@ import {
   ApplicationCommandOptionTypes,
   ChannelTypes,
 } from 'discord.js/typings/enums';
+
+import { ParamOptions } from '../../decorators/option/param/param-options';
+import { ExcludeEnum } from '../../definitions/types/exclude-enum.type';
+import { ParamType } from '../../definitions/types/param.type';
+import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
+import { OptionMetadata } from './option-metadata';
 
 @Injectable()
 export class OptionResolver {

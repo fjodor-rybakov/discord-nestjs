@@ -1,6 +1,13 @@
+import { Injectable, OnModuleInit, Type } from '@nestjs/common';
+import { DiscoveryService, MetadataScanner, ModuleRef } from '@nestjs/core';
+import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
+
 import { DiscordModuleOption } from '../definitions/interfaces/discord-module-options';
 import { CommandNode } from '../definitions/types/tree/command-node';
 import { Leaf } from '../definitions/types/tree/leaf';
+import { BaseCollectorResolver } from '../resolvers/collector/base-collector.resolver';
+import { CollectorClassResolver } from '../resolvers/collector/collector-class.resolver';
+import { CollectorResolver } from '../resolvers/collector/use-collectors/collector.resolver';
 import { CommandResolver } from '../resolvers/command/command.resolver';
 import { EventResolver } from '../resolvers/event/event.resolver';
 import { FilterClassResolver } from '../resolvers/filter/filter-class.resolver';
@@ -16,9 +23,6 @@ import { CommandPathToClassService } from './command-path-to-class.service';
 import { CommandTreeService } from './command-tree.service';
 import { DiscordOptionService } from './discord-option.service';
 import { RegisterCommandService } from './register-command.service';
-import { Injectable, OnModuleInit, Type } from '@nestjs/common';
-import { DiscoveryService, MetadataScanner, ModuleRef } from '@nestjs/core';
-import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 
 @Injectable()
 export class DiscordResolverService implements OnModuleInit {
@@ -40,6 +44,9 @@ export class DiscordResolverService implements OnModuleInit {
     private readonly commandPathToClassService: CommandPathToClassService,
     private readonly commandTreeService: CommandTreeService,
     private readonly registerCommandService: RegisterCommandService,
+    private readonly collectorResolver: CollectorResolver,
+    private readonly collectorClassResolver: CollectorClassResolver,
+    private readonly baseCollectorResolver: BaseCollectorResolver,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -59,16 +66,19 @@ export class DiscordResolverService implements OnModuleInit {
     const methodResolvers = [
       this.filterResolver,
       this.paramResolver,
-      this.eventResolver,
+      this.collectorResolver,
       this.guardResolver,
       this.pipeResolver,
+      this.eventResolver,
     ];
 
     const classResolvers = [
       this.filterClassResolver,
+      this.baseCollectorResolver,
       this.middlewareResolver,
       this.guardClassResolver,
       this.pipeClassResolver,
+      this.collectorClassResolver,
     ];
 
     await Promise.all(
@@ -81,6 +91,9 @@ export class DiscordResolverService implements OnModuleInit {
             instance = instanceWrapper.instance;
           if (!instance || !IsObject(instance)) return;
 
+          for await (const resolver of classResolvers)
+            await resolver.resolve({ instance });
+
           const methodNames = this.scanMetadata(instance);
           await Promise.all(
             methodNames.map(async (methodName: string) => {
@@ -92,9 +105,6 @@ export class DiscordResolverService implements OnModuleInit {
               }
             }),
           );
-
-          for await (const resolver of classResolvers)
-            await resolver.resolve({ instance });
         }),
     );
 

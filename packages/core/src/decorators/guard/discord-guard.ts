@@ -1,13 +1,18 @@
-import { ClientEvents } from 'discord.js';
+import { Interaction } from 'discord.js';
+
+import { EventArgs, EventType } from '../../definitions/types/event.type';
 
 /**
  * Guard interface
  *
  * Guards should be implemented on its basis
  */
-export interface DiscordGuard<TEvent extends keyof ClientEvents = any> {
+export interface DiscordGuard<
+  TEvent extends EventType = any,
+  TInteraction extends Interaction = any,
+> {
   canActive(
     event: TEvent,
-    context: ClientEvents[TEvent],
+    eventArgs: EventArgs<TEvent, TInteraction>,
   ): boolean | Promise<boolean>;
 }

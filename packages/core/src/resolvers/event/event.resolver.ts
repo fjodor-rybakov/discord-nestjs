@@ -1,13 +1,16 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { ClientEvents } from 'discord.js';
+
+import { ExecutionContext } from '../../definitions/interfaces/execution-context';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { DiscordClientService } from '../../services/discord-client.service';
+import { CollectorResolver } from '../collector/use-collectors/collector.resolver';
 import { FilterResolver } from '../filter/filter.resolver';
 import { GuardResolver } from '../guard/guard.resolver';
 import { MethodResolveOptions } from '../interfaces/method-resolve-options';
 import { MethodResolver } from '../interfaces/method-resolver';
 import { MiddlewareResolver } from '../middleware/middleware.resolver';
 import { PipeResolver } from '../pipe/pipe.resolver';
-import { Injectable, Logger } from '@nestjs/common';
-import { ClientEvents } from 'discord.js';
 
 @Injectable()
 export class EventResolver implements MethodResolver {
@@ -20,11 +23,12 @@ export class EventResolver implements MethodResolver {
     private readonly guardResolver: GuardResolver,
     private readonly filterResolver: FilterResolver,
     private readonly pipeResolver: PipeResolver,
+    private readonly collectorResolver: CollectorResolver,
   ) {}
 
-  resolve(options: MethodResolveOptions): void {
+  async resolve(options: MethodResolveOptions): Promise<void> {
     const { instance, methodName } = options;
-    let eventMethod = 'on';
+    let eventMethod: 'on' | 'once' = 'on';
     let metadata = this.metadataProvider.getOnEventDecoratorMetadata(
       instance,
       methodName,
@@ -47,15 +51,15 @@ export class EventResolver implements MethodResolver {
       .getClient()
       [eventMethod](
         event,
-        async (...context: ClientEvents[keyof ClientEvents]) => {
+        async (...eventArgs: ClientEvents[keyof ClientEvents]) => {
           try {
             //#region apply middleware, guard, pipe
-            await this.middlewareResolver.applyMiddleware(event, context);
+            await this.middlewareResolver.applyMiddleware(event, eventArgs);
             const isAllowFromGuards = await this.guardResolver.applyGuard({
               instance,
               methodName,
               event,
-              context,
+              eventArgs,
             });
             if (!isAllowFromGuards) return;
 
@@ -63,19 +67,32 @@ export class EventResolver implements MethodResolver {
               instance,
               methodName,
               event,
-              context,
-              initValue: context,
+              eventArgs,
+              initValue: eventArgs,
             });
-
             //#endregion
 
-            await instance[methodName](...(pipeResult || context));
+            const collectors = await this.collectorResolver.applyCollector({
+              instance,
+              methodName,
+              event,
+              eventArgs,
+            });
+
+            const executionContext: ExecutionContext = {
+              collectors,
+            };
+
+            await instance[methodName](
+              ...(pipeResult || eventArgs),
+              executionContext,
+            );
           } catch (exception) {
             const isTrowException = await this.filterResolver.applyFilter({
               instance,
               methodName,
               event,
-              context,
+              eventArgs,
               exception,
             });
 

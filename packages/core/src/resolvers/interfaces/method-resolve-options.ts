@@ -1,4 +1,4 @@
 export interface MethodResolveOptions {
-  instance: unknown;
+  instance: InstanceType<any>;
   methodName: string;
 }

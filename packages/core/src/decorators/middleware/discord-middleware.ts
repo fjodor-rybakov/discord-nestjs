@@ -1,10 +1,18 @@
-import { ClientEvents } from 'discord.js';
+import { Interaction } from 'discord.js';
+
+import { EventArgs, EventType } from '../../definitions/types/event.type';
 
 /**
  * Middleware interface
  *
  * Middleware should be implemented on its basis
  */
-export interface DiscordMiddleware<TEvent extends keyof ClientEvents = any> {
-  use(event: TEvent, context: ClientEvents[TEvent]): Promise<void> | void;
+export interface DiscordMiddleware<
+  TEvent extends EventType = any,
+  TInteraction extends Interaction = any,
+> {
+  use(
+    event: TEvent,
+    eventArgs: EventArgs<TEvent, TInteraction>,
+  ): Promise<void> | void;
 }

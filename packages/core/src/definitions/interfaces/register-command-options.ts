@@ -1,8 +1,4 @@
-import {
-  ApplicationCommandData,
-  Message,
-  Snowflake,
-} from 'discord.js';
+import { ApplicationCommandData, Message, Snowflake } from 'discord.js';
 
 export interface RegisterCommandOptions {
   /**

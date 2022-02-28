@@ -1,3 +1,6 @@
+import { Injectable, Type } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
+
 import { DiscordPipeTransform } from '../../decorators/pipe/discord-pipe-transform';
 import { PipeType } from '../../definitions/types/pipe.type';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
@@ -6,8 +9,6 @@ import { MethodResolveOptions } from '../interfaces/method-resolve-options';
 import { MethodResolver } from '../interfaces/method-resolver';
 import { DiscordPipeList } from './discord-pipe-list';
 import { DiscordPipeOptions } from './discord-pipe-options';
-import { Injectable, Type } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
 
 @Injectable()
 export class PipeResolver implements MethodResolver {
@@ -66,7 +67,7 @@ export class PipeResolver implements MethodResolver {
       instance,
       methodName,
       event,
-      context,
+      eventArgs,
       initValue,
       metatype,
       commandNode,
@@ -79,7 +80,7 @@ export class PipeResolver implements MethodResolver {
         const prevData = await prev;
         return curr.transform(prevData, {
           event,
-          context,
+          eventArgs,
           metatype,
           commandNode,
         });
