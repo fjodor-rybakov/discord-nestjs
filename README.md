@@ -42,6 +42,9 @@ This monorepo consists of several packages.
   * [@discord-nestjs/sample-validation](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/validation) - Bot example with slash commands validation
   * [@discord-nestjs/sample-event](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/event) - Bot example with events
   * [@discord-nestjs/sample-dependency-injection](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/dependency-injection) - Bot example with dependency injection
+  * [@discord-nestjs/sample-reaction-collector](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/reaction-collector) - Bot example with reaction collector
+  * [@discord-nestjs/sample-message-collector](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/message-collector) - Bot example with message collector
+  * [@discord-nestjs/sample-interaction-collector](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/interaction-collector) - Bot example with interaction collector
 
 
 
