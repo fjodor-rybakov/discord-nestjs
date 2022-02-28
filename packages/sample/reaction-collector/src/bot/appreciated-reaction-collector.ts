@@ -1,12 +1,16 @@
-import { Filter, On, Once, ReactionEventCollector } from '@discord-nestjs/core';
-import { Inject } from '@nestjs/common';
-import { REQUEST } from '@nestjs/core';
+import {
+  Filter,
+  InjectCollector,
+  On,
+  Once,
+  ReactionEventCollector,
+} from '@discord-nestjs/core';
 import { MessageReaction, ReactionCollector, User } from 'discord.js';
 
 @ReactionEventCollector({ time: 15000 })
 export class AppreciatedReactionCollector {
   constructor(
-    @Inject(REQUEST)
+    @InjectCollector()
     private readonly collector: ReactionCollector,
   ) {}
 

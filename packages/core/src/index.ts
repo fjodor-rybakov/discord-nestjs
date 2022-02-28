@@ -20,6 +20,7 @@ export * from './decorators/guard/discord-guard';
 export * from './decorators/pipe/discord-pipe-transform';
 export * from './decorators/pipe/discord-argument-metadata';
 export * from './decorators/filter/discord-exception-filter';
+export * from './decorators/collector/inject-collector/inject-collector';
 
 // Types
 export * from './definitions/types/guard.type';

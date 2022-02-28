@@ -13,6 +13,7 @@ NestJS package for discord.js
   - [ℹ️ Pipes](#Pipes)
   - [ℹ️ Guards](#Guards)
   - [ℹ️ Exception filters](#Filters)
+  - [ℹ️ Collectors](#Collectors)
   - [ℹ️ Middleware](#MiddlewareUsage)
 - [🛠️ Exported providers](#Providers)
   - [ℹ️ DiscordClientProvider](#DiscordClientProvider)
@@ -644,6 +645,164 @@ export class EmailSubCommand implements DiscordTransformedCommand<EmailDto> {
 ```
 
 > You can also define filter globally by passing it as `useFilters` option in the module settings.
+
+### ℹ️ Collectors <a name="Collectors"></a>
+
+In addition to the standard implementation of `collectors` from `discord.js`, `discord-nestjs` provides their declaration 
+through decorators. You can create three types of collectors: ReactCollector, MessageCollector and InteractionCollector.
+
+The first thing you need to do is create a collector class and mark it with either `@MessageCollector` or 
+`@ReactionEventCollector` or `@InteractionEventCollector` with a decorator. For example, let's create a `ReactionCollector`.
+
+#### 💡 Example
+
+```typescript
+/* appreciated-reaction-collector.ts */
+
+import {
+  Filter,
+  InjectCollector,
+  On,
+  Once,
+  ReactionEventCollector,
+} from '@discord-nestjs/core';
+import { MessageReaction, ReactionCollector, User } from 'discord.js';
+
+@ReactionEventCollector({ time: 15000 })
+export class AppreciatedReactionCollector {
+  constructor(
+    @InjectCollector()
+    private readonly collector: ReactionCollector,
+  ) {}
+
+  @Filter()
+  isLikeFromAuthor(reaction: MessageReaction, user: User): boolean {
+    return (
+      reaction.emoji.name === '👍' && user.id === reaction.message.author.id
+    );
+  }
+
+  @On('collect')
+  onCollect(): void {
+    console.log('collect');
+  }
+
+  @Once('end')
+  onEnd(): void {
+    console.log('end');
+  }
+}
+```
+
+Let me explain in detail what is going on here.
+
+* We marked the `AppreciatedReactionCollector` class with the `@ReactionEventCollector` decorator and passed collector 
+  options as decorator argument. Think of it like we created `message.createReactionCollector({ time: 15000 });` from
+  `discord.js` library.
+* The `@InjectCollector` injects the value of the collector into the class constructor.
+* The `@Filter` decorator filters the incoming data into the collector. Treat it like the `filter` option in `createReactionCollector`.
+* Decorators `On` and `Once` subscribe to collector events.
+
+Then add your collector to `extraProviders` in `DiscordModule` options.
+
+To apply your collector to the message use `@UseCollectors` decorator.
+
+#### 💡 Example
+
+```typescript
+/* bot.gateway.ts */
+
+import { On, Once, UseCollectors, UseGuards } from '@discord-nestjs/core';
+import { Injectable, Logger } from '@nestjs/common';
+import { Message } from 'discord.js';
+
+import { AppreciatedReactionCollector } from './appreciated-reaction-collector';
+import { MessageFromUserGuard } from './guards/message-from-user.guard';
+
+@Injectable()
+export class BotGateway {
+  private readonly logger = new Logger(BotGateway.name);
+
+  @Once('ready')
+  onReady(): void {
+    this.logger.log('Bot was started!');
+  }
+
+  @On('messageCreate')
+  @UseGuards(MessageFromUserGuard)
+  @UseCollectors(AppreciatedReactionCollector)
+  async onMessage(message: Message): Promise<void> {
+    await message.reply('Start collector');
+  }
+}
+```
+
+Other collectors types are created exactly by analogy. They apply to both event handlers and commands.
+
+For example, below is a sample button creation.
+
+#### 💡 Example
+
+```typescript
+/* post-interaction-collector.ts */
+
+import { InteractionEventCollector, On, Once } from '@discord-nestjs/core';
+import { ButtonInteraction } from 'discord.js';
+
+@InteractionEventCollector({ time: 15000 })
+export class PostInteractionCollector {
+  @On('collect')
+  async onCollect(interaction: ButtonInteraction): Promise<void> {
+    await interaction.update({
+      content: 'A button was clicked!',
+      components: [],
+    });
+  }
+}
+```
+
+```typescript
+/* play.command.ts */
+
+import { TransformPipe } from '@discord-nestjs/common';
+import {
+  Command,
+  DiscordTransformedCommand,
+  Payload,
+  UseCollectors,
+  UsePipes,
+} from '@discord-nestjs/core';
+import {
+  InteractionReplyOptions,
+  MessageActionRow,
+  MessageButton,
+} from 'discord.js';
+
+import { PlayDto } from '../dto/play.dto';
+import { PostInteractionCollector } from '../post-interaction-collector';
+
+@Command({
+  name: 'play',
+  description: 'Plays a song',
+})
+@UsePipes(TransformPipe)
+@UseCollectors(PostInteractionCollector)
+export class PlayCommand implements DiscordTransformedCommand<PlayDto> {
+  async handler(@Payload() dto: PlayDto): Promise<InteractionReplyOptions> {
+    const row = new MessageActionRow().addComponents(
+      new MessageButton()
+        .setCustomId('primary')
+        .setLabel(dto.song)
+        .setStyle('PRIMARY'),
+    );
+
+    return {
+      content: 'Click on the button to play the song!',
+      components: [row],
+    };
+  }
+}
+```
 
 ### ℹ️ Middleware <a name="MiddlewareUsage"></a>
 
