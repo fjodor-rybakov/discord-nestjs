@@ -709,6 +709,8 @@ Let me explain in detail what is going on here.
 * The `@Filter` decorator filters the incoming data into the collector. Treat it like the `filter` option in `createReactionCollector`.
 * Decorators `On` and `Once` subscribe to collector events.
 
+> Filters, guards and pipes can be applied to collector events.
+
 Then add your collector to `extraProviders` in `DiscordModule` options.
 
 To apply your collector to the message use `@UseCollectors` decorator.

@@ -1,7 +1,7 @@
 import { DiscordModule } from '@discord-nestjs/core';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Intents } from 'discord.js';
+import { Intents, Message } from 'discord.js';
 
 import { PlayCommand } from './command/play.command';
 import { PostInteractionCollector } from './post-interaction-collector';
@@ -20,6 +20,15 @@ import { PostInteractionCollector } from './post-interaction-collector';
             Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
           ],
         },
+        removeGlobalCommands: true,
+        registerCommandOptions: [
+          {
+            forGuild: configService.get('GUILD_ID_WITH_COMMANDS'),
+            allowFactory: (message: Message) =>
+              !message.author.bot && message.content === '!deploy',
+            removeCommandsBefore: true,
+          },
+        ],
       }),
       extraProviders: [PostInteractionCollector],
       inject: [ConfigService],
