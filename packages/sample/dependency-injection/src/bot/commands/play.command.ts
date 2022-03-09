@@ -5,7 +5,6 @@ import {
   Payload,
   UsePipes,
 } from '@discord-nestjs/core';
-import { CommandInteraction } from 'discord.js';
 
 import { PlayDto } from '../dto/play.dto';
 import { PlayService } from '../services/play.service';
@@ -18,7 +17,7 @@ import { PlayService } from '../services/play.service';
 export class PlayCommand implements DiscordTransformedCommand<PlayDto> {
   constructor(private readonly playService: PlayService) {}
 
-  handler(@Payload() dto: PlayDto, interaction: CommandInteraction): string {
+  handler(@Payload() dto: PlayDto): string {
     return this.playService.play(dto.song);
   }
 }
