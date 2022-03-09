@@ -20,6 +20,7 @@ NestJS package for discord.js
   - [ℹ️ DiscordCommandProvider](#DiscordCommandProvider)
   - [ℹ️ ReflectMetadataProvider](#ReflectMetadataProvider)
 - [🗂 Decorators description](#DecoratorsDescription)
+  - [ℹ️ @InjectDiscordClient](#InjectDiscordClient)
   - [ℹ️ @Command](#Command)
   - [ℹ️ @SubCommand](#SubCommand)
   - [ℹ️ @On](#On)
@@ -423,12 +424,24 @@ Use the `@On` decorator to subscribe to an event. `BotGateway` must be added to 
 ```typescript
 /* bot.gateway.ts */
 
-import { Injectable } from '@nestjs/common';
-import { On } from '@discord-nestjs/core';
-import { Message } from 'discord.js';
+import { Injectable, Logger } from '@nestjs/common';
+import { On, Once, InjectDiscordClient } from '@discord-nestjs/core';
+import { Client, Message } from 'discord.js';
 
 @Injectable()
 export class BotGateway {
+  private readonly logger = new Logger(BotGateway.name);
+
+  constructor(
+    @InjectDiscordClient()
+    private readonly client: Client,
+  ) {}
+
+  @Once('ready')
+  onReady() {
+    this.logger.log(`Bot ${this.client.user.tag} was started!`);
+  }
+  
   @On('messageCreate')
   async onMessage(message: Message): Promise<void> {
     if (!message.author.bot) {
@@ -866,6 +879,10 @@ Provides methods for getting metadata for decorators.
 
 
 ## 🗂 Decorators description <a name="DecoratorsDescription"></a>
+
+### ℹ️ @InjectDiscordClient <a name="InjectDiscordClient"></a>
+
+Inject Discord.js client
 
 ### ℹ️ @Command <a name="Command"></a>
 

@@ -1,6 +1,12 @@
-import { On, Once, UseGuards, UsePipes } from '@discord-nestjs/core';
+import {
+  InjectDiscordClient,
+  On,
+  Once,
+  UseGuards,
+  UsePipes,
+} from '@discord-nestjs/core';
 import { Injectable, Logger } from '@nestjs/common';
-import { Message } from 'discord.js';
+import { Client, Message } from 'discord.js';
 
 import { MessageFromUserGuard } from './guards/message-from-user.guard';
 import { MessageToUpperPipe } from './pipes/message-to-upper.pipe';
@@ -9,9 +15,14 @@ import { MessageToUpperPipe } from './pipes/message-to-upper.pipe';
 export class BotGateway {
   private readonly logger = new Logger(BotGateway.name);
 
+  constructor(
+    @InjectDiscordClient()
+    private readonly client: Client,
+  ) {}
+
   @Once('ready')
   onReady() {
-    this.logger.log('Bot was started!');
+    this.logger.log(`Bot ${this.client.user.tag} was started!`);
   }
 
   @On('messageCreate')

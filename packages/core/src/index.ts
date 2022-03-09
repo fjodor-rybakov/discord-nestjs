@@ -34,6 +34,7 @@ export * from './definitions/types/event.type';
 export * from './definitions/types/collector-args.type';
 
 // Decorators
+export * from './decorators/client/inject-discord-client.decorator';
 export * from './decorators/command/command.decorator';
 export * from './decorators/event/on/on.decorator';
 export * from './decorators/event/once/once.decorator';

@@ -1,6 +1,7 @@
 import { DynamicModule, Module, Provider, Type } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
 
+import { INJECT_DISCORD_CLIENT } from './decorators/client/inject-discord-client.constant';
 import { DISCORD_MODULE_OPTIONS } from './definitions/constants/discord-module.contant';
 import { DiscordModuleAsyncOptions } from './definitions/interfaces/discord-module-async-options';
 import { DiscordModuleOption } from './definitions/interfaces/discord-module-options';
@@ -36,6 +37,7 @@ import { RegisterCommandService } from './services/register-command.service';
 export class DiscordModule {
   static forRootAsync(options: DiscordModuleAsyncOptions): DynamicModule {
     const extraProviders = options.extraProviders || [];
+    const discordClient = DiscordModule.createDiscordClient();
 
     return {
       module: DiscordModule,
@@ -60,7 +62,6 @@ export class DiscordModule {
         DiscordResolverService,
         ...DiscordModule.createAsyncDiscordOptionProviders(options),
         DiscordClientProvider,
-        DiscordResolverService,
         DiscordClientService,
         BuildApplicationCommandService,
         CommandTreeService,
@@ -68,12 +69,23 @@ export class DiscordModule {
         CollectorClassResolver,
         CollectorResolver,
         ...extraProviders,
+        discordClient,
       ],
       exports: [
         DiscordClientProvider,
         ReflectMetadataProvider,
         DiscordCommandProvider,
+        discordClient,
       ],
+    };
+  }
+
+  private static createDiscordClient(): Provider {
+    return {
+      provide: INJECT_DISCORD_CLIENT,
+      useFactory: (discordClientProvider: DiscordClientProvider) =>
+        discordClientProvider.getClient(),
+      inject: [DiscordClientProvider],
     };
   }
 
