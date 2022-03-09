@@ -4,6 +4,11 @@
   "workspaces": [
     "packages/**/*"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fjodor-rybakov/discord-nestjs"
+  },
+  "homepage": "https://github.com/fjodor-rybakov/discord-nestjs#readme",
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "clean": "lerna clean",

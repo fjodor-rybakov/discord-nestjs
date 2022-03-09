@@ -12,8 +12,9 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/fjodor-rybakov/discord-nestjs"
+    "url": "https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/core"
   },
+  "homepage": "https://github.com/fjodor-rybakov/discord-nestjs#readme",
   "publishConfig": {
     "access": "public"
   },
