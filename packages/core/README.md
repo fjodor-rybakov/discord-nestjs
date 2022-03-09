@@ -424,7 +424,7 @@ Use the `@On` decorator to subscribe to an event. `BotGateway` must be added to 
 /* bot.gateway.ts */
 
 import { Injectable } from '@nestjs/common';
-import { On } from 'discord-nestjs';
+import { On } from '@discord-nestjs/core';
 import { Message } from 'discord.js';
 
 @Injectable()
@@ -446,7 +446,7 @@ You can also subscribe to an event once using the `@Once` decorator
 /* bot.gateway.ts */
 
 import { Injectable, Logger } from '@nestjs/common';
-import { Once } from 'discord-nestjs';
+import { Once } from '@discord-nestjs/core';
 import { Message } from 'discord.js';
 
 @Injectable()
@@ -822,7 +822,7 @@ To do this, you need to implement the `DiscordMiddleware` interface.
 ```typescript
 /* bot.middleware.ts */
 
-import { Middleware, DiscordMiddleware } from 'discord-nestjs';
+import { Middleware, DiscordMiddleware } from '@discord-nestjs/core';
 import { Logger } from '@nestjs/common';
 import { ClientEvents } from 'discord.js';
 
