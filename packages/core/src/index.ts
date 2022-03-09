@@ -61,3 +61,6 @@ export * from './decorators/collector/filter/filter.decorator';
 export * from './providers/discord-client.provider';
 export * from './providers/reflect-metadata.provider';
 export * from './providers/discord-command.provider';
+
+// Constants
+export * from './decorators/client/inject-discord-client.constant';
