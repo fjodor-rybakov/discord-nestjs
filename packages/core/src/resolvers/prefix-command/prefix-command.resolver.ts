@@ -108,7 +108,8 @@ export class PrefixCommandResolver implements MethodResolver {
             event,
             metatype: dtoInstance?.constructor,
             eventArgs,
-            initValue: eventArgs,
+            initValue: message,
+            commandNode: { dtoInstance },
           });
           //#endregion
 
@@ -122,11 +123,14 @@ export class PrefixCommandResolver implements MethodResolver {
           const executionContext: ExecutionContext = {
             collectors,
           };
+          const handlerArgs = dtoInstance ? [pipeResult, message] : eventArgs;
 
-          await instance[methodName](
-            ...(pipeResult || eventArgs),
+          const replyResult = await instance[methodName](
+            ...handlerArgs,
             executionContext,
           );
+
+          if (replyResult) await message.reply(replyResult);
 
           if (isRemoveMessage) await this.removeMessageFromChannel(message);
         } catch (exception) {

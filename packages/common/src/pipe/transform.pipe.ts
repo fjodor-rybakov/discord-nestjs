@@ -4,7 +4,7 @@ import {
   ReflectMetadataProvider,
 } from '@discord-nestjs/core';
 import { Inject, Injectable, Optional } from '@nestjs/common';
-import { ClassTransformOptions, instanceToInstance } from 'class-transformer';
+import { ClassTransformOptions, plainToInstance } from 'class-transformer';
 import { Interaction } from 'discord.js';
 
 import { TRANSFORMER_OPTION } from '../transformer-options.constant';
@@ -24,30 +24,28 @@ export class TransformPipe implements DiscordPipeTransform {
   transform(
     interaction: Interaction,
     metadata: DiscordArgumentMetadata<'interactionCreate'>,
-  ): any {
+  ): InstanceType<any> {
     if (!metadata.metatype || !interaction || !interaction.isCommand()) return;
 
-    const { dtoInstance: originalInstance } = metadata.commandNode;
-    const newInstance = Object.assign(
-      Object.create(Object.getPrototypeOf(originalInstance)),
-      originalInstance,
-    );
+    const { dtoInstance } = metadata.commandNode;
+    const plainObject = {};
 
-    Object.keys(originalInstance).forEach((property: string) => {
+    Object.keys(dtoInstance).forEach((property: string) => {
       const paramDecoratorMetadata =
-        this.metadataProvider.getParamDecoratorMetadata(
-          originalInstance,
-          property,
-        );
+        this.metadataProvider.getParamDecoratorMetadata(dtoInstance, property);
 
       if (!paramDecoratorMetadata) return;
 
       const { name, required } = paramDecoratorMetadata;
-      newInstance[property] =
+      plainObject[property] =
         interaction.options.get(name ?? property, required)?.value ??
-        originalInstance[property];
+        dtoInstance[property];
     });
 
-    return instanceToInstance(newInstance, this.classTransformerOptions);
+    return plainToInstance(
+      metadata.metatype,
+      plainObject,
+      this.classTransformerOptions,
+    );
   }
 }

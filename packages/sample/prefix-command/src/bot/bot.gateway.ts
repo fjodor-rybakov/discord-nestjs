@@ -1,13 +1,15 @@
+import { PrefixCommandTransformPipe } from '@discord-nestjs/common';
 import {
   InjectDiscordClient,
   OnPrefixCommand,
   Once,
+  Payload,
   UsePipes,
 } from '@discord-nestjs/core';
 import { Injectable, Logger } from '@nestjs/common';
-import { Client, Message } from 'discord.js';
+import { Client } from 'discord.js';
 
-import { MessageToUpperPipe } from './pipes/message-to-upper.pipe';
+import { StartDto } from './dto/start.dto';
 
 @Injectable()
 export class BotGateway {
@@ -24,10 +26,10 @@ export class BotGateway {
   }
 
   @OnPrefixCommand('start')
-  @UsePipes(MessageToUpperPipe)
-  async onMessage(message: Message): Promise<void> {
-    this.logger.log(`Incoming message: ${message.content}`);
+  @UsePipes(PrefixCommandTransformPipe)
+  async onMessage(@Payload() dto: StartDto): Promise<string> {
+    console.log(dto);
 
-    await message.reply('Message processed successfully');
+    return 'Message processed successfully';
   }
 }

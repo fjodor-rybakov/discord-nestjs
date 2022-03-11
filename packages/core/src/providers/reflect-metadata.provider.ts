@@ -41,6 +41,10 @@ import { ON_PREFIX_COMMAND_DECORATOR } from '../decorators/prefix-command/on-pre
 import { PrefixCommandOptions } from '../decorators/prefix-command/prefix-command-options';
 import { SubCommandOptions } from '../decorators/sub-command/sub-command-options';
 import { SUB_COMMAND_DECORATOR } from '../decorators/sub-command/sub-command.constant';
+import { ArgNumOptions } from '../decorators/transformation/arg-num/arg-num-options';
+import { ARG_NUM_DECORATOR } from '../decorators/transformation/arg-num/arg-num.constant';
+import { ArgRangeOptions } from '../decorators/transformation/arg-range/arg-range-options';
+import { ARG_RANGE_DECORATOR } from '../decorators/transformation/arg-range/arg-range.constant';
 import { ExcludeEnum } from '../definitions/types/exclude-enum.type';
 import { FilterType } from '../definitions/types/filter.type';
 import { GuardType } from '../definitions/types/guard.type';
@@ -81,6 +85,20 @@ export class ReflectMetadataProvider {
       instance,
       methodName,
     );
+  }
+
+  getArgNumDecoratorMetadata(
+    instance: InstanceType<any>,
+    propertyKey: string,
+  ): (last?: number) => ArgNumOptions {
+    return Reflect.getMetadata(ARG_NUM_DECORATOR, instance, propertyKey);
+  }
+
+  getArgRangeDecoratorMetadata(
+    instance: InstanceType<any>,
+    propertyKey: string,
+  ): (last?: number) => ArgRangeOptions {
+    return Reflect.getMetadata(ARG_RANGE_DECORATOR, instance, propertyKey);
   }
 
   getOnCollectEventDecoratorMetadata(

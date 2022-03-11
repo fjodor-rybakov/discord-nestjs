@@ -22,6 +22,8 @@ export * from './decorators/pipe/discord-argument-metadata';
 export * from './decorators/filter/discord-exception-filter';
 export * from './decorators/collector/inject-collector/inject-collector';
 export * from './decorators/prefix-command/prefix-command-options';
+export * from './decorators/transformation/arg-num/arg-num-options';
+export * from './decorators/transformation/arg-range/arg-range-options';
 
 // Types
 export * from './definitions/types/guard.type';
@@ -58,6 +60,8 @@ export * from './decorators/collector/interaction-collector/interaction-collecto
 export * from './decorators/collector/use-collectors/use-collectors.decorator';
 export * from './decorators/collector/filter/filter.decorator';
 export * from './decorators/prefix-command/on-prefix-command.decorator';
+export * from './decorators/transformation/arg-num/arg-num.decorator';
+export * from './decorators/transformation/arg-range/arg-range.decorator';
 
 // Providers
 export * from './providers/discord-client.provider';
