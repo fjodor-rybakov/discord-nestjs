@@ -13,10 +13,7 @@ export class ParamResolver implements MethodResolver {
 
   constructor(private readonly metadataProvider: ReflectMetadataProvider) {}
 
-  resolve({
-    instance,
-    methodName,
-  }: MethodResolveOptions): Promise<void> | void {
+  resolve({ instance, methodName }: MethodResolveOptions): void {
     const paramsTypes = this.metadataProvider.getParamTypesMetadata(
       instance,
       methodName,

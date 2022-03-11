@@ -37,6 +37,8 @@ import { PARAM_DECORATOR } from '../decorators/option/param/param.constant';
 import { ParamTypeOptions } from '../decorators/param/param-type-options';
 import { PAYLOAD_DECORATOR } from '../decorators/param/payload/payload.constant';
 import { USE_PIPES_DECORATOR } from '../decorators/pipe/pipe.constant';
+import { ON_PREFIX_COMMAND_DECORATOR } from '../decorators/prefix-command/on-prefix-command.constant';
+import { PrefixCommandOptions } from '../decorators/prefix-command/prefix-command-options';
 import { SubCommandOptions } from '../decorators/sub-command/sub-command-options';
 import { SUB_COMMAND_DECORATOR } from '../decorators/sub-command/sub-command.constant';
 import { ExcludeEnum } from '../definitions/types/exclude-enum.type';
@@ -68,6 +70,17 @@ export class ReflectMetadataProvider {
     methodName: string,
   ): OnDecoratorOptions {
     return Reflect.getMetadata(ONCE_DECORATOR, instance, methodName);
+  }
+
+  getOnCommandDecoratorMetadata(
+    instance: InstanceType<any>,
+    methodName: string,
+  ): PrefixCommandOptions {
+    return Reflect.getMetadata(
+      ON_PREFIX_COMMAND_DECORATOR,
+      instance,
+      methodName,
+    );
   }
 
   getOnCollectEventDecoratorMetadata(

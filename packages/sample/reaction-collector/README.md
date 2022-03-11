@@ -15,7 +15,7 @@
 
 ## Description
 
-Sample with slash commands
+Sample with reaction collector
 
 ## Installation
 
