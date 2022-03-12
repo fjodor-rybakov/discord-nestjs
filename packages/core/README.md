@@ -10,6 +10,7 @@ NestJS package for discord.js
   - [ℹ️ Creating slash commands](#Command)
     - [ℹ️ Automatic registration of slash commands](#AutoRegCommand)
   - [ℹ️ Subscribe to event](#SubToEvent)
+  - [ℹ️ Prefix commands](#PrefixCommands)
   - [ℹ️ Pipes](#Pipes)
   - [ℹ️ Guards](#Guards)
   - [ℹ️ Exception filters](#Filters)
@@ -25,6 +26,9 @@ NestJS package for discord.js
   - [ℹ️ @SubCommand](#SubCommand)
   - [ℹ️ @On](#On)
   - [ℹ️ @Once](#Once)
+  - [ℹ️ @PrefixCommand](#PrefixCommand)
+  - [ℹ️ @ArgNum](#ArgNum)
+  - [ℹ️ @ArgRange](#ArgRange)
   - [ℹ️ @Payload](#Payload)
   - [ℹ️ @UsePipes](#UsePipes)
   - [ℹ️ @UseGuards](#UseGuards)
@@ -78,12 +82,13 @@ If `true` then overlaps `registerCommandOptions`
 - `registerCommandOptions` - Specific registration of slash commands
     - `forGuild` - For which guild to register a slash command
     - `allowFactory` - Based on what criteria will slash commands be registered
-- `webhook` - Connecting with webhook
-    - `webhookId` \* - Webhook id
-    - `webhookToken` \* - Webhook token
+- `prefix` - Global command prefix
 - `useFilters` - List of filter exception that will apply to all handlers
 - `usePipes` - List of pipes that will apply to all handlers
 - `useGuards` - List of guards that will apply to all handlers
+- `webhook` - Connecting with webhook
+    - `webhookId` \* - Webhook id
+    - `webhookToken` \* - Webhook token
 
 > ⚠️**Important! For the bot to work correctly, you need to set up intentions in `discordClientOptions` param. [More info](https://discordjs.guide/popular-topics/intents.html#privileged-intents)**
 
@@ -417,7 +422,7 @@ export class BotModule {}
 
 Subscription to incoming events ([hint](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584))
 
-Use the `@On` decorator to subscribe to an event. `BotGateway` must be added to providers.
+Use the `@On` decorator to subscribe to an event. `BotGateway` must be added to module providers.
 
 #### 💡 Example
 
@@ -472,6 +477,121 @@ export class BotGateway {
   }
 }
 ```
+
+### ℹ️ Prefix commands <a name="PrefixCommands"></a>
+
+To create a command with a prefix from the `messageCreate` event use the `@PrefixCommand` decorator.
+The following code will create a `!start` prefix command.
+
+#### 💡 Example
+
+```typescript
+/* bot.gateway.ts */
+
+import {
+  InjectDiscordClient,
+  PrefixCommand,
+  Once,
+} from '@discord-nestjs/core';
+import { Injectable, Logger } from '@nestjs/common';
+import { Client } from 'discord.js';
+
+@Injectable()
+export class BotGateway {
+  private readonly logger = new Logger(BotGateway.name);
+
+  constructor(
+    @InjectDiscordClient()
+    private readonly client: Client,
+  ) {}
+
+  @Once('ready')
+  onReady() {
+    this.logger.log(`Bot ${this.client.user.tag} was started!`);
+  }
+
+  @PrefixCommand('start', { prefix: '!' })
+  async onMessage(message: Message): Promise<string> {
+    return 'Message processed successfully';
+  }
+}
+```
+
+> You can set the `prefix` globally via setting in the `DiscordModule`.
+
+You can also generate a DTO class based on incoming message content. 
+
+Create an DTO class. Think of the input string as if it were separated by spaces.
+For slicing parameters, the decorators `@ArgNum` and `@ArgRange` are used.
+
+* `@ArgNum` takes value at array index 
+* `@ArgRange` is the same as the `slice` function
+
+#### 💡 Example
+
+```typescript
+/* start.dto.ts */
+
+import { ArgNum, ArgRange } from '@discord-nestjs/core';
+
+export class StartDto {
+  @ArgNum(() => ({ position: 0 }))
+  game: string;
+
+  @ArgRange((last) => ({ formPosition: last + 1 }))
+  players: string[];
+}
+```
+
+Then just create a command. Mark the DTO with the `@Payload` decorator as the first parameter.
+It is also necessary to hang a pipe that will create DTO. You can use the already built-in `PrefixCommandTransformPipe`
+from the package `@discord/common` package or create your own pipe.
+
+```typescript
+/* bot.gateway.ts */
+
+import { PrefixCommandTransformPipe } from '@discord-nestjs/common';
+import {
+  InjectDiscordClient,
+  PrefixCommand,
+  Once,
+  Payload,
+  UsePipes,
+} from '@discord-nestjs/core';
+import { Injectable, Logger } from '@nestjs/common';
+import { Client, Message } from 'discord.js';
+
+import { StartDto } from './dto/start.dto';
+
+@Injectable()
+export class BotGateway {
+  private readonly logger = new Logger(BotGateway.name);
+
+  constructor(
+    @InjectDiscordClient()
+    private readonly client: Client,
+  ) {}
+
+  @Once('ready')
+  onReady() {
+    this.logger.log(`Bot ${this.client.user.tag} was started!`);
+  }
+
+  @PrefixCommand('start')
+  @UsePipes(PrefixCommandTransformPipe)
+  async onMessage(@Payload() dto: StartDto, message: Message): Promise<string> {
+    console.log(dto);
+
+    return 'Message processed successfully';
+  }
+}
+```
+
+`BotGateway` must be added to module providers.
+
+The message `!start warzone misha mark` in the channel should generate 
+`StartDto { game: 'warzone', players: [ 'misha', 'mark' ] }` DTO.
+
 
 ### ℹ️ Pipes <a name="Pipes"></a>
 
@@ -915,6 +1035,42 @@ Handle discord and collector events [hint](https://gist.github.com/koad/316b265a
 ### ℹ️ @Once <a name="Once"></a>
 
 Handle discord and collector events (only once) [hint](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
+
+### ℹ️ @PrefixCommand <a name="PrefixCommand"></a>
+
+Create prefix command
+
+#### Params
+
+`name` \* - Command name
+`prefix` - Command prefix (If set, it overrides the global)
+`isRemoveCommandName` - Remove command name from input string (Default `true`)
+`isRemovePrefix` - Remove prefix from input string (Default `true`)
+`isIgnoreBotMessage` - Ignore messages from bots (Default `true`)
+`isRemoveMessage` - Remove message from channel after processing (Default `false`)
+
+### ℹ️ @ArgNum <a name="ArgNum"></a>
+
+Set value by argument number
+
+#### Params
+
+- arguments
+    - `last` - Last index position
+- return
+    - `position` \* - Position index form input
+
+### ℹ️ @ArgRange <a name="ArgRange"></a>
+
+Set value by argument number
+
+#### Params
+
+- arguments
+    - `last` - Last index position
+- return
+    - `formPosition` \* - Start index position form input
+    - `toPosition` - Finish index position form input (default last index of input)
 
 #### Params
 

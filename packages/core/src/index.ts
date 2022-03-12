@@ -59,7 +59,7 @@ export * from './decorators/collector/message-collector/message-collector.decora
 export * from './decorators/collector/interaction-collector/interaction-collector.decorator';
 export * from './decorators/collector/use-collectors/use-collectors.decorator';
 export * from './decorators/collector/filter/filter.decorator';
-export * from './decorators/prefix-command/on-prefix-command.decorator';
+export * from './decorators/prefix-command/prefix-command.decorator';
 export * from './decorators/transformation/arg-num/arg-num.decorator';
 export * from './decorators/transformation/arg-range/arg-range.decorator';
 
