@@ -1,6 +1,7 @@
 import { Type } from '@nestjs/common';
 
 import { EventArgs, EventType } from '../../definitions/types/event.type';
+import { CommandNode } from '../../definitions/types/tree/command-node';
 
 export interface DiscordPipeOptions<TEvent extends EventType = any> {
   instance: unknown;
@@ -9,5 +10,5 @@ export interface DiscordPipeOptions<TEvent extends EventType = any> {
   eventArgs: EventArgs<TEvent>;
   initValue?: unknown;
   metatype?: Type;
-  commandNode?: Record<string, any>;
+  commandNode?: CommandNode;
 }

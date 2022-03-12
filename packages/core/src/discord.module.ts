@@ -23,12 +23,14 @@ import { OptionResolver } from './resolvers/option/option.resolver';
 import { ParamResolver } from './resolvers/param/param.resolver';
 import { PipeClassResolver } from './resolvers/pipe/pipe-class.resolver';
 import { PipeResolver } from './resolvers/pipe/pipe.resolver';
+import { PrefixCommandResolver } from './resolvers/prefix-command/prefix-command.resolver';
 import { BuildApplicationCommandService } from './services/build-application-command.service';
 import { CommandPathToClassService } from './services/command-path-to-class.service';
 import { CommandTreeService } from './services/command-tree.service';
 import { DiscordClientService } from './services/discord-client.service';
 import { DiscordOptionService } from './services/discord-option.service';
 import { DiscordResolverService } from './services/discord-resolver.service';
+import { DtoService } from './services/dto.service';
 import { RegisterCommandService } from './services/register-command.service';
 
 @Module({
@@ -58,6 +60,8 @@ export class DiscordModule {
         PipeClassResolver,
         ParamResolver,
         CommandResolver,
+        PrefixCommandResolver,
+        DtoService,
         EventResolver,
         DiscordResolverService,
         ...DiscordModule.createAsyncDiscordOptionProviders(options),

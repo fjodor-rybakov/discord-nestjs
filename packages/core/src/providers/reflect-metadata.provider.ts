@@ -37,8 +37,14 @@ import { PARAM_DECORATOR } from '../decorators/option/param/param.constant';
 import { ParamTypeOptions } from '../decorators/param/param-type-options';
 import { PAYLOAD_DECORATOR } from '../decorators/param/payload/payload.constant';
 import { USE_PIPES_DECORATOR } from '../decorators/pipe/pipe.constant';
+import { PrefixCommandOptions } from '../decorators/prefix-command/prefix-command-options';
+import { ON_PREFIX_COMMAND_DECORATOR } from '../decorators/prefix-command/prefix-command.constant';
 import { SubCommandOptions } from '../decorators/sub-command/sub-command-options';
 import { SUB_COMMAND_DECORATOR } from '../decorators/sub-command/sub-command.constant';
+import { ArgNumOptions } from '../decorators/transformation/arg-num/arg-num-options';
+import { ARG_NUM_DECORATOR } from '../decorators/transformation/arg-num/arg-num.constant';
+import { ArgRangeOptions } from '../decorators/transformation/arg-range/arg-range-options';
+import { ARG_RANGE_DECORATOR } from '../decorators/transformation/arg-range/arg-range.constant';
 import { ExcludeEnum } from '../definitions/types/exclude-enum.type';
 import { FilterType } from '../definitions/types/filter.type';
 import { GuardType } from '../definitions/types/guard.type';
@@ -68,6 +74,31 @@ export class ReflectMetadataProvider {
     methodName: string,
   ): OnDecoratorOptions {
     return Reflect.getMetadata(ONCE_DECORATOR, instance, methodName);
+  }
+
+  getOnCommandDecoratorMetadata(
+    instance: InstanceType<any>,
+    methodName: string,
+  ): PrefixCommandOptions {
+    return Reflect.getMetadata(
+      ON_PREFIX_COMMAND_DECORATOR,
+      instance,
+      methodName,
+    );
+  }
+
+  getArgNumDecoratorMetadata(
+    instance: InstanceType<any>,
+    propertyKey: string,
+  ): (last?: number) => ArgNumOptions {
+    return Reflect.getMetadata(ARG_NUM_DECORATOR, instance, propertyKey);
+  }
+
+  getArgRangeDecoratorMetadata(
+    instance: InstanceType<any>,
+    propertyKey: string,
+  ): (last?: number) => ArgRangeOptions {
+    return Reflect.getMetadata(ARG_RANGE_DECORATOR, instance, propertyKey);
   }
 
   getOnCollectEventDecoratorMetadata(

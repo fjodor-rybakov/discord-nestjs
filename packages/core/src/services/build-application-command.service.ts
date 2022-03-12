@@ -21,8 +21,8 @@ import { DiscordCommand } from '../definitions/interfaces/discord-command';
 import { TInclude } from '../definitions/types/include.type';
 import { ReflectMetadataProvider } from '../providers/reflect-metadata.provider';
 import { OptionResolver } from '../resolvers/option/option.resolver';
-import { ParamResolver } from '../resolvers/param/param.resolver';
 import { CommandTreeService } from './command-tree.service';
+import { DtoService } from './dto.service';
 
 type NonCommandData =
   | ApplicationCommandNonOptionsData
@@ -32,11 +32,11 @@ type NonCommandData =
 @Injectable()
 export class BuildApplicationCommandService {
   constructor(
-    private readonly paramResolver: ParamResolver,
     private readonly moduleRef: ModuleRef,
     private readonly metadataProvider: ReflectMetadataProvider,
     private readonly optionResolver: OptionResolver,
     private readonly commandTreeService: CommandTreeService,
+    private readonly dtoService: DtoService,
   ) {}
 
   async resolveCommandOptions(
@@ -50,11 +50,6 @@ export class BuildApplicationCommandService {
       type = ApplicationCommandTypes.CHAT_INPUT,
     }: CommandOptions,
   ): Promise<ApplicationCommandData> {
-    this.paramResolver.resolve({ instance, methodName });
-    const payloadType = this.paramResolver.getPayloadType({
-      instance,
-      methodName,
-    });
     this.commandTreeService.appendNode([name], { instance });
     const applicationCommandData: ApplicationCommandData = {
       type,
@@ -63,16 +58,18 @@ export class BuildApplicationCommandService {
       defaultPermission,
     };
 
-    if (applicationCommandData.type === ApplicationCommandTypes.CHAT_INPUT) {
+    if (applicationCommandData.type === ApplicationCommandTypes.CHAT_INPUT)
       applicationCommandData.options = await this.resolveSubCommandOptions(
         name,
         include,
       );
-    }
 
-    let dtoInstance: any;
-    if (payloadType) {
-      dtoInstance = await this.moduleRef.create(payloadType);
+    const dtoInstance = await this.dtoService.createDtoInstance(
+      instance,
+      methodName,
+    );
+
+    if (dtoInstance) {
       this.commandTreeService.appendNode([name, 'dtoInstance'], dtoInstance);
       const optionMetadata = this.optionResolver.resolve(dtoInstance);
       const commandOptions: NonCommandData[] = [];
@@ -95,11 +92,10 @@ export class BuildApplicationCommandService {
         });
       }
 
-      if (applicationCommandData.type === ApplicationCommandTypes.CHAT_INPUT) {
+      if (applicationCommandData.type === ApplicationCommandTypes.CHAT_INPUT)
         applicationCommandData.options = applicationCommandData.options.concat(
           this.sortByRequired(commandOptions),
         );
-      }
     }
 
     return applicationCommandData;
@@ -159,12 +155,10 @@ export class BuildApplicationCommandService {
     );
 
     const methodName = 'handler';
-    this.paramResolver.resolve({ instance: subCommandInstance, methodName });
-
-    const payloadType = this.paramResolver.getPayloadType({
-      instance: subCommandInstance,
+    const dtoInstance = await this.dtoService.createDtoInstance(
+      subCommandInstance,
       methodName,
-    });
+    );
     const applicationSubCommandData: ApplicationCommandSubCommandData = {
       name: metadata.name,
       description: metadata.description,
@@ -172,8 +166,7 @@ export class BuildApplicationCommandService {
     };
     const applicationSubCommandOptions = [];
 
-    if (payloadType) {
-      const dtoInstance = await this.moduleRef.create(payloadType);
+    if (dtoInstance) {
       this.commandTreeService.appendNode(
         [commandName, subGroupName, metadata.name, 'dtoInstance'],
         dtoInstance,
@@ -209,8 +202,8 @@ export class BuildApplicationCommandService {
   private sortByRequired<TOption extends { required?: boolean }>(
     options: TOption[],
   ): TOption[] {
-    return options.sort((first, second) => {
-      return first.required > second.required ? -1 : 1;
-    });
+    return options.sort((first, second) =>
+      first.required > second.required ? -1 : 1,
+    );
   }
 }

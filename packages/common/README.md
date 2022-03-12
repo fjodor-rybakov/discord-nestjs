@@ -20,7 +20,9 @@ $ yarn add @discord-nestjs/common
 
 ### ℹ️ Pipes template
 
-`TransformPipe` fills in the fields `DTO` from `CommandInteraction`.
+`TransformPipe` fills in the fields `DTO` from `CommandInteraction`. 
+
+For prefix command use `PrefixCommandTransformPipe`.
 
 #### 💡 Example
 
@@ -73,7 +75,9 @@ export class BaseInfoCommand implements DiscordTransformedCommand<RegistrationEm
 ```
 
 `ValidationPipe` validate the resulting `DTO` based on class-validator. If the `DTO` is invalid then an exception will be thrown, 
-which can be caught by the filter from the package `@discord-nestjs/core`.
+which can be caught by the filter from the package `@discord-nestjs/core`. 
+
+Also suitable for prefix commands.
 
 > for validation, you need to install package `class-validator`
 

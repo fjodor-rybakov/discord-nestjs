@@ -53,6 +53,13 @@ export interface DiscordModuleOption {
   registerCommandOptions?: RegisterCommandOptions[];
 
   /**
+   * Command prefix
+   *
+   * Only for prefix command
+   */
+  prefix?: string;
+
+  /**
    * Use pipes for all handlers
    * Takes list of class types or list of instances
    */

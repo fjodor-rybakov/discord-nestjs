@@ -18,6 +18,7 @@ import { MiddlewareResolver } from '../resolvers/middleware/middleware.resolver'
 import { ParamResolver } from '../resolvers/param/param.resolver';
 import { PipeClassResolver } from '../resolvers/pipe/pipe-class.resolver';
 import { PipeResolver } from '../resolvers/pipe/pipe.resolver';
+import { PrefixCommandResolver } from '../resolvers/prefix-command/prefix-command.resolver';
 import { IsObject } from '../utils/function/is-object';
 import { CommandPathToClassService } from './command-path-to-class.service';
 import { CommandTreeService } from './command-tree.service';
@@ -47,6 +48,7 @@ export class DiscordResolverService implements OnModuleInit {
     private readonly collectorResolver: CollectorResolver,
     private readonly collectorClassResolver: CollectorClassResolver,
     private readonly baseCollectorResolver: BaseCollectorResolver,
+    private readonly prefixCommandResolver: PrefixCommandResolver,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -70,6 +72,7 @@ export class DiscordResolverService implements OnModuleInit {
       this.guardResolver,
       this.pipeResolver,
       this.eventResolver,
+      this.prefixCommandResolver,
     ];
 
     const classResolvers = [
