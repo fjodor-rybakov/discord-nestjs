@@ -30,7 +30,6 @@ import { PipeClassResolver } from './resolvers/pipe/pipe-class.resolver';
 import { PipeResolver } from './resolvers/pipe/pipe.resolver';
 import { PrefixCommandResolver } from './resolvers/prefix-command/prefix-command.resolver';
 import { BuildApplicationCommandService } from './services/build-application-command.service';
-import { CommandPathToClassService } from './services/command-path-to-class.service';
 import { CommandTreeService } from './services/command-tree.service';
 import { DiscordClientService } from './services/discord-client.service';
 import { DiscordResolverService } from './services/discord-resolver.service';
@@ -52,7 +51,6 @@ export class DiscordModule {
       providers: [
         ...DiscordModule.createAsyncDiscordOptionProviders(options),
         ...DiscordModule.createExportedForRootProviders(),
-        CommandPathToClassService,
         RegisterCommandService,
         OptionResolver,
         FilterResolver,

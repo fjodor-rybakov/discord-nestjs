@@ -1,4 +1,3 @@
-import { Type } from '@nestjs/common';
 import { ClientOptions, WebhookClientData } from 'discord.js';
 
 import { FilterType } from '../types/filter.type';
@@ -17,12 +16,6 @@ export interface DiscordModuleOption {
    * Client options from discord.js library
    */
   discordClientOptions: ClientOptions;
-
-  /**
-   * List of command classes
-   * Accepts list of class types or list of search patterns
-   */
-  commands?: (Type | string)[];
 
   /**
    * Slash command permission which allow you to control who has access to use

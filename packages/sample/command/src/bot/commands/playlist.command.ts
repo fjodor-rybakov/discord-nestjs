@@ -1,6 +1,8 @@
 import { Command, DiscordCommand } from '@discord-nestjs/core';
+import { Injectable } from '@nestjs/common';
 import { CommandInteraction } from 'discord.js';
 
+@Injectable()
 @Command({
   name: 'playlist',
   description: 'Your playlist',

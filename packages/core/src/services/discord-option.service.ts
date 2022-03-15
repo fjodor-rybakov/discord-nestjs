@@ -21,7 +21,6 @@ export class DiscordOptionService {
       useGuards,
       usePipes,
       useFilters,
-      commands,
       autoRegisterGlobalCommands,
       removeGlobalCommands,
     } = options;
@@ -31,7 +30,6 @@ export class DiscordOptionService {
       useGuards: useGuards ?? [],
       usePipes: usePipes ?? [],
       useFilters: useFilters ?? [],
-      commands: commands ?? [],
       autoRegisterGlobalCommands: autoRegisterGlobalCommands || false,
       removeGlobalCommands: removeGlobalCommands || false,
     };

@@ -4,7 +4,6 @@ import { City } from '../definitions/city';
 
 export class EmailDto {
   @Param({
-    name: 'email',
     description: 'Base user email',
     required: true,
   })

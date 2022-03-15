@@ -1,10 +1,7 @@
-import { Injectable, OnModuleInit, Type } from '@nestjs/common';
-import { DiscoveryService, MetadataScanner, ModuleRef } from '@nestjs/core';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { DiscoveryService, MetadataScanner } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 
-import { DiscordModuleOption } from '../definitions/interfaces/discord-module-options';
-import { CommandNode } from '../definitions/types/tree/command-node';
-import { Leaf } from '../definitions/types/tree/leaf';
 import { BaseCollectorResolver } from '../resolvers/collector/base-collector.resolver';
 import { CollectorClassResolver } from '../resolvers/collector/collector-class.resolver';
 import { CollectorResolver } from '../resolvers/collector/use-collectors/collector.resolver';
@@ -20,8 +17,6 @@ import { PipeClassResolver } from '../resolvers/pipe/pipe-class.resolver';
 import { PipeResolver } from '../resolvers/pipe/pipe.resolver';
 import { PrefixCommandResolver } from '../resolvers/prefix-command/prefix-command.resolver';
 import { IsObject } from '../utils/function/is-object';
-import { CommandPathToClassService } from './command-path-to-class.service';
-import { CommandTreeService } from './command-tree.service';
 import { DiscordOptionService } from './discord-option.service';
 import { RegisterCommandService } from './register-command.service';
 
@@ -29,7 +24,6 @@ import { RegisterCommandService } from './register-command.service';
 export class DiscordResolverService implements OnModuleInit {
   constructor(
     private readonly discoveryService: DiscoveryService,
-    private readonly moduleRef: ModuleRef,
     private readonly metadataScanner: MetadataScanner,
     private readonly filterResolver: FilterResolver,
     private readonly filterClassResolver: FilterClassResolver,
@@ -42,8 +36,6 @@ export class DiscordResolverService implements OnModuleInit {
     private readonly paramResolver: ParamResolver,
     private readonly commandResolver: CommandResolver,
     private readonly discordOptionService: DiscordOptionService,
-    private readonly commandPathToClassService: CommandPathToClassService,
-    private readonly commandTreeService: CommandTreeService,
     private readonly registerCommandService: RegisterCommandService,
     private readonly collectorResolver: CollectorResolver,
     private readonly collectorClassResolver: CollectorClassResolver,
@@ -63,7 +55,6 @@ export class DiscordResolverService implements OnModuleInit {
     controllers: InstanceWrapper[],
   ): Promise<void> {
     const options = this.discordOptionService.getClientData();
-    const commandInstances = await this.instantiateCommands(options);
 
     const methodResolvers = [
       this.filterResolver,
@@ -76,6 +67,7 @@ export class DiscordResolverService implements OnModuleInit {
     ];
 
     const classResolvers = [
+      this.commandResolver,
       this.filterClassResolver,
       this.baseCollectorResolver,
       this.middlewareResolver,
@@ -85,60 +77,30 @@ export class DiscordResolverService implements OnModuleInit {
     ];
 
     await Promise.all(
-      providers
-        .concat(controllers)
-        .concat(commandInstances.flat())
-        .map(async (instanceWrapper: any) => {
-          let instance = instanceWrapper;
-          if (instanceWrapper instanceof InstanceWrapper)
-            instance = instanceWrapper.instance;
-          if (!instance || !IsObject(instance)) return;
+      providers.concat(controllers).map(async (instanceWrapper: any) => {
+        let instance = instanceWrapper;
+        if (instanceWrapper instanceof InstanceWrapper)
+          instance = instanceWrapper.instance;
+        if (!instance || !IsObject(instance)) return;
 
-          for await (const resolver of classResolvers)
-            await resolver.resolve({ instance });
+        for await (const resolver of classResolvers)
+          await resolver.resolve({ instance });
 
-          const methodNames = this.scanMetadata(instance);
-          await Promise.all(
-            methodNames.map(async (methodName: string) => {
-              for await (const resolver of methodResolvers) {
-                await resolver.resolve({
-                  instance,
-                  methodName,
-                });
-              }
-            }),
-          );
-        }),
-    );
-
-    await this.registerCommandService.register(options);
-  }
-
-  private async instantiateCommands(
-    options: DiscordModuleOption,
-  ): Promise<any[]> {
-    const commandTypes =
-      await this.commandPathToClassService.resolveCommandsType(
-        options.commands,
-      );
-
-    const commandInstances = await Promise.all(
-      commandTypes.map(async (command: Type) => {
-        const instance = await this.moduleRef.create(command);
-        await this.commandResolver.resolve({ instance });
-        const instances: any[] = [];
-
-        const commandNode = Object.values(
-          this.commandTreeService.getTree(),
-        ).find((node) => node.instance.constructor.name === command.name);
-
-        this.findAllInstancesInTree(commandNode, instances);
-
-        return instances;
+        const methodNames = this.scanMetadata(instance);
+        await Promise.all(
+          methodNames.map(async (methodName: string) => {
+            for await (const resolver of methodResolvers) {
+              await resolver.resolve({
+                instance,
+                methodName,
+              });
+            }
+          }),
+        );
       }),
     );
 
-    return commandInstances.flat();
+    await this.registerCommandService.register(options);
   }
 
   private scanMetadata(instance: any): string[] {
@@ -147,24 +109,5 @@ export class DiscordResolverService implements OnModuleInit {
       Object.getPrototypeOf(instance),
       (methodName) => methodName,
     );
-  }
-
-  private findAllInstancesInTree(node: CommandNode, instances: any[]): void {
-    if (!node) return;
-    if (node.instance) instances.push(node.instance);
-
-    const commandsNames = this.getCommandNamesFromNode(node);
-    if (commandsNames.length === 0) return;
-
-    commandsNames.forEach((name: string) =>
-      this.findAllInstancesInTree(node[name], instances),
-    );
-  }
-
-  private getCommandNamesFromNode(node: CommandNode): string[] {
-    const keys = Object.keys(node);
-    const excludeKeys: (keyof Leaf)[] = ['instance', 'dtoInstance'];
-
-    return keys.filter((key: keyof Leaf) => !excludeKeys.includes(key));
   }
 }
