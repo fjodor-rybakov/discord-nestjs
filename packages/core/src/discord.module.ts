@@ -1,11 +1,16 @@
 import { DynamicModule, Module, Provider, Type } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
+import { Subject, firstValueFrom } from 'rxjs';
 
 import { INJECT_DISCORD_CLIENT } from './decorators/client/inject-discord-client.constant';
+import { DISCORD_CLIENT_PROVIDER_ALIAS } from './definitions/constants/discord-client-provider-alias';
+import { DISCORD_COMMAND_PROVIDER_ALIAS } from './definitions/constants/discord-command-provider-alias';
 import { DISCORD_MODULE_OPTIONS } from './definitions/constants/discord-module.contant';
+import { REFLECT_METADATA_PROVIDER_ALIAS } from './definitions/constants/reflect-metadata-provider-alias';
 import { DiscordModuleAsyncOptions } from './definitions/interfaces/discord-module-async-options';
 import { DiscordModuleOption } from './definitions/interfaces/discord-module-options';
 import { DiscordOptionsFactory } from './definitions/interfaces/discord-options-factory';
+import { DiscordHostModule } from './discord-host.module';
 import { DiscordClientProvider } from './providers/discord-client.provider';
 import { DiscordCommandProvider } from './providers/discord-command.provider';
 import { ReflectMetadataProvider } from './providers/reflect-metadata.provider';
@@ -28,28 +33,27 @@ import { BuildApplicationCommandService } from './services/build-application-com
 import { CommandPathToClassService } from './services/command-path-to-class.service';
 import { CommandTreeService } from './services/command-tree.service';
 import { DiscordClientService } from './services/discord-client.service';
-import { DiscordOptionService } from './services/discord-option.service';
 import { DiscordResolverService } from './services/discord-resolver.service';
 import { DtoService } from './services/dto.service';
 import { RegisterCommandService } from './services/register-command.service';
 
 @Module({
-  imports: [DiscoveryModule],
+  imports: [DiscordHostModule, DiscoveryModule],
 })
 export class DiscordModule {
+  private static initSubject = new Subject();
+
   static forRootAsync(options: DiscordModuleAsyncOptions): DynamicModule {
     const extraProviders = options.extraProviders || [];
-    const discordClient = DiscordModule.createDiscordClient();
 
     return {
       module: DiscordModule,
       imports: options.imports || [],
       providers: [
+        ...DiscordModule.createAsyncDiscordOptionProviders(options),
+        ...DiscordModule.createExportedForRootProviders(),
         CommandPathToClassService,
         RegisterCommandService,
-        DiscordOptionService,
-        DiscordCommandProvider,
-        ReflectMetadataProvider,
         OptionResolver,
         FilterResolver,
         MiddlewareResolver,
@@ -64,33 +68,88 @@ export class DiscordModule {
         DtoService,
         EventResolver,
         DiscordResolverService,
-        ...DiscordModule.createAsyncDiscordOptionProviders(options),
-        DiscordClientProvider,
-        DiscordClientService,
         BuildApplicationCommandService,
         CommandTreeService,
         BaseCollectorResolver,
         CollectorClassResolver,
         CollectorResolver,
         ...extraProviders,
-        discordClient,
       ],
       exports: [
         DiscordClientProvider,
         ReflectMetadataProvider,
         DiscordCommandProvider,
-        discordClient,
+        INJECT_DISCORD_CLIENT,
       ],
     };
   }
 
-  private static createDiscordClient(): Provider {
+  static forFeature(): DynamicModule {
     return {
-      provide: INJECT_DISCORD_CLIENT,
-      useFactory: (discordClientProvider: DiscordClientProvider) =>
-        discordClientProvider.getClient(),
-      inject: [DiscordClientProvider],
+      module: DiscordModule,
+      providers: [
+        {
+          provide: INJECT_DISCORD_CLIENT,
+          useFactory: () => firstValueFrom(DiscordModule.initSubject),
+        },
+        {
+          provide: DiscordClientProvider,
+          useExisting: DISCORD_CLIENT_PROVIDER_ALIAS,
+        },
+        {
+          provide: ReflectMetadataProvider,
+          useExisting: REFLECT_METADATA_PROVIDER_ALIAS,
+        },
+        {
+          provide: DiscordCommandProvider,
+          useExisting: DISCORD_COMMAND_PROVIDER_ALIAS,
+        },
+      ],
+      exports: [
+        DiscordClientProvider,
+        ReflectMetadataProvider,
+        DiscordCommandProvider,
+        INJECT_DISCORD_CLIENT,
+      ],
     };
+  }
+
+  private static createExportedForRootProviders(): Provider[] {
+    return [
+      {
+        provide: DiscordClientProvider,
+        useFactory: (
+          discordClientService: DiscordClientService,
+          discordClientProvider: DiscordClientProvider,
+          discordModuleOptions: DiscordModuleOption,
+        ) => {
+          discordClientService.init(discordModuleOptions);
+
+          DiscordModule.initSubject.next(discordClientService.getClient());
+
+          return discordClientProvider;
+        },
+        inject: [
+          DiscordClientService,
+          DISCORD_CLIENT_PROVIDER_ALIAS,
+          DISCORD_MODULE_OPTIONS,
+        ],
+      },
+      {
+        provide: ReflectMetadataProvider,
+        useExisting: REFLECT_METADATA_PROVIDER_ALIAS,
+      },
+      {
+        provide: DiscordCommandProvider,
+        useExisting: DISCORD_COMMAND_PROVIDER_ALIAS,
+      },
+      {
+        provide: INJECT_DISCORD_CLIENT,
+        useFactory: (discordClientProvider: DiscordClientProvider) =>
+          discordClientProvider.getClient(),
+        inject: [DiscordClientProvider],
+      },
+    ];
   }
 
   private static createAsyncDiscordOptionProviders(
