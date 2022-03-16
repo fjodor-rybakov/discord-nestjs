@@ -19,14 +19,11 @@ import { CollectorClassResolver } from './resolvers/collector/collector-class.re
 import { CollectorResolver } from './resolvers/collector/use-collectors/collector.resolver';
 import { CommandResolver } from './resolvers/command/command.resolver';
 import { EventResolver } from './resolvers/event/event.resolver';
-import { FilterClassResolver } from './resolvers/filter/filter-class.resolver';
 import { FilterResolver } from './resolvers/filter/filter.resolver';
-import { GuardClassResolver } from './resolvers/guard/guard-class.resolver';
 import { GuardResolver } from './resolvers/guard/guard.resolver';
 import { MiddlewareResolver } from './resolvers/middleware/middleware.resolver';
 import { OptionResolver } from './resolvers/option/option.resolver';
 import { ParamResolver } from './resolvers/param/param.resolver';
-import { PipeClassResolver } from './resolvers/pipe/pipe-class.resolver';
 import { PipeResolver } from './resolvers/pipe/pipe.resolver';
 import { PrefixCommandResolver } from './resolvers/prefix-command/prefix-command.resolver';
 import { BuildApplicationCommandService } from './services/build-application-command.service';
@@ -34,6 +31,7 @@ import { CommandTreeService } from './services/command-tree.service';
 import { DiscordClientService } from './services/discord-client.service';
 import { DiscordResolverService } from './services/discord-resolver.service';
 import { DtoService } from './services/dto.service';
+import { InstantiationService } from './services/instantiation.service';
 import { RegisterCommandService } from './services/register-command.service';
 
 @Module({
@@ -49,15 +47,13 @@ export class DiscordModule {
       providers: [
         ...DiscordModule.createAsyncDiscordOptionProviders(options),
         ...DiscordModule.createExportedForRootProviders(),
+        InstantiationService,
         RegisterCommandService,
         OptionResolver,
         FilterResolver,
         MiddlewareResolver,
         PipeResolver,
         GuardResolver,
-        FilterClassResolver,
-        GuardClassResolver,
-        PipeClassResolver,
         ParamResolver,
         CommandResolver,
         PrefixCommandResolver,

@@ -1,8 +1,5 @@
 import { ClientOptions, WebhookClientData } from 'discord.js';
 
-import { FilterType } from '../types/filter.type';
-import { GuardType } from '../types/guard.type';
-import { PipeType } from '../types/pipe.type';
 import { RegisterCommandOptions } from './register-command-options';
 import { SlashCommandPermissions } from './slash-command-permissions';
 
@@ -51,24 +48,6 @@ export interface DiscordModuleOption {
    * Only for prefix command
    */
   prefix?: string;
-
-  /**
-   * Use pipes for all handlers
-   * Takes list of class types or list of instances
-   */
-  usePipes?: PipeType[];
-
-  /**
-   * Use guards for all handlers
-   * Takes list of class types or list of instances
-   */
-  useGuards?: GuardType[];
-
-  /**
-   * Use filters for all handlers
-   * Takes list of class types or list of instances
-   */
-  useFilters?: FilterType[];
 
   /**
    * Webhook for the bot

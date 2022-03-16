@@ -1,37 +1,48 @@
 import { Injectable } from '@nestjs/common';
 
 import { DiscordModuleOption } from '../definitions/interfaces/discord-module-options';
+import { InternalDiscordModuleOption } from '../definitions/interfaces/internal-discord-module-option';
 
 @Injectable()
 export class DiscordOptionService {
-  private options: DiscordModuleOption;
+  private options: InternalDiscordModuleOption;
 
-  updateOptions(options): DiscordModuleOption {
-    this.options = this.setDefault(options);
-
-    return this.options;
+  constructor() {
+    this.options = {
+      token: null,
+      discordClientOptions: {
+        intents: [],
+      },
+      useGuards: [],
+      usePipes: [],
+      useFilters: [],
+    };
   }
 
-  getClientData(): DiscordModuleOption {
-    return this.options;
-  }
+  setDefault(options: DiscordModuleOption): void {
+    const { autoRegisterGlobalCommands, removeGlobalCommands } = options;
 
-  private setDefault(options: DiscordModuleOption): DiscordModuleOption {
-    const {
-      useGuards,
-      usePipes,
-      useFilters,
-      autoRegisterGlobalCommands,
-      removeGlobalCommands,
-    } = options;
-
-    return {
+    this.options = {
+      ...this.options,
       ...options,
-      useGuards: useGuards ?? [],
-      usePipes: usePipes ?? [],
-      useFilters: useFilters ?? [],
       autoRegisterGlobalCommands: autoRegisterGlobalCommands || false,
       removeGlobalCommands: removeGlobalCommands || false,
     };
+  }
+
+  addPipe(pipe: InstanceType<any>): number {
+    return this.options.usePipes.push(pipe);
+  }
+
+  addGuard(guard: InstanceType<any>): number {
+    return this.options.useGuards.push(guard);
+  }
+
+  addFilter(filter: InstanceType<any>): number {
+    return this.options.useFilters.push(filter);
+  }
+
+  getClientData(): InternalDiscordModuleOption {
+    return this.options;
   }
 }

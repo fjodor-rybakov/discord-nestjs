@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { DiscoveryService, ModuleRef } from '@nestjs/core';
 
-import { GuardType } from '../../definitions/types/guard.type';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { DiscordOptionService } from '../../services/discord-option.service';
+import { InstantiationService } from '../../services/instantiation.service';
 import { MethodResolveOptions } from '../interfaces/method-resolve-options';
 import { MethodResolver } from '../interfaces/method-resolver';
 import { DiscordGuardOptions } from './discord-guard-options';
@@ -16,57 +15,44 @@ export class GuardResolver implements MethodResolver {
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
     private readonly discordOptionService: DiscordOptionService,
-    private readonly discoveryService: DiscoveryService,
+    private readonly instantiationService: InstantiationService,
   ) {}
 
   async resolve(options: MethodResolveOptions): Promise<void> {
     const { instance, methodName } = options;
-    let guards = this.metadataProvider.getUseGuardsDecoratorMetadata(
-      instance,
-      methodName,
-    );
-    if (!guards) {
-      const hasMetadataForGuard = this.checkApplyGlobalGuard(options);
-      if (!hasMetadataForGuard) return;
 
-      const guardAlreadyRegistered = this.getGuardData(options);
-      if (guardAlreadyRegistered) return;
+    const globalGuards = this.discordOptionService.getClientData().useGuards;
 
-      guards = this.discordOptionService.getClientData().useGuards;
-      if (guards.length === 0) return;
+    const classGuards =
+      this.metadataProvider.getUseGuardsDecoratorMetadata(instance) ?? [];
+
+    const methodGuards =
+      this.metadataProvider.getUseGuardsDecoratorMetadata(
+        instance,
+        methodName,
+      ) ?? [];
+
+    if (classGuards.length === 0 && methodGuards.length === 0) {
+      if (globalGuards.length !== 0)
+        this.guardInfos.push({
+          instance,
+          methodName,
+          guardList: globalGuards,
+        });
+
+      return;
     }
-    await this.addGuard(options, guards);
-  }
 
-  async addGuard(
-    options: MethodResolveOptions,
-    guards: GuardType[],
-  ): Promise<void> {
-    const { instance, methodName } = options;
-
-    const instanceWrapper = this.discoveryService
-      .getProviders()
-      .find(({ token }) => token === instance.constructor);
-
-    if (!instanceWrapper?.host)
-      throw new Error(
-        `Not found module for ${instance.constructor.name} class`,
+    const localGuardInstances =
+      await this.instantiationService.resolveInstances(
+        [...classGuards, ...methodGuards],
+        this.instantiationService.getHostModule(instance),
       );
-
-    const guardList = await Promise.all(
-      guards.map((guard) => {
-        if (typeof guard !== 'function') return guard;
-
-        return instanceWrapper.host
-          .getProviderByKey(ModuleRef)
-          .instance.create(guard);
-      }),
-    );
 
     this.guardInfos.push({
       instance,
       methodName,
-      guardList,
+      guardList: [...globalGuards, ...localGuardInstances],
     });
   }
 
@@ -80,23 +66,6 @@ export class GuardResolver implements MethodResolver {
       if (!result) return false;
     }
     return true;
-  }
-
-  private checkApplyGlobalGuard({
-    instance,
-    methodName,
-  }: MethodResolveOptions): boolean {
-    const someClassHasMetadata = [
-      this.metadataProvider.getCommandDecoratorMetadata,
-      this.metadataProvider.getSubCommandDecoratorMetadata,
-    ].some((item) => item(instance));
-
-    if (someClassHasMetadata) return true;
-
-    return [
-      this.metadataProvider.getOnEventDecoratorMetadata,
-      this.metadataProvider.getOnceEventDecoratorMetadata,
-    ].some((item) => item(instance, methodName));
   }
 
   private getGuardData({

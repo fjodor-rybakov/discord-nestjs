@@ -21,8 +21,11 @@ export class DiscordClientService
   constructor(private discordOptionService: DiscordOptionService) {}
 
   init(options: DiscordModuleOption): void {
+    this.discordOptionService.setDefault(options);
+
     const { token, webhook, discordClientOptions } =
-      this.discordOptionService.updateOptions(options);
+      this.discordOptionService.getClientData();
+
     this.client = new Client(discordClientOptions);
     this.clientToken = token;
     this.webhookClient = this.createWebhookClient(webhook);

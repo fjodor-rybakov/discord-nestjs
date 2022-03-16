@@ -1,9 +1,8 @@
 import { Injectable, Type } from '@nestjs/common';
-import { DiscoveryService, ModuleRef } from '@nestjs/core';
 
-import { FilterType } from '../../definitions/types/filter.type';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { DiscordOptionService } from '../../services/discord-option.service';
+import { InstantiationService } from '../../services/instantiation.service';
 import { MethodResolveOptions } from '../interfaces/method-resolve-options';
 import { MethodResolver } from '../interfaces/method-resolver';
 import { DiscordFilterOptions } from './discord-filter-options';
@@ -16,57 +15,44 @@ export class FilterResolver implements MethodResolver {
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
     private readonly discordOptionService: DiscordOptionService,
-    private readonly discoveryService: DiscoveryService,
+    private readonly instantiationService: InstantiationService,
   ) {}
 
   async resolve(options: MethodResolveOptions): Promise<void> {
     const { instance, methodName } = options;
-    let filters = this.metadataProvider.getUseFiltersDecoratorMetadata(
-      instance,
-      methodName,
-    );
-    if (!filters) {
-      const hasMetadataForPipe = this.checkApplyGlobalPipe(options);
-      if (!hasMetadataForPipe) return;
 
-      const filterAlreadyRegistered = this.getFilterData(options);
-      if (filterAlreadyRegistered) return;
+    const globalFilters = this.discordOptionService.getClientData().useFilters;
 
-      filters = this.discordOptionService.getClientData().useFilters;
-      if (filters.length === 0) return;
+    const classFilters =
+      this.metadataProvider.getUseFiltersDecoratorMetadata(instance) ?? [];
+
+    const methodFilters =
+      this.metadataProvider.getUseFiltersDecoratorMetadata(
+        instance,
+        methodName,
+      ) ?? [];
+
+    if (classFilters.length === 0 && methodFilters.length === 0) {
+      if (globalFilters.length !== 0)
+        this.filterInfos.push({
+          instance,
+          methodName,
+          exceptionFilters: globalFilters,
+        });
+
+      return;
     }
-    await this.addFilter(options, filters);
-  }
 
-  async addFilter(
-    options: MethodResolveOptions,
-    filters: FilterType[],
-  ): Promise<void> {
-    const { instance, methodName } = options;
-
-    const instanceWrapper = this.discoveryService
-      .getProviders()
-      .find(({ token }) => token === instance.constructor);
-
-    if (!instanceWrapper?.host)
-      throw new Error(
-        `Not found module for ${instance.constructor.name} class`,
+    const localFilterInstances =
+      await this.instantiationService.resolveInstances(
+        [...classFilters, ...methodFilters],
+        this.instantiationService.getHostModule(instance),
       );
-
-    const exceptionFilters = await Promise.all(
-      filters.map((filter) => {
-        if (typeof filter !== 'function') return filter;
-
-        return instanceWrapper.host
-          .getProviderByKey(ModuleRef)
-          .instance.create(filter);
-      }),
-    );
 
     this.filterInfos.push({
       instance,
       methodName,
-      exceptionFilters,
+      exceptionFilters: [...globalFilters, ...localFilterInstances].reverse(), // Like in NestJS
     });
   }
 
@@ -121,23 +107,6 @@ export class FilterResolver implements MethodResolver {
       });
 
     return !(concreteMatchedFilter || indexOfAnyException);
-  }
-
-  private checkApplyGlobalPipe({
-    instance,
-    methodName,
-  }: MethodResolveOptions): boolean {
-    const someClassHasMetadata = [
-      this.metadataProvider.getCommandDecoratorMetadata,
-      this.metadataProvider.getSubCommandDecoratorMetadata,
-    ].some((item) => item(instance));
-
-    if (someClassHasMetadata) return true;
-
-    return [
-      this.metadataProvider.getOnEventDecoratorMetadata,
-      this.metadataProvider.getOnceEventDecoratorMetadata,
-    ].some((item) => item(instance, methodName));
   }
 
   private getFilterData({
