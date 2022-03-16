@@ -1,7 +1,6 @@
 import { Injectable, Type } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
+import { DiscoveryService, ModuleRef } from '@nestjs/core';
 
-import { DiscordExceptionFilter } from '../../decorators/filter/discord-exception-filter';
 import { FilterType } from '../../definitions/types/filter.type';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { DiscordOptionService } from '../../services/discord-option.service';
@@ -17,7 +16,7 @@ export class FilterResolver implements MethodResolver {
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
     private readonly discordOptionService: DiscordOptionService,
-    private readonly moduleRef: ModuleRef,
+    private readonly discoveryService: DiscoveryService,
   ) {}
 
   async resolve(options: MethodResolveOptions): Promise<void> {
@@ -44,13 +43,26 @@ export class FilterResolver implements MethodResolver {
     filters: FilterType[],
   ): Promise<void> {
     const { instance, methodName } = options;
-    const exceptionFilters: DiscordExceptionFilter[] = [];
-    for await (const filter of filters) {
-      const classType =
-        typeof filter === 'function' ? filter : (filter.constructor as Type);
-      const newFilterInstance = await this.moduleRef.create(classType);
-      exceptionFilters.push(newFilterInstance);
-    }
+
+    const instanceWrapper = this.discoveryService
+      .getProviders()
+      .find(({ token }) => token === instance.constructor);
+
+    if (!instanceWrapper?.host)
+      throw new Error(
+        `Not found module for ${instance.constructor.name} class`,
+      );
+
+    const exceptionFilters = await Promise.all(
+      filters.map((filter) => {
+        if (typeof filter !== 'function') return filter;
+
+        return instanceWrapper.host
+          .getProviderByKey(ModuleRef)
+          .instance.create(filter);
+      }),
+    );
+
     this.filterInfos.push({
       instance,
       methodName,

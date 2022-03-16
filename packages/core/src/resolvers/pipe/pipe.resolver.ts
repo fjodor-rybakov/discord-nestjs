@@ -1,5 +1,6 @@
-import { Injectable, Type } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
+import { Injectable, Scope, Type } from '@nestjs/common';
+import { SCOPE_OPTIONS_METADATA } from '@nestjs/common/constants';
+import { DiscoveryService, ModuleRef } from '@nestjs/core';
 
 import { DiscordPipeTransform } from '../../decorators/pipe/discord-pipe-transform';
 import { PipeType } from '../../definitions/types/pipe.type';
@@ -16,8 +17,8 @@ export class PipeResolver implements MethodResolver {
 
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
-    private readonly moduleRef: ModuleRef,
     private readonly discordOptionService: DiscordOptionService,
+    private readonly discoveryService: DiscoveryService,
   ) {}
 
   async resolve(options: MethodResolveOptions): Promise<void> {
@@ -44,21 +45,30 @@ export class PipeResolver implements MethodResolver {
     pipes: PipeType[],
   ): Promise<void> {
     const { instance, methodName } = options;
-    const pipeListForMethod: DiscordPipeTransform[] = [];
-    for await (const pipe of pipes) {
-      const classType =
-        typeof pipe === 'function' ? pipe : (pipe.constructor as Type);
-      const newPipeInstance = await this.moduleRef.create(classType);
-      if (typeof pipe !== 'function') {
-        // resolve constructor params
-        newPipeInstance.validateOptions = pipe['validateOptions'];
-      }
-      pipeListForMethod.push(newPipeInstance);
-    }
+
+    const instanceWrapper = this.discoveryService
+      .getProviders()
+      .find(({ token }) => token === instance.constructor);
+
+    if (!instanceWrapper?.host)
+      throw new Error(
+        `Not found module for ${instance.constructor.name} class`,
+      );
+
+    const pipeList = await Promise.all(
+      pipes.map((pipe) => {
+        if (typeof pipe !== 'function') return pipe;
+
+        return instanceWrapper.host
+          .getProviderByKey(ModuleRef)
+          .instance.create(pipe);
+      }),
+    );
+
     this.pipeList.push({
       instance,
       methodName,
-      pipeList: pipeListForMethod,
+      pipeList,
     });
   }
 
@@ -114,5 +124,10 @@ export class PipeResolver implements MethodResolver {
       (item: DiscordPipeList) =>
         item.methodName === methodName && item.instance === instance,
     );
+  }
+
+  private getClassScope(provider: Type<unknown>): Scope {
+    const metadata = Reflect.getMetadata(SCOPE_OPTIONS_METADATA, provider);
+    return metadata && metadata.scope;
   }
 }

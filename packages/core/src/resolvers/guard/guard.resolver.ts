@@ -1,7 +1,6 @@
-import { Injectable, Type } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
+import { Injectable } from '@nestjs/common';
+import { DiscoveryService, ModuleRef } from '@nestjs/core';
 
-import { DiscordGuard } from '../../decorators/guard/discord-guard';
 import { GuardType } from '../../definitions/types/guard.type';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { DiscordOptionService } from '../../services/discord-option.service';
@@ -16,8 +15,8 @@ export class GuardResolver implements MethodResolver {
 
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
-    private readonly moduleRef: ModuleRef,
     private readonly discordOptionService: DiscordOptionService,
+    private readonly discoveryService: DiscoveryService,
   ) {}
 
   async resolve(options: MethodResolveOptions): Promise<void> {
@@ -44,17 +43,30 @@ export class GuardResolver implements MethodResolver {
     guards: GuardType[],
   ): Promise<void> {
     const { instance, methodName } = options;
-    const guardListForMethod: DiscordGuard[] = [];
-    for await (const guard of guards) {
-      const classType =
-        typeof guard === 'function' ? guard : (guard.constructor as Type);
-      const newGuardInstance = await this.moduleRef.create(classType);
-      guardListForMethod.push(newGuardInstance);
-    }
+
+    const instanceWrapper = this.discoveryService
+      .getProviders()
+      .find(({ token }) => token === instance.constructor);
+
+    if (!instanceWrapper?.host)
+      throw new Error(
+        `Not found module for ${instance.constructor.name} class`,
+      );
+
+    const guardList = await Promise.all(
+      guards.map((guard) => {
+        if (typeof guard !== 'function') return guard;
+
+        return instanceWrapper.host
+          .getProviderByKey(ModuleRef)
+          .instance.create(guard);
+      }),
+    );
+
     this.guardInfos.push({
       instance,
       methodName,
-      guardList: guardListForMethod,
+      guardList,
     });
   }
 
