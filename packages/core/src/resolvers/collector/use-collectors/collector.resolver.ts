@@ -91,6 +91,7 @@ export class CollectorResolver implements MethodResolver {
             const requestInstance = await this.moduleRef.resolve(
               classInstance.constructor,
               contextId,
+              { strict: false },
             );
 
             if (filterMethodName)
@@ -128,6 +129,7 @@ export class CollectorResolver implements MethodResolver {
             const requestInstance = await this.moduleRef.resolve(
               classInstance.constructor,
               contextId,
+              { strict: false },
             );
 
             if (filterMethodName)
@@ -166,6 +168,7 @@ export class CollectorResolver implements MethodResolver {
             const requestInstance = await this.moduleRef.resolve(
               classInstance.constructor,
               contextId,
+              { strict: false },
             );
 
             if (filterMethodName)

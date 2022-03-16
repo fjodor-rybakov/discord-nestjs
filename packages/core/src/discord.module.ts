@@ -43,8 +43,6 @@ export class DiscordModule {
   private static initSubject = new Subject();
 
   static forRootAsync(options: DiscordModuleAsyncOptions): DynamicModule {
-    const extraProviders = options.extraProviders || [];
-
     return {
       module: DiscordModule,
       imports: options.imports || [],
@@ -71,7 +69,6 @@ export class DiscordModule {
         BaseCollectorResolver,
         CollectorClassResolver,
         CollectorResolver,
-        ...extraProviders,
       ],
       exports: [
         DiscordClientProvider,

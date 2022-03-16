@@ -1,4 +1,4 @@
-import { ModuleMetadata, Provider, Type } from '@nestjs/common';
+import { ModuleMetadata, Type } from '@nestjs/common';
 
 import { DiscordModuleOption } from './discord-module-options';
 import { DiscordOptionsFactory } from './discord-options-factory';
@@ -10,9 +10,5 @@ export interface DiscordModuleAsyncOptions
   useFactory?: (
     ...args: any[]
   ) => Promise<DiscordModuleOption> | DiscordModuleOption;
-  /**
-   * Add the necessary providers for dependency injection in your commands, pipe, filters etc.
-   */
-  extraProviders?: Provider[];
   inject?: any[];
 }

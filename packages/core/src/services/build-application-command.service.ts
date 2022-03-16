@@ -1,5 +1,5 @@
 import { Injectable, Type } from '@nestjs/common';
-import { DiscoveryService } from '@nestjs/core';
+import { ModuleRef } from '@nestjs/core';
 import {
   ApplicationCommandChannelOptionData,
   ApplicationCommandChoicesData,
@@ -32,7 +32,7 @@ type NonCommandData =
 @Injectable()
 export class BuildApplicationCommandService {
   constructor(
-    private readonly discoveryService: DiscoveryService,
+    private readonly moduleRef: ModuleRef,
     private readonly metadataProvider: ReflectMetadataProvider,
     private readonly optionResolver: OptionResolver,
     private readonly commandTreeService: CommandTreeService,
@@ -143,10 +143,9 @@ export class BuildApplicationCommandService {
     commandName: string,
     subGroupName?: string,
   ): Promise<ApplicationCommandSubCommandData> {
-    // TODO: Possible problems
-    const subCommandInstance = this.discoveryService
-      .getProviders()
-      .find(({ token }) => token === subCommandType)?.instance;
+    const subCommandInstance = this.moduleRef.get(subCommandType, {
+      strict: false,
+    });
     const metadata =
       this.metadataProvider.getSubCommandDecoratorMetadata(subCommandInstance);
 
