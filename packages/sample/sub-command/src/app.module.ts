@@ -18,8 +18,7 @@ import { BotModule } from './bot/bot.module';
         registerCommandOptions: [
           {
             forGuild: configService.get('GUILD_ID_WITH_COMMANDS'),
-            allowFactory: (message: Message) =>
-              !message.author.bot && message.content === '!deploy',
+            removeCommandsBefore: true,
           },
         ],
       }),

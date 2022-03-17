@@ -1,7 +1,7 @@
 import { DiscordModule } from '@discord-nestjs/core';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Intents, Message } from 'discord.js';
+import { Intents } from 'discord.js';
 import { ApplicationCommandPermissionTypes } from 'discord.js/typings/enums';
 
 import { BotModule } from './bot/bot.module';
@@ -21,8 +21,6 @@ import { PlaylistCommand } from './bot/commands/playlist.command';
         registerCommandOptions: [
           {
             forGuild: configService.get('GUILD_ID_WITH_COMMANDS'),
-            allowFactory: (message: Message) =>
-              !message.author.bot && message.content === '!deploy',
             removeCommandsBefore: true,
           },
         ],

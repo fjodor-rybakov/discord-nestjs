@@ -13,7 +13,6 @@ import { EventResolver } from '../resolvers/event/event.resolver';
 import { FilterResolver } from '../resolvers/filter/filter.resolver';
 import { GuardResolver } from '../resolvers/guard/guard.resolver';
 import { MiddlewareResolver } from '../resolvers/middleware/middleware.resolver';
-import { ParamResolver } from '../resolvers/param/param.resolver';
 import { PipeResolver } from '../resolvers/pipe/pipe.resolver';
 import { PrefixCommandResolver } from '../resolvers/prefix-command/prefix-command.resolver';
 import { IsObject } from '../utils/function/is-object';
@@ -30,7 +29,6 @@ export class DiscordResolverService implements OnModuleInit {
     private readonly guardResolver: GuardResolver,
     private readonly pipeResolver: PipeResolver,
     private readonly middlewareResolver: MiddlewareResolver,
-    private readonly paramResolver: ParamResolver,
     private readonly commandResolver: CommandResolver,
     private readonly discordOptionService: DiscordOptionService,
     private readonly registerCommandService: RegisterCommandService,
@@ -73,7 +71,6 @@ export class DiscordResolverService implements OnModuleInit {
     );
 
     const methodResolvers = [
-      this.paramResolver,
       this.collectorResolver,
       this.eventResolver,
       this.prefixCommandResolver,
