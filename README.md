@@ -51,6 +51,232 @@ This monorepo consists of several packages.
 
 ## ❓ Answers on questions
 
+### How to migrate from v2 to v3
+
+<details>
+  <summary>Click to expand</summary>
+
+#### Modules
+
+For ease of understanding, move your bot declarations to the root module(AppModule).
+
+```typescript
+/* app.module.ts */
+
+import { DiscordModule } from '@discord-nestjs/core';
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Intents } from 'discord.js';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot(),
+    DiscordModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        token: configService.get('TOKEN'),
+        discordClientOptions: {
+          intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+        },
+        registerCommandOptions: [
+          {
+            forGuild: configService.get('GUILD_ID_WITH_COMMANDS'),
+            removeCommandsBefore: true,
+          },
+        ],
+      }),
+      inject: [ConfigService],
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+Bot components(such as the slash command class or gateways) no longer related with DiscordModule. Absolutely all providers
+are searched globally through all modules. If you need to inject Discord client, you can only do this if you have 
+exported providers from DiscordModule. The `DiscordModule` is not global, so a new `forFeature` function has been added.
+
+```typescript
+/* bot.module.ts */
+
+import { DiscordModule } from '@discord-nestjs/core';
+import { Module } from '@nestjs/common';
+
+import { BotGatewaty } from './bot.gateway';
+
+@Module({
+  imports: [DiscordModule.forFeature()],
+  providers: [BotGatewaty],
+})
+export class BotModule {}
+```
+
+```typescript
+/* bot.gateway.ts */
+
+import { InjectDiscordClient, Once } from '@discord-nestjs/core';
+import { Injectable, Logger } from '@nestjs/common';
+import { Client } from 'discord.js';
+
+@Injectable()
+export class BotGateway {
+  private readonly logger = new Logger(BotGateway.name);
+
+  constructor(
+    @InjectDiscordClient()
+    private readonly client: Client,
+  ) {}
+
+  @Once('ready')
+  onReady() {
+    this.logger.log(`Bot ${this.client.user.tag} was started!`);
+  }
+}
+```
+
+So the `extraProviders` option is no longer needed.
+
+#### Guards, pipes and filters
+
+The `Request lifecycle` has also been reworked. Now he repeats it like in NestJS.
+
+1. Incoming request
+2. Globally bound middleware
+3. Global guards
+4. Controller guards
+5. Route guards
+6. Global pipes
+7. Controller pipes
+8. Route pipes
+9. Method handler
+10. Exception filters (route, then controller, then global). Apply from end to beginning.
+11. Response
+
+Removed options responsible for adding global guards, pipes and filters. Instead, add providers to the AppModule like so:
+
+* `registerGuardGlobally()` - use for register global guard
+* `registerPipeGlobally()` - use for register global pipe
+* `registerFilterGlobally()` - use for register global guard
+
+> The functions generate an always unique id, so each provider will be registered.
+
+```typescript
+/* app.module.ts */
+
+import { DiscordModule, registerGuardGlobally } from '@discord-nestjs/core';
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Intents } from 'discord.js';
+
+import { MyGlobalGuard } from './my-global-guard';
+import { MySecondGlobalGuard } from './my-second-global-guard';
+import { MyGlobalFilter } from './my-global-filter';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot(),
+    DiscordModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        token: configService.get('TOKEN'),
+        discordClientOptions: {
+          intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+        },
+        registerCommandOptions: [
+          {
+            forGuild: configService.get('GUILD_ID_WITH_COMMANDS'),
+            removeCommandsBefore: true,
+          },
+        ],
+      }),
+      inject: [ConfigService],
+    }),
+  ],
+  providers: [
+    {
+      provide: registerGuardGlobally(),
+      useClass: MyGlobalGuard,
+    },
+    {
+      provide: registerGuardGlobally(),
+      useClass: MySecondGlobalGuard,
+    },
+    {
+      provide: registerFilterGlobally(),
+      useClass: MyGlobalFilter,
+    },
+  ],
+})
+export class AppModule {}
+```
+
+#### Providers by glob pattern
+
+Previously, you could use the `commands` option, which allowed you to search files by glob pattern. All this functionality 
+was moved to a separate library https://github.com/fjodor-rybakov/nestjs-dynamic-providers. 
+
+Mark the `BotModule` with the `@InjectDynamicProviders` decorator.
+
+```typescript
+/* bot.module.ts */
+
+import { DiscordModule } from '@discord-nestjs/core';
+import { Module } from '@nestjs/common';
+import { InjectDynamicProviders } from 'nestjs-dynamic-providers';
+
+@InjectDynamicProviders('**/*.command.js')
+@Module({
+  imports: [DiscordModule.forFeature()],
+})
+export class BotModule {}
+```
+
+Also add the `resolveDynamicProviders()` function before creating the Nest application for add metadata for each module.
+
+```typescript
+/* main.ts */
+
+import { AppModule } from './app.module';
+import { NestFactory } from '@nestjs/core';
+import { resolveDynamicProviders } from 'nestjs-dynamic-providers';
+
+async function bootstrap() {
+  await resolveDynamicProviders();
+  const app = await NestFactory.createApplicationContext(AppModule);
+  await app.init();
+}
+
+bootstrap();
+```
+
+> By default, classes are searched for that are marked with @Injectable() decorator. To override you need to pass 
+> filterPredicate as parameters to @InjectDynamicProviders().
+
+<details>
+  <summary>Example with filter for `@Command` decorator only</summary>
+
+```typescript
+/* bot.module.ts */
+
+import { COMMAND_DECORATOR, DiscordModule } from '@discord-nestjs/core';
+import { Module } from '@nestjs/common';
+import { InjectDynamicProviders, IsObject } from 'nestjs-dynamic-providers';
+
+@InjectDynamicProviders({
+  pattern: '**/*.command.js',
+  filterPredicate: (type) =>
+    IsObject(type) && Reflect.hasMetadata(COMMAND_DECORATOR, type.prototype),
+})
+@Module({
+  imports: [DiscordModule.forFeature()],
+})
+export class BotModule {}
+
+```
+</details>
+
+</details>
+
 ### The bot starts up, but the slash commands and events do not work
 
 <details>
@@ -69,70 +295,5 @@ Set `useDefineForClassFields` to `true` in your `tsconfig.json`.
 Also check that the `Palyoad` and `UsePipes` decorators are imported from `@discord-nestjs/core`.
 
 </details>
-
-### How to inject dependencies into your command, pipe, guard or filter
-
-<details>
-  <summary>Click to expand</summary>
-
-Add the required providers to the `extraProviders` option.
-
-```typescript
-import { PlayModule } from './services/play.module';
-import { DiscordModule } from '@discord-nestjs/core';
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Intents, Message } from 'discord.js';
-
-@Module({
-  imports: [
-    DiscordModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        token: configService.get('TOKEN'),
-        commands: ['**/*.command.js'],
-        discordClientOptions: {
-          intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
-        },
-        registerCommandOptions: [
-          {
-            forGuild: configService.get('GUILD_ID_WITH_COMMANDS'),
-            allowFactory: (message: Message) =>
-              !message.author.bot && message.content === '!deploy',
-          },
-        ],
-      }),
-      extraProviders: [PlayService],
-      inject: [ConfigService],
-    }),
-  ],
-})
-export class BotModule {}
-```
-
-And then you can inject your dependencies
-
-```typescript
-import { PlayService } from '../services/play.serivce';
-import { Command } from '@discord-nestjs/core';
-import { DiscordCommand } from '@discord-nestjs/core/src';
-import { CommandInteraction } from 'discord.js';
-
-@Command({
-  name: 'play',
-  description: 'Plays a song',
-})
-export class PlayCommand implements DiscordCommand {
-  constructor(private readonly playService: PlayService) {}
-
-  handler(interaction: CommandInteraction): string {
-    return this.playService.play();
-  }
-}
-```
-
-</details>
-
-
 
 Any questions or suggestions? Discord Федок#3051
