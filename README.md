@@ -163,7 +163,7 @@ Removed options responsible for adding global guards, pipes and filters. Instead
 ```typescript
 /* app.module.ts */
 
-import { DiscordModule, registerGuardGlobally } from '@discord-nestjs/core';
+import { DiscordModule, registerGuardGlobally, registerFilterGlobally } from '@discord-nestjs/core';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Intents } from 'discord.js';
