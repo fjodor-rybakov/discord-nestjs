@@ -6,11 +6,11 @@ import { InstantiationService } from '../../services/instantiation.service';
 import { MethodResolveOptions } from '../interfaces/method-resolve-options';
 import { MethodResolver } from '../interfaces/method-resolver';
 import { DiscordGuardOptions } from './discord-guard-options';
-import { ResolvedGuardInfo } from './resolved-guard-info';
+import { DiscordGuards } from './discord-guards';
 
 @Injectable()
 export class GuardResolver implements MethodResolver {
-  private readonly guardInfos: ResolvedGuardInfo[] = [];
+  private readonly discordGuards = new Map<InstanceType<any>, DiscordGuards>();
 
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
@@ -34,47 +34,52 @@ export class GuardResolver implements MethodResolver {
 
     if (classGuards.length === 0 && methodGuards.length === 0) {
       if (globalGuards.length !== 0)
-        this.guardInfos.push({
-          instance,
-          methodName,
-          guardList: globalGuards,
-        });
+        this.discordGuards.set(instance, { globalGuards });
 
       return;
     }
 
-    const localGuardInstances =
+    const hostModule = this.instantiationService.getHostModule(instance);
+    const methodGuardInstances =
       await this.instantiationService.resolveInstances(
-        [...classGuards, ...methodGuards],
-        this.instantiationService.getHostModule(instance),
+        methodGuards,
+        hostModule,
       );
 
-    this.guardInfos.push({
-      instance,
-      methodName,
-      guardList: [...globalGuards, ...localGuardInstances],
-    });
+    if (this.discordGuards.has(instance))
+      this.discordGuards.get(instance).methodGuards[methodName] =
+        methodGuardInstances;
+    else {
+      const classGuardInstances =
+        await this.instantiationService.resolveInstances(
+          classGuards,
+          hostModule,
+        );
+
+      this.discordGuards.set(instance, {
+        methodGuards: { [methodName]: methodGuardInstances },
+        classGuards: classGuardInstances,
+        globalGuards,
+      });
+    }
   }
 
   async applyGuard(options: DiscordGuardOptions): Promise<boolean> {
     const { instance, methodName, event, eventArgs } = options;
-    const guardListForMethod = this.getGuardData({ instance, methodName });
-    if (!guardListForMethod) return true;
+    if (!this.discordGuards.has(instance)) return true;
 
-    for await (const guard of guardListForMethod.guardList) {
+    const { globalGuards, classGuards, methodGuards } =
+      this.discordGuards.get(instance);
+    const guardList = [
+      ...globalGuards,
+      ...classGuards,
+      ...(methodGuards[methodName] || []),
+    ];
+
+    for await (const guard of guardList) {
       const result = await guard.canActive(event, eventArgs);
       if (!result) return false;
     }
     return true;
-  }
-
-  private getGuardData({
-    instance,
-    methodName,
-  }: MethodResolveOptions): ResolvedGuardInfo {
-    return this.guardInfos.find(
-      (item: ResolvedGuardInfo) =>
-        item.methodName === methodName && item.instance === instance,
-    );
   }
 }

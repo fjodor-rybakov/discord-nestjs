@@ -6,12 +6,12 @@ import { DiscordOptionService } from '../../services/discord-option.service';
 import { InstantiationService } from '../../services/instantiation.service';
 import { MethodResolveOptions } from '../interfaces/method-resolve-options';
 import { MethodResolver } from '../interfaces/method-resolver';
-import { DiscordPipeList } from './discord-pipe-list';
 import { DiscordPipeOptions } from './discord-pipe-options';
+import { DiscordPipes } from './discord-pipes';
 
 @Injectable()
 export class PipeResolver implements MethodResolver {
-  private readonly pipeList: DiscordPipeList[] = [];
+  private readonly discordPipes = new Map<InstanceType<any>, DiscordPipes>();
 
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
@@ -35,25 +35,31 @@ export class PipeResolver implements MethodResolver {
 
     if (classPipes.length === 0 && methodPipes.length === 0) {
       if (globalPipes.length !== 0)
-        this.pipeList.push({
-          instance,
-          methodName,
-          pipeList: globalPipes,
-        });
+        this.discordPipes.set(instance, { globalPipes });
 
       return;
     }
 
-    const localPipeInstances = await this.instantiationService.resolveInstances(
-      [...classPipes, ...methodPipes],
-      this.instantiationService.getHostModule(instance),
-    );
+    const hostModule = this.instantiationService.getHostModule(instance);
+    const methodPipeInstances =
+      await this.instantiationService.resolveInstances(methodPipes, hostModule);
 
-    this.pipeList.push({
-      instance,
-      methodName,
-      pipeList: [...globalPipes, ...localPipeInstances],
-    });
+    if (this.discordPipes.has(instance))
+      this.discordPipes.get(instance).methodPipes[methodName] =
+        methodPipeInstances;
+    else {
+      const classPipeInstances =
+        await this.instantiationService.resolveInstances(
+          classPipes,
+          hostModule,
+        );
+
+      this.discordPipes.set(instance, {
+        methodPipes: { [methodName]: methodPipeInstances },
+        classPipes: classPipeInstances,
+        globalPipes,
+      });
+    }
   }
 
   async applyPipe(options: DiscordPipeOptions): Promise<any> {
@@ -66,30 +72,23 @@ export class PipeResolver implements MethodResolver {
       metatype,
       commandNode,
     } = options;
-    const pipesListForMethod = this.getPipeData({ instance, methodName });
-    if (!pipesListForMethod) return;
+    if (!this.discordPipes.has(instance)) return;
 
-    return pipesListForMethod.pipeList.reduce(
-      async (prev: Promise<any>, curr: DiscordPipeTransform) => {
-        const prevData = await prev;
-        return curr.transform(prevData, {
-          event,
-          eventArgs,
-          metatype,
-          commandNode,
-        });
-      },
-      Promise.resolve(initValue),
-    );
-  }
+    const { globalPipes, classPipes, methodPipes } =
+      this.discordPipes.get(instance);
 
-  private getPipeData({
-    instance,
-    methodName,
-  }: MethodResolveOptions): DiscordPipeList {
-    return this.pipeList.find(
-      (item: DiscordPipeList) =>
-        item.methodName === methodName && item.instance === instance,
-    );
+    return [
+      ...globalPipes,
+      ...classPipes,
+      ...(methodPipes[methodName] || []),
+    ].reduce(async (prev: Promise<any>, curr: DiscordPipeTransform) => {
+      const prevData = await prev;
+      return curr.transform(prevData, {
+        event,
+        eventArgs,
+        metatype,
+        commandNode,
+      });
+    }, Promise.resolve(initValue));
   }
 }

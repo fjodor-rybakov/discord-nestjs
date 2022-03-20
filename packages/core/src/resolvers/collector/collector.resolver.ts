@@ -1,4 +1,4 @@
-import { Injectable, Scope, Type } from '@nestjs/common';
+import { Injectable, Scope } from '@nestjs/common';
 import { ContextIdFactory, MetadataScanner, ModuleRef } from '@nestjs/core';
 import {
   ClientEvents,
@@ -23,12 +23,15 @@ import { PipeResolver } from '../pipe/pipe.resolver';
 import { CollectMethodEventsInfo } from './collect-method-events-info';
 import { CollectorMetadata } from './collector-metadata';
 import { CollectorType } from './collector-type';
-import { ResolvedCollectorInfos } from './resolved-collector-infos';
+import { DiscordCollectors } from './discord-collectors';
 import { UseCollectorApplyOptions } from './use-collector-apply-options';
 
 @Injectable()
 export class CollectorResolver implements MethodResolver {
-  private readonly collectorInfos: ResolvedCollectorInfos[] = [];
+  private readonly discordCollectors = new Map<
+    InstanceType<any>,
+    DiscordCollectors
+  >();
 
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
@@ -53,67 +56,36 @@ export class CollectorResolver implements MethodResolver {
     if (classCollectors.length === 0 && methodCollectors.length === 0) return;
 
     const hostModule = this.instantiationService.getHostModule(instance);
-    const localCollectorInstances =
+    const moduleRef =
+      hostModule.getProviderByKey<ModuleRef>(ModuleRef).instance;
+    const methodCollectorInstances =
       await this.instantiationService.resolveInstances(
-        [...classCollectors, ...methodCollectors],
+        methodCollectors,
         hostModule,
       );
-
-    const collectors: CollectorMetadata[] = localCollectorInstances.map(
-      (collectorInstance) => {
-        const { filterMethodName, events } =
-          this.resolveBaseInfo(collectorInstance);
-
-        const reactionMetadata =
-          this.metadataProvider.getReactionCollectorDecoratorMetadata(
-            collectorInstance,
-          );
-
-        if (reactionMetadata)
-          return {
-            classInstance: collectorInstance,
-            metadata: reactionMetadata,
-            type: CollectorType.REACTION,
-            filterMethodName,
-            events,
-          };
-
-        const messageMetadata =
-          this.metadataProvider.getMessageCollectorDecoratorMetadata(
-            collectorInstance,
-          );
-
-        if (messageMetadata)
-          return {
-            classInstance: collectorInstance,
-            metadata: messageMetadata,
-            type: CollectorType.MESSAGE,
-            filterMethodName,
-            events,
-          };
-
-        const interactionMetadata =
-          this.metadataProvider.getInteractionCollectorDecoratorMetadata(
-            collectorInstance,
-          );
-
-        if (interactionMetadata)
-          return {
-            classInstance: collectorInstance,
-            metadata: interactionMetadata,
-            type: CollectorType.INTERACTION,
-            filterMethodName,
-            events,
-          };
-      },
+    const methodCollectorInfos = this.getCollectorsInfo(
+      methodCollectorInstances,
     );
 
-    this.collectorInfos.push({
-      instance,
-      methodName,
-      moduleRef: hostModule.getProviderByKey(ModuleRef).instance,
-      collectors,
-    });
+    if (this.discordCollectors.has(instance))
+      this.discordCollectors.get(instance).methodCollectors[methodName] =
+        methodCollectorInfos;
+    else {
+      const classCollectorInstances =
+        await this.instantiationService.resolveInstances(
+          classCollectors,
+          hostModule,
+        );
+      const classCollectorInfos = this.getCollectorsInfo(
+        classCollectorInstances,
+      );
+
+      this.discordCollectors.set(instance, {
+        methodCollectors: { [methodName]: methodCollectorInfos },
+        classCollectors: classCollectorInfos,
+        moduleRef,
+      });
+    }
   }
 
   async applyCollector({
@@ -124,115 +96,116 @@ export class CollectorResolver implements MethodResolver {
   }: UseCollectorApplyOptions): Promise<
     (ReactionCollector | MessageCollector | InteractionCollector<any>)[]
   > {
-    const collectorDataList = this.getCollectorData({ instance, methodName });
+    if (!this.discordCollectors.has(instance)) return;
 
-    if (!collectorDataList) return;
-
-    const { moduleRef } = collectorDataList;
+    const { classCollectors, methodCollectors, moduleRef } =
+      this.discordCollectors.get(instance);
 
     return Promise.all(
-      collectorDataList.collectors.map(async (collector) => {
-        const { type, metadata, filterMethodName, classInstance, events } =
-          collector;
-        switch (type) {
-          case CollectorType.REACTION: {
-            if (!this.isMessageEvent(event, eventArgs)) return;
+      [...classCollectors, ...(methodCollectors[methodName] || [])].map(
+        async (collector) => {
+          const { type, metadata, filterMethodName, classInstance, events } =
+            collector;
+          switch (type) {
+            case CollectorType.REACTION: {
+              if (!this.isMessageEvent(event, eventArgs)) return;
 
-            const [message] = eventArgs;
-            const reactionCollectorOptions: ReactionCollectorOptions = {
-              ...metadata,
-            };
-            const reactionCollector = message.createReactionCollector(
-              reactionCollectorOptions,
-            );
-
-            const executedClassInstance = await this.registerRequest(
-              moduleRef,
-              classInstance,
-              reactionCollector,
-            );
-
-            if (filterMethodName)
-              reactionCollector.filter = (...filterArgs) =>
-                executedClassInstance[filterMethodName](...filterArgs);
-
-            this.subscribeToEvents(
-              reactionCollector,
-              events,
-              executedClassInstance,
-            );
-
-            return reactionCollector;
-          }
-          case CollectorType.MESSAGE: {
-            if (
-              !this.isMessageEvent(event, eventArgs) &&
-              !this.isInteractionEvent(event, eventArgs)
-            )
-              return;
-            const [messageOrInteraction] = eventArgs;
-            const messageCollectorOptions: MessageCollectorOptions = {
-              ...metadata,
-            };
-            const messageCollector =
-              messageOrInteraction.channel.createMessageCollector(
-                messageCollectorOptions,
-              );
-
-            const executedClassInstance = await this.registerRequest(
-              moduleRef,
-              classInstance,
-              messageCollector,
-            );
-
-            if (filterMethodName)
-              messageCollector.filter = (...filterArgs) =>
-                executedClassInstance[filterMethodName](...filterArgs);
-
-            this.subscribeToEvents(
-              messageCollector,
-              events,
-              executedClassInstance,
-            );
-
-            return messageCollector;
-          }
-          case CollectorType.INTERACTION: {
-            if (
-              !this.isMessageEvent(event, eventArgs) &&
-              !this.isInteractionEvent(event, eventArgs)
-            )
-              return;
-            const [messageOrInteraction] = eventArgs;
-            const interactionCollectorOptions: InteractionCollectorOptions<any> =
-              {
+              const [message] = eventArgs;
+              const reactionCollectorOptions: ReactionCollectorOptions = {
                 ...metadata,
               };
-            const interactionCollector =
-              messageOrInteraction.channel.createMessageComponentCollector(
-                interactionCollectorOptions,
+              const reactionCollector = message.createReactionCollector(
+                reactionCollectorOptions,
               );
 
-            const executedClassInstance = await this.registerRequest(
-              moduleRef,
-              classInstance,
-              interactionCollector,
-            );
+              const executedClassInstance = await this.registerRequest(
+                moduleRef,
+                classInstance,
+                reactionCollector,
+              );
 
-            if (filterMethodName)
-              interactionCollector.filter = (...filterArgs) =>
-                executedClassInstance[filterMethodName](...filterArgs);
+              if (filterMethodName)
+                reactionCollector.filter = (...filterArgs) =>
+                  executedClassInstance[filterMethodName](...filterArgs);
 
-            this.subscribeToEvents(
-              interactionCollector,
-              events,
-              executedClassInstance,
-            );
+              this.subscribeToEvents(
+                reactionCollector,
+                events,
+                executedClassInstance,
+              );
 
-            return interactionCollector;
+              return reactionCollector;
+            }
+            case CollectorType.MESSAGE: {
+              if (
+                !this.isMessageEvent(event, eventArgs) &&
+                !this.isInteractionEvent(event, eventArgs)
+              )
+                return;
+              const [messageOrInteraction] = eventArgs;
+              const messageCollectorOptions: MessageCollectorOptions = {
+                ...metadata,
+              };
+              const messageCollector =
+                messageOrInteraction.channel.createMessageCollector(
+                  messageCollectorOptions,
+                );
+
+              const executedClassInstance = await this.registerRequest(
+                moduleRef,
+                classInstance,
+                messageCollector,
+              );
+
+              if (filterMethodName)
+                messageCollector.filter = (...filterArgs) =>
+                  executedClassInstance[filterMethodName](...filterArgs);
+
+              this.subscribeToEvents(
+                messageCollector,
+                events,
+                executedClassInstance,
+              );
+
+              return messageCollector;
+            }
+            case CollectorType.INTERACTION: {
+              if (
+                !this.isMessageEvent(event, eventArgs) &&
+                !this.isInteractionEvent(event, eventArgs)
+              )
+                return;
+              const [messageOrInteraction] = eventArgs;
+              const interactionCollectorOptions: InteractionCollectorOptions<any> =
+                {
+                  ...metadata,
+                };
+              const interactionCollector =
+                messageOrInteraction.channel.createMessageComponentCollector(
+                  interactionCollectorOptions,
+                );
+
+              const executedClassInstance = await this.registerRequest(
+                moduleRef,
+                classInstance,
+                interactionCollector,
+              );
+
+              if (filterMethodName)
+                interactionCollector.filter = (...filterArgs) =>
+                  executedClassInstance[filterMethodName](...filterArgs);
+
+              this.subscribeToEvents(
+                interactionCollector,
+                events,
+                executedClassInstance,
+              );
+
+              return interactionCollector;
+            }
           }
-        }
-      }),
+        },
+      ),
     );
   }
 
@@ -279,6 +252,57 @@ export class CollectorResolver implements MethodResolver {
         });
       },
     );
+  }
+
+  private getCollectorsInfo(
+    collectorInstances: InstanceType<any>[],
+  ): CollectorMetadata[] {
+    return collectorInstances.map((collectorInstance) => {
+      const { filterMethodName, events } =
+        this.resolveBaseInfo(collectorInstance);
+
+      const reactionMetadata =
+        this.metadataProvider.getReactionCollectorDecoratorMetadata(
+          collectorInstance,
+        );
+
+      if (reactionMetadata)
+        return {
+          classInstance: collectorInstance,
+          metadata: reactionMetadata,
+          type: CollectorType.REACTION,
+          filterMethodName,
+          events,
+        };
+
+      const messageMetadata =
+        this.metadataProvider.getMessageCollectorDecoratorMetadata(
+          collectorInstance,
+        );
+
+      if (messageMetadata)
+        return {
+          classInstance: collectorInstance,
+          metadata: messageMetadata,
+          type: CollectorType.MESSAGE,
+          filterMethodName,
+          events,
+        };
+
+      const interactionMetadata =
+        this.metadataProvider.getInteractionCollectorDecoratorMetadata(
+          collectorInstance,
+        );
+
+      if (interactionMetadata)
+        return {
+          classInstance: collectorInstance,
+          metadata: interactionMetadata,
+          type: CollectorType.INTERACTION,
+          filterMethodName,
+          events,
+        };
+    });
   }
 
   private async registerRequest(
@@ -361,15 +385,5 @@ export class CollectorResolver implements MethodResolver {
     context: ClientEvents[keyof ClientEvents],
   ): context is ClientEvents['interactionCreate'] {
     return event === 'interactionCreate';
-  }
-
-  private getCollectorData({
-    instance,
-    methodName,
-  }: MethodResolveOptions): ResolvedCollectorInfos {
-    return this.collectorInfos.find(
-      (item: ResolvedCollectorInfos) =>
-        item.methodName === methodName && item.instance === instance,
-    );
   }
 }

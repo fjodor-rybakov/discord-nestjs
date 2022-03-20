@@ -77,7 +77,7 @@ export class DiscordModule {
       providers: [
         {
           provide: INJECT_DISCORD_CLIENT,
-          useFactory: () => firstValueFrom(DiscordModule.initSubject),
+          useFactory: () => firstValueFrom(DiscordModule.initSubject), // Should only be called after DiscordClientService init
         },
         {
           provide: DiscordClientProvider,

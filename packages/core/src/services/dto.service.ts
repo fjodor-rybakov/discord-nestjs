@@ -14,11 +14,7 @@ export class DtoService {
     instance: InstanceType<any>,
     methodName: string,
   ): Promise<InstanceType<any>> {
-    this.paramResolver.resolve({ instance, methodName });
-    const payloadType = this.paramResolver.getPayloadType({
-      instance,
-      methodName,
-    });
+    const payloadType = this.paramResolver.getPayloadType(instance, methodName);
 
     if (!payloadType) return;
 

@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { DiscordExceptionFilter } from '../decorators/filter/discord-exception-filter';
+import { DiscordGuard } from '../decorators/guard/discord-guard';
+import { DiscordPipeTransform } from '../decorators/pipe/discord-pipe-transform';
 import { DiscordModuleOption } from '../definitions/interfaces/discord-module-options';
 import { InternalDiscordModuleOption } from '../definitions/interfaces/internal-discord-module-option';
 
@@ -30,15 +33,15 @@ export class DiscordOptionService {
     };
   }
 
-  addPipe(pipe: InstanceType<any>): number {
+  addPipe(pipe: DiscordPipeTransform): number {
     return this.options.usePipes.push(pipe);
   }
 
-  addGuard(guard: InstanceType<any>): number {
+  addGuard(guard: DiscordGuard): number {
     return this.options.useGuards.push(guard);
   }
 
-  addFilter(filter: InstanceType<any>): number {
+  addFilter(filter: DiscordExceptionFilter): number {
     return this.options.useFilters.push(filter);
   }
 

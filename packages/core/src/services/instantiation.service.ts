@@ -1,4 +1,4 @@
-import { Injectable, Scope, Type } from '@nestjs/common';
+import { Injectable, Type } from '@nestjs/common';
 import { DiscoveryService, ModuleRef } from '@nestjs/core';
 import { Module } from '@nestjs/core/injector/module';
 
