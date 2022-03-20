@@ -210,6 +210,50 @@ import { MyGlobalFilter } from './my-global-filter';
 export class AppModule {}
 ```
 
+#### Collectors
+
+If you are using `InjectCollector` decorator, add `scope: Scope.REQUEST`.
+
+```typescript
+/* appreciated-reaction-collector.ts */
+
+import {
+  Filter,
+  InjectCollector,
+  On,
+  Once,
+  ReactionEventCollector,
+} from '@discord-nestjs/core';
+import { Injectable, Scope } from '@nestjs/common';
+import { MessageReaction, ReactionCollector, User } from 'discord.js';
+
+@Injectable({ scope: Scope.REQUEST }) // <--- here
+@ReactionEventCollector({ time: 15000 })
+export class AppreciatedReactionCollector {
+  constructor(
+    @InjectCollector()
+    private readonly collector: ReactionCollector,
+  ) {}
+
+  @Filter()
+  isLikeFromAuthor(reaction: MessageReaction, user: User): boolean {
+    return (
+      reaction.emoji.name === '👍' && user.id === reaction.message.author.id
+    );
+  }
+
+  @On('collect')
+  onCollect(): void {
+    console.log('collect');
+  }
+
+  @Once('end')
+  onEnd(): void {
+    console.log('end');
+  }
+}
+```
+
 #### Providers by glob pattern
 
 Previously, you could use the `commands` option, which allowed you to search files by glob pattern. All this functionality 
