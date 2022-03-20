@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { Client, WebhookClient, WebhookClientData } from 'discord.js';
 
+import { DiscordModuleOption } from '../definitions/interfaces/discord-module-options';
 import { DiscordOptionService } from './discord-option.service';
 
 @Injectable()
@@ -13,13 +14,18 @@ export class DiscordClientService
   implements OnApplicationBootstrap, OnApplicationShutdown
 {
   private readonly logger = new Logger(DiscordClientService.name);
-  private readonly webhookClient: WebhookClient;
-  private readonly client: Client;
-  private readonly clientToken: string;
+  private webhookClient: WebhookClient;
+  private client: Client;
+  private clientToken: string;
 
-  constructor(discordOptionService: DiscordOptionService) {
+  constructor(private discordOptionService: DiscordOptionService) {}
+
+  init(options: DiscordModuleOption): void {
+    this.discordOptionService.setDefault(options);
+
     const { token, webhook, discordClientOptions } =
-      discordOptionService.getClientData();
+      this.discordOptionService.getClientData();
+
     this.client = new Client(discordClientOptions);
     this.clientToken = token;
     this.webhookClient = this.createWebhookClient(webhook);

@@ -143,7 +143,9 @@ export class BuildApplicationCommandService {
     commandName: string,
     subGroupName?: string,
   ): Promise<ApplicationCommandSubCommandData> {
-    const subCommandInstance = await this.moduleRef.create(subCommandType);
+    const subCommandInstance = this.moduleRef.get(subCommandType, {
+      strict: false,
+    });
     const metadata =
       this.metadataProvider.getSubCommandDecoratorMetadata(subCommandInstance);
 

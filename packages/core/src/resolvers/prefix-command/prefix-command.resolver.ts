@@ -6,7 +6,7 @@ import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provid
 import { DiscordClientService } from '../../services/discord-client.service';
 import { DiscordOptionService } from '../../services/discord-option.service';
 import { DtoService } from '../../services/dto.service';
-import { CollectorResolver } from '../collector/use-collectors/collector.resolver';
+import { CollectorResolver } from '../collector/collector.resolver';
 import { FilterResolver } from '../filter/filter.resolver';
 import { GuardResolver } from '../guard/guard.resolver';
 import { MethodResolveOptions } from '../interfaces/method-resolve-options';

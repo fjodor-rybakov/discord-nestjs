@@ -13,7 +13,7 @@ import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provid
 import { BuildApplicationCommandService } from '../../services/build-application-command.service';
 import { CommandTreeService } from '../../services/command-tree.service';
 import { DiscordClientService } from '../../services/discord-client.service';
-import { CollectorResolver } from '../collector/use-collectors/collector.resolver';
+import { CollectorResolver } from '../collector/collector.resolver';
 import { FilterResolver } from '../filter/filter.resolver';
 import { GuardResolver } from '../guard/guard.resolver';
 import { ClassResolveOptions } from '../interfaces/class-resolve-options';

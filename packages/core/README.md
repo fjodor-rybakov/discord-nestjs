@@ -73,7 +73,6 @@ creating a dynamic module through the `forRootAsync` functions.
 
 - `token` \* - Your discord bot token. You can get [here](https://discord.com/developers/applications)
 - `discordClientOptions` \* - Client options from discord.js library
-- `commands` - List of class types or list of search patterns
 - `slashCommandsPermissions` - Slash commands permissions
   - `commandClassType` - Class type that describes the command
   - `permissions` - Permission list
@@ -83,9 +82,6 @@ If `true` then overlaps `registerCommandOptions`
     - `forGuild` - For which guild to register a slash command
     - `allowFactory` - Based on what criteria will slash commands be registered
 - `prefix` - Global command prefix
-- `useFilters` - List of filter exception that will apply to all handlers
-- `usePipes` - List of pipes that will apply to all handlers
-- `useGuards` - List of guards that will apply to all handlers
 - `webhook` - Connecting with webhook
     - `webhookId` \* - Webhook id
     - `webhookToken` \* - Webhook token
@@ -95,80 +91,107 @@ If `true` then overlaps `registerCommandOptions`
 Below is an example of creating a dynamic module using the `forRootAsync` function
 
 ```typescript
-/* bot.module.ts */
+/* app.module.ts */
 
 import { DiscordModule } from '@discord-nestjs/core';
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Intents } from 'discord.js';
 
 @Module({
   imports: [
     DiscordModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        token: configService.get('TOKEN'),
-        commands: ['**/*.command.js'],
+      useFactory: () => ({
+        token: 'your-bot-token',
         discordClientOptions: {
           intents: [Intents.FLAGS.GUILDS],
         },
       }),
-      inject: [ConfigService],
     }),
   ],
 })
-export class BotModule {}
+export class AppModule {}
 ```
 
 Alternatively, you can use the `useClass` syntax
 
 ```typescript
-/* bot.module.ts */
+/* app.module.ts */
 
 import { Module } from '@nestjs/common';
 import { DiscordConfigService } from './discord-config-service';
 import { DiscordModule } from '@discord-nestjs/core';
-import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
     DiscordModule.forRootAsync({
-      imports: [ConfigModule],
       useClass: DiscordConfigService,
     }),
   ],
 })
-export class BotModule {}
+export class AppModule {}
 ```
 
 You need to implement the `DiscordOptionsFactory` interface
 
 ```typescript
-/* discord-config-service.ts */
+/* discord-config.service.ts */
 
 import { Injectable } from '@nestjs/common';
 import {
   DiscordModuleOption,
   DiscordOptionsFactory,
 } from '@discord-nestjs/core';
-import { ConfigService } from '@nestjs/config';
 import { Intents } from 'discord.js';
 
 @Injectable()
 export class DiscordConfigService implements DiscordOptionsFactory {
-  constructor(
-    private readonly configService: ConfigService
-  ) {
-  }
-
   createDiscordOptions(): DiscordModuleOption {
     return {
-      token: this.configService.get('TOKEN'),
-      commands: ['**/*.command.js'],
+      token: 'your-bot-token',
       discordClientOptions: {
         intents: [Intents.FLAGS.GUILDS],
       },
     };
+  }
+}
+```
+
+If you need to inject exported providers outside the `AppModule`, use the `Discord.forFeature()` import.
+For example, you need to get the Discord `Client` in your module.
+
+```typescript
+/* bot.module.ts */
+
+import { Module } from '@nestjs/common';
+import { DiscordModule } from '@discord-nestjs/core';
+import { BotGateway } from './bot.gateway'
+
+@Module({
+  imports: [DiscordModule.forFeature()],
+  providers: [BotGateway]
+})
+export class BotModule {}
+```
+
+```typescript
+/* bot.gateway.ts */
+
+import { Injectable, Logger } from '@nestjs/common';
+import { Once, InjectDiscordClient } from '@discord-nestjs/core';
+import { Client } from 'discord.js';
+
+@Injectable()
+export class BotGateway {
+  private readonly logger = new Logger(BotGateway.name);
+
+  constructor(
+    @InjectDiscordClient()
+    private readonly client: Client,
+  ) {}
+
+  @Once('ready')
+  onReady() {
+    this.logger.log(`Bot ${this.client.user.tag} was started!`);
   }
 }
 ```
@@ -187,11 +210,13 @@ Command decorator accepts a `name` and `description` as parameters.
 
 import { Command, DiscordCommand } from '@discord-nestjs/core';
 import { CommandInteraction } from 'discord.js';
+import { Injectable } from '@nestjs/common';
 
 @Command({
   name: 'playlist',
   description: 'Get current playlist',
 })
+@Injectable()
 export class PlaylistCommand implements DiscordCommand {
   handler(interaction: CommandInteraction): string {
     return 'List with music...';
@@ -212,12 +237,14 @@ The `handler` method of the `DiscordTransformedCommand` interface takes a DTO ma
 import { RegistrationDto } from './registration.dto';
 import { Command, UsePipes, Payload, DiscordTransformedCommand } from '@discord-nestjs/core';
 import { TransformPipe } from '@discord-nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CommandInteraction } from 'discord.js';
 
 @Command({
   name: 'reg',
   description: 'User registration',
 })
+@Injectable()
 @UsePipes(TransformPipe)
 export class BaseInfoCommand implements DiscordTransformedCommand<RegistrationDto>
 {
@@ -265,6 +292,62 @@ export class RegistrationDto {
 
 > You can also transform and validate the parameters to match your DTO by using the [common](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/common) package's 
 > TransformPipe and ValidationPipe, or by using custom [Pipes](#Pipes).
+
+Each command must be added to a NestJS module.
+
+```typescript
+/* bot-slash-commands.module.ts */
+
+import { PlaylistCommand } from './playlist.command';
+import { BaseInfoCommand } from './registration.command';
+import { Module } from '@nestjs/common';
+
+@Module({
+  providers: [PlaylistCommand, BaseInfoCommand],
+})
+export class BotSlashCommands {
+}
+```
+
+Or you can use https://github.com/fjodor-rybakov/nestjs-dynamic-providers for search files by glob pattern.
+
+```typescript
+/* bot-slash-commands.module.ts */
+
+import { DiscordModule } from '@discord-nestjs/core';
+import { Module } from '@nestjs/common';
+import { InjectDynamicProviders } from 'nestjs-dynamic-providers';
+
+@InjectDynamicProviders('**/*.command.js')
+@Module({})
+export class BotSlashCommands {}
+```
+
+And add your `BotSlashCommands` to `AppModule`.
+
+```typescript
+/* app.module.ts */
+
+import { DiscordModule } from '@discord-nestjs/core';
+import { Module } from '@nestjs/common';
+import { Intents } from 'discord.js';
+import { BotSlashCommands } from './bot-slash-commands.module';
+
+@Module({
+  imports: [
+    DiscordModule.forRootAsync({
+      useFactory: () => ({
+        token: 'your-bot-token',
+        discordClientOptions: {
+          intents: [Intents.FLAGS.GUILDS],
+        },
+      }),
+    }),
+    BotSlashCommands,
+  ],
+})
+export class AppModule {}
+```
 
 If your command is more complex, you can add subgroups of commands or subcommands to it. 
 To do this, you need to add your subgroups and subcommands to the `include` option. The `include` parameter accepts 
@@ -372,13 +455,36 @@ export class BaseInfoSubCommand implements DiscordCommand {
 }
 ```
 
+All commands and sub-commands must also be added to module providers.
+
+```typescript
+/* bot-slash-commands.module.ts */
+
+import { RegistrationCommand } from './registration.command';
+import { BaseInfoSubCommand } from './sub-commands/base-info-sub-command';
+import { EmailSubCommand } from './sub-commands/email-sub-command';
+import { NumberSubCommand } from './sub-commands/number-sub-command';
+import { Module } from '@nestjs/common';
+
+@Module({
+  providers: [
+    RegistrationCommand,
+    NumberSubCommand,
+    EmailSubCommand,
+    BaseInfoSubCommand,
+  ],
+})
+export class BotSlashCommands {
+}
+```
+
 ### ℹ️ Automatic registration of slash commands <a name="AutoRegCommand"></a>
 
 By default, automatic command registration is disabled. You can enable it by setting the `autoRegisterGlobalCommands` parameter to true.
 The globals are cached and updated once an hour. [More info](https://discordjs.guide/interactions/registering-slash-commands.html#global-commands). 
 The most optimal way is to update the slash commands for a specific guild. This can be configured via `registerCommandOptions`.
 
-* `registerCommandOptions` - takes an array of objects. 
+* `registerCommandOptions` - takes an array of objects.
 
 
 * If `allowFactory` and `forGuild` are specified, then commands for a specific guild will be registered according to the condition from `allowFactory`
@@ -392,6 +498,7 @@ import { DiscordModule } from '@discord-nestjs/core';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Intents, Message } from 'discord.js';
+import { BotSlashCommands } from './bot-slash-commands.module';
 
 @Module({
   imports: [
@@ -399,7 +506,6 @@ import { Intents, Message } from 'discord.js';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         token: configService.get('TOKEN'),
-        commands: ['**/*.command.js'],
         discordClientOptions: {
           intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
         },
@@ -413,6 +519,7 @@ import { Intents, Message } from 'discord.js';
       }),
       inject: [ConfigService],
     }),
+    BotSlashCommands
   ],
 })
 export class BotModule {}
@@ -652,7 +759,50 @@ export class BotGateway {
 You can also set `@UsePipes` decorator on class. In this case, the decorator is applied to all methods in the class. 
 Excluding command classes.
 
-> You can define pipe globally by passing it as `usePipes` option in the module settings.
+You can define pipe globally with `registerPipeGlobally()` function.
+
+```typescript
+/* app.module.ts */
+
+import { DiscordModule, registerPipeGlobally } from '@discord-nestjs/core';
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Intents } from 'discord.js';
+import { BotGateway } from './bot.gateway';
+import { MyGlobalPipe } from './my-global-pipe';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot(),
+    DiscordModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        token: configService.get('TOKEN'),
+        discordClientOptions: {
+          intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+        },
+        registerCommandOptions: [
+          {
+            forGuild: configService.get('GUILD_ID_WITH_COMMANDS'),
+            removeCommandsBefore: true,
+          },
+        ],
+      }),
+      inject: [ConfigService],
+    }),
+  ],
+  providers: [
+    BotGateway,
+    {
+      provide: registerPipeGlobally(),
+      useClass: MyGlobalPipe,
+    },
+  ],
+})
+export class AppModule {}
+```
+
+> The `registerPipeGlobally()` function always generate a unique provider key, so you can define as many pipes as you want.
 
 ### ℹ️ Guards <a name="Guards"></a>
 
@@ -707,7 +857,50 @@ export class BotGateway {
 You can also set `@UseGuards` decorator on class. In this case, the decorator is applied to all methods in the class.
 Excluding command classes.
 
-> You can define guard globally by passing it as `useGuards` option in the module settings.
+You can define guard globally with `registerGuardGlobally()` function.
+
+```typescript
+/* app.module.ts */
+
+import { DiscordModule, registerGuardGlobally } from '@discord-nestjs/core';
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Intents } from 'discord.js';
+import { BotGateway } from './bot.gateway';
+import { MyGlobalGuard } from './my-global-guard';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot(),
+    DiscordModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        token: configService.get('TOKEN'),
+        discordClientOptions: {
+          intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+        },
+        registerCommandOptions: [
+          {
+            forGuild: configService.get('GUILD_ID_WITH_COMMANDS'),
+            removeCommandsBefore: true,
+          },
+        ],
+      }),
+      inject: [ConfigService],
+    }),
+  ],
+  providers: [
+    BotGateway,
+    {
+      provide: registerGuardGlobally(),
+      useClass: MyGlobalGuard,
+    },
+  ],
+})
+export class AppModule {}
+```
+
+> The `registerGuardGlobally()` function always generate a unique provider key, so you can define as many guards as you want.
 
 ### ℹ️ Exception filters <a name="Filters"></a>
 
@@ -760,14 +953,14 @@ After that, you just need to pass the filter to `@UseFilters` decorator.
 > ⚠️**Import `UseFilters` from the `@discord-nestjs/core` package**
 
 ```typescript
-/* email-sub-command.ts */
+/* email-command.ts */
 
 import { EmailDto } from '../../dto/email.dto';
 import { CommandValidationFilter } from '../../filter/command-validation.filter';
 import { TransformPipe, ValidationPipe } from '@discord-nestjs/common';
 import {
   Payload,
-  SubCommand,
+  Command,
   DiscordTransformedCommand,
   UseFilters,
   UsePipes,
@@ -775,15 +968,58 @@ import {
 
 @UseFilters(CommandValidationFilter)
 @UsePipes(TransformPipe, ValidationPipe)
-@SubCommand({ name: 'email', description: 'Register by email' })
-export class EmailSubCommand implements DiscordTransformedCommand<EmailDto> {
+@Command({ name: 'email', description: 'Register by email' })
+export class EmailCommand implements DiscordTransformedCommand<EmailDto> {
   handler(@Payload() dto: EmailDto): string {
     return `Success register user: ${dto.email}, ${dto.name}, ${dto.age}, ${dto.city}`;
   }
 }
 ```
 
-> You can also define filter globally by passing it as `useFilters` option in the module settings.
+You can define filter globally with `registerFilterGlobally()` function.
+
+```typescript
+/* app.module.ts */
+
+import { DiscordModule, registerFilterGlobally } from '@discord-nestjs/core';
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Intents } from 'discord.js';
+import { EmailCommand } from './email-command';
+import { MyGlobalFilter } from './my-global-filter';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot(),
+    DiscordModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        token: configService.get('TOKEN'),
+        discordClientOptions: {
+          intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+        },
+        registerCommandOptions: [
+          {
+            forGuild: configService.get('GUILD_ID_WITH_COMMANDS'),
+            removeCommandsBefore: true,
+          },
+        ],
+      }),
+      inject: [ConfigService],
+    }),
+  ],
+  providers: [
+    EmailCommand,
+    {
+      provide: registerFilterGlobally(),
+      useClass: MyGlobalFilter,
+    },
+  ],
+})
+export class AppModule {}
+```
+
+> The `registerFilterGlobally()` function always generate a unique provider key, so you can define as many filters as you want.
 
 ### ℹ️ Collectors <a name="Collectors"></a>
 
@@ -805,8 +1041,10 @@ import {
   Once,
   ReactionEventCollector,
 } from '@discord-nestjs/core';
+import { Injectable, Scope } from '@nestjs/common';
 import { MessageReaction, ReactionCollector, User } from 'discord.js';
 
+@Injectable({ scope: Scope.REQUEST })
 @ReactionEventCollector({ time: 15000 })
 export class AppreciatedReactionCollector {
   constructor(
@@ -838,13 +1076,14 @@ Let me explain in detail what is going on here.
 * We marked the `AppreciatedReactionCollector` class with the `@ReactionEventCollector` decorator and passed collector 
   options as decorator argument. Think of it like we created `message.createReactionCollector({ time: 15000 });` from
   `discord.js` library.
-* The `@InjectCollector` injects the value of the collector into the class constructor.
+* The `@InjectCollector` injects the value of the collector into the class constructor. 
+If you use this decorator, you need to add `scope: Scope.REQUEST`. The default is `scope: Scope.DEFAULT`.
 * The `@Filter` decorator filters the incoming data into the collector. Treat it like the `filter` option in `createReactionCollector`.
 * Decorators `On` and `Once` subscribe to collector events.
 
 > Filters, guards and pipes can be applied to collector events.
 
-Then add your collector to `extraProviders` in `DiscordModule` options.
+All collectors, guards, pipes and filters are created automatically in the module used.
 
 To apply your collector to the message use `@UseCollectors` decorator.
 

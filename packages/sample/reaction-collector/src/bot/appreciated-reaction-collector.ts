@@ -5,8 +5,10 @@ import {
   Once,
   ReactionEventCollector,
 } from '@discord-nestjs/core';
+import { Injectable, Scope } from '@nestjs/common';
 import { MessageReaction, ReactionCollector, User } from 'discord.js';
 
+@Injectable({ scope: Scope.REQUEST })
 @ReactionEventCollector({ time: 15000 })
 export class AppreciatedReactionCollector {
   constructor(

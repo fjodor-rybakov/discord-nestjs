@@ -70,3 +70,10 @@ export * from './providers/discord-command.provider';
 
 // Constants
 export * from './decorators/client/inject-discord-client.constant';
+export * from './decorators/command/command.constant';
+export * from './decorators/sub-command/sub-command.constant';
+
+// Utils
+export * from './utils/function/register-filter-globally';
+export * from './utils/function/register-guard-globally';
+export * from './utils/function/register-pipe-globally';

@@ -6,9 +6,11 @@ import {
   TransformedCommandExecutionContext,
   UsePipes,
 } from '@discord-nestjs/core';
+import { Injectable } from '@nestjs/common';
 
 import { PlayDto } from '../dto/play.dto';
 
+@Injectable()
 @Command({
   name: 'play',
   description: 'Plays a song',

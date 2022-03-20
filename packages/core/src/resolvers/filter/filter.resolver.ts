@@ -1,61 +1,74 @@
 import { Injectable, Type } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
 
-import { DiscordExceptionFilter } from '../../decorators/filter/discord-exception-filter';
-import { FilterType } from '../../definitions/types/filter.type';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { DiscordOptionService } from '../../services/discord-option.service';
+import { InstantiationService } from '../../services/instantiation.service';
 import { MethodResolveOptions } from '../interfaces/method-resolve-options';
 import { MethodResolver } from '../interfaces/method-resolver';
 import { DiscordFilterOptions } from './discord-filter-options';
-import { ResolvedFilterInfo } from './resolved-filter-info';
+import { DiscordFilters } from './discord-filters';
 
 @Injectable()
 export class FilterResolver implements MethodResolver {
-  private readonly filterInfos: ResolvedFilterInfo[] = [];
+  private readonly discordFilters = new Map<
+    InstanceType<any>,
+    DiscordFilters
+  >();
 
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
     private readonly discordOptionService: DiscordOptionService,
-    private readonly moduleRef: ModuleRef,
+    private readonly instantiationService: InstantiationService,
   ) {}
 
   async resolve(options: MethodResolveOptions): Promise<void> {
     const { instance, methodName } = options;
-    let filters = this.metadataProvider.getUseFiltersDecoratorMetadata(
-      instance,
-      methodName,
-    );
-    if (!filters) {
-      const hasMetadataForPipe = this.checkApplyGlobalPipe(options);
-      if (!hasMetadataForPipe) return;
 
-      const filterAlreadyRegistered = this.getFilterData(options);
-      if (filterAlreadyRegistered) return;
+    const globalFilters = this.discordOptionService
+      .getClientData()
+      .useFilters.reverse(); // Like in NestJS
 
-      filters = this.discordOptionService.getClientData().useFilters;
-      if (filters.length === 0) return;
+    const classFilters = (
+      this.metadataProvider.getUseFiltersDecoratorMetadata(instance) ?? []
+    ).reverse(); // Like in NestJS
+
+    const methodFilters = (
+      this.metadataProvider.getUseFiltersDecoratorMetadata(
+        instance,
+        methodName,
+      ) ?? []
+    ).reverse(); // Like in NestJS
+
+    if (classFilters.length === 0 && methodFilters.length === 0) {
+      if (globalFilters.length !== 0)
+        this.discordFilters.set(instance, { globalFilters });
+
+      return;
     }
-    await this.addFilter(options, filters);
-  }
 
-  async addFilter(
-    options: MethodResolveOptions,
-    filters: FilterType[],
-  ): Promise<void> {
-    const { instance, methodName } = options;
-    const exceptionFilters: DiscordExceptionFilter[] = [];
-    for await (const filter of filters) {
-      const classType =
-        typeof filter === 'function' ? filter : (filter.constructor as Type);
-      const newFilterInstance = await this.moduleRef.create(classType);
-      exceptionFilters.push(newFilterInstance);
+    const hostModule = this.instantiationService.getHostModule(instance);
+    const methodFilterInstances =
+      await this.instantiationService.resolveInstances(
+        methodFilters,
+        hostModule,
+      );
+
+    if (this.discordFilters.has(instance))
+      this.discordFilters.get(instance).methodFilters[methodName] =
+        methodFilterInstances;
+    else {
+      const classFilterInstances =
+        await this.instantiationService.resolveInstances(
+          classFilters,
+          hostModule,
+        );
+
+      this.discordFilters.set(instance, {
+        methodFilters: { [methodName]: methodFilterInstances },
+        classFilters: classFilterInstances,
+        globalFilters,
+      });
     }
-    this.filterInfos.push({
-      instance,
-      methodName,
-      exceptionFilters,
-    });
   }
 
   async applyFilter(options: DiscordFilterOptions): Promise<boolean> {
@@ -68,29 +81,33 @@ export class FilterResolver implements MethodResolver {
       metatype,
       commandNode,
     } = options;
-    const filterListForMethod = this.getFilterData({ instance, methodName });
-    if (!filterListForMethod) return true;
+    if (!this.discordFilters.has(instance)) return true;
 
+    const { globalFilters, classFilters, methodFilters } =
+      this.discordFilters.get(instance);
+    const exceptionFilters = [
+      ...globalFilters,
+      ...classFilters,
+      ...(methodFilters[methodName] || []),
+    ];
     let indexOfAnyException: number;
-    const matchedFilters = filterListForMethod.exceptionFilters.filter(
-      (filter, index) => {
-        const catchExceptionTypes =
-          this.metadataProvider.getCatchDecoratorMetadata(filter);
+    const matchedFilters = exceptionFilters.filter((filter, index) => {
+      const catchExceptionTypes =
+        this.metadataProvider.getCatchDecoratorMetadata(filter);
 
-        const isAnyException = catchExceptionTypes.length === 0;
-        if (isAnyException && !indexOfAnyException) indexOfAnyException = index;
+      const isAnyException = catchExceptionTypes.length === 0;
+      if (isAnyException && !indexOfAnyException) indexOfAnyException = index;
 
-        const hasConcreteType = catchExceptionTypes.some((expectException) => {
-          const exceptionType = this.getExceptionConstructor(exception);
+      const hasConcreteType = catchExceptionTypes.some((expectException) => {
+        const exceptionType = this.getExceptionConstructor(exception);
 
-          return this.getAllParents(exceptionType)
-            .concat([exceptionType])
-            .includes(expectException);
-        });
+        return this.getAllParents(exceptionType)
+          .concat([exceptionType])
+          .includes(expectException);
+      });
 
-        return hasConcreteType || isAnyException;
-      },
-    );
+      return hasConcreteType || isAnyException;
+    });
 
     const [concreteMatchedFilter] = matchedFilters;
     if (concreteMatchedFilter)
@@ -109,33 +126,6 @@ export class FilterResolver implements MethodResolver {
       });
 
     return !(concreteMatchedFilter || indexOfAnyException);
-  }
-
-  private checkApplyGlobalPipe({
-    instance,
-    methodName,
-  }: MethodResolveOptions): boolean {
-    const someClassHasMetadata = [
-      this.metadataProvider.getCommandDecoratorMetadata,
-      this.metadataProvider.getSubCommandDecoratorMetadata,
-    ].some((item) => item(instance));
-
-    if (someClassHasMetadata) return true;
-
-    return [
-      this.metadataProvider.getOnEventDecoratorMetadata,
-      this.metadataProvider.getOnceEventDecoratorMetadata,
-    ].some((item) => item(instance, methodName));
-  }
-
-  private getFilterData({
-    instance,
-    methodName,
-  }: MethodResolveOptions): ResolvedFilterInfo {
-    return this.filterInfos.find(
-      (item: ResolvedFilterInfo) =>
-        item.methodName === methodName && item.instance === instance,
-    );
   }
 
   private getExceptionConstructor(exception: any): Type {
