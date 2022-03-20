@@ -5,9 +5,7 @@ import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { DISCORD_APP_FILTER } from '../definitions/constants/discord-app-filter';
 import { DISCORD_APP_GUARD } from '../definitions/constants/discord-app-guard';
 import { DISCORD_APP_PIPE } from '../definitions/constants/discord-app-pipe';
-import { BaseCollectorResolver } from '../resolvers/collector/base-collector.resolver';
-import { CollectorClassResolver } from '../resolvers/collector/collector-class.resolver';
-import { CollectorResolver } from '../resolvers/collector/use-collectors/collector.resolver';
+import { CollectorResolver } from '../resolvers/collector/collector.resolver';
 import { CommandResolver } from '../resolvers/command/command.resolver';
 import { EventResolver } from '../resolvers/event/event.resolver';
 import { FilterResolver } from '../resolvers/filter/filter.resolver';
@@ -33,8 +31,6 @@ export class DiscordResolverService implements OnModuleInit {
     private readonly discordOptionService: DiscordOptionService,
     private readonly registerCommandService: RegisterCommandService,
     private readonly collectorResolver: CollectorResolver,
-    private readonly collectorClassResolver: CollectorClassResolver,
-    private readonly baseCollectorResolver: BaseCollectorResolver,
     private readonly prefixCommandResolver: PrefixCommandResolver,
   ) {}
 
@@ -70,23 +66,15 @@ export class DiscordResolverService implements OnModuleInit {
       },
     );
 
-    const methodResolvers = [
-      this.collectorResolver,
-      this.eventResolver,
-      this.prefixCommandResolver,
-    ];
+    const methodResolvers = [this.eventResolver, this.prefixCommandResolver];
 
-    const classResolvers = [
-      this.commandResolver,
-      this.baseCollectorResolver,
-      this.middlewareResolver,
-      this.collectorClassResolver,
-    ];
+    const classResolvers = [this.commandResolver, this.middlewareResolver];
 
     const lifecyclePartsResolvers = [
       this.guardResolver,
       this.pipeResolver,
       this.filterResolver,
+      this.collectorResolver,
     ];
 
     await Promise.all(

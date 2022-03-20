@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Scope, Type } from '@nestjs/common';
 import { DiscoveryService, ModuleRef } from '@nestjs/core';
 import { Module } from '@nestjs/core/injector/module';
 
@@ -24,14 +24,16 @@ export class InstantiationService {
   }
 
   resolveInstances(
-    classTypeOrInstance: (PipeType | FilterType | GuardType)[],
+    classTypeOrInstance: (PipeType | FilterType | GuardType | Type)[],
     hostModule: Module,
-  ) {
+  ): Promise<InstanceType<any>[]> {
     return Promise.all(
       classTypeOrInstance.map((classTypeOrInstance) => {
         // User-created instance
         if (typeof classTypeOrInstance !== 'function')
           return classTypeOrInstance;
+
+        hostModule.addProvider(classTypeOrInstance);
 
         // Create an instance in the host module
         return hostModule

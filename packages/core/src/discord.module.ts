@@ -14,9 +14,7 @@ import { DiscordHostModule } from './discord-host.module';
 import { DiscordClientProvider } from './providers/discord-client.provider';
 import { DiscordCommandProvider } from './providers/discord-command.provider';
 import { ReflectMetadataProvider } from './providers/reflect-metadata.provider';
-import { BaseCollectorResolver } from './resolvers/collector/base-collector.resolver';
-import { CollectorClassResolver } from './resolvers/collector/collector-class.resolver';
-import { CollectorResolver } from './resolvers/collector/use-collectors/collector.resolver';
+import { CollectorResolver } from './resolvers/collector/collector.resolver';
 import { CommandResolver } from './resolvers/command/command.resolver';
 import { EventResolver } from './resolvers/event/event.resolver';
 import { FilterResolver } from './resolvers/filter/filter.resolver';
@@ -62,8 +60,6 @@ export class DiscordModule {
         DiscordResolverService,
         BuildApplicationCommandService,
         CommandTreeService,
-        BaseCollectorResolver,
-        CollectorClassResolver,
         CollectorResolver,
       ],
       exports: [

@@ -1041,8 +1041,10 @@ import {
   Once,
   ReactionEventCollector,
 } from '@discord-nestjs/core';
+import { Injectable, Scope } from '@nestjs/common';
 import { MessageReaction, ReactionCollector, User } from 'discord.js';
 
+@Injectable({ scope: Scope.REQUEST })
 @ReactionEventCollector({ time: 15000 })
 export class AppreciatedReactionCollector {
   constructor(
@@ -1074,7 +1076,8 @@ Let me explain in detail what is going on here.
 * We marked the `AppreciatedReactionCollector` class with the `@ReactionEventCollector` decorator and passed collector 
   options as decorator argument. Think of it like we created `message.createReactionCollector({ time: 15000 });` from
   `discord.js` library.
-* The `@InjectCollector` injects the value of the collector into the class constructor.
+* The `@InjectCollector` injects the value of the collector into the class constructor. 
+If you use this decorator, you need to add `scope: Scope.REQUEST`. The default is `scope: Scope.DEFAULT`.
 * The `@Filter` decorator filters the incoming data into the collector. Treat it like the `filter` option in `createReactionCollector`.
 * Decorators `On` and `Once` subscribe to collector events.
 
