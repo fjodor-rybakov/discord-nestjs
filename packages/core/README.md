@@ -8,6 +8,7 @@ NestJS package for discord.js
 - [📑 Overview](#Overview)
 - [▶️ Usage](#Usage)
   - [ℹ️ Creating slash commands](#Command)
+  - [ℹ️ UI based commands(Context menu commands)](#UIBasedCommand)
     - [ℹ️ Automatic registration of slash commands](#AutoRegCommand)
   - [ℹ️ Subscribe to event](#SubToEvent)
   - [ℹ️ Prefix commands](#PrefixCommands)
@@ -475,6 +476,29 @@ import { Module } from '@nestjs/common';
   ],
 })
 export class BotSlashCommands {
+}
+```
+
+### ℹ️ UI based commands(Context menu commands) <a name="UIBasedCommand"></a>
+
+In addition to slash commands, you can define commands through the context menu.
+To do this, you need to explicitly set the command type. (`USER` or `MESSAGE`)
+
+```typescript
+/* playlist.command.ts */
+
+import { Command, DiscordCommand } from '@discord-nestjs/core';
+import { ContextMenuInteraction } from 'discord.js';
+import { ApplicationCommandTypes } from 'discord.js/typings/enums';
+
+@Command({
+  name: 'playlist',
+  type: ApplicationCommandTypes.USER,
+})
+export class PlaylistCommand implements DiscordCommand {
+  handler(interaction: ContextMenuInteraction): string {
+    return 'Your playlist...';
+  }
 }
 ```
 
