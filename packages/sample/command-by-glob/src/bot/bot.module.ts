@@ -1,11 +1,9 @@
 import { DiscordModule } from '@discord-nestjs/core';
 import { Module } from '@nestjs/common';
+import { InjectDynamicProviders } from 'nestjs-dynamic-providers';
 
-import { PlayCommand } from './commands/play.command';
-import { PlaylistCommand } from './commands/playlist.command';
-
+@InjectDynamicProviders('**/*.command.js')
 @Module({
   imports: [DiscordModule.forFeature()],
-  providers: [PlayCommand, PlaylistCommand],
 })
 export class BotModule {}

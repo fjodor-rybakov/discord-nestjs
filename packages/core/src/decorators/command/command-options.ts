@@ -27,9 +27,9 @@ export interface CommandOptions {
   defaultPermission?: boolean;
 
   /**
-   * Command Type (Slash or Context Menu)
+   * Slash command type
    *
    * @default CHAT_INPUT
    */
-  type?: ApplicationCommandTypes;
+  type?: ApplicationCommandTypes.CHAT_INPUT;
 }

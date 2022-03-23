@@ -18,7 +18,7 @@ export interface ParamOptions {
   required?: boolean;
 
   /**
-   *
+   * Param type
    */
   type?: ParamType;
 }
