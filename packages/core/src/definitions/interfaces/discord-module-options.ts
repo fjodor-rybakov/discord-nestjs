@@ -21,6 +21,8 @@ export interface DiscordModuleOption {
   slashCommandsPermissions?: SlashCommandPermissions[];
 
   /**
+   * @deprecated use instead `registerCommandOptions`
+   *
    * Automatically register global commands in the Discord API
    *
    * If true then overlaps registerCommandOptions
@@ -30,6 +32,8 @@ export interface DiscordModuleOption {
   autoRegisterGlobalCommands?: boolean;
 
   /**
+   * @deprecated use instead `registerCommandOptions`
+   *
    * Automatically remove global commands
    *
    * Start before `autoRegisterGlobalCommands`

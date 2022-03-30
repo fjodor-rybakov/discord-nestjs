@@ -5,13 +5,16 @@ import {
   ApplicationCommand,
   ApplicationCommandData,
   Client,
+  FetchApplicationCommandOptions,
+  GuildResolvable,
   Message,
 } from 'discord.js';
 
+import { InjectDiscordClient } from '../decorators/client/inject-discord-client.decorator';
 import { DiscordModuleOption } from '../definitions/interfaces/discord-module-options';
+import { RegisterCommandOptions } from '../definitions/interfaces/register-command-options';
 import { SlashCommandPermissions } from '../definitions/interfaces/slash-command-permissions';
 import { DiscordCommandProvider } from '../providers/discord-command.provider';
-import { DiscordClientService } from './discord-client.service';
 
 @Injectable()
 export class RegisterCommandService {
@@ -19,19 +22,12 @@ export class RegisterCommandService {
 
   constructor(
     private readonly discordCommandProvider: DiscordCommandProvider,
-    private readonly discordClientService: DiscordClientService,
+    @InjectDiscordClient()
+    private readonly client: Client,
   ) {}
 
   async register(options: DiscordModuleOption): Promise<void> {
-    const client = this.discordClientService.getClient();
-
-    if (
-      (options.registerCommandOptions &&
-        options.registerCommandOptions.length !== 0) ||
-      options.autoRegisterGlobalCommands ||
-      options.removeGlobalCommands
-    )
-      client.on('ready', () => this.registerCommands(client, options));
+    this.client.on('ready', () => this.registerCommands(this.client, options));
   }
 
   private async registerCommands(
@@ -51,6 +47,7 @@ export class RegisterCommandService {
 
     if (!client.application?.owner) await client.application?.fetch();
 
+    // TODO: Remove in next minor release
     if (removeGlobalCommands) await this.dropGlobalCommands(client);
 
     if (autoRegisterGlobalCommands) {
@@ -60,7 +57,7 @@ export class RegisterCommandService {
 
       if (slashCommandsPermissions)
         await this.setPermissions(
-          registeredCommands,
+          Array.from(registeredCommands.values()),
           commands,
           slashCommandsPermissions,
         );
@@ -69,21 +66,18 @@ export class RegisterCommandService {
     } else {
       await Promise.all(
         registerCommandOptions.map(
-          async ({ forGuild, allowFactory, removeCommandsBefore }) => {
+          async (commandOptions: RegisterCommandOptions) => {
+            const { forGuild, allowFactory } = commandOptions;
             if (allowFactory) {
               if (forGuild) {
                 // Registering commands for specific guild
                 client.on('messageCreate', async (message: Message) => {
                   if (!allowFactory(message, commandList)) return;
 
-                  if (removeCommandsBefore)
-                    await this.dropLocalCommands(client, forGuild);
-
-                  const registeredCommands =
-                    await client.application.commands.set(
-                      commandList,
-                      forGuild,
-                    );
+                  const registeredCommands = await this.updateCommands(
+                    commandList,
+                    commandOptions,
+                  );
 
                   if (slashCommandsPermissions)
                     await this.setPermissions(
@@ -91,19 +85,16 @@ export class RegisterCommandService {
                       commands,
                       slashCommandsPermissions,
                     );
-
-                  this.logger.log('All guild commands are registered!');
                 });
               } else {
                 // Registering global commands
                 client.on('messageCreate', async (message: Message) => {
                   if (!allowFactory(message, commandList)) return;
 
-                  if (removeCommandsBefore)
-                    await this.dropGlobalCommands(client);
-
-                  const registeredCommands =
-                    await client.application.commands.set(commandList);
+                  const registeredCommands = await this.updateCommands(
+                    commandList,
+                    commandOptions,
+                  );
 
                   if (slashCommandsPermissions)
                     await this.setPermissions(
@@ -111,18 +102,12 @@ export class RegisterCommandService {
                       commands,
                       slashCommandsPermissions,
                     );
-
-                  this.logger.log('All global commands are registered!');
                 });
               }
             } else if (forGuild) {
-              if (removeCommandsBefore)
-                await this.dropLocalCommands(client, forGuild);
-
-              // Registering commands for specific guild
-              const registeredCommands = await client.application.commands.set(
+              const registeredCommands = await this.updateCommands(
                 commandList,
-                forGuild,
+                commandOptions,
               );
 
               if (slashCommandsPermissions)
@@ -131,8 +116,18 @@ export class RegisterCommandService {
                   commands,
                   slashCommandsPermissions,
                 );
+            } else {
+              const registeredCommands = await this.updateCommands(
+                commandList,
+                commandOptions,
+              );
 
-              this.logger.log('All guild commands are registered!');
+              if (slashCommandsPermissions)
+                await this.setPermissions(
+                  registeredCommands,
+                  commands,
+                  slashCommandsPermissions,
+                );
             }
           },
         ),
@@ -147,18 +142,115 @@ export class RegisterCommandService {
     this.logger.log('All global commands removed!');
   }
 
-  private async dropLocalCommands(
-    client: Client,
-    guildId: string,
+  private async dropMissingCommands(
+    existCommands: Collection<string, ApplicationCommand>,
+    commandList: ApplicationCommandData[],
   ): Promise<void> {
-    const localCommands = await client.application.commands.fetch({ guildId });
-    await Promise.all(localCommands.map((command) => command.delete()));
+    const deleteCommands = existCommands.filter(
+      (existCommand) =>
+        !commandList.find(
+          (newCommand) =>
+            existCommand.name === newCommand.name &&
+            existCommand.type === newCommand.type,
+        ),
+    );
 
-    this.logger.log('All local commands removed!');
+    await Promise.all(deleteCommands.map((command) => command.delete()));
+  }
+
+  private splitByCommands(
+    existCommandList: Collection<
+      string,
+      ApplicationCommand<{ guild: GuildResolvable }>
+    >,
+    commandList: ApplicationCommandData[],
+  ): [
+    ApplicationCommandData[],
+    {
+      existCommand: ApplicationCommand<{ guild: GuildResolvable }>;
+      newCommand: ApplicationCommandData;
+    }[],
+  ] {
+    return commandList.reduce(
+      (result, newCommand) => {
+        const alreadyExist = existCommandList.find(
+          (existCommand) =>
+            newCommand.name === existCommand.name &&
+            newCommand.type === existCommand.type,
+        );
+
+        alreadyExist
+          ? result[1].push({
+              existCommand: alreadyExist,
+              newCommand,
+            })
+          : result[0].push(newCommand);
+
+        return result;
+      },
+      [[], []],
+    );
+  }
+
+  private async updateCommands(
+    commandList: ApplicationCommandData[],
+    { forGuild, removeCommandsBefore }: RegisterCommandOptions,
+  ): Promise<ApplicationCommand[]> {
+    // Fetch guild or global commands
+    const options: FetchApplicationCommandOptions & { guildId: Snowflake } =
+      forGuild && {
+        guildId: forGuild,
+      };
+    const existCommandList = await this.client.application.commands.fetch(
+      options,
+    );
+
+    // Remove if needed
+    if (removeCommandsBefore) {
+      await this.dropMissingCommands(existCommandList, commandList);
+
+      this.logger.log(`All ${forGuild ? 'guild' : 'global'} commands removed!`);
+    }
+
+    let registeredCommands: ApplicationCommand[] = [];
+
+    const [createCommands, editCommands] = this.splitByCommands(
+      existCommandList,
+      commandList,
+    );
+
+    // Edit existing commands
+    if (editCommands.length !== 0) {
+      const editedCommands = await Promise.all(
+        editCommands.map(({ existCommand, newCommand }) =>
+          existCommand.edit(newCommand),
+        ),
+      );
+
+      registeredCommands = registeredCommands.concat(editedCommands);
+    }
+
+    // Create new commands
+    if (createCommands.length !== 0) {
+      const createdCommands = await this.client.application.commands.set(
+        commandList,
+        forGuild,
+      );
+
+      registeredCommands = registeredCommands.concat(
+        Array.from(createdCommands.values()),
+      );
+    }
+
+    this.logger.log(
+      `All ${forGuild ? 'guild' : 'global'} commands are registered!`,
+    );
+
+    return registeredCommands;
   }
 
   private async setPermissions(
-    registeredCommands: Collection<Snowflake, ApplicationCommand>,
+    registeredCommands: ApplicationCommand[],
     rowCommandsData: Map<Type, ApplicationCommandData>,
     slashCommandsPermissions: SlashCommandPermissions[],
   ) {
@@ -174,5 +266,7 @@ export class RegisterCommandService {
         },
       ),
     );
+
+    this.logger.log('All command permissions set!');
   }
 }

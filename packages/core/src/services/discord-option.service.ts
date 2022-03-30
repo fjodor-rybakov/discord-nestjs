@@ -19,6 +19,7 @@ export class DiscordOptionService {
       useGuards: [],
       usePipes: [],
       useFilters: [],
+      registerCommandOptions: [{}],
     };
   }
 
