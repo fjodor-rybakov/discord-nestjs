@@ -46,7 +46,7 @@ export class PrefixCommandResolver implements MethodResolver {
       isRemovePrefix = ( discordOptions.prefixGlobalOptions.isRemovePrefix ?? true ),
       isIgnoreBotMessage = ( discordOptions.prefixGlobalOptions.isIgnoreBotMessage ?? true ),
       isRemoveCommandName = ( discordOptions.prefixGlobalOptions.isRemoveCommandName ?? true ),
-      isRemoveMessage = ( discordOptions.prefixGlobalOptions.isRemoveMessage ?? true ),
+      isRemoveMessage = ( discordOptions.prefixGlobalOptions.isRemoveMessage ?? false ),
     } = metadata;
 
     if (!prefix) throw new Error(`Prefix for ${name} command not found`);
