@@ -82,6 +82,7 @@ creating a dynamic module through the `forRootAsync` functions.
     - `allowFactory` - Based on what criteria will slash commands be registered
     - `removeCommandsBefore` - Remove mission commands
 - `prefix` - Global command prefix
+- `prefixGlobalOptions` - Global options for prefix command
 - `webhook` - Connecting with webhook
     - `webhookId` \* - Webhook id
     - `webhookToken` \* - Webhook token
