@@ -53,7 +53,6 @@ export interface DiscordModuleOption {
   /**
    * Global options for prefix command
    */
-
   prefixGlobalOptions?: PrefixCommandGlobalOptions;
 
   /**
