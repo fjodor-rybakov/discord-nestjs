@@ -15,7 +15,7 @@ export interface RegisterCommandOptions {
   ) => boolean;
 
   /**
-   * Remove commands before
+   * Remove only missing commands
    *
    * @default: false
    */

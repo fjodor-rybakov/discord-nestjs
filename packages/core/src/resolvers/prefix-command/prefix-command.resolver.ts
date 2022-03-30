@@ -79,7 +79,7 @@ export class PrefixCommandResolver implements MethodResolver {
           );
           if (messagePrefix !== prefix || commandName !== name) return; // not suitable for handler
 
-          ///#region handle message
+          //#region handle message
           if (isRemovePrefix)
             messageContent = messageContent.slice(prefix.length);
 

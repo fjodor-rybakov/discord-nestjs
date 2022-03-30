@@ -19,7 +19,6 @@ import { BotModule } from './bot/bot.module';
             Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
           ],
         },
-        removeGlobalCommands: true,
         registerCommandOptions: [
           {
             forGuild: configService.get('GUILD_ID_WITH_COMMANDS'),

@@ -77,11 +77,10 @@ creating a dynamic module through the `forRootAsync` functions.
 - `slashCommandsPermissions` - Slash commands permissions
   - `commandClassType` - Class type that describes the command
   - `permissions` - Permission list
-- `autoRegisterGlobalCommands` - Automatically register global commands in the Discord API `(default: false)`. 
-If `true` then overlaps `registerCommandOptions`
-- `registerCommandOptions` - Specific registration of slash commands
+- `registerCommandOptions` - Specific registration of slash commands(If option is not set, global commands will be registered)
     - `forGuild` - For which guild to register a slash command
     - `allowFactory` - Based on what criteria will slash commands be registered
+    - `removeCommandsBefore` - Remove mission commands
 - `prefix` - Global command prefix
 - `webhook` - Connecting with webhook
     - `webhookId` \* - Webhook id

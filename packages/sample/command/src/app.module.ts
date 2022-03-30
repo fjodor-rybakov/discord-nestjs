@@ -17,7 +17,6 @@ import { PlaylistCommand } from './bot/commands/playlist.command';
         discordClientOptions: {
           intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
         },
-        removeGlobalCommands: true,
         registerCommandOptions: [
           {
             forGuild: configService.get('GUILD_ID_WITH_COMMANDS'),
