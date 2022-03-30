@@ -1,4 +1,6 @@
-export interface PrefixCommandOptions {
+import { PrefixCommandGlobalOptions } from "../../definitions/interfaces/prefix-command-global-options";
+
+export interface PrefixCommandOptions extends PrefixCommandGlobalOptions {
   /**
    * Command name
    */
@@ -8,32 +10,4 @@ export interface PrefixCommandOptions {
    * Command prefix (If set, it overrides the global)
    */
   prefix?: string;
-
-  /**
-   * Remove command name from input string
-   *
-   * @default true
-   */
-  isRemoveCommandName?: boolean;
-
-  /**
-   * Remove prefix from input string
-   *
-   * @default true
-   */
-  isRemovePrefix?: boolean;
-
-  /**
-   * Ignore messages from bots
-   *
-   * @default true
-   */
-  isIgnoreBotMessage?: boolean;
-
-  /**
-   * Remove message from channel after processing
-   *
-   * @default false
-   */
-  isRemoveMessage?: boolean;
 }
