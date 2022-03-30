@@ -34,7 +34,11 @@ export class GuardResolver implements MethodResolver {
 
     if (classGuards.length === 0 && methodGuards.length === 0) {
       if (globalGuards.length !== 0)
-        this.discordGuards.set(instance, { globalGuards });
+        this.discordGuards.set(instance, {
+          globalGuards,
+          classGuards: [],
+          methodGuards: {},
+        });
 
       return;
     }

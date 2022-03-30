@@ -41,7 +41,11 @@ export class FilterResolver implements MethodResolver {
 
     if (classFilters.length === 0 && methodFilters.length === 0) {
       if (globalFilters.length !== 0)
-        this.discordFilters.set(instance, { globalFilters });
+        this.discordFilters.set(instance, {
+          globalFilters,
+          classFilters: [],
+          methodFilters: {},
+        });
 
       return;
     }
