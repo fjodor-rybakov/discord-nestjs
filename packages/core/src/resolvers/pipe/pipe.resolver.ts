@@ -35,7 +35,11 @@ export class PipeResolver implements MethodResolver {
 
     if (classPipes.length === 0 && methodPipes.length === 0) {
       if (globalPipes.length !== 0)
-        this.discordPipes.set(instance, { globalPipes });
+        this.discordPipes.set(instance, {
+          globalPipes,
+          classPipes: [],
+          methodPipes: {},
+        });
 
       return;
     }
