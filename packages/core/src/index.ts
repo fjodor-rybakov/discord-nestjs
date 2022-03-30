@@ -9,6 +9,7 @@ export * from './definitions/interfaces/discord-transformed-command';
 export * from './definitions/interfaces/execution-context';
 export * from './definitions/interfaces/command-execution-context';
 export * from './definitions/interfaces/transformed-command-execution-context';
+export * from './definitions/interfaces/prefix-command-global-options';
 
 export * from './decorators/command/command-options';
 export * from './decorators/sub-command/sub-command-options';
