@@ -89,11 +89,11 @@ export class DiscordResolverService implements OnModuleInit {
           const methodNames = this.scanMetadata(instance);
 
           await Promise.all(
-            lifecyclePartsResolvers.map((resolver) => {
+            lifecyclePartsResolvers.map(async (resolver) => {
               if (methodNames.length)
-                return methodNames.map((methodName) =>
-                  resolver.resolve({ instance, methodName }),
-                );
+                for await (const methodName of methodNames) {
+                  await resolver.resolve({ instance, methodName });
+                }
 
               return resolver.resolve({ instance });
             }),
