@@ -10,7 +10,7 @@ import { DiscordArgumentMetadata } from '../pipe/discord-argument-metadata';
  */
 export interface DiscordExceptionFilter<
   TException = any,
-  TEvent extends EventType = any,
+  TEvent extends EventType = EventType,
   TInteraction extends Interaction = any,
 > {
   catch(

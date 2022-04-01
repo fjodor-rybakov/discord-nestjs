@@ -8,7 +8,7 @@ import { EventArgs, EventType } from '../../definitions/types/event.type';
  * Guards should be implemented on its basis
  */
 export interface DiscordGuard<
-  TEvent extends EventType = any,
+  TEvent extends EventType = EventType,
   TInteraction extends Interaction = any,
 > {
   canActive(

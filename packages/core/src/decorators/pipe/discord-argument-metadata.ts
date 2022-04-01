@@ -8,7 +8,7 @@ import { CommandNode } from '../../definitions/types/tree/command-node';
  * Discord argument metadata
  */
 export interface DiscordArgumentMetadata<
-  TEvent extends EventType = any,
+  TEvent extends EventType = EventType,
   TInteraction extends Interaction = any,
 > {
   /**

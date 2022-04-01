@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Type } from '@nestjs/common';
 
 import { DiscordPipeTransform } from '../../decorators/pipe/discord-pipe-transform';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
@@ -11,7 +11,7 @@ import { DiscordPipes } from './discord-pipes';
 
 @Injectable()
 export class PipeResolver implements MethodResolver {
-  private readonly discordPipes = new Map<InstanceType<any>, DiscordPipes>();
+  private readonly cachedPipes = new WeakMap<Type, DiscordPipes>();
 
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
@@ -33,9 +33,11 @@ export class PipeResolver implements MethodResolver {
         methodName,
       ) ?? [];
 
+    const classType = instance.constructor;
+
     if (classPipes.length === 0 && methodPipes.length === 0) {
       if (globalPipes.length !== 0)
-        this.discordPipes.set(instance, {
+        this.cachedPipes.set(classType, {
           globalPipes,
           classPipes: [],
           methodPipes: {},
@@ -48,8 +50,8 @@ export class PipeResolver implements MethodResolver {
     const methodPipeInstances =
       await this.instantiationService.resolveInstances(methodPipes, hostModule);
 
-    if (this.discordPipes.has(instance))
-      this.discordPipes.get(instance).methodPipes[methodName] =
+    if (this.cachedPipes.has(classType))
+      this.cachedPipes.get(classType).methodPipes[methodName] =
         methodPipeInstances;
     else {
       const classPipeInstances =
@@ -58,7 +60,7 @@ export class PipeResolver implements MethodResolver {
           hostModule,
         );
 
-      this.discordPipes.set(instance, {
+      this.cachedPipes.set(classType, {
         methodPipes: { [methodName]: methodPipeInstances },
         classPipes: classPipeInstances,
         globalPipes,
@@ -76,10 +78,12 @@ export class PipeResolver implements MethodResolver {
       metatype,
       commandNode,
     } = options;
-    if (!this.discordPipes.has(instance)) return;
+    const classType = instance.constructor;
+
+    if (!this.cachedPipes.has(classType)) return;
 
     const { globalPipes, classPipes, methodPipes } =
-      this.discordPipes.get(instance);
+      this.cachedPipes.get(classType);
 
     return [
       ...globalPipes,

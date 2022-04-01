@@ -22,7 +22,7 @@ export class MiddlewareResolver implements ClassResolver {
     this.middlewareList.push({ instance, metadata });
   }
 
-  async applyMiddleware<TEvent extends EventType = any>(
+  async applyMiddleware<TEvent extends EventType = EventType>(
     event: TEvent,
     eventArgs: EventArgs<TEvent>,
   ): Promise<void> {

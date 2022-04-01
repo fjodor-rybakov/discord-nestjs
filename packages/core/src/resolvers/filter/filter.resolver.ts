@@ -10,10 +10,7 @@ import { DiscordFilters } from './discord-filters';
 
 @Injectable()
 export class FilterResolver implements MethodResolver {
-  private readonly discordFilters = new Map<
-    InstanceType<any>,
-    DiscordFilters
-  >();
+  private readonly cachedFilters = new WeakMap<Type, DiscordFilters>();
 
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
@@ -39,9 +36,11 @@ export class FilterResolver implements MethodResolver {
       ) ?? []
     ).reverse(); // Like in NestJS
 
+    const classType = instance.constructor;
+
     if (classFilters.length === 0 && methodFilters.length === 0) {
       if (globalFilters.length !== 0)
-        this.discordFilters.set(instance, {
+        this.cachedFilters.set(classType, {
           globalFilters,
           classFilters: [],
           methodFilters: {},
@@ -57,8 +56,8 @@ export class FilterResolver implements MethodResolver {
         hostModule,
       );
 
-    if (this.discordFilters.has(instance))
-      this.discordFilters.get(instance).methodFilters[methodName] =
+    if (this.cachedFilters.has(classType))
+      this.cachedFilters.get(classType).methodFilters[methodName] =
         methodFilterInstances;
     else {
       const classFilterInstances =
@@ -67,7 +66,7 @@ export class FilterResolver implements MethodResolver {
           hostModule,
         );
 
-      this.discordFilters.set(instance, {
+      this.cachedFilters.set(classType, {
         methodFilters: { [methodName]: methodFilterInstances },
         classFilters: classFilterInstances,
         globalFilters,
@@ -85,10 +84,12 @@ export class FilterResolver implements MethodResolver {
       metatype,
       commandNode,
     } = options;
-    if (!this.discordFilters.has(instance)) return true;
+    const classType = instance.constructor;
+
+    if (!this.cachedFilters.has(classType)) return true;
 
     const { globalFilters, classFilters, methodFilters } =
-      this.discordFilters.get(instance);
+      this.cachedFilters.get(classType);
     const exceptionFilters = [
       ...globalFilters,
       ...classFilters,

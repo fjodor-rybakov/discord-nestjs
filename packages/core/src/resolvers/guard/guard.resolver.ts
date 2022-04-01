@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Type } from '@nestjs/common';
 
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { DiscordOptionService } from '../../services/discord-option.service';
@@ -10,7 +10,7 @@ import { DiscordGuards } from './discord-guards';
 
 @Injectable()
 export class GuardResolver implements MethodResolver {
-  private readonly discordGuards = new Map<InstanceType<any>, DiscordGuards>();
+  private readonly cachedGuards = new WeakMap<Type, DiscordGuards>();
 
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
@@ -32,9 +32,11 @@ export class GuardResolver implements MethodResolver {
         methodName,
       ) ?? [];
 
+    const classType = instance.constructor;
+
     if (classGuards.length === 0 && methodGuards.length === 0) {
       if (globalGuards.length !== 0)
-        this.discordGuards.set(instance, {
+        this.cachedGuards.set(classType, {
           globalGuards,
           classGuards: [],
           methodGuards: {},
@@ -50,8 +52,8 @@ export class GuardResolver implements MethodResolver {
         hostModule,
       );
 
-    if (this.discordGuards.has(instance))
-      this.discordGuards.get(instance).methodGuards[methodName] =
+    if (this.cachedGuards.has(classType))
+      this.cachedGuards.get(classType).methodGuards[methodName] =
         methodGuardInstances;
     else {
       const classGuardInstances =
@@ -60,7 +62,7 @@ export class GuardResolver implements MethodResolver {
           hostModule,
         );
 
-      this.discordGuards.set(instance, {
+      this.cachedGuards.set(classType, {
         methodGuards: { [methodName]: methodGuardInstances },
         classGuards: classGuardInstances,
         globalGuards,
@@ -70,10 +72,12 @@ export class GuardResolver implements MethodResolver {
 
   async applyGuard(options: DiscordGuardOptions): Promise<boolean> {
     const { instance, methodName, event, eventArgs } = options;
-    if (!this.discordGuards.has(instance)) return true;
+    const classType = instance.constructor;
+
+    if (!this.cachedGuards.has(classType)) return true;
 
     const { globalGuards, classGuards, methodGuards } =
-      this.discordGuards.get(instance);
+      this.cachedGuards.get(classType);
     const guardList = [
       ...globalGuards,
       ...classGuards,

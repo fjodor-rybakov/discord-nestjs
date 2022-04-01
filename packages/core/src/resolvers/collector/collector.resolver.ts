@@ -1,4 +1,4 @@
-import { Injectable, Scope } from '@nestjs/common';
+import { Injectable, Scope, Type } from '@nestjs/common';
 import { ContextIdFactory, MetadataScanner, ModuleRef } from '@nestjs/core';
 import {
   ClientEvents,
@@ -28,10 +28,8 @@ import { UseCollectorApplyOptions } from './use-collector-apply-options';
 
 @Injectable()
 export class CollectorResolver implements MethodResolver {
-  private readonly discordCollectors = new Map<
-    InstanceType<any>,
-    DiscordCollectors
-  >();
+  private readonly cachedCollectors = new WeakMap<Type, DiscordCollectors>();
+  private readonly initCollectorInstances: InstanceType<any>[] = [];
 
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
@@ -66,9 +64,10 @@ export class CollectorResolver implements MethodResolver {
     const methodCollectorInfos = this.getCollectorsInfo(
       methodCollectorInstances,
     );
+    const classType = instance.constructor;
 
-    if (this.discordCollectors.has(instance))
-      this.discordCollectors.get(instance).methodCollectors[methodName] =
+    if (this.cachedCollectors.has(classType))
+      this.cachedCollectors.get(classType).methodCollectors[methodName] =
         methodCollectorInfos;
     else {
       const classCollectorInstances =
@@ -80,12 +79,14 @@ export class CollectorResolver implements MethodResolver {
         classCollectorInstances,
       );
 
-      this.discordCollectors.set(instance, {
+      this.cachedCollectors.set(classType, {
         methodCollectors: { [methodName]: methodCollectorInfos },
         classCollectors: classCollectorInfos,
         moduleRef,
       });
     }
+
+    this.initCollectorInstances.push(...methodCollectorInstances);
   }
 
   async applyCollector({
@@ -96,10 +97,12 @@ export class CollectorResolver implements MethodResolver {
   }: UseCollectorApplyOptions): Promise<
     (ReactionCollector | MessageCollector | InteractionCollector<any>)[]
   > {
-    if (!this.discordCollectors.has(instance)) return;
+    const classType = instance.constructor;
+
+    if (!this.cachedCollectors.has(classType)) return;
 
     const { classCollectors, methodCollectors, moduleRef } =
-      this.discordCollectors.get(instance);
+      this.cachedCollectors.get(classType);
 
     return Promise.all(
       [...classCollectors, ...(methodCollectors[methodName] || [])].map(
@@ -207,6 +210,10 @@ export class CollectorResolver implements MethodResolver {
         },
       ),
     );
+  }
+
+  getInitCollectorInstances(): InteractionCollector<any>[] {
+    return this.initCollectorInstances;
   }
 
   private subscribeToEvents(

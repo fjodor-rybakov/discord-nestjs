@@ -10,6 +10,7 @@ import { CommandResolver } from '../resolvers/command/command.resolver';
 import { EventResolver } from '../resolvers/event/event.resolver';
 import { FilterResolver } from '../resolvers/filter/filter.resolver';
 import { GuardResolver } from '../resolvers/guard/guard.resolver';
+import { MethodResolver } from '../resolvers/interfaces/method-resolver';
 import { MiddlewareResolver } from '../resolvers/middleware/middleware.resolver';
 import { PipeResolver } from '../resolvers/pipe/pipe.resolver';
 import { PrefixCommandResolver } from '../resolvers/prefix-command/prefix-command.resolver';
@@ -70,11 +71,10 @@ export class DiscordResolverService implements OnModuleInit {
 
     const classResolvers = [this.commandResolver, this.middlewareResolver];
 
-    const lifecyclePartsResolvers = [
+    const lifecyclePartsResolvers: MethodResolver[] = [
       this.guardResolver,
       this.pipeResolver,
       this.filterResolver,
-      this.collectorResolver,
     ];
 
     await Promise.all(
@@ -89,14 +89,15 @@ export class DiscordResolverService implements OnModuleInit {
           const methodNames = this.scanMetadata(instance);
 
           await Promise.all(
-            lifecyclePartsResolvers.map(async (resolver) => {
-              if (methodNames.length)
-                for await (const methodName of methodNames) {
-                  await resolver.resolve({ instance, methodName });
-                }
+            lifecyclePartsResolvers
+              .concat([this.collectorResolver])
+              .map(async (resolver) => {
+                if (methodNames.length)
+                  for await (const methodName of methodNames)
+                    await resolver.resolve({ instance, methodName });
 
-              return resolver.resolve({ instance });
-            }),
+                return resolver.resolve({ instance });
+              }),
           );
 
           for await (const resolver of methodResolvers)
@@ -109,6 +110,20 @@ export class DiscordResolverService implements OnModuleInit {
               ),
             );
         }),
+    );
+
+    await Promise.all(
+      this.collectorResolver.getInitCollectorInstances().map((instance) =>
+        lifecyclePartsResolvers.map(async (resolver) => {
+          const methodNames = this.scanMetadata(instance);
+
+          if (methodNames.length)
+            for await (const methodName of methodNames)
+              await resolver.resolve({ instance, methodName });
+
+          return resolver.resolve({ instance });
+        }),
+      ),
     );
 
     await this.registerCommandService.register(options);

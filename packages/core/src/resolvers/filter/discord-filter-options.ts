@@ -4,7 +4,7 @@ import { EventArgs, EventType } from '../../definitions/types/event.type';
 
 export interface DiscordFilterOptions<
   TException extends Error = any,
-  TEvent extends EventType = any,
+  TEvent extends EventType = EventType,
 > {
   instance: InstanceType<any>;
   methodName: string;

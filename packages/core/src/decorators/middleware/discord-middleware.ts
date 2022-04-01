@@ -8,7 +8,7 @@ import { EventArgs, EventType } from '../../definitions/types/event.type';
  * Middleware should be implemented on its basis
  */
 export interface DiscordMiddleware<
-  TEvent extends EventType = any,
+  TEvent extends EventType = EventType,
   TInteraction extends Interaction = any,
 > {
   use(

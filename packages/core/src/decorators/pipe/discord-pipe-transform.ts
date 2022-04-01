@@ -11,7 +11,7 @@ import { DiscordArgumentMetadata } from './discord-argument-metadata';
 export interface DiscordPipeTransform<
   TValue = any,
   TReturn = any,
-  TEvent extends EventType = any,
+  TEvent extends EventType = EventType,
   TInteraction extends Interaction = any,
 > {
   transform(
