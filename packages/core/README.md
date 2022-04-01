@@ -504,16 +504,21 @@ export class PlaylistCommand implements DiscordCommand {
 
 ### ℹ️ Automatic registration of slash commands <a name="AutoRegCommand"></a>
 
-By default, automatic command registration is disabled. You can enable it by setting the `autoRegisterGlobalCommands` parameter to true.
-The globals are cached and updated once an hour. [More info](https://discordjs.guide/interactions/registering-slash-commands.html#global-commands). 
-The most optimal way is to update the slash commands for a specific guild. This can be configured via `registerCommandOptions`.
+Commands are registered automatically if you define them in code. The `registerCommandOptions` property responds to the 
+command registration setting. It works according to the following principle:
 
 * `registerCommandOptions` - takes an array of objects.
 
 
-* If `allowFactory` and `forGuild` are specified, then commands for a specific guild will be registered according to the condition from `allowFactory`
-* If `allowFactory` is specified then commands will be registered globally by condition from `allowFactory`
-* If `forGuild` is specified, then commands for a specific guild will be registered without conditions
+* If `registerCommandOptions` option is not specified, global commands will be registered by default
+
+* If `allowFactory` is specified then commands will be registered by condition from `allowFactory`
+* If `forGuild` is specified, then commands for a specific guild will be registered
+* If `removeCommandsBefore` is specified, then registered commands that are not in your code will be removed
+
+The `allowFactory`, `forGuild` and `removeCommandsBefore` options are combined with each other.
+
+> Global commands, unlike guild commands, are cached and updated once per hour. [More info](https://discordjs.guide/interactions/registering-slash-commands.html#global-commands).
 
 #### 💡 Example
 
