@@ -44,10 +44,10 @@ export class PrefixCommandResolver implements MethodResolver {
     const {
       name,
       prefix = discordOptions.prefix,
-      isRemovePrefix = prefixGlobalOptions.isRemovePrefix ?? true,
-      isIgnoreBotMessage = prefixGlobalOptions.isIgnoreBotMessage ?? true,
-      isRemoveCommandName = prefixGlobalOptions.isRemoveCommandName ?? true,
-      isRemoveMessage = prefixGlobalOptions.isRemoveMessage ?? false,
+      isRemovePrefix = prefixGlobalOptions?.isRemovePrefix ?? true,
+      isIgnoreBotMessage = prefixGlobalOptions?.isIgnoreBotMessage ?? true,
+      isRemoveCommandName = prefixGlobalOptions?.isRemoveCommandName ?? true,
+      isRemoveMessage = prefixGlobalOptions?.isRemoveMessage ?? false,
     } = metadata;
 
     if (!prefix) throw new Error(`Prefix for ${name} command not found`);
