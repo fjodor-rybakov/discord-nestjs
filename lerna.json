@@ -1,7 +1,8 @@
 {
   "npmClient": "npm",
   "packages": [
-    "packages/**/*"
+    "packages/*",
+    "packages/sample/*"
   ],
   "command": {
     "bootstrap": {

@@ -1,0 +1,43 @@
+{
+  "name": "@discord-nestjs/schematics",
+  "version": "0.0.1",
+  "description": "Schematics for discord-nestjs",
+  "author": "fjodor-rybakov",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist/**/*",
+    "*.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/schematics"
+  },
+  "homepage": "https://github.com/fjodor-rybakov/discord-nestjs#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "schematics"
+  ],
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "tsc -p tsconfig.json",
+    "postbuild": "npm run copy:collection && npm run copy:lib",
+    "copy:collection": "copyfiles --up 1 src/collection.json dist && copyfiles --up 1 src/**/schema.json dist",
+    "copy:lib": "copyfiles --up 1 src/lib/**/files/**/* dist"
+  },
+  "schematics": "./dist/collection.json",
+  "dependencies": {
+    "@angular-devkit/core": "13.3.3",
+    "@angular-devkit/schematics": "13.3.3",
+    "build": "^0.1.4",
+    "typescript": "4.6.3"
+  },
+  "devDependencies": {
+    "@types/node": "17.0.24",
+    "copyfiles": "^2.4.1",
+    "rimraf": "^3.0.2"
+  }
+}
