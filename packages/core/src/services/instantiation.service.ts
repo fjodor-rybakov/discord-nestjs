@@ -11,9 +11,10 @@ export class InstantiationService {
   constructor(private readonly discoveryService: DiscoveryService) {}
 
   getHostModule(baseClassInstance: InstanceType<any>): Module {
-    const instanceWrapper = this.discoveryService
-      .getProviders()
-      .find(({ token }) => token === baseClassInstance.constructor);
+    const instanceWrapper = [
+      ...this.discoveryService.getControllers(),
+      ...this.discoveryService.getProviders(),
+    ].find(({ token }) => token === baseClassInstance.constructor);
 
     if (!instanceWrapper?.host)
       throw new Error(
