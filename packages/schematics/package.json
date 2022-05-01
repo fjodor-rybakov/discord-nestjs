@@ -32,7 +32,6 @@
   "dependencies": {
     "@angular-devkit/core": "13.3.3",
     "@angular-devkit/schematics": "13.3.3",
-    "build": "^0.1.4",
     "typescript": "4.6.3"
   },
   "devDependencies": {
