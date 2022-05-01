@@ -40,6 +40,7 @@ function installDependencies(options: ApplicationSchema): Rule {
     context.addTask(
       new NodePackageInstallTask({
         packageManager: options.packageManager,
+        workingDirectory: options.name,
       }),
     );
     context.logger.log('info', `🔍 Installing packages...`);
