@@ -1,6 +1,6 @@
 {
   "name": "@discord-nestjs/schematics",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Schematics for discord-nestjs",
   "author": "fjodor-rybakov",
   "license": "MIT",
