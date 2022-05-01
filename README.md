@@ -36,6 +36,7 @@ NestJS package for discord.js
 This monorepo consists of several packages.
 * [@discord-nestjs/core](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/core) - Main package containing decorators, basic types and module declaration.
 * [@discord-nestjs/common](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/common) - Contains optional common templates. For example TransformPipe or ValidationPipe.
+* [@discord-nestjs/schematics](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/schematics) - Provides cli to create a bot template.
 * Samples
   * [@discord-nestjs/sample-command](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/command) - Bot example with slash commands
   * [@discord-nestjs/sample-command-by-glob](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/command-by-glob) - Bot example with slash commands by glob pattern

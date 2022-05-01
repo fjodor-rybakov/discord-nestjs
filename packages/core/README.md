@@ -201,6 +201,10 @@ export class BotGateway {
 
 ### ℹ️ Creating slash commands <a name="Command"></a>
 
+> If you install `@angular-devkit/schematics-cli` and [@discord-nestjs/schematics](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/schematics)
+> , you can run the follow command to create a slash-command bot template: 
+> `schematics @discord-nestjs/schematics:application --template slash-command`
+
 To add a slash command, you need to create a class that will implement the `DiscordCommand` interface and mark it with `@Command` decorator.
 Command decorator accepts a `name` and `description` as parameters.
 
@@ -615,6 +619,10 @@ export class BotGateway {
 ```
 
 ### ℹ️ Prefix commands <a name="PrefixCommands"></a>
+
+> If you install `@angular-devkit/schematics-cli` and [@discord-nestjs/schematics](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/schematics)
+> , you can run the follow command to create a prefix-command bot template:
+> `schematics @discord-nestjs/schematics:application --template prefix-command`
 
 To create a command with a prefix from the `messageCreate` event use the `@PrefixCommand` decorator.
 The following code will create a `!start` prefix command.
