@@ -30,7 +30,7 @@
   },
   "schematics": "./dist/collection.json",
   "dependencies": {
-    "@angular-devkit/core": "13.3.3",
+    "@angular-devkit/core": "13.3.4",
     "@angular-devkit/schematics": "13.3.3",
     "typescript": "4.6.3"
   },
