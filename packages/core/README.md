@@ -86,6 +86,7 @@ creating a dynamic module through the `forRootAsync` functions.
 - `webhook` - Connecting with webhook
     - `webhookId` \* - Webhook id
     - `webhookToken` \* - Webhook token
+- `autoLogin` - Calling login function from discord client on application bootstrap
 
 > ⚠️**Important! For the bot to work correctly, you need to set up intentions in `discordClientOptions` param. [More info](https://discordjs.guide/popular-topics/intents.html#privileged-intents)**
 

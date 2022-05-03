@@ -249,6 +249,7 @@ export class RegisterCommandService {
     return registeredCommands;
   }
 
+  // FIXME: Potential Problem
   private async setPermissions(
     registeredCommands: ApplicationCommand[],
     rowCommandsData: Map<Type, ApplicationCommandData>,

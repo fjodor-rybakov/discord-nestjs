@@ -10,6 +10,7 @@ import { CommandResolver } from '../resolvers/command/command.resolver';
 import { EventResolver } from '../resolvers/event/event.resolver';
 import { FilterResolver } from '../resolvers/filter/filter.resolver';
 import { GuardResolver } from '../resolvers/guard/guard.resolver';
+import { ClassResolver } from '../resolvers/interfaces/class-resolver';
 import { MethodResolver } from '../resolvers/interfaces/method-resolver';
 import { MiddlewareResolver } from '../resolvers/middleware/middleware.resolver';
 import { PipeResolver } from '../resolvers/pipe/pipe.resolver';
@@ -48,24 +49,7 @@ export class DiscordResolverService implements OnModuleInit {
   ): Promise<void> {
     const options = this.discordOptionService.getClientData();
 
-    const restProviders = providers.filter(
-      ({ token, instance }: InstanceWrapper) => {
-        if (typeof token === 'string') {
-          const [globalToken] = token.split(':');
-          if (globalToken)
-            switch (globalToken) {
-              case DISCORD_APP_PIPE:
-                return !this.discordOptionService.addPipe(instance);
-              case DISCORD_APP_GUARD:
-                return !this.discordOptionService.addGuard(instance);
-              case DISCORD_APP_FILTER:
-                return !this.discordOptionService.addFilter(instance);
-            }
-        }
-
-        return true;
-      },
-    );
+    const restProviders = this.filterGlobalLifecycleParts(providers);
 
     const methodResolvers = [this.eventResolver, this.prefixCommandResolver];
 
@@ -88,16 +72,10 @@ export class DiscordResolverService implements OnModuleInit {
 
           const methodNames = this.scanMetadata(instance);
 
-          await Promise.all(
-            lifecyclePartsResolvers
-              .concat([this.collectorResolver])
-              .map(async (resolver) => {
-                if (methodNames.length)
-                  for await (const methodName of methodNames)
-                    await resolver.resolve({ instance, methodName });
-
-                return resolver.resolve({ instance });
-              }),
+          await this.resolveClassOrMethod(
+            lifecyclePartsResolvers.concat([this.collectorResolver]),
+            instance,
+            methodNames,
           );
 
           for await (const resolver of methodResolvers)
@@ -113,23 +91,58 @@ export class DiscordResolverService implements OnModuleInit {
     );
 
     await Promise.all(
-      this.collectorResolver.getInitCollectorInstances().map((instance) =>
-        lifecyclePartsResolvers.map(async (resolver) => {
-          const methodNames = this.scanMetadata(instance);
+      this.collectorResolver.getInitCollectorInstances().map((instance) => {
+        const methodNames = this.scanMetadata(instance);
 
-          if (methodNames.length)
-            for await (const methodName of methodNames)
-              await resolver.resolve({ instance, methodName });
-
-          return resolver.resolve({ instance });
-        }),
-      ),
+        return this.resolveClassOrMethod(
+          lifecyclePartsResolvers,
+          instance,
+          methodNames,
+        );
+      }),
     );
 
     await this.registerCommandService.register(options);
   }
 
-  private scanMetadata(instance: any): string[] {
+  private resolveClassOrMethod(
+    resolvers: (MethodResolver | ClassResolver)[],
+    instance: InstanceType<any>,
+    methodNames: string[],
+  ): Promise<void[]> {
+    return Promise.all(
+      resolvers.map(async (resolver) => {
+        if (methodNames.length)
+          for await (const methodName of methodNames)
+            await resolver.resolve({ instance, methodName });
+
+        await resolver.resolve({ instance });
+      }),
+    );
+  }
+
+  private filterGlobalLifecycleParts(
+    providers: InstanceWrapper[],
+  ): InstanceWrapper[] {
+    return providers.filter(({ token, instance }: InstanceWrapper) => {
+      if (typeof token === 'string') {
+        const [globalToken] = token.split(':');
+        if (globalToken)
+          switch (globalToken) {
+            case DISCORD_APP_PIPE:
+              return !this.discordOptionService.addPipe(instance);
+            case DISCORD_APP_GUARD:
+              return !this.discordOptionService.addGuard(instance);
+            case DISCORD_APP_FILTER:
+              return !this.discordOptionService.addFilter(instance);
+          }
+      }
+
+      return true;
+    });
+  }
+
+  private scanMetadata(instance: InstanceType<any>): string[] {
     return this.metadataScanner.scanFromPrototype(
       instance,
       Object.getPrototypeOf(instance),

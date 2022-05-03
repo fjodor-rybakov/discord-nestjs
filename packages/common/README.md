@@ -56,9 +56,8 @@ export class RegistrationEmailDto {
 /* play.command.ts */
 
 import { RegistrationDto } from './registration.dto';
-import { Command, UsePipes, Payload } from '@discord-nestjs/core';
+import { Command, UsePipes, Payload, DiscordTransformedCommand } from '@discord-nestjs/core';
 import { TransformPipe } from '@discord-nestjs/common';
-import { DiscordTransformedCommand } from '@discord-nestjs/core/src';
 import { CommandInteraction } from 'discord.js';
 
 @Command({

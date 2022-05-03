@@ -1,6 +1,6 @@
 import { ClientOptions, WebhookClientData } from 'discord.js';
-import { PrefixCommandGlobalOptions } from './prefix-command-global-options';
 
+import { PrefixCommandGlobalOptions } from './prefix-command-global-options';
 import { RegisterCommandOptions } from './register-command-options';
 import { SlashCommandPermissions } from './slash-command-permissions';
 
@@ -63,4 +63,11 @@ export interface DiscordModuleOption {
    * Webhook for the bot
    */
   webhook?: WebhookClientData;
+
+  /**
+   * Calling login function from discord client on application bootstrap
+   *
+   * @default true
+   */
+  autoLogin?: boolean;
 }

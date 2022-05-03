@@ -1,9 +1,10 @@
 import {
+  ArgNumOptions,
+  ArgRangeOptions,
   DiscordArgumentMetadata,
   DiscordPipeTransform,
   ReflectMetadataProvider,
 } from '@discord-nestjs/core';
-import { ArgNumOptions, ArgRangeOptions } from '@discord-nestjs/core/src';
 import { Inject, Injectable, Optional } from '@nestjs/common';
 import { ClassTransformOptions, plainToInstance } from 'class-transformer';
 import { Message } from 'discord.js';

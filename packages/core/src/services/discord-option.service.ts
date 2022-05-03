@@ -24,13 +24,15 @@ export class DiscordOptionService {
   }
 
   setDefault(options: DiscordModuleOption): void {
-    const { autoRegisterGlobalCommands, removeGlobalCommands } = options;
+    const { autoRegisterGlobalCommands, removeGlobalCommands, autoLogin } =
+      options;
 
     this.options = {
       ...this.options,
       ...options,
       autoRegisterGlobalCommands: autoRegisterGlobalCommands || false,
       removeGlobalCommands: removeGlobalCommands || false,
+      autoLogin: autoLogin ?? true,
     };
   }
 

@@ -16,7 +16,6 @@ export class DiscordClientService
   private readonly logger = new Logger(DiscordClientService.name);
   private webhookClient: WebhookClient;
   private client: Client;
-  private clientToken: string;
 
   constructor(private discordOptionService: DiscordOptionService) {}
 
@@ -27,7 +26,7 @@ export class DiscordClientService
       this.discordOptionService.getClientData();
 
     this.client = new Client(discordClientOptions);
-    this.clientToken = token;
+    this.client.token = token;
     this.webhookClient = this.createWebhookClient(webhook);
   }
 
@@ -40,8 +39,10 @@ export class DiscordClientService
   }
 
   async onApplicationBootstrap(): Promise<void> {
+    if (!this.discordOptionService.getClientData().autoLogin) return;
+
     try {
-      await this.client.login(this.clientToken);
+      await this.client.login();
     } catch (err) {
       this.logger.error('Failed to connect to Discord API');
       this.logger.error(err);
