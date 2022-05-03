@@ -32,12 +32,7 @@ export class RegisterCommandService {
 
   private async registerCommands(
     client: Client,
-    {
-      registerCommandOptions,
-      autoRegisterGlobalCommands,
-      removeGlobalCommands,
-      slashCommandsPermissions,
-    }: DiscordModuleOption,
+    { registerCommandOptions, slashCommandsPermissions }: DiscordModuleOption,
   ): Promise<void> {
     const commands = this.discordCommandProvider.getAllCommands();
 
@@ -47,99 +42,74 @@ export class RegisterCommandService {
 
     if (!client.application?.owner) await client.application?.fetch();
 
-    // TODO: Remove in next minor release
-    if (removeGlobalCommands) await this.dropGlobalCommands(client);
+    await Promise.all(
+      registerCommandOptions.map(
+        async (commandOptions: RegisterCommandOptions) => {
+          const { forGuild, allowFactory } = commandOptions;
+          if (allowFactory) {
+            if (forGuild) {
+              // Registering commands for specific guild
+              client.on('messageCreate', async (message: Message) => {
+                if (!allowFactory(message, commandList)) return;
 
-    if (autoRegisterGlobalCommands) {
-      const registeredCommands = await client.application.commands.set(
-        commandList,
-      );
-
-      if (slashCommandsPermissions)
-        await this.setPermissions(
-          Array.from(registeredCommands.values()),
-          commands,
-          slashCommandsPermissions,
-        );
-
-      this.logger.log('All global commands are registered!');
-    } else {
-      await Promise.all(
-        registerCommandOptions.map(
-          async (commandOptions: RegisterCommandOptions) => {
-            const { forGuild, allowFactory } = commandOptions;
-            if (allowFactory) {
-              if (forGuild) {
-                // Registering commands for specific guild
-                client.on('messageCreate', async (message: Message) => {
-                  if (!allowFactory(message, commandList)) return;
-
-                  const registeredCommands = await this.updateCommands(
-                    commandList,
-                    commandOptions,
-                  );
-
-                  if (slashCommandsPermissions)
-                    await this.setPermissions(
-                      registeredCommands,
-                      commands,
-                      slashCommandsPermissions,
-                    );
-                });
-              } else {
-                // Registering global commands
-                client.on('messageCreate', async (message: Message) => {
-                  if (!allowFactory(message, commandList)) return;
-
-                  const registeredCommands = await this.updateCommands(
-                    commandList,
-                    commandOptions,
-                  );
-
-                  if (slashCommandsPermissions)
-                    await this.setPermissions(
-                      registeredCommands,
-                      commands,
-                      slashCommandsPermissions,
-                    );
-                });
-              }
-            } else if (forGuild) {
-              const registeredCommands = await this.updateCommands(
-                commandList,
-                commandOptions,
-              );
-
-              if (slashCommandsPermissions)
-                await this.setPermissions(
-                  registeredCommands,
-                  commands,
-                  slashCommandsPermissions,
+                const registeredCommands = await this.updateCommands(
+                  commandList,
+                  commandOptions,
                 );
+
+                if (slashCommandsPermissions)
+                  await this.setPermissions(
+                    registeredCommands,
+                    commands,
+                    slashCommandsPermissions,
+                  );
+              });
             } else {
-              const registeredCommands = await this.updateCommands(
-                commandList,
-                commandOptions,
-              );
+              // Registering global commands
+              client.on('messageCreate', async (message: Message) => {
+                if (!allowFactory(message, commandList)) return;
 
-              if (slashCommandsPermissions)
-                await this.setPermissions(
-                  registeredCommands,
-                  commands,
-                  slashCommandsPermissions,
+                const registeredCommands = await this.updateCommands(
+                  commandList,
+                  commandOptions,
                 );
+
+                if (slashCommandsPermissions)
+                  await this.setPermissions(
+                    registeredCommands,
+                    commands,
+                    slashCommandsPermissions,
+                  );
+              });
             }
-          },
-        ),
-      );
-    }
-  }
+          } else if (forGuild) {
+            const registeredCommands = await this.updateCommands(
+              commandList,
+              commandOptions,
+            );
 
-  private async dropGlobalCommands(client: Client): Promise<void> {
-    const globalCommands = await client.application.commands.fetch();
-    await Promise.all(globalCommands.map((command) => command.delete()));
+            if (slashCommandsPermissions)
+              await this.setPermissions(
+                registeredCommands,
+                commands,
+                slashCommandsPermissions,
+              );
+          } else {
+            const registeredCommands = await this.updateCommands(
+              commandList,
+              commandOptions,
+            );
 
-    this.logger.log('All global commands removed!');
+            if (slashCommandsPermissions)
+              await this.setPermissions(
+                registeredCommands,
+                commands,
+                slashCommandsPermissions,
+              );
+          }
+        },
+      ),
+    );
   }
 
   private async dropMissingCommands(
