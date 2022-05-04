@@ -67,8 +67,9 @@ export class ExplorerService implements OnModuleInit {
         .map(async ({ instance }: InstanceWrapper) => {
           if (!instance || !IsObject(instance)) return;
 
-          for await (const explorer of classExplorers)
-            await explorer.explore({ instance });
+          await Promise.all(
+            classExplorers.map((explorer) => explorer.explore({ instance })),
+          );
 
           const methodNames = this.scanMetadata(instance);
 
@@ -78,15 +79,18 @@ export class ExplorerService implements OnModuleInit {
             methodNames,
           );
 
-          for await (const explorer of methodExplorers)
-            await Promise.all(
-              methodNames.map((methodName) =>
-                explorer.explore({
-                  instance,
-                  methodName,
-                }),
+          await Promise.all(
+            methodExplorers.map((explorer) =>
+              Promise.all(
+                methodNames.map((methodName) =>
+                  explorer.explore({
+                    instance,
+                    methodName,
+                  }),
+                ),
               ),
-            );
+            ),
+          );
         }),
     );
 
