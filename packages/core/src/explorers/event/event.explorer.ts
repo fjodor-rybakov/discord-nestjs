@@ -4,29 +4,29 @@ import { ClientEvents } from 'discord.js';
 import { ExecutionContext } from '../../definitions/interfaces/execution-context';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { DiscordClientService } from '../../services/discord-client.service';
-import { CollectorResolver } from '../collector/collector.resolver';
-import { FilterResolver } from '../filter/filter.resolver';
-import { GuardResolver } from '../guard/guard.resolver';
-import { MethodResolveOptions } from '../interfaces/method-resolve-options';
-import { MethodResolver } from '../interfaces/method-resolver';
-import { MiddlewareResolver } from '../middleware/middleware.resolver';
-import { PipeResolver } from '../pipe/pipe.resolver';
+import { CollectorExplorer } from '../collector/collector.explorer';
+import { FilterExplorer } from '../filter/filter.explorer';
+import { GuardExplorer } from '../guard/guard.explorer';
+import { MethodExplorer } from '../interfaces/method-explorer';
+import { MethodExplorerOptions } from '../interfaces/method-explorer-options';
+import { MiddlewareExplorer } from '../middleware/middleware.explorer';
+import { PipeExplorer } from '../pipe/pipe.explorer';
 
 @Injectable()
-export class EventResolver implements MethodResolver {
+export class EventExplorer implements MethodExplorer {
   private readonly logger = new Logger();
 
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
     private readonly discordClientService: DiscordClientService,
-    private readonly middlewareResolver: MiddlewareResolver,
-    private readonly guardResolver: GuardResolver,
-    private readonly filterResolver: FilterResolver,
-    private readonly pipeResolver: PipeResolver,
-    private readonly collectorResolver: CollectorResolver,
+    private readonly middlewareExplorer: MiddlewareExplorer,
+    private readonly guardExplorer: GuardExplorer,
+    private readonly filterExplorer: FilterExplorer,
+    private readonly pipeExplorer: PipeExplorer,
+    private readonly collectorExplorer: CollectorExplorer,
   ) {}
 
-  async resolve(options: MethodResolveOptions): Promise<void> {
+  async explore(options: MethodExplorerOptions): Promise<void> {
     const { instance, methodName } = options;
     let eventMethod: 'on' | 'once' = 'on';
     let metadata = this.metadataProvider.getOnEventDecoratorMetadata(
@@ -54,8 +54,8 @@ export class EventResolver implements MethodResolver {
         async (...eventArgs: ClientEvents[keyof ClientEvents]) => {
           try {
             //#region apply middleware, guard, pipe
-            await this.middlewareResolver.applyMiddleware(event, eventArgs);
-            const isAllowFromGuards = await this.guardResolver.applyGuard({
+            await this.middlewareExplorer.applyMiddleware(event, eventArgs);
+            const isAllowFromGuards = await this.guardExplorer.applyGuard({
               instance,
               methodName,
               event,
@@ -63,7 +63,7 @@ export class EventResolver implements MethodResolver {
             });
             if (!isAllowFromGuards) return;
 
-            const pipeResult = await this.pipeResolver.applyPipe({
+            const pipeResult = await this.pipeExplorer.applyPipe({
               instance,
               methodName,
               event,
@@ -72,7 +72,7 @@ export class EventResolver implements MethodResolver {
             });
             //#endregion
 
-            const collectors = await this.collectorResolver.applyCollector({
+            const collectors = await this.collectorExplorer.applyCollector({
               instance,
               methodName,
               event,
@@ -88,7 +88,7 @@ export class EventResolver implements MethodResolver {
               executionContext,
             );
           } catch (exception) {
-            const isTrowException = await this.filterResolver.applyFilter({
+            const isTrowException = await this.filterExplorer.applyFilter({
               instance,
               methodName,
               event,

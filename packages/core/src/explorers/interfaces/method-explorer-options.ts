@@ -1,4 +1,4 @@
-export interface MethodResolveOptions {
+export interface MethodExplorerOptions {
   instance: InstanceType<any>;
   methodName?: string;
 }

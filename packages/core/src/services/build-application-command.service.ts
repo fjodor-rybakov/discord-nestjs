@@ -19,8 +19,8 @@ import { isSubCommandGroup } from '../decorators/sub-command-group/is-sub-comman
 import { SubCommandGroupOptions } from '../decorators/sub-command-group/sub-command-group-options';
 import { DiscordCommand } from '../definitions/interfaces/discord-command';
 import { TInclude } from '../definitions/types/include.type';
+import { OptionExplorer } from '../explorers/option/option.explorer';
 import { ReflectMetadataProvider } from '../providers/reflect-metadata.provider';
-import { OptionResolver } from '../resolvers/option/option.resolver';
 import { CommandTreeService } from './command-tree.service';
 import { DtoService } from './dto.service';
 
@@ -34,12 +34,12 @@ export class BuildApplicationCommandService {
   constructor(
     private readonly moduleRef: ModuleRef,
     private readonly metadataProvider: ReflectMetadataProvider,
-    private readonly optionResolver: OptionResolver,
+    private readonly optionExplorer: OptionExplorer,
     private readonly commandTreeService: CommandTreeService,
     private readonly dtoService: DtoService,
   ) {}
 
-  async resolveCommandOptions(
+  async exploreCommandOptions(
     instance: DiscordCommand,
     methodName: string,
     {
@@ -59,7 +59,7 @@ export class BuildApplicationCommandService {
     };
 
     if (applicationCommandData.type === ApplicationCommandTypes.CHAT_INPUT)
-      applicationCommandData.options = await this.resolveSubCommandOptions(
+      applicationCommandData.options = await this.exploreSubCommandOptions(
         name,
         include,
       );
@@ -71,7 +71,7 @@ export class BuildApplicationCommandService {
 
     if (dtoInstance) {
       this.commandTreeService.appendNode([name, 'dtoInstance'], dtoInstance);
-      const optionMetadata = this.optionResolver.resolve(dtoInstance);
+      const optionMetadata = this.optionExplorer.explore(dtoInstance);
       const commandOptions: NonCommandData[] = [];
       for (const property in optionMetadata) {
         const propertyOptions = optionMetadata[property];
@@ -101,7 +101,7 @@ export class BuildApplicationCommandService {
     return applicationCommandData;
   }
 
-  private async resolveSubCommandOptions(
+  private async exploreSubCommandOptions(
     commandName: string,
     rawCommandOptions: TInclude[],
   ): Promise<ApplicationCommandOptionData[]> {
@@ -173,7 +173,7 @@ export class BuildApplicationCommandService {
         [commandName, subGroupName, metadata.name, 'dtoInstance'],
         dtoInstance,
       );
-      const optionMetadata = this.optionResolver.resolve(dtoInstance);
+      const optionMetadata = this.optionExplorer.explore(dtoInstance);
       for (const property in optionMetadata) {
         const propertyOptions = optionMetadata[property];
         const {

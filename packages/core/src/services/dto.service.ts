@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 
-import { ParamResolver } from '../resolvers/param/param.resolver';
+import { ParamExplorer } from '../explorers/param/param.explorer';
 
 @Injectable()
 export class DtoService {
   constructor(
-    private readonly paramResolver: ParamResolver,
+    private readonly paramExplorer: ParamExplorer,
     private readonly moduleRef: ModuleRef,
   ) {}
 
@@ -14,7 +14,7 @@ export class DtoService {
     instance: InstanceType<any>,
     methodName: string,
   ): Promise<InstanceType<any>> {
-    const payloadType = this.paramResolver.getPayloadType(instance, methodName);
+    const payloadType = this.paramExplorer.getPayloadType(instance, methodName);
 
     if (!payloadType) return;
 

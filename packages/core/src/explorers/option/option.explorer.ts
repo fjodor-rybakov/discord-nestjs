@@ -17,10 +17,10 @@ import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provid
 import { OptionMetadata } from './option-metadata';
 
 @Injectable()
-export class OptionResolver {
+export class OptionExplorer {
   constructor(private readonly metadataProvider: ReflectMetadataProvider) {}
 
-  resolve(dtoInstance: any): OptionMetadata {
+  explore(dtoInstance: any): OptionMetadata {
     const optionMetadata: OptionMetadata = {};
 
     Object.keys(dtoInstance).map((propertyKey: string) => {

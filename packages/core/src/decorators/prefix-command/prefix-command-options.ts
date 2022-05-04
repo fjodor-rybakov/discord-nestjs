@@ -1,4 +1,4 @@
-import { PrefixCommandGlobalOptions } from "../../definitions/interfaces/prefix-command-global-options";
+import { PrefixCommandGlobalOptions } from '../../definitions/interfaces/prefix-command-global-options';
 
 export interface PrefixCommandOptions extends PrefixCommandGlobalOptions {
   /**

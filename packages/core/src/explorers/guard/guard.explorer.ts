@@ -3,13 +3,13 @@ import { Injectable, Type } from '@nestjs/common';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { DiscordOptionService } from '../../services/discord-option.service';
 import { InstantiationService } from '../../services/instantiation.service';
-import { MethodResolveOptions } from '../interfaces/method-resolve-options';
-import { MethodResolver } from '../interfaces/method-resolver';
+import { MethodExplorer } from '../interfaces/method-explorer';
+import { MethodExplorerOptions } from '../interfaces/method-explorer-options';
 import { DiscordGuardOptions } from './discord-guard-options';
 import { DiscordGuards } from './discord-guards';
 
 @Injectable()
-export class GuardResolver implements MethodResolver {
+export class GuardExplorer implements MethodExplorer {
   private readonly cachedGuards = new WeakMap<Type, DiscordGuards>();
 
   constructor(
@@ -18,7 +18,7 @@ export class GuardResolver implements MethodResolver {
     private readonly instantiationService: InstantiationService,
   ) {}
 
-  async resolve(options: MethodResolveOptions): Promise<void> {
+  async explore(options: MethodExplorerOptions): Promise<void> {
     const { instance, methodName } = options;
 
     const globalGuards = this.discordOptionService.getClientData().useGuards;
@@ -47,7 +47,7 @@ export class GuardResolver implements MethodResolver {
 
     const hostModule = this.instantiationService.getHostModule(instance);
     const methodGuardInstances =
-      await this.instantiationService.resolveInstances(
+      await this.instantiationService.exploreInstances(
         methodGuards,
         hostModule,
       );
@@ -57,7 +57,7 @@ export class GuardResolver implements MethodResolver {
         methodGuardInstances;
     else {
       const classGuardInstances =
-        await this.instantiationService.resolveInstances(
+        await this.instantiationService.exploreInstances(
           classGuards,
           hostModule,
         );

@@ -288,8 +288,7 @@ import { resolveDynamicProviders } from 'nestjs-dynamic-providers';
 
 async function bootstrap() {
   await resolveDynamicProviders();
-  const app = await NestFactory.createApplicationContext(AppModule);
-  await app.init();
+  await NestFactory.createApplicationContext(AppModule);
 }
 
 bootstrap();

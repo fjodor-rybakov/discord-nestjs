@@ -4,13 +4,13 @@ import { DiscordPipeTransform } from '../../decorators/pipe/discord-pipe-transfo
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { DiscordOptionService } from '../../services/discord-option.service';
 import { InstantiationService } from '../../services/instantiation.service';
-import { MethodResolveOptions } from '../interfaces/method-resolve-options';
-import { MethodResolver } from '../interfaces/method-resolver';
+import { MethodExplorer } from '../interfaces/method-explorer';
+import { MethodExplorerOptions } from '../interfaces/method-explorer-options';
 import { DiscordPipeOptions } from './discord-pipe-options';
 import { DiscordPipes } from './discord-pipes';
 
 @Injectable()
-export class PipeResolver implements MethodResolver {
+export class PipeExplorer implements MethodExplorer {
   private readonly cachedPipes = new WeakMap<Type, DiscordPipes>();
 
   constructor(
@@ -19,7 +19,7 @@ export class PipeResolver implements MethodResolver {
     private readonly instantiationService: InstantiationService,
   ) {}
 
-  async resolve(options: MethodResolveOptions): Promise<void> {
+  async explore(options: MethodExplorerOptions): Promise<void> {
     const { instance, methodName } = options;
 
     const globalPipes = this.discordOptionService.getClientData().usePipes;
@@ -48,14 +48,14 @@ export class PipeResolver implements MethodResolver {
 
     const hostModule = this.instantiationService.getHostModule(instance);
     const methodPipeInstances =
-      await this.instantiationService.resolveInstances(methodPipes, hostModule);
+      await this.instantiationService.exploreInstances(methodPipes, hostModule);
 
     if (this.cachedPipes.has(classType))
       this.cachedPipes.get(classType).methodPipes[methodName] =
         methodPipeInstances;
     else {
       const classPipeInstances =
-        await this.instantiationService.resolveInstances(
+        await this.instantiationService.exploreInstances(
           classPipes,
           hostModule,
         );

@@ -3,17 +3,17 @@ import { Injectable } from '@nestjs/common';
 import { DiscordMiddleware } from '../../decorators/middleware/discord-middleware';
 import { EventArgs, EventType } from '../../definitions/types/event.type';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
-import { ClassResolveOptions } from '../interfaces/class-resolve-options';
-import { ClassResolver } from '../interfaces/class-resolver';
+import { ClassExplorer } from '../interfaces/class-explorer';
+import { ClassExplorerOptions } from '../interfaces/class-explorer-options';
 import { DiscordMiddlewareInstance } from './discord-middleware-instance';
 
 @Injectable()
-export class MiddlewareResolver implements ClassResolver {
+export class MiddlewareExplorer implements ClassExplorer {
   private readonly middlewareList: DiscordMiddlewareInstance[] = [];
 
   constructor(private readonly metadataProvider: ReflectMetadataProvider) {}
 
-  resolve(options: ClassResolveOptions): void {
+  explore(options: ClassExplorerOptions): void {
     const { instance } = options;
     if (!this.instanceIsMiddleware(instance)) return;
 

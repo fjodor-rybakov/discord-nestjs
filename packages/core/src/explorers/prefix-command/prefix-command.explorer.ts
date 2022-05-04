@@ -6,31 +6,34 @@ import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provid
 import { DiscordClientService } from '../../services/discord-client.service';
 import { DiscordOptionService } from '../../services/discord-option.service';
 import { DtoService } from '../../services/dto.service';
-import { CollectorResolver } from '../collector/collector.resolver';
-import { FilterResolver } from '../filter/filter.resolver';
-import { GuardResolver } from '../guard/guard.resolver';
-import { MethodResolveOptions } from '../interfaces/method-resolve-options';
-import { MethodResolver } from '../interfaces/method-resolver';
-import { MiddlewareResolver } from '../middleware/middleware.resolver';
-import { PipeResolver } from '../pipe/pipe.resolver';
+import { CollectorExplorer } from '../collector/collector.explorer';
+import { FilterExplorer } from '../filter/filter.explorer';
+import { GuardExplorer } from '../guard/guard.explorer';
+import { MethodExplorer } from '../interfaces/method-explorer';
+import { MethodExplorerOptions } from '../interfaces/method-explorer-options';
+import { MiddlewareExplorer } from '../middleware/middleware.explorer';
+import { PipeExplorer } from '../pipe/pipe.explorer';
 
 @Injectable()
-export class PrefixCommandResolver implements MethodResolver {
+export class PrefixCommandExplorer implements MethodExplorer {
   private readonly logger = new Logger();
 
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
     private readonly discordClientService: DiscordClientService,
     private readonly discordOptionService: DiscordOptionService,
-    private readonly middlewareResolver: MiddlewareResolver,
-    private readonly guardResolver: GuardResolver,
-    private readonly filterResolver: FilterResolver,
-    private readonly pipeResolver: PipeResolver,
-    private readonly collectorResolver: CollectorResolver,
+    private readonly middlewareExplorer: MiddlewareExplorer,
+    private readonly guardExplorer: GuardExplorer,
+    private readonly filterExplorer: FilterExplorer,
+    private readonly pipeExplorer: PipeExplorer,
+    private readonly collectorExplorer: CollectorExplorer,
     private readonly dtoService: DtoService,
   ) {}
 
-  async resolve({ instance, methodName }: MethodResolveOptions): Promise<void> {
+  async explore({
+    instance,
+    methodName,
+  }: MethodExplorerOptions): Promise<void> {
     const metadata = this.metadataProvider.getOnCommandDecoratorMetadata(
       instance,
       methodName,
@@ -94,8 +97,8 @@ export class PrefixCommandResolver implements MethodResolver {
           //#endregion
 
           //#region apply middleware, guard, pipe
-          await this.middlewareResolver.applyMiddleware(event, eventArgs);
-          const isAllowFromGuards = await this.guardResolver.applyGuard({
+          await this.middlewareExplorer.applyMiddleware(event, eventArgs);
+          const isAllowFromGuards = await this.guardExplorer.applyGuard({
             instance,
             methodName,
             event,
@@ -103,7 +106,7 @@ export class PrefixCommandResolver implements MethodResolver {
           });
           if (!isAllowFromGuards) return;
 
-          const pipeResult = await this.pipeResolver.applyPipe({
+          const pipeResult = await this.pipeExplorer.applyPipe({
             instance,
             methodName,
             event,
@@ -114,7 +117,7 @@ export class PrefixCommandResolver implements MethodResolver {
           });
           //#endregion
 
-          const collectors = await this.collectorResolver.applyCollector({
+          const collectors = await this.collectorExplorer.applyCollector({
             instance,
             methodName,
             event,
@@ -135,7 +138,7 @@ export class PrefixCommandResolver implements MethodResolver {
 
           if (isRemoveMessage) await this.removeMessageFromChannel(message);
         } catch (exception) {
-          const isTrowException = await this.filterResolver.applyFilter({
+          const isTrowException = await this.filterExplorer.applyFilter({
             instance,
             methodName,
             event,

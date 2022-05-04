@@ -3,7 +3,7 @@ import { Injectable, Type } from '@nestjs/common';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 
 @Injectable()
-export class ParamResolver {
+export class ParamExplorer {
   constructor(private readonly metadataProvider: ReflectMetadataProvider) {}
 
   getPayloadType(instance: InstanceType<any>, methodName: string): Type {

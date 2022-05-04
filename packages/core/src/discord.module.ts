@@ -11,23 +11,23 @@ import { DiscordModuleAsyncOptions } from './definitions/interfaces/discord-modu
 import { DiscordModuleOption } from './definitions/interfaces/discord-module-options';
 import { DiscordOptionsFactory } from './definitions/interfaces/discord-options-factory';
 import { DiscordHostModule } from './discord-host.module';
+import { CollectorExplorer } from './explorers/collector/collector.explorer';
+import { CommandExplorer } from './explorers/command/command.explorer';
+import { EventExplorer } from './explorers/event/event.explorer';
+import { FilterExplorer } from './explorers/filter/filter.explorer';
+import { GuardExplorer } from './explorers/guard/guard.explorer';
+import { MiddlewareExplorer } from './explorers/middleware/middleware.explorer';
+import { OptionExplorer } from './explorers/option/option.explorer';
+import { ParamExplorer } from './explorers/param/param.explorer';
+import { PipeExplorer } from './explorers/pipe/pipe.explorer';
+import { PrefixCommandExplorer } from './explorers/prefix-command/prefix-command.explorer';
 import { DiscordClientProvider } from './providers/discord-client.provider';
 import { DiscordCommandProvider } from './providers/discord-command.provider';
 import { ReflectMetadataProvider } from './providers/reflect-metadata.provider';
-import { CollectorResolver } from './resolvers/collector/collector.resolver';
-import { CommandResolver } from './resolvers/command/command.resolver';
-import { EventResolver } from './resolvers/event/event.resolver';
-import { FilterResolver } from './resolvers/filter/filter.resolver';
-import { GuardResolver } from './resolvers/guard/guard.resolver';
-import { MiddlewareResolver } from './resolvers/middleware/middleware.resolver';
-import { OptionResolver } from './resolvers/option/option.resolver';
-import { ParamResolver } from './resolvers/param/param.resolver';
-import { PipeResolver } from './resolvers/pipe/pipe.resolver';
-import { PrefixCommandResolver } from './resolvers/prefix-command/prefix-command.resolver';
 import { BuildApplicationCommandService } from './services/build-application-command.service';
 import { CommandTreeService } from './services/command-tree.service';
 import { DiscordClientService } from './services/discord-client.service';
-import { DiscordResolverService } from './services/discord-resolver.service';
+import { DiscordExplorerService } from './services/discord-explorer.service';
 import { DtoService } from './services/dto.service';
 import { InstantiationService } from './services/instantiation.service';
 import { RegisterCommandService } from './services/register-command.service';
@@ -47,20 +47,20 @@ export class DiscordModule {
         ...DiscordModule.createExportedForRootProviders(),
         InstantiationService,
         RegisterCommandService,
-        OptionResolver,
-        FilterResolver,
-        MiddlewareResolver,
-        PipeResolver,
-        GuardResolver,
-        ParamResolver,
-        CommandResolver,
-        PrefixCommandResolver,
+        OptionExplorer,
+        FilterExplorer,
+        MiddlewareExplorer,
+        PipeExplorer,
+        GuardExplorer,
+        ParamExplorer,
+        CommandExplorer,
+        PrefixCommandExplorer,
         DtoService,
-        EventResolver,
-        DiscordResolverService,
+        EventExplorer,
+        DiscordExplorerService,
         BuildApplicationCommandService,
         CommandTreeService,
-        CollectorResolver,
+        CollectorExplorer,
       ],
       exports: [
         DiscordClientProvider,

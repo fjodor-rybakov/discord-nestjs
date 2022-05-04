@@ -14,12 +14,12 @@ import {
 import { BaseCollectorMetadata } from '../../definitions/types/base-collector-metadata';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { InstantiationService } from '../../services/instantiation.service';
-import { FilterResolver } from '../filter/filter.resolver';
-import { GuardResolver } from '../guard/guard.resolver';
-import { MethodResolveOptions } from '../interfaces/method-resolve-options';
-import { MethodResolver } from '../interfaces/method-resolver';
-import { MiddlewareResolver } from '../middleware/middleware.resolver';
-import { PipeResolver } from '../pipe/pipe.resolver';
+import { FilterExplorer } from '../filter/filter.explorer';
+import { GuardExplorer } from '../guard/guard.explorer';
+import { MethodExplorer } from '../interfaces/method-explorer';
+import { MethodExplorerOptions } from '../interfaces/method-explorer-options';
+import { MiddlewareExplorer } from '../middleware/middleware.explorer';
+import { PipeExplorer } from '../pipe/pipe.explorer';
 import { CollectMethodEventsInfo } from './collect-method-events-info';
 import { CollectorMetadata } from './collector-metadata';
 import { CollectorType } from './collector-type';
@@ -27,21 +27,24 @@ import { DiscordCollectors } from './discord-collectors';
 import { UseCollectorApplyOptions } from './use-collector-apply-options';
 
 @Injectable()
-export class CollectorResolver implements MethodResolver {
+export class CollectorExplorer implements MethodExplorer {
   private readonly cachedCollectors = new WeakMap<Type, DiscordCollectors>();
   private readonly initCollectorInstances: InstanceType<any>[] = [];
 
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
     private readonly instantiationService: InstantiationService,
-    private readonly middlewareResolver: MiddlewareResolver,
-    private readonly guardResolver: GuardResolver,
-    private readonly filterResolver: FilterResolver,
-    private readonly pipeResolver: PipeResolver,
+    private readonly middlewareExplorer: MiddlewareExplorer,
+    private readonly guardExplorer: GuardExplorer,
+    private readonly filterExplorer: FilterExplorer,
+    private readonly pipeExplorer: PipeExplorer,
     private readonly metadataScanner: MetadataScanner,
   ) {}
 
-  async resolve({ instance, methodName }: MethodResolveOptions): Promise<void> {
+  async explore({
+    instance,
+    methodName,
+  }: MethodExplorerOptions): Promise<void> {
     const classCollectors =
       this.metadataProvider.getUseCollectorsDecoratorMetadata(instance) ?? [];
 
@@ -57,7 +60,7 @@ export class CollectorResolver implements MethodResolver {
     const moduleRef =
       hostModule.getProviderByKey<ModuleRef>(ModuleRef).instance;
     const methodCollectorInstances =
-      await this.instantiationService.resolveInstances(
+      await this.instantiationService.exploreInstances(
         methodCollectors,
         hostModule,
       );
@@ -71,7 +74,7 @@ export class CollectorResolver implements MethodResolver {
         methodCollectorInfos;
     else {
       const classCollectorInstances =
-        await this.instantiationService.resolveInstances(
+        await this.instantiationService.exploreInstances(
           classCollectors,
           hostModule,
         );
@@ -226,8 +229,8 @@ export class CollectorResolver implements MethodResolver {
         collector[eventMethod](eventName as any, async (...eventArgs) => {
           try {
             //#region apply middleware, guard, pipe
-            await this.middlewareResolver.applyMiddleware(eventName, eventArgs);
-            const isAllowFromGuards = await this.guardResolver.applyGuard({
+            await this.middlewareExplorer.applyMiddleware(eventName, eventArgs);
+            const isAllowFromGuards = await this.guardExplorer.applyGuard({
               instance: classInstance,
               methodName,
               event: eventName,
@@ -235,7 +238,7 @@ export class CollectorResolver implements MethodResolver {
             });
             if (!isAllowFromGuards) return;
 
-            const pipeResult = await this.pipeResolver.applyPipe({
+            const pipeResult = await this.pipeExplorer.applyPipe({
               instance: classInstance,
               methodName,
               event: eventName,
@@ -246,7 +249,7 @@ export class CollectorResolver implements MethodResolver {
 
             classInstance[methodName](...(pipeResult || eventArgs));
           } catch (exception) {
-            const isTrowException = await this.filterResolver.applyFilter({
+            const isTrowException = await this.filterExplorer.applyFilter({
               instance: classInstance,
               methodName,
               event: eventName,
@@ -266,7 +269,7 @@ export class CollectorResolver implements MethodResolver {
   ): CollectorMetadata[] {
     return collectorInstances.map((collectorInstance) => {
       const { filterMethodName, events } =
-        this.resolveBaseInfo(collectorInstance);
+        this.exploreBaseInfo(collectorInstance);
 
       const reactionMetadata =
         this.metadataProvider.getReactionCollectorDecoratorMetadata(
@@ -325,7 +328,7 @@ export class CollectorResolver implements MethodResolver {
     return moduleRef.resolve(classInstance.constructor, contextId);
   }
 
-  private resolveBaseInfo(instance: InstanceType<any>): BaseCollectorMetadata {
+  private exploreBaseInfo(instance: InstanceType<any>): BaseCollectorMetadata {
     let filterMethodName;
     const events: CollectMethodEventsInfo = {};
 

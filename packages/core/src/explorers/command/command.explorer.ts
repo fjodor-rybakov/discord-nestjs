@@ -13,31 +13,31 @@ import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provid
 import { BuildApplicationCommandService } from '../../services/build-application-command.service';
 import { CommandTreeService } from '../../services/command-tree.service';
 import { DiscordClientService } from '../../services/discord-client.service';
-import { CollectorResolver } from '../collector/collector.resolver';
-import { FilterResolver } from '../filter/filter.resolver';
-import { GuardResolver } from '../guard/guard.resolver';
-import { ClassResolveOptions } from '../interfaces/class-resolve-options';
-import { ClassResolver } from '../interfaces/class-resolver';
-import { MiddlewareResolver } from '../middleware/middleware.resolver';
-import { PipeResolver } from '../pipe/pipe.resolver';
+import { CollectorExplorer } from '../collector/collector.explorer';
+import { FilterExplorer } from '../filter/filter.explorer';
+import { GuardExplorer } from '../guard/guard.explorer';
+import { ClassExplorer } from '../interfaces/class-explorer';
+import { ClassExplorerOptions } from '../interfaces/class-explorer-options';
+import { MiddlewareExplorer } from '../middleware/middleware.explorer';
+import { PipeExplorer } from '../pipe/pipe.explorer';
 
 @Injectable()
-export class CommandResolver implements ClassResolver {
+export class CommandExplorer implements ClassExplorer {
   constructor(
     private readonly discordClientService: DiscordClientService,
     private readonly metadataProvider: ReflectMetadataProvider,
-    private readonly middlewareResolver: MiddlewareResolver,
+    private readonly middlewareExplorer: MiddlewareExplorer,
     private readonly discordCommandProvider: DiscordCommandProvider,
-    private readonly guardResolver: GuardResolver,
+    private readonly guardExplorer: GuardExplorer,
     private readonly moduleRef: ModuleRef,
-    private readonly pipeResolver: PipeResolver,
+    private readonly pipeExplorer: PipeExplorer,
     private readonly buildApplicationCommandService: BuildApplicationCommandService,
     private readonly commandTreeService: CommandTreeService,
-    private readonly filterResolver: FilterResolver,
-    private readonly collectorResolver: CollectorResolver,
+    private readonly filterExplorer: FilterExplorer,
+    private readonly collectorExplorer: CollectorExplorer,
   ) {}
 
-  async resolve({ instance }: ClassResolveOptions): Promise<void> {
+  async explore({ instance }: ClassExplorerOptions): Promise<void> {
     const metadata =
       this.metadataProvider.getCommandDecoratorMetadata(instance);
     if (!metadata) return;
@@ -46,15 +46,15 @@ export class CommandResolver implements ClassResolver {
     const event = 'interactionCreate';
     const methodName = 'handler';
     const applicationCommandData =
-      await this.buildApplicationCommandService.resolveCommandOptions(
+      await this.buildApplicationCommandService.exploreCommandOptions(
         instance,
         methodName,
         metadata,
       );
 
     if (Logger.isLevelEnabled('debug')) {
-      Logger.debug('Slash command options', CommandResolver.name);
-      Logger.debug(applicationCommandData, CommandResolver.name);
+      Logger.debug('Slash command options', CommandExplorer.name);
+      Logger.debug(applicationCommandData, CommandExplorer.name);
     }
 
     this.discordCommandProvider.addCommand(
@@ -91,8 +91,8 @@ export class CommandResolver implements ClassResolver {
 
         try {
           //#region apply middleware, guard, pipe
-          await this.middlewareResolver.applyMiddleware(event, eventArgs);
-          const isAllowFromGuards = await this.guardResolver.applyGuard({
+          await this.middlewareExplorer.applyMiddleware(event, eventArgs);
+          const isAllowFromGuards = await this.guardExplorer.applyGuard({
             instance: commandInstance,
             methodName,
             event,
@@ -100,7 +100,7 @@ export class CommandResolver implements ClassResolver {
           });
           if (!isAllowFromGuards) return;
 
-          const pipeResult = await this.pipeResolver.applyPipe({
+          const pipeResult = await this.pipeExplorer.applyPipe({
             instance: commandInstance,
             methodName,
             event,
@@ -111,7 +111,7 @@ export class CommandResolver implements ClassResolver {
           });
           //#endregion
 
-          const collectors = (await this.collectorResolver.applyCollector({
+          const collectors = (await this.collectorExplorer.applyCollector({
             instance,
             methodName,
             event,
@@ -134,7 +134,7 @@ export class CommandResolver implements ClassResolver {
 
           if (replyResult) await interaction.reply(replyResult);
         } catch (exception) {
-          const isTrowException = await this.filterResolver.applyFilter({
+          const isTrowException = await this.filterExplorer.applyFilter({
             instance: commandInstance,
             methodName,
             event,

@@ -3,13 +3,13 @@ import { Injectable, Type } from '@nestjs/common';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { DiscordOptionService } from '../../services/discord-option.service';
 import { InstantiationService } from '../../services/instantiation.service';
-import { MethodResolveOptions } from '../interfaces/method-resolve-options';
-import { MethodResolver } from '../interfaces/method-resolver';
+import { MethodExplorer } from '../interfaces/method-explorer';
+import { MethodExplorerOptions } from '../interfaces/method-explorer-options';
 import { DiscordFilterOptions } from './discord-filter-options';
 import { DiscordFilters } from './discord-filters';
 
 @Injectable()
-export class FilterResolver implements MethodResolver {
+export class FilterExplorer implements MethodExplorer {
   private readonly cachedFilters = new WeakMap<Type, DiscordFilters>();
 
   constructor(
@@ -18,7 +18,7 @@ export class FilterResolver implements MethodResolver {
     private readonly instantiationService: InstantiationService,
   ) {}
 
-  async resolve(options: MethodResolveOptions): Promise<void> {
+  async explore(options: MethodExplorerOptions): Promise<void> {
     const { instance, methodName } = options;
 
     const globalFilters = this.discordOptionService
@@ -51,7 +51,7 @@ export class FilterResolver implements MethodResolver {
 
     const hostModule = this.instantiationService.getHostModule(instance);
     const methodFilterInstances =
-      await this.instantiationService.resolveInstances(
+      await this.instantiationService.exploreInstances(
         methodFilters,
         hostModule,
       );
@@ -61,7 +61,7 @@ export class FilterResolver implements MethodResolver {
         methodFilterInstances;
     else {
       const classFilterInstances =
-        await this.instantiationService.resolveInstances(
+        await this.instantiationService.exploreInstances(
           classFilters,
           hostModule,
         );

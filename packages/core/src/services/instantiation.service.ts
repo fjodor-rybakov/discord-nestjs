@@ -24,7 +24,7 @@ export class InstantiationService {
     return instanceWrapper.host;
   }
 
-  resolveInstances(
+  exploreInstances(
     classTypeOrInstance: (PipeType | FilterType | GuardType | Type)[],
     hostModule: Module,
   ): Promise<InstanceType<any>[]> {
