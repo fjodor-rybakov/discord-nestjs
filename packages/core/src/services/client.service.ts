@@ -7,17 +7,17 @@ import {
 import { Client, WebhookClient, WebhookClientData } from 'discord.js';
 
 import { DiscordModuleOption } from '../definitions/interfaces/discord-module-options';
-import { DiscordOptionService } from './discord-option.service';
+import { OptionService } from './option.service';
 
 @Injectable()
-export class DiscordClientService
+export class ClientService
   implements OnApplicationBootstrap, OnApplicationShutdown
 {
-  private readonly logger = new Logger(DiscordClientService.name);
+  private readonly logger = new Logger(ClientService.name);
   private webhookClient: WebhookClient;
   private client: Client;
 
-  constructor(private discordOptionService: DiscordOptionService) {}
+  constructor(private discordOptionService: OptionService) {}
 
   init(options: DiscordModuleOption): void {
     this.discordOptionService.setDefault(options);

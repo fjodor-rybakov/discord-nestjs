@@ -11,8 +11,8 @@ import { TransformedCommandExecutionContext } from '../../definitions/interfaces
 import { DiscordCommandProvider } from '../../providers/discord-command.provider';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { BuildApplicationCommandService } from '../../services/build-application-command.service';
+import { ClientService } from '../../services/client.service';
 import { CommandTreeService } from '../../services/command-tree.service';
-import { DiscordClientService } from '../../services/discord-client.service';
 import { CollectorExplorer } from '../collector/collector.explorer';
 import { FilterExplorer } from '../filter/filter.explorer';
 import { GuardExplorer } from '../guard/guard.explorer';
@@ -24,7 +24,7 @@ import { PipeExplorer } from '../pipe/pipe.explorer';
 @Injectable()
 export class CommandExplorer implements ClassExplorer {
   constructor(
-    private readonly discordClientService: DiscordClientService,
+    private readonly discordClientService: ClientService,
     private readonly metadataProvider: ReflectMetadataProvider,
     private readonly middlewareExplorer: MiddlewareExplorer,
     private readonly discordCommandProvider: DiscordCommandProvider,

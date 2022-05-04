@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Client, WebhookClient } from 'discord.js';
 
-import { DiscordClientService } from '../services/discord-client.service';
+import { ClientService } from '../services/client.service';
 
 @Injectable()
 export class DiscordClientProvider {
-  constructor(private readonly discordClientService: DiscordClientService) {}
+  constructor(private readonly discordClientService: ClientService) {}
 
   getClient(): Client {
     return this.discordClientService.getClient();

@@ -16,11 +16,11 @@ import { MiddlewareExplorer } from '../explorers/middleware/middleware.explorer'
 import { PipeExplorer } from '../explorers/pipe/pipe.explorer';
 import { PrefixCommandExplorer } from '../explorers/prefix-command/prefix-command.explorer';
 import { IsObject } from '../utils/function/is-object';
-import { DiscordOptionService } from './discord-option.service';
+import { OptionService } from './option.service';
 import { RegisterCommandService } from './register-command.service';
 
 @Injectable()
-export class DiscordExplorerService implements OnModuleInit {
+export class ExplorerService implements OnModuleInit {
   constructor(
     private readonly discoveryService: DiscoveryService,
     private readonly metadataScanner: MetadataScanner,
@@ -30,7 +30,7 @@ export class DiscordExplorerService implements OnModuleInit {
     private readonly pipeExplorer: PipeExplorer,
     private readonly middlewareExplorer: MiddlewareExplorer,
     private readonly commandExplorer: CommandExplorer,
-    private readonly discordOptionService: DiscordOptionService,
+    private readonly discordOptionService: OptionService,
     private readonly registerCommandService: RegisterCommandService,
     private readonly collectorExplorer: CollectorExplorer,
     private readonly prefixCommandExplorer: PrefixCommandExplorer,

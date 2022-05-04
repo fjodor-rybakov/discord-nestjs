@@ -3,7 +3,7 @@ import { ClientEvents } from 'discord.js';
 
 import { ExecutionContext } from '../../definitions/interfaces/execution-context';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
-import { DiscordClientService } from '../../services/discord-client.service';
+import { ClientService } from '../../services/client.service';
 import { CollectorExplorer } from '../collector/collector.explorer';
 import { FilterExplorer } from '../filter/filter.explorer';
 import { GuardExplorer } from '../guard/guard.explorer';
@@ -18,7 +18,7 @@ export class EventExplorer implements MethodExplorer {
 
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
-    private readonly discordClientService: DiscordClientService,
+    private readonly discordClientService: ClientService,
     private readonly middlewareExplorer: MiddlewareExplorer,
     private readonly guardExplorer: GuardExplorer,
     private readonly filterExplorer: FilterExplorer,

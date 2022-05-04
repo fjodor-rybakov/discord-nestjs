@@ -7,13 +7,13 @@ import { REFLECT_METADATA_PROVIDER_ALIAS } from './definitions/constants/reflect
 import { DiscordClientProvider } from './providers/discord-client.provider';
 import { DiscordCommandProvider } from './providers/discord-command.provider';
 import { ReflectMetadataProvider } from './providers/reflect-metadata.provider';
-import { DiscordClientService } from './services/discord-client.service';
-import { DiscordOptionService } from './services/discord-option.service';
+import { ClientService } from './services/client.service';
+import { OptionService } from './services/option.service';
 
 @Module({
   providers: [
-    DiscordClientService,
-    DiscordOptionService,
+    ClientService,
+    OptionService,
     {
       provide: REFLECT_METADATA_PROVIDER_ALIAS,
       useClass: ReflectMetadataProvider,
@@ -32,8 +32,8 @@ import { DiscordOptionService } from './services/discord-option.service';
     },
   ],
   exports: [
-    DiscordClientService,
-    DiscordOptionService,
+    ClientService,
+    OptionService,
     REFLECT_METADATA_PROVIDER_ALIAS,
     DISCORD_COMMAND_PROVIDER_ALIAS,
     DISCORD_CLIENT_PROVIDER_ALIAS,

@@ -7,7 +7,7 @@ import { DiscordModuleOption } from '../definitions/interfaces/discord-module-op
 import { InternalDiscordModuleOption } from '../definitions/interfaces/internal-discord-module-option';
 
 @Injectable()
-export class DiscordOptionService {
+export class OptionService {
   private options: InternalDiscordModuleOption;
 
   constructor() {

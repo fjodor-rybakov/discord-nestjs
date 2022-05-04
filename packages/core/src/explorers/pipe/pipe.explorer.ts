@@ -2,8 +2,8 @@ import { Injectable, Type } from '@nestjs/common';
 
 import { DiscordPipeTransform } from '../../decorators/pipe/discord-pipe-transform';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
-import { DiscordOptionService } from '../../services/discord-option.service';
 import { InstantiationService } from '../../services/instantiation.service';
+import { OptionService } from '../../services/option.service';
 import { MethodExplorer } from '../interfaces/method-explorer';
 import { MethodExplorerOptions } from '../interfaces/method-explorer-options';
 import { DiscordPipeOptions } from './discord-pipe-options';
@@ -15,7 +15,7 @@ export class PipeExplorer implements MethodExplorer {
 
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
-    private readonly discordOptionService: DiscordOptionService,
+    private readonly discordOptionService: OptionService,
     private readonly instantiationService: InstantiationService,
   ) {}
 

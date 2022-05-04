@@ -25,10 +25,10 @@ import { DiscordClientProvider } from './providers/discord-client.provider';
 import { DiscordCommandProvider } from './providers/discord-command.provider';
 import { ReflectMetadataProvider } from './providers/reflect-metadata.provider';
 import { BuildApplicationCommandService } from './services/build-application-command.service';
+import { ClientService } from './services/client.service';
 import { CommandTreeService } from './services/command-tree.service';
-import { DiscordClientService } from './services/discord-client.service';
-import { DiscordExplorerService } from './services/discord-explorer.service';
 import { DtoService } from './services/dto.service';
+import { ExplorerService } from './services/explorer.service';
 import { InstantiationService } from './services/instantiation.service';
 import { RegisterCommandService } from './services/register-command.service';
 
@@ -57,7 +57,7 @@ export class DiscordModule {
         PrefixCommandExplorer,
         DtoService,
         EventExplorer,
-        DiscordExplorerService,
+        ExplorerService,
         BuildApplicationCommandService,
         CommandTreeService,
         CollectorExplorer,
@@ -106,7 +106,7 @@ export class DiscordModule {
       {
         provide: DiscordClientProvider,
         useFactory: (
-          discordClientService: DiscordClientService,
+          discordClientService: ClientService,
           discordClientProvider: DiscordClientProvider,
           discordModuleOptions: DiscordModuleOption,
         ) => {
@@ -117,7 +117,7 @@ export class DiscordModule {
           return discordClientProvider;
         },
         inject: [
-          DiscordClientService,
+          ClientService,
           DISCORD_CLIENT_PROVIDER_ALIAS,
           DISCORD_MODULE_OPTIONS,
         ],
