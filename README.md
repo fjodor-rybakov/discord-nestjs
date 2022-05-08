@@ -48,6 +48,7 @@ This monorepo consists of several packages.
   * [@discord-nestjs/sample-message-collector](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/message-collector) - Bot example with message collector
   * [@discord-nestjs/sample-interaction-collector](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/interaction-collector) - Bot example with interaction collector
   * [@discord-nestjs/prefix-command](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/prefix-command) - Bot example with prefix command
+  * [@discord-nestjs/sample-modals](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/modals) - Bot example with modals
 
 
 

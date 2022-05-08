@@ -17,6 +17,7 @@ NestJS package for discord.js
   - [ℹ️ Exception filters](#Filters)
   - [ℹ️ Collectors](#Collectors)
   - [ℹ️ Middleware](#MiddlewareUsage)
+  - [ℹ️ Modals](#Modals)
 - [🛠️ Exported providers](#Providers)
   - [ℹ️ DiscordClientProvider](#DiscordClientProvider)
   - [ℹ️ DiscordCommandProvider](#DiscordCommandProvider)
@@ -1249,6 +1250,50 @@ export class BotMiddleware implements DiscordMiddleware {
 ```
 
 Also don't forget to add your middleware to the providers.
+
+### ℹ️ Modals <a name="Modals"></a>
+
+Discord.js does not currently have the ability to create modals, 
+so use an [external package](https://www.npmjs.com/package/discord-modals) to create them.
+
+All you need to do is modify the client in the `setupClientFactory` function
+
+```typescript
+import { DiscordModule } from '@discord-nestjs/core';
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { default as discordModals } from 'discord-modals';
+import { Client, Intents } from 'discord.js';
+
+import { BotModule } from './bot/bot.module';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot(),
+    DiscordModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        token: configService.get('TOKEN'),
+        discordClientOptions: {
+          intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+        },
+        registerCommandOptions: [
+          {
+            forGuild: configService.get('GUILD_ID_WITH_COMMANDS'),
+            removeCommandsBefore: true,
+          },
+        ],
+      }),
+      setupClientFactory: (client: Client) => discordModals(client),
+      inject: [ConfigService],
+    }),
+    BotModule,
+  ],
+})
+export class AppModule {}
+```
+
+Full example is shown [here](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/modals)
 
 
 
