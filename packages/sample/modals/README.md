@@ -15,7 +15,7 @@
 
 ## Description
 
-Sample with slash commands by glob pattern
+Sample with modals
 
 ## Installation
 
@@ -29,7 +29,6 @@ Add next `.env` config in root
 ```dotenv
 TOKEN=YourToken
 GUILD_ID_WITH_COMMANDS=YourGuildId
-ROLE_WITHOUT_PLAYLIST_PERMISSION=YourRoleId
 ```
 
 ## Running the app
