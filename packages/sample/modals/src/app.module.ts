@@ -14,8 +14,7 @@ import { BotModule } from './bot/bot.module';
       useFactory: (configService: ConfigService) => ({
         token: configService.get('TOKEN'),
         discordClientOptions: {
-          // https://stackoverflow.com/questions/64006888/can-anyone-explain-the-issue
-          intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, 32767],
+          intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
         },
         registerCommandOptions: [
           {
