@@ -44,7 +44,7 @@ export class DiscordModule {
       imports: options.imports || [],
       providers: [
         ...DiscordModule.createAsyncDiscordOptionProviders(options),
-        ...DiscordModule.createExportedForRootProviders(),
+        ...DiscordModule.createExportedForRootProviders(options),
         InstantiationService,
         RegisterCommandService,
         OptionExplorer,
@@ -101,16 +101,19 @@ export class DiscordModule {
     };
   }
 
-  private static createExportedForRootProviders(): Provider[] {
+  private static createExportedForRootProviders(
+    options: DiscordModuleAsyncOptions,
+  ): Provider[] {
     return [
       {
         provide: DiscordClientProvider,
-        useFactory: (
+        useFactory: async (
           discordClientService: ClientService,
           discordClientProvider: DiscordClientProvider,
           discordModuleOptions: DiscordModuleOption,
         ) => {
-          discordClientService.init(discordModuleOptions);
+          discordClientService.initClient(discordModuleOptions);
+          await discordClientService.setupClient(options.setupClientFactory);
 
           DiscordModule.initSubject.next(discordClientService.getClient());
 

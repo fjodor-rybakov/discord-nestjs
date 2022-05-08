@@ -15,7 +15,7 @@
 
 ## Description
 
-Sample with slash commands by glob pattern
+Sample with modals
 
 ## Installation
 

@@ -52,7 +52,7 @@ export class RegisterCommandService {
               client.on('messageCreate', async (message: Message) => {
                 if (!allowFactory(message, commandList)) return;
 
-                const registeredCommands = await this.updateCommands(
+                const registeredCommands = await this.setupCommands(
                   commandList,
                   commandOptions,
                 );
@@ -69,7 +69,7 @@ export class RegisterCommandService {
               client.on('messageCreate', async (message: Message) => {
                 if (!allowFactory(message, commandList)) return;
 
-                const registeredCommands = await this.updateCommands(
+                const registeredCommands = await this.setupCommands(
                   commandList,
                   commandOptions,
                 );
@@ -83,7 +83,8 @@ export class RegisterCommandService {
               });
             }
           } else if (forGuild) {
-            const registeredCommands = await this.updateCommands(
+            // Registering commands for specific guild
+            const registeredCommands = await this.setupCommands(
               commandList,
               commandOptions,
             );
@@ -95,7 +96,8 @@ export class RegisterCommandService {
                 slashCommandsPermissions,
               );
           } else {
-            const registeredCommands = await this.updateCommands(
+            // Registering global commands
+            const registeredCommands = await this.setupCommands(
               commandList,
               commandOptions,
             );
@@ -162,7 +164,7 @@ export class RegisterCommandService {
     );
   }
 
-  private async updateCommands(
+  private async setupCommands(
     commandList: ApplicationCommandData[],
     { forGuild, removeCommandsBefore }: RegisterCommandOptions,
   ): Promise<ApplicationCommand[]> {

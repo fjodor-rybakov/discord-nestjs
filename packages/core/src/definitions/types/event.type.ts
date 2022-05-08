@@ -2,7 +2,7 @@ import { ClientEvents, Interaction } from 'discord.js';
 
 import { CollectorArgsType } from './collector-args.type';
 
-export type BaseEvents = keyof ClientEvents;
+export type BaseEvents = keyof ClientEvents | 'modalSubmit';
 export type CollectorEvents = 'collect' | 'dispose' | 'end' | 'remove' | string;
 
 export type EventType = BaseEvents | CollectorEvents;

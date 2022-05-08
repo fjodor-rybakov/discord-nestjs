@@ -12,6 +12,7 @@ import {
 } from 'discord.js';
 
 import { BaseCollectorMetadata } from '../../definitions/types/base-collector-metadata';
+import { BaseEvents } from '../../definitions/types/event.type';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { InstantiationService } from '../../services/instantiation.service';
 import { FilterExplorer } from '../filter/filter.explorer';
@@ -384,14 +385,14 @@ export class CollectorExplorer implements MethodExplorer {
   }
 
   private isMessageEvent(
-    event: keyof ClientEvents,
+    event: BaseEvents,
     context: ClientEvents[keyof ClientEvents],
   ): context is ClientEvents['messageCreate'] {
     return event === 'messageCreate';
   }
 
   private isInteractionEvent(
-    event: keyof ClientEvents,
+    event: BaseEvents,
     context: ClientEvents[keyof ClientEvents],
   ): context is ClientEvents['interactionCreate'] {
     return event === 'interactionCreate';

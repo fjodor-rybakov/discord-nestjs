@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { Client, WebhookClient, WebhookClientData } from 'discord.js';
 
+import { SetupClientFactory } from '../definitions/interfaces/discord-module-async-options';
 import { DiscordModuleOption } from '../definitions/interfaces/discord-module-options';
 import { OptionService } from './option.service';
 
@@ -19,7 +20,7 @@ export class ClientService
 
   constructor(private discordOptionService: OptionService) {}
 
-  init(options: DiscordModuleOption): void {
+  initClient(options: DiscordModuleOption): void {
     this.discordOptionService.setDefault(options);
 
     const { token, webhook, discordClientOptions } =
@@ -32,6 +33,12 @@ export class ClientService
 
   getClient(): Client {
     return this.client;
+  }
+
+  async setupClient(setupFunction?: SetupClientFactory): Promise<void> {
+    if (!setupFunction) return;
+
+    await setupFunction(this.client);
   }
 
   getWebhookClient(): WebhookClient {
