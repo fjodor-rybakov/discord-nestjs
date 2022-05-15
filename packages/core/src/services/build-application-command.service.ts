@@ -1,10 +1,12 @@
 import { Injectable, Type } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import {
+  ApplicationCommandAutocompleteOption,
   ApplicationCommandChannelOptionData,
   ApplicationCommandChoicesData,
   ApplicationCommandData,
   ApplicationCommandNonOptionsData,
+  ApplicationCommandNumericOptionData,
   ApplicationCommandOptionData,
   ApplicationCommandSubCommandData,
   ApplicationCommandSubGroupData,
@@ -27,7 +29,9 @@ import { DtoService } from './dto.service';
 type NonCommandData =
   | ApplicationCommandNonOptionsData
   | ApplicationCommandChannelOptionData
-  | ApplicationCommandChoicesData;
+  | ApplicationCommandChoicesData
+  | ApplicationCommandAutocompleteOption
+  | ApplicationCommandNumericOptionData;
 
 @Injectable()
 export class BuildApplicationCommandService {
@@ -80,6 +84,9 @@ export class BuildApplicationCommandService {
           description,
           required = false,
           type,
+          minValue,
+          maxValue,
+          autocomplete,
         } = propertyOptions.param;
 
         commandOptions.push({
@@ -87,6 +94,9 @@ export class BuildApplicationCommandService {
           description,
           required,
           type,
+          autocomplete,
+          minValue,
+          maxValue,
           choices: propertyOptions.choice,
           channelTypes: propertyOptions.channelTypes,
         });

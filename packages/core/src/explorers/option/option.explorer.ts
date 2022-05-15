@@ -42,6 +42,9 @@ export class OptionExplorer {
           name: paramDecoratorMetadata.name ?? propertyKey,
           description: paramDecoratorMetadata.description,
           type: applicationOptionType,
+          maxValue: paramDecoratorMetadata.maxValue,
+          minValue: paramDecoratorMetadata.minValue,
+          autocomplete: paramDecoratorMetadata.autocomplete,
           required: paramDecoratorMetadata.required,
         },
         choice: this.getChoiceOptions(dtoInstance, propertyKey),
@@ -90,10 +93,7 @@ export class OptionExplorer {
     dtoInstance: any,
     propertyKey: string,
     argDecoratorOptions: ParamOptions,
-  ):
-    | CommandOptionChoiceResolvableType
-    | CommandOptionNonChoiceResolvableType
-    | CommandOptionChannelResolvableType {
+  ): ApplicationCommandOptionTypes {
     switch (argDecoratorOptions.type) {
       case ParamType.STRING:
         return ApplicationCommandOptionTypes.STRING;

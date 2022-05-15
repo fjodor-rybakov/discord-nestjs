@@ -32,8 +32,11 @@ import { MiddlewareOptions } from '../decorators/middleware/middleware-options';
 import { MIDDLEWARE_DECORATOR } from '../decorators/middleware/middleware.constant';
 import { CHANNEL_DECORATOR } from '../decorators/option/channel/channel.constant';
 import { CHOICE_DECORATOR } from '../decorators/option/choice/choice.constant';
+import { NonParamOptions } from '../decorators/option/param/non-param-options';
+import { NumericParamOptions } from '../decorators/option/param/numeric-param-options';
 import { ParamOptions } from '../decorators/option/param/param-options';
 import { PARAM_DECORATOR } from '../decorators/option/param/param.constant';
+import { StringParamOptions } from '../decorators/option/param/string-param-options';
 import { ParamTypeOptions } from '../decorators/param/param-type-options';
 import { PAYLOAD_DECORATOR } from '../decorators/param/payload/payload.constant';
 import { USE_PIPES_DECORATOR } from '../decorators/pipe/pipe.constant';
@@ -177,7 +180,7 @@ export class ReflectMetadataProvider {
   getParamDecoratorMetadata(
     instance: InstanceType<any>,
     propertyKey: string,
-  ): ParamOptions {
+  ): NumericParamOptions & StringParamOptions & NonParamOptions {
     return Reflect.getMetadata(PARAM_DECORATOR, instance, propertyKey);
   }
 

@@ -1,23 +1,18 @@
-import {
-  ApplicationCommandOptionChoice,
-  CommandOptionChannelResolvableType,
-  CommandOptionChoiceResolvableType,
-  CommandOptionNonChoiceResolvableType,
-} from 'discord.js';
+import { ApplicationCommandOptionChoice } from 'discord.js';
 import { ChannelTypes } from 'discord.js/typings/enums';
 
+import { NonParamOptions } from '../../decorators/option/param/non-param-options';
+import { NumericParamOptions } from '../../decorators/option/param/numeric-param-options';
+import { StringParamOptions } from '../../decorators/option/param/string-param-options';
 import { ExcludeEnum } from '../../definitions/types/exclude-enum.type';
 
 export interface OptionMetadata {
   [property: string]: {
-    param: {
-      description: string;
-      name: string;
-      required?: boolean;
-      type?:
-        | CommandOptionChoiceResolvableType
-        | CommandOptionNonChoiceResolvableType
-        | CommandOptionChannelResolvableType;
+    param: Omit<
+      NumericParamOptions & StringParamOptions & NonParamOptions,
+      'type'
+    > & {
+      type?: any; // TODO: should be ApplicationCommandOptionTypes
     };
     choice?: ApplicationCommandOptionChoice[];
     channelTypes?: ExcludeEnum<typeof ChannelTypes, 'UNKNOWN'>[];

@@ -1,24 +1,8 @@
-import { ParamType } from '../../../definitions/types/param.type';
+import { NonParamOptions } from './non-param-options';
+import { NumericParamOptions } from './numeric-param-options';
+import { StringParamOptions } from './string-param-options';
 
-export interface ParamOptions {
-  /**
-   * Option description
-   */
-  description: string;
-
-  /**
-   * Sets a new name for the option
-   * The default is the name of the property being decorated
-   */
-  name?: string;
-
-  /**
-   * Is required option
-   */
-  required?: boolean;
-
-  /**
-   * Param type
-   */
-  type?: ParamType;
-}
+export type ParamOptions =
+  | NumericParamOptions
+  | StringParamOptions
+  | NonParamOptions;
