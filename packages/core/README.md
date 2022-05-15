@@ -1435,6 +1435,9 @@ Sets the command parameter
 - `description` \* - Command description
 - `name` - Command name
 - `required` - The parameter is required
+- `autocomplete` - Send autocomplete interaction(Only for `string`, `number` and `integer`)
+- `minValue` - Min value for `number` or `integer`
+- `maxValue` - Max value for `number` or `integer`
 - `type` - Specifies the type of the parameter
 
 ### ℹ️ @Choice <a name="Choice"></a>
