@@ -1,6 +1,5 @@
 import { Collection } from '@discordjs/collection';
 import { Injectable, Logger, Type } from '@nestjs/common';
-import { Snowflake } from 'discord-api-types';
 import {
   ApplicationCommand,
   ApplicationCommandData,
@@ -8,6 +7,7 @@ import {
   FetchApplicationCommandOptions,
   GuildResolvable,
   Message,
+  Snowflake,
 } from 'discord.js';
 
 import { InjectDiscordClient } from '../decorators/client/inject-discord-client.decorator';

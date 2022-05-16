@@ -1,10 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  ApplicationCommandOptionChoice,
-  CommandOptionChannelResolvableType,
-  CommandOptionChoiceResolvableType,
-  CommandOptionNonChoiceResolvableType,
-} from 'discord.js';
+import { ApplicationCommandOptionChoiceData } from 'discord.js';
 import {
   ApplicationCommandOptionTypes,
   ChannelTypes,
@@ -58,7 +53,7 @@ export class OptionExplorer {
   private getChoiceOptions(
     dtoInstance: any,
     propertyKey: string,
-  ): ApplicationCommandOptionChoice[] {
+  ): ApplicationCommandOptionChoiceData[] {
     const choiceData = this.metadataProvider.getChoiceDecoratorMetadata(
       dtoInstance,
       propertyKey,

@@ -3,22 +3,32 @@ import {
   DiscordCommand,
   InjectDiscordClient,
   On,
+  UseGuards,
 } from '@discord-nestjs/core';
 import { Logger } from '@nestjs/common';
 import {
+  Client,
+  CommandInteraction,
+  Formatters,
+  MessageActionRow,
   Modal,
+  ModalActionRowComponent,
   ModalSubmitInteraction,
   TextInputComponent,
-  showModal,
-} from 'discord-modals';
-import { Client, CommandInteraction, Formatters } from 'discord.js';
+} from 'discord.js';
+import { TextInputStyles } from 'discord.js/typings/enums';
+
+import { IsModalInteractionGuard } from '../guard/is-modal-interaction.guard';
 
 @Command({
-  name: 'show-modal',
-  description: 'Show test modal',
+  name: 'submit-registration-request',
+  description: 'Apply for registration',
 })
 export class PlayCommand implements DiscordCommand {
   private readonly logger = new Logger(PlayCommand.name);
+  private readonly requestParticipantModalId = 'RequestParticipant';
+  private readonly usernameComponentId = 'Username';
+  private readonly commentComponentId = 'Comment';
 
   constructor(
     @InjectDiscordClient()
@@ -26,36 +36,45 @@ export class PlayCommand implements DiscordCommand {
   ) {}
 
   async handler(interaction: CommandInteraction): Promise<void> {
-    const modal = new Modal() // We create a Modal
-      .setCustomId('modal-customid')
-      .setTitle('Test of Discord-Modals!')
-      .addComponents(
-        new TextInputComponent() // We create a Text Input Component
-          .setCustomId('textinput-customid')
-          .setLabel('Some text Here')
-          .setStyle('SHORT') //IMPORTANT: Text Input Component Style can be 'SHORT' or 'LONG'
-          .setMinLength(4)
-          .setMaxLength(10)
-          .setPlaceholder('Write a text here')
-          .setRequired(true), // If it's required or not
-      );
+    const modal = new Modal()
+      .setTitle('Request participation')
+      .setCustomId(this.requestParticipantModalId);
 
-    await showModal(modal, {
-      client: this.client,
-      interaction,
-    });
+    const userNameInputComponent = new TextInputComponent()
+      .setCustomId(this.usernameComponentId)
+      .setLabel('Your username')
+      .setStyle(TextInputStyles.SHORT);
+
+    const commentInputComponent = new TextInputComponent()
+      .setCustomId(this.commentComponentId)
+      .setLabel('Add an explanatory comment')
+      .setStyle(TextInputStyles.PARAGRAPH);
+
+    const rows = [userNameInputComponent, commentInputComponent].map(
+      (component) =>
+        new MessageActionRow<ModalActionRowComponent>().addComponents(
+          component,
+        ),
+    );
+
+    modal.addComponents(...rows);
+
+    await interaction.showModal(modal);
   }
 
-  @On('modalSubmit')
+  @On('interactionCreate')
+  @UseGuards(IsModalInteractionGuard)
   async onModuleSubmit(modal: ModalSubmitInteraction) {
     this.logger.log(`Modal ${modal.customId} submit`);
 
-    if (modal.customId === 'modal-customid') {
-      const firstResponse = modal.getTextInputValue('textinput-customid');
-      await modal.reply(
-        'Congrats! Powered by discord-modals.' +
-          Formatters.codeBlock('markdown', firstResponse),
-      );
-    }
+    if (modal.customId !== this.requestParticipantModalId) return;
+
+    const username = modal.fields.getTextInputValue(this.usernameComponentId);
+    const comment = modal.fields.getTextInputValue(this.commentComponentId);
+
+    await modal.reply(
+      `${username}, your request has been submitted.` +
+        Formatters.codeBlock('markdown', comment),
+    );
   }
 }

@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionChoice } from 'discord.js';
+import { ApplicationCommandOptionChoiceData } from 'discord.js';
 import { ChannelTypes } from 'discord.js/typings/enums';
 
 import { NonParamOptions } from '../../decorators/option/param/non-param-options';
@@ -14,7 +14,7 @@ export interface OptionMetadata {
     > & {
       type?: any; // TODO: should be ApplicationCommandOptionTypes
     };
-    choice?: ApplicationCommandOptionChoice[];
+    choice?: ApplicationCommandOptionChoiceData[];
     channelTypes?: ExcludeEnum<typeof ChannelTypes, 'UNKNOWN'>[];
   };
 }
