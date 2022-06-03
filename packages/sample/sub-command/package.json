@@ -22,7 +22,7 @@
     "@discord-nestjs/common": "*",
     "@discord-nestjs/core": "*",
     "@nestjs/common": "8.4.5",
-    "@nestjs/config": "2.0.0",
+    "@nestjs/config": "2.1.0",
     "@nestjs/core": "8.4.5",
     "class-validator": "0.13.1",
     "discord.js": "13.7.0",
