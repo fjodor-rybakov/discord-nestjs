@@ -31,7 +31,7 @@
   "schematics": "./dist/collection.json",
   "dependencies": {
     "@angular-devkit/core": "14.0.0",
-    "@angular-devkit/schematics": "14.0.0",
+    "@angular-devkit/schematics": "14.0.1",
     "typescript": "4.7.3"
   },
   "devDependencies": {
