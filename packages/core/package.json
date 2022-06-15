@@ -1,6 +1,6 @@
 {
   "name": "@discord-nestjs/core",
-  "version": "3.3.2",
+  "version": "3.3.3",
   "description": "Core module",
   "author": "fjodor-rybakov",
   "license": "MIT",
