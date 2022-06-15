@@ -221,7 +221,6 @@ export class RegisterCommandService {
     return registeredCommands;
   }
 
-  // FIXME: Potential Problem
   private async setPermissions(
     registeredCommands: ApplicationCommand[],
     rowCommandsData: Map<Type, ApplicationCommandData>,
@@ -231,6 +230,8 @@ export class RegisterCommandService {
       slashCommandsPermissions.map(
         async ({ commandClassType, permissions }) => {
           const commandData = rowCommandsData.get(commandClassType);
+          if (!commandData) return;
+
           const command = registeredCommands.find(
             (command) => command.name === commandData.name,
           );
