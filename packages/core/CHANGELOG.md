@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.4.0](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@3.3.4...@discord-nestjs/core@3.4.0) (2022-06-17)
+
+
+### Features
+
+* Add priority for global filter, pipe and guard ([8653bc4](https://github.com/fjodor-rybakov/discord-nestjs/commit/8653bc41f0ee4ec025ff8b27d7a28e8b9d7cfce7))
+
+
+
+
+
 ## [3.3.4](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@3.3.3...@discord-nestjs/core@3.3.4) (2022-06-15)
 
 
