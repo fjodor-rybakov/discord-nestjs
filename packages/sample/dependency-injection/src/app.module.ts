@@ -1,11 +1,11 @@
 import { DiscordModule } from '@discord-nestjs/core';
-import { PlayDto } from '@discord-nestjs/sample-command/dist/bot/dto/play.dto';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Intents, Message } from 'discord.js';
 import { ApplicationCommandPermissionTypes } from 'discord.js/typings/enums';
 
 import { BotModule } from './bot/bot.module';
+import { PlayDto } from './bot/dto/play.dto';
 
 @Module({
   imports: [
@@ -32,7 +32,7 @@ import { BotModule } from './bot/bot.module';
               {
                 id: configService.get('ROLE_WITHOUT_PLAYLIST_PERMISSION'),
                 type: ApplicationCommandPermissionTypes.ROLE,
-                permission: false,
+                permission: true,
               },
             ],
           },

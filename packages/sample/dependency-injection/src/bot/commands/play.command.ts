@@ -12,6 +12,7 @@ import { PlayService } from '../services/play.service';
 @Command({
   name: 'play',
   description: 'Plays a song',
+  defaultPermission: false,
 })
 @UsePipes(TransformPipe)
 export class PlayCommand implements DiscordTransformedCommand<PlayDto> {
