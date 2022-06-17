@@ -16,7 +16,7 @@
     "build": "lerna run build --no-private",
     "format": "prettier --write \"packages/**/*.ts\" --ignore-path .gitignore",
     "prepublish": "npm run build",
-    "publish": "lerna publish -m \"chore: Publish release\" --no-private --conventional-commits",
+    "publish": "lerna publish -m \"chore: Publish release\" --no-private --conventional-commits --create-release github",
     "publish:beta": "lerna publish --canary --preid beta -m \"chore: Publish beta release\" --no-private",
     "lint": "eslint \"packages/{common,core}/src/**/*.ts\" --fix",
     "prepare": "husky install",
