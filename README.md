@@ -38,17 +38,17 @@ This monorepo consists of several packages.
 * [@discord-nestjs/common](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/common) - Contains optional common templates. For example TransformPipe or ValidationPipe.
 * [@discord-nestjs/schematics](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/schematics) - Provides cli to create a bot template.
 * Samples
-  * [@discord-nestjs/sample-command](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/command) - Bot example with slash commands
-  * [@discord-nestjs/sample-command-by-glob](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/command-by-glob) - Bot example with slash commands by glob pattern
-  * [@discord-nestjs/sample-sub-command](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/sub-command) - Bot example with slash sub-commands and sub-groups
-  * [@discord-nestjs/sample-validation](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/validation) - Bot example with slash commands validation
-  * [@discord-nestjs/sample-event](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/event) - Bot example with events
-  * [@discord-nestjs/sample-dependency-injection](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/dependency-injection) - Bot example with dependency injection
-  * [@discord-nestjs/sample-reaction-collector](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/reaction-collector) - Bot example with reaction collector
-  * [@discord-nestjs/sample-message-collector](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/message-collector) - Bot example with message collector
-  * [@discord-nestjs/sample-interaction-collector](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/interaction-collector) - Bot example with interaction collector
-  * [@discord-nestjs/prefix-command](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/prefix-command) - Bot example with prefix command
-  * [@discord-nestjs/sample-modals](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/modals) - Bot example with modals
+  * [@sample/command](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/command) - Bot example with slash commands
+  * [@sample/command-by-glob](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/command-by-glob) - Bot example with slash commands by glob pattern
+  * [@sample/sub-command](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/sub-command) - Bot example with slash sub-commands and sub-groups
+  * [@sample/validation](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/validation) - Bot example with slash commands validation
+  * [@sample/event](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/event) - Bot example with events
+  * [@sample/dependency-injection](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/dependency-injection) - Bot example with dependency injection
+  * [@sample/reaction-collector](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/reaction-collector) - Bot example with reaction collector
+  * [@sample/message-collector](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/message-collector) - Bot example with message collector
+  * [@sample/interaction-collector](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/interaction-collector) - Bot example with interaction collector
+  * [@sample/prefix-command](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/prefix-command) - Bot example with prefix command
+  * [@sample/modals](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/modals) - Bot example with modals
 
 
 

@@ -1,5 +1,5 @@
 {
-  "name": "@discord-nestjs/sample-reaction-collector",
+  "name": "@sample/reaction-collector",
   "version": "0.0.1",
   "private": true,
   "license": "UNLICENSED",

@@ -1,5 +1,5 @@
 {
-  "name": "@discord-nestjs/sample-event",
+  "name": "@sample/event",
   "version": "0.0.1",
   "private": true,
   "license": "UNLICENSED",

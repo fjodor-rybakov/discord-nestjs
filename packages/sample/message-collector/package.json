@@ -1,5 +1,5 @@
 {
-  "name": "@discord-nestjs/sample-message-collector",
+  "name": "@sample/message-collector",
   "version": "0.0.1",
   "private": true,
   "license": "UNLICENSED",

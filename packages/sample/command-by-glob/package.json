@@ -1,5 +1,5 @@
 {
-  "name": "@discord-nestjs/sample-command-by-glob",
+  "name": "@sample/command-by-glob",
   "version": "0.0.1",
   "private": true,
   "license": "UNLICENSED",

@@ -1,5 +1,5 @@
 {
-  "name": "@discord-nestjs/sample-validation",
+  "name": "@sample/validation",
   "version": "0.0.1",
   "private": true,
   "license": "UNLICENSED",

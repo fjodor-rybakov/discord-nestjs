@@ -1,5 +1,5 @@
 {
-  "name": "@discord-nestjs/sample-dependency-injection",
+  "name": "@sample/dependency-injection",
   "version": "0.0.1",
   "private": true,
   "license": "UNLICENSED",

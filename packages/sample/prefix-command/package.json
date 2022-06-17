@@ -1,5 +1,5 @@
 {
-  "name": "@discord-nestjs/sample-prefix-command",
+  "name": "@sample/prefix-command",
   "version": "0.0.1",
   "private": true,
   "license": "UNLICENSED",
