@@ -15,6 +15,7 @@ import { DiscordModuleOption } from '../definitions/interfaces/discord-module-op
 import { RegisterCommandOptions } from '../definitions/interfaces/register-command-options';
 import { SlashCommandPermissions } from '../definitions/interfaces/slash-command-permissions';
 import { DiscordCommandProvider } from '../providers/discord-command.provider';
+import { OptionService } from './option.service';
 
 @Injectable()
 export class RegisterCommandService {
@@ -24,9 +25,12 @@ export class RegisterCommandService {
     private readonly discordCommandProvider: DiscordCommandProvider,
     @InjectDiscordClient()
     private readonly client: Client,
+    private readonly discordOptionService: OptionService,
   ) {}
 
-  async register(options: DiscordModuleOption): Promise<void> {
+  async register(): Promise<void> {
+    const options = this.discordOptionService.getClientData();
+
     this.client.on('ready', () => this.registerCommands(this.client, options));
   }
 

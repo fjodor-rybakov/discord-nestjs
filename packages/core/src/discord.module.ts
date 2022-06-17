@@ -29,6 +29,7 @@ import { ClientService } from './services/client.service';
 import { CommandTreeService } from './services/command-tree.service';
 import { DtoService } from './services/dto.service';
 import { ExplorerService } from './services/explorer.service';
+import { GlobalProviderService } from './services/global-provider.service';
 import { InstantiationService } from './services/instantiation.service';
 import { RegisterCommandService } from './services/register-command.service';
 
@@ -59,6 +60,7 @@ export class DiscordModule {
         EventExplorer,
         ExplorerService,
         BuildApplicationCommandService,
+        GlobalProviderService,
         CommandTreeService,
         CollectorExplorer,
       ],

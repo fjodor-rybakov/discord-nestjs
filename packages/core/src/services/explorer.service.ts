@@ -16,6 +16,7 @@ import { MiddlewareExplorer } from '../explorers/middleware/middleware.explorer'
 import { PipeExplorer } from '../explorers/pipe/pipe.explorer';
 import { PrefixCommandExplorer } from '../explorers/prefix-command/prefix-command.explorer';
 import { IsObject } from '../utils/function/is-object';
+import { GlobalProviderService } from './global-provider.service';
 import { OptionService } from './option.service';
 import { RegisterCommandService } from './register-command.service';
 
@@ -30,10 +31,11 @@ export class ExplorerService implements OnModuleInit {
     private readonly pipeExplorer: PipeExplorer,
     private readonly middlewareExplorer: MiddlewareExplorer,
     private readonly commandExplorer: CommandExplorer,
-    private readonly discordOptionService: OptionService,
+    private readonly globalProviderService: GlobalProviderService,
     private readonly registerCommandService: RegisterCommandService,
     private readonly collectorExplorer: CollectorExplorer,
     private readonly prefixCommandExplorer: PrefixCommandExplorer,
+    private readonly discordOptionService: OptionService,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -47,9 +49,24 @@ export class ExplorerService implements OnModuleInit {
     providers: InstanceWrapper[],
     controllers: InstanceWrapper[],
   ): Promise<void> {
-    const options = this.discordOptionService.getClientData();
+    const { globalLifecycleParts, restProviders } =
+      this.globalProviderService.filterGlobalProviders(providers);
 
-    const restProviders = this.filterGlobalLifecycleParts(providers);
+    const sortedGlobalProviders =
+      this.globalProviderService.sortGlobalProviders(globalLifecycleParts);
+
+    sortedGlobalProviders.forEach(({ token, instance }: InstanceWrapper) => {
+      const [globalToken] = (token as string).split(':');
+
+      switch (globalToken) {
+        case DISCORD_APP_PIPE:
+          return !this.discordOptionService.addPipe(instance);
+        case DISCORD_APP_GUARD:
+          return !this.discordOptionService.addGuard(instance);
+        case DISCORD_APP_FILTER:
+          return !this.discordOptionService.addFilter(instance);
+      }
+    });
 
     const methodExplorers = [this.eventExplorer, this.prefixCommandExplorer];
 
@@ -106,7 +123,7 @@ export class ExplorerService implements OnModuleInit {
       }),
     );
 
-    await this.registerCommandService.register(options);
+    await this.registerCommandService.register();
   }
 
   private exploreClassOrMethod(
@@ -123,27 +140,6 @@ export class ExplorerService implements OnModuleInit {
         await explorer.explore({ instance });
       }),
     );
-  }
-
-  private filterGlobalLifecycleParts(
-    providers: InstanceWrapper[],
-  ): InstanceWrapper[] {
-    return providers.filter(({ token, instance }: InstanceWrapper) => {
-      if (typeof token === 'string') {
-        const [globalToken] = token.split(':');
-        if (globalToken)
-          switch (globalToken) {
-            case DISCORD_APP_PIPE:
-              return !this.discordOptionService.addPipe(instance);
-            case DISCORD_APP_GUARD:
-              return !this.discordOptionService.addGuard(instance);
-            case DISCORD_APP_FILTER:
-              return !this.discordOptionService.addFilter(instance);
-          }
-      }
-
-      return true;
-    });
   }
 
   private scanMetadata(instance: InstanceType<any>): string[] {
