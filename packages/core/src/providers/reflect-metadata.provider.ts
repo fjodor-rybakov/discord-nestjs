@@ -30,6 +30,8 @@ import { USE_GUARDS_DECORATOR } from '../decorators/guard/guard.constant';
 import { DiscordMiddleware } from '../decorators/middleware/discord-middleware';
 import { MiddlewareOptions } from '../decorators/middleware/middleware-options';
 import { MIDDLEWARE_DECORATOR } from '../decorators/middleware/middleware.constant';
+import { FIELD_DECORATOR } from '../decorators/modal/field/field.constant';
+import { TEXT_INPUT_VALUE_DECORATOR } from '../decorators/modal/text-input-value/text-input-value.constant';
 import { CHANNEL_DECORATOR } from '../decorators/option/channel/channel.constant';
 import { CHOICE_DECORATOR } from '../decorators/option/choice/choice.constant';
 import { NonParamOptions } from '../decorators/option/param/non-param-options';
@@ -221,5 +223,23 @@ export class ReflectMetadataProvider {
     methodName?: string,
   ): Type[] {
     return Reflect.getMetadata(USE_COLLECTORS_METADATA, instance, methodName);
+  }
+
+  getFiledDecoratorMetadata(
+    instance: InstanceType<any>,
+    propertyKey: string,
+  ): { customId?: string } {
+    return Reflect.getMetadata(FIELD_DECORATOR, instance, propertyKey);
+  }
+
+  getTextInputValueDecoratorMetadata(
+    instance: InstanceType<any>,
+    propertyKey: string,
+  ): { customId?: string } {
+    return Reflect.getMetadata(
+      TEXT_INPUT_VALUE_DECORATOR,
+      instance,
+      propertyKey,
+    );
   }
 }

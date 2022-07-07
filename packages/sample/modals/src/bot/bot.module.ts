@@ -1,10 +1,10 @@
 import { DiscordModule } from '@discord-nestjs/core';
 import { Module } from '@nestjs/common';
 
-import { PlayCommand } from './commands/play.command';
+import { RegisterCommand } from './commands/register.command';
 
 @Module({
   imports: [DiscordModule.forFeature()],
-  providers: [PlayCommand],
+  providers: [RegisterCommand],
 })
 export class BotModule {}

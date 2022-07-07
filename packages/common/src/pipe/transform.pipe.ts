@@ -7,7 +7,7 @@ import { Inject, Injectable, Optional } from '@nestjs/common';
 import { ClassTransformOptions, plainToInstance } from 'class-transformer';
 import { Interaction } from 'discord.js';
 
-import { TRANSFORMER_OPTION } from '../transformer-options.constant';
+import { TRANSFORMER_OPTION } from '../contants/transformer-options.constant';
 
 /**
  * Fills DTO with values from interaction
