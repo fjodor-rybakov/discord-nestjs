@@ -1,9 +1,12 @@
+import { ModalFieldsTransformPipe } from '@discord-nestjs/common';
 import {
   Command,
   DiscordCommand,
   InjectDiscordClient,
   On,
+  Payload,
   UseGuards,
+  UsePipes,
 } from '@discord-nestjs/core';
 import { Logger } from '@nestjs/common';
 import {
@@ -19,13 +22,14 @@ import {
 import { TextInputStyles } from 'discord.js/typings/enums';
 
 import { IsModalInteractionGuard } from '../guard/is-modal-interaction.guard';
+import { FormDto } from './dto/form.dto';
 
 @Command({
   name: 'submit-registration-request',
   description: 'Apply for registration',
 })
-export class PlayCommand implements DiscordCommand {
-  private readonly logger = new Logger(PlayCommand.name);
+export class RegisterCommand implements DiscordCommand {
+  private readonly logger = new Logger(RegisterCommand.name);
   private readonly requestParticipantModalId = 'RequestParticipant';
   private readonly usernameComponentId = 'Username';
   private readonly commentComponentId = 'Comment';
@@ -63,17 +67,18 @@ export class PlayCommand implements DiscordCommand {
   }
 
   @On('interactionCreate')
+  @UsePipes(ModalFieldsTransformPipe)
   @UseGuards(IsModalInteractionGuard)
-  async onModuleSubmit(modal: ModalSubmitInteraction) {
+  async onModuleSubmit(
+    @Payload() { username, comment }: FormDto,
+    modal: ModalSubmitInteraction,
+  ) {
     this.logger.log(`Modal ${modal.customId} submit`);
 
     if (modal.customId !== this.requestParticipantModalId) return;
 
-    const username = modal.fields.getTextInputValue(this.usernameComponentId);
-    const comment = modal.fields.getTextInputValue(this.commentComponentId);
-
     await modal.reply(
-      `${username}, your request has been submitted.` +
+      `${username.value}, your request has been submitted.` +
         Formatters.codeBlock('markdown', comment),
     );
   }

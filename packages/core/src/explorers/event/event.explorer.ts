@@ -5,6 +5,7 @@ import { ClientEvents } from 'discord.js';
 import { ExecutionContext } from '../../definitions/interfaces/execution-context';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { ClientService } from '../../services/client.service';
+import { DtoService } from '../../services/dto.service';
 import { CollectorExplorer } from '../collector/collector.explorer';
 import { FilterExplorer } from '../filter/filter.explorer';
 import { GuardExplorer } from '../guard/guard.explorer';
@@ -25,6 +26,7 @@ export class EventExplorer implements MethodExplorer {
     private readonly filterExplorer: FilterExplorer,
     private readonly pipeExplorer: PipeExplorer,
     private readonly collectorExplorer: CollectorExplorer,
+    private readonly dtoService: DtoService,
   ) {}
 
   async explore(options: MethodExplorerOptions): Promise<void> {
@@ -46,6 +48,11 @@ export class EventExplorer implements MethodExplorer {
     this.logger.log(
       `Subscribe to event(${eventMethod}): ${event}`,
       instance.constructor.name,
+    );
+
+    const dtoInstance = await this.dtoService.createDtoInstance(
+      instance,
+      methodName,
     );
 
     this.discordClientService.getClient()[eventMethod](
@@ -71,6 +78,8 @@ export class EventExplorer implements MethodExplorer {
             event,
             eventArgs,
             initValue: eventArgs,
+            metatype: dtoInstance?.constructor,
+            commandNode: { dtoInstance },
           });
           //#endregion
 
@@ -85,10 +94,11 @@ export class EventExplorer implements MethodExplorer {
             collectors,
           };
 
-          await instance[methodName](
-            ...(pipeResult || eventArgs),
-            executionContext,
-          );
+          const handlerArgs = dtoInstance
+            ? [pipeResult, ...eventArgs]
+            : eventArgs;
+
+          await instance[methodName](...handlerArgs, executionContext);
         } catch (exception) {
           const isTrowException = await this.filterExplorer.applyFilter({
             instance,

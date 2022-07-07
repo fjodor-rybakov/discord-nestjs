@@ -9,7 +9,7 @@ import { Inject, Injectable, Optional } from '@nestjs/common';
 import { ClassTransformOptions, plainToInstance } from 'class-transformer';
 import { Message } from 'discord.js';
 
-import { TRANSFORMER_OPTION } from '../transformer-options.constant';
+import { TRANSFORMER_OPTION } from '../contants/transformer-options.constant';
 
 @Injectable()
 export class PrefixCommandTransformPipe implements DiscordPipeTransform {
@@ -72,6 +72,8 @@ export class PrefixCommandTransformPipe implements DiscordPipeTransform {
         return;
       }
     });
+
+    console.log(plainObject);
 
     return plainToInstance(
       metadata.metatype,

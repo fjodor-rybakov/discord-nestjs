@@ -50,6 +50,8 @@ export * from './decorators/option/choice/choice.decorator';
 export * from './decorators/sub-command/sub-command.decorator';
 export * from './decorators/sub-command-group/use-group';
 export * from './decorators/param/payload/payload.decorator';
+export * from './decorators/modal/field/field.decorator';
+export * from './decorators/modal/text-input-value/text-input-value.decorator';
 export * from './decorators/option/param/param.decorator';
 export * from './decorators/option/choice/choice.decorator';
 export * from './decorators/option/channel/channel.decorator';
