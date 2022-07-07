@@ -5,6 +5,6 @@ export class FormDto {
   @Field('Username')
   username: PartialTextInputData;
 
-  @TextInputValue()
+  @TextInputValue() // Custom id is optional. By default, will be used property name.
   comment: string;
 }

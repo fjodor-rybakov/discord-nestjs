@@ -67,7 +67,7 @@ export class RegisterCommand implements DiscordCommand {
   }
 
   @On('interactionCreate')
-  @UsePipes(ModalFieldsTransformPipe)
+  @UsePipes(ModalFieldsTransformPipe) // ModalFieldsTransformPipe is required if you want use DTO
   @UseGuards(IsModalInteractionGuard)
   async onModuleSubmit(
     @Payload() { username, comment }: FormDto,

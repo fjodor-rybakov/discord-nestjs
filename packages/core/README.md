@@ -45,6 +45,8 @@ NestJS package for discord.js
   - [ℹ️ @UseCollectors](#UseCollectors)
   - [ℹ️ @InjectCollector](#InjectCollector)
   - [ℹ️ @Filter](#Filter)
+  - [ℹ️ @Field](#Field)
+  - [ℹ️ @TextInputValue](#TextInputValue)
 
 
 
@@ -1253,46 +1255,6 @@ Also don't forget to add your middleware to the providers.
 
 ### ℹ️ Modals <a name="Modals"></a>
 
-Discord.js does not currently have the ability to create modals, 
-so use an [external package](https://www.npmjs.com/package/discord-modals) to create them.
-
-All you need to do is modify the client in the `setupClientFactory` function
-
-```typescript
-import { DiscordModule } from '@discord-nestjs/core';
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { default as discordModals } from 'discord-modals';
-import { Client, Intents } from 'discord.js';
-
-import { BotModule } from './bot/bot.module';
-
-@Module({
-  imports: [
-    ConfigModule.forRoot(),
-    DiscordModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        token: configService.get('TOKEN'),
-        discordClientOptions: {
-          intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
-        },
-        registerCommandOptions: [
-          {
-            forGuild: configService.get('GUILD_ID_WITH_COMMANDS'),
-            removeCommandsBefore: true,
-          },
-        ],
-      }),
-      setupClientFactory: (client: Client) => discordModals(client),
-      inject: [ConfigService],
-    }),
-    BotModule,
-  ],
-})
-export class AppModule {}
-```
-
 Full example is shown [here](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/modals)
 
 
@@ -1505,3 +1467,11 @@ Inject collector in constructor (only in class collector)
 ### ℹ️ @Filter <a name="Filter"></a>
 
 Add filter to collector
+
+### ℹ️ @Field <a name="Field"></a>
+
+Extract field from modal form
+
+### ℹ️ @TextInputValue <a name="TextInputValue"></a>
+
+Extract text input value from modal form
