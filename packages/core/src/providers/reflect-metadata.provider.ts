@@ -228,14 +228,14 @@ export class ReflectMetadataProvider {
   getFiledDecoratorMetadata(
     instance: InstanceType<any>,
     propertyKey: string,
-  ): string {
+  ): { customId?: string } {
     return Reflect.getMetadata(FIELD_DECORATOR, instance, propertyKey);
   }
 
   getTextInputValueDecoratorMetadata(
     instance: InstanceType<any>,
     propertyKey: string,
-  ): string {
+  ): { customId?: string } {
     return Reflect.getMetadata(
       TEXT_INPUT_VALUE_DECORATOR,
       instance,

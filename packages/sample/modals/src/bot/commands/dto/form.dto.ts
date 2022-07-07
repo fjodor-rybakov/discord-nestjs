@@ -5,6 +5,6 @@ export class FormDto {
   @Field('Username')
   username: PartialTextInputData;
 
-  @TextInputValue('Comment')
+  @TextInputValue()
   comment: string;
 }

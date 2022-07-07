@@ -1,10 +1,10 @@
 import { TEXT_INPUT_VALUE_DECORATOR } from './text-input-value.constant';
 
-export function TextInputValue(customId: string): PropertyDecorator {
+export function TextInputValue(customId?: string): PropertyDecorator {
   return (target, propertyKey) => {
     Reflect.defineMetadata(
       TEXT_INPUT_VALUE_DECORATOR,
-      customId,
+      { customId },
       target,
       propertyKey,
     );

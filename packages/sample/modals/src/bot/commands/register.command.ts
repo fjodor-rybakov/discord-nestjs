@@ -32,7 +32,7 @@ export class RegisterCommand implements DiscordCommand {
   private readonly logger = new Logger(RegisterCommand.name);
   private readonly requestParticipantModalId = 'RequestParticipant';
   private readonly usernameComponentId = 'Username';
-  private readonly commentComponentId = 'Comment';
+  private readonly commentComponentId = 'comment';
 
   constructor(
     @InjectDiscordClient()

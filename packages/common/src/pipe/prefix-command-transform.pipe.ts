@@ -73,8 +73,6 @@ export class PrefixCommandTransformPipe implements DiscordPipeTransform {
       }
     });
 
-    console.log(plainObject);
-
     return plainToInstance(
       metadata.metatype,
       plainObject,
