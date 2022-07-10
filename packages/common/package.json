@@ -37,8 +37,8 @@
   },
   "peerDependencies": {
     "@discord-nestjs/core": "*",
-    "@nestjs/common": "^8.*",
-    "@nestjs/core": "^8.*",
+    "@nestjs/common": "8.* || 9.*",
+    "@nestjs/core": "8.* || 9.*",
     "discord.js": "^13.*",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.*"
