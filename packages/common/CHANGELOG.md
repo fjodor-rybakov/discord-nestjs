@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.4.1](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/common@3.4.0...@discord-nestjs/common@3.4.1) (2022-07-10)
+
+**Note:** Version bump only for package @discord-nestjs/common
+
+
+
+
+
 # [3.4.0](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/common@3.3.5...@discord-nestjs/common@3.4.0) (2022-07-07)
 
 
