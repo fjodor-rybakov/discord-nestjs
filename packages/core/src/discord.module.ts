@@ -68,6 +68,7 @@ export class DiscordModule {
         DiscordClientProvider,
         ReflectMetadataProvider,
         DiscordCommandProvider,
+        RegisterCommandService,
         INJECT_DISCORD_CLIENT,
       ],
     };
@@ -98,6 +99,7 @@ export class DiscordModule {
         DiscordClientProvider,
         ReflectMetadataProvider,
         DiscordCommandProvider,
+        RegisterCommandService,
         INJECT_DISCORD_CLIENT,
       ],
     };

@@ -28,13 +28,41 @@ export class RegisterCommandService {
     private readonly discordOptionService: OptionService,
   ) {}
 
-  async register(): Promise<void> {
+  async listen(): Promise<void> {
     const options = this.discordOptionService.getClientData();
 
-    this.client.on('ready', () => this.registerCommands(this.client, options));
+    this.client.on('ready', () =>
+      this.listenRegisterCommands(this.client, options),
+    );
   }
 
-  private async registerCommands(
+  async registerCommands(
+    commandOptions?: RegisterCommandOptions,
+    slashCommandsPermissions?: SlashCommandPermissions[],
+  ): Promise<void> {
+    const client = this.client;
+    const commands = this.discordCommandProvider.getAllCommands();
+
+    if (commands.size === 0) return;
+
+    const commandList = Array.from(commands.values());
+
+    if (!client.application?.owner) await client.application?.fetch();
+
+    const registeredCommands = await this.setupCommands(
+      commandList,
+      commandOptions,
+    );
+
+    if (slashCommandsPermissions)
+      await this.setPermissions(
+        registeredCommands,
+        commands,
+        slashCommandsPermissions,
+      );
+  }
+
+  private async listenRegisterCommands(
     client: Client,
     { registerCommandOptions, slashCommandsPermissions }: DiscordModuleOption,
   ): Promise<void> {
@@ -56,62 +84,34 @@ export class RegisterCommandService {
               client.on('messageCreate', async (message: Message) => {
                 if (!allowFactory(message, commandList)) return;
 
-                const registeredCommands = await this.setupCommands(
-                  commandList,
+                await this.registerCommands(
                   commandOptions,
+                  slashCommandsPermissions,
                 );
-
-                if (slashCommandsPermissions)
-                  await this.setPermissions(
-                    registeredCommands,
-                    commands,
-                    slashCommandsPermissions,
-                  );
               });
             } else {
               // Registering global commands
               client.on('messageCreate', async (message: Message) => {
                 if (!allowFactory(message, commandList)) return;
 
-                const registeredCommands = await this.setupCommands(
-                  commandList,
+                await this.registerCommands(
                   commandOptions,
+                  slashCommandsPermissions,
                 );
-
-                if (slashCommandsPermissions)
-                  await this.setPermissions(
-                    registeredCommands,
-                    commands,
-                    slashCommandsPermissions,
-                  );
               });
             }
           } else if (forGuild) {
             // Registering commands for specific guild
-            const registeredCommands = await this.setupCommands(
-              commandList,
+            await this.registerCommands(
               commandOptions,
+              slashCommandsPermissions,
             );
-
-            if (slashCommandsPermissions)
-              await this.setPermissions(
-                registeredCommands,
-                commands,
-                slashCommandsPermissions,
-              );
           } else {
             // Registering global commands
-            const registeredCommands = await this.setupCommands(
-              commandList,
+            await this.registerCommands(
               commandOptions,
+              slashCommandsPermissions,
             );
-
-            if (slashCommandsPermissions)
-              await this.setPermissions(
-                registeredCommands,
-                commands,
-                slashCommandsPermissions,
-              );
           }
         },
       ),

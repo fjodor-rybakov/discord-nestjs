@@ -123,7 +123,7 @@ export class ExplorerService implements OnModuleInit {
       }),
     );
 
-    await this.registerCommandService.register();
+    await this.registerCommandService.listen();
   }
 
   private exploreClassOrMethod(
