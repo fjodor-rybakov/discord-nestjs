@@ -9,6 +9,8 @@ import {
   Message,
   Snowflake,
 } from 'discord.js';
+import { Observable, firstValueFrom, isObservable } from 'rxjs';
+import { isPromise } from 'util/types';
 
 import { InjectDiscordClient } from '../decorators/client/inject-discord-client.decorator';
 import { DiscordModuleOption } from '../definitions/interfaces/discord-module-options';
@@ -49,10 +51,10 @@ export class RegisterCommandService {
     await Promise.all(
       registerCommandOptions.map(
         async (commandOptions: RegisterCommandOptions) => {
-          const { forGuild, allowFactory } = commandOptions;
-          if (allowFactory) {
-            if (forGuild) {
-              // Registering commands for specific guild
+          const { allowFactory, trigger } = commandOptions;
+
+          const register = async () => {
+            if (allowFactory) {
               client.on('messageCreate', async (message: Message) => {
                 if (!allowFactory(message, commandList)) return;
 
@@ -70,49 +72,27 @@ export class RegisterCommandService {
               });
             } else {
               // Registering global commands
-              client.on('messageCreate', async (message: Message) => {
-                if (!allowFactory(message, commandList)) return;
+              const registeredCommands = await this.setupCommands(
+                commandList,
+                commandOptions,
+              );
 
-                const registeredCommands = await this.setupCommands(
-                  commandList,
-                  commandOptions,
+              if (slashCommandsPermissions)
+                await this.setPermissions(
+                  registeredCommands,
+                  commands,
+                  slashCommandsPermissions,
                 );
-
-                if (slashCommandsPermissions)
-                  await this.setPermissions(
-                    registeredCommands,
-                    commands,
-                    slashCommandsPermissions,
-                  );
-              });
             }
-          } else if (forGuild) {
-            // Registering commands for specific guild
-            const registeredCommands = await this.setupCommands(
-              commandList,
-              commandOptions,
-            );
+          };
 
-            if (slashCommandsPermissions)
-              await this.setPermissions(
-                registeredCommands,
-                commands,
-                slashCommandsPermissions,
-              );
-          } else {
-            // Registering global commands
-            const registeredCommands = await this.setupCommands(
-              commandList,
-              commandOptions,
-            );
-
-            if (slashCommandsPermissions)
-              await this.setPermissions(
-                registeredCommands,
-                commands,
-                slashCommandsPermissions,
-              );
-          }
+          if (trigger)
+            trigger(commandList).subscribe({
+              next: async () => {
+                await register();
+              },
+            });
+          else await register();
         },
       ),
     );
@@ -246,5 +226,15 @@ export class RegisterCommandService {
     );
 
     this.logger.log('All command permissions set!');
+  }
+
+  private toPromise(
+    value: boolean | Promise<boolean> | Observable<boolean>,
+  ): Promise<boolean> {
+    if (isObservable(value)) return firstValueFrom(value);
+
+    if (isPromise(value)) return value;
+
+    return Promise.resolve(value);
   }
 }
