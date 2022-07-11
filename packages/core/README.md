@@ -82,6 +82,7 @@ creating a dynamic module through the `forRootAsync` functions.
   - `permissions` - Permission list
 - `registerCommandOptions` - Specific registration of slash commands(If option is not set, global commands will be registered)
     - `forGuild` - For which guild to register a slash command
+    - `trigger` - Used in cases where it is necessary to register commands by event
     - `allowFactory` - Based on what criteria will slash commands be registered
     - `removeCommandsBefore` - Remove mission commands
 - `prefix` - Global command prefix
@@ -520,11 +521,12 @@ command registration setting. It works according to the following principle:
 
 * If `registerCommandOptions` option is not specified, global commands will be registered by default
 
+* If `trigger` used in cases where it is necessary to register commands by event
 * If `allowFactory` is specified then commands will be registered by condition from `allowFactory`
 * If `forGuild` is specified, then commands for a specific guild will be registered
 * If `removeCommandsBefore` is specified, then registered commands that are not in your code will be removed
 
-The `allowFactory`, `forGuild` and `removeCommandsBefore` options are combined with each other.
+The `trigger`, `allowFactory`, `forGuild` and `removeCommandsBefore` options are combined with each other.
 
 > Global commands, unlike guild commands, are cached and updated once per hour. [More info](https://discordjs.guide/interactions/slash-commands.html#global-commands).
 
