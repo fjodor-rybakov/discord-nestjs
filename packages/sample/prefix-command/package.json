@@ -29,7 +29,7 @@
     "rxjs": "7.5.5"
   },
   "devDependencies": {
-    "@nestjs/cli": "8.2.8",
+    "@nestjs/cli": "9.0.0",
     "@nestjs/schematics": "8.0.11",
     "@types/node": "18.0.3",
     "@typescript-eslint/eslint-plugin": "5.30.5",
