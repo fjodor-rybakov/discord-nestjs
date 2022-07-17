@@ -11,7 +11,11 @@ import { DiscordModuleAsyncOptions } from './definitions/interfaces/discord-modu
 import { DiscordModuleOption } from './definitions/interfaces/discord-module-options';
 import { DiscordOptionsFactory } from './definitions/interfaces/discord-options-factory';
 import { DiscordHostModule } from './discord-host.module';
+import { CollectorRegister } from './explorers/collector/collector-register';
 import { CollectorExplorer } from './explorers/collector/collector.explorer';
+import { InteractionCollectorStrategy } from './explorers/collector/strategy/interaction-collector.strategy';
+import { MessageCollectorStrategy } from './explorers/collector/strategy/message-collector.strategy';
+import { ReactCollectorStrategy } from './explorers/collector/strategy/react-collector.strategy';
 import { CommandExplorer } from './explorers/command/command.explorer';
 import { EventExplorer } from './explorers/event/event.explorer';
 import { FilterExplorer } from './explorers/filter/filter.explorer';
@@ -63,6 +67,10 @@ export class DiscordModule {
         GlobalProviderService,
         CommandTreeService,
         CollectorExplorer,
+        ReactCollectorStrategy,
+        MessageCollectorStrategy,
+        InteractionCollectorStrategy,
+        CollectorRegister,
       ],
       exports: [
         DiscordClientProvider,

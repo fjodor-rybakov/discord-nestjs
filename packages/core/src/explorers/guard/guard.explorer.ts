@@ -78,13 +78,13 @@ export class GuardExplorer implements MethodExplorer {
 
     const { globalGuards, classGuards, methodGuards } =
       this.cachedGuards.get(classType);
-    const guardList = [
+    const guards = [
       ...globalGuards,
       ...classGuards,
       ...(methodGuards[methodName] || []),
     ];
 
-    for await (const guard of guardList) {
+    for await (const guard of guards) {
       const result = await guard.canActive(event, eventArgs);
       if (!result) return false;
     }

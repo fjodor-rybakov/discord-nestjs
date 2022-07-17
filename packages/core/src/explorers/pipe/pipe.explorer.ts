@@ -84,19 +84,23 @@ export class PipeExplorer implements MethodExplorer {
 
     const { globalPipes, classPipes, methodPipes } =
       this.cachedPipes.get(classType);
-
-    return [
+    const pipes = [
       ...globalPipes,
       ...classPipes,
       ...(methodPipes[methodName] || []),
-    ].reduce(async (prev: Promise<any>, curr: DiscordPipeTransform) => {
-      const prevData = await prev;
-      return curr.transform(prevData, {
-        event,
-        eventArgs,
-        metatype,
-        commandNode,
-      });
-    }, Promise.resolve(initValue));
+    ];
+
+    return pipes.reduce(
+      async (prev: Promise<any>, curr: DiscordPipeTransform) => {
+        const prevData = await prev;
+        return curr.transform(prevData, {
+          event,
+          eventArgs,
+          metatype,
+          commandNode,
+        });
+      },
+      Promise.resolve(initValue),
+    );
   }
 }
