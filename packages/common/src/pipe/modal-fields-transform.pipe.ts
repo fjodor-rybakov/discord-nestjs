@@ -33,6 +33,7 @@ export class ModalFieldsTransformPipe implements DiscordPipeTransform {
       if (fieldCustomMetadata) {
         plainObject[property] = modal.fields.getField(
           fieldCustomMetadata.customId ?? property,
+          fieldCustomMetadata.type,
         );
 
         return;
