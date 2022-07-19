@@ -8,6 +8,16 @@ export interface StringParamOptions extends BaseParamOptions {
   type?: ParamType.STRING;
 
   /**
+   * Min string length
+   */
+  minLength?: number;
+
+  /**
+   * Max string length
+   */
+  maxLength?: number;
+
+  /**
    * Use autocomplete
    */
   autocomplete?: boolean;

@@ -1,12 +1,7 @@
 import { Injectable, Type } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import {
-  ApplicationCommandAutocompleteOption,
-  ApplicationCommandChannelOptionData,
-  ApplicationCommandChoicesData,
   ApplicationCommandData,
-  ApplicationCommandNonOptionsData,
-  ApplicationCommandNumericOptionData,
   ApplicationCommandOptionData,
   ApplicationCommandOptionType,
   ApplicationCommandSubCommandData,
@@ -23,13 +18,6 @@ import { OptionExplorer } from '../explorers/option/option.explorer';
 import { ReflectMetadataProvider } from '../providers/reflect-metadata.provider';
 import { CommandTreeService } from './command-tree.service';
 import { DtoService } from './dto.service';
-
-type NonCommandData =
-  | ApplicationCommandNonOptionsData
-  | ApplicationCommandChannelOptionData
-  | ApplicationCommandChoicesData
-  | ApplicationCommandAutocompleteOption
-  | ApplicationCommandNumericOptionData;
 
 @Injectable()
 export class BuildApplicationCommandService {
@@ -79,32 +67,7 @@ export class BuildApplicationCommandService {
 
     if (dtoInstance) {
       this.commandTreeService.appendNode([name, 'dtoInstance'], dtoInstance);
-      const optionMetadata = this.optionExplorer.explore(dtoInstance);
-      const commandOptions: NonCommandData[] = [];
-      for (const property in optionMetadata) {
-        const propertyOptions = optionMetadata[property];
-        const {
-          name,
-          description,
-          required = false,
-          type,
-          minValue,
-          maxValue,
-          autocomplete,
-        } = propertyOptions.param;
-
-        commandOptions.push({
-          name,
-          description,
-          required,
-          type,
-          autocomplete,
-          minValue,
-          maxValue,
-          choices: propertyOptions.choice,
-          channelTypes: propertyOptions.channelTypes,
-        });
-      }
+      const commandOptions = this.dtoService.exploreDtoOptions(dtoInstance);
 
       if (applicationCommandData.type === ApplicationCommandType.ChatInput)
         applicationCommandData.options = applicationCommandData.options.concat(
@@ -182,38 +145,17 @@ export class BuildApplicationCommandService {
       nameLocalizations: metadata.nameLocalizations,
       descriptionLocalizations: metadata.descriptionLocalizations,
     };
-    const applicationSubCommandOptions: ApplicationCommandSubCommandData['options'] =
-      [];
 
     if (dtoInstance) {
       this.commandTreeService.appendNode(
         [commandName, subGroupName, metadata.name, 'dtoInstance'],
         dtoInstance,
       );
-      const optionMetadata = this.optionExplorer.explore(dtoInstance);
-      for (const property in optionMetadata) {
-        const propertyOptions = optionMetadata[property];
-        const {
-          name,
-          description,
-          required = false,
-          type,
-        } = propertyOptions.param;
+      const commandOptions = this.dtoService.exploreDtoOptions(dtoInstance);
 
-        applicationSubCommandOptions.push({
-          name,
-          description,
-          required,
-          type,
-          choices: propertyOptions.choice,
-        });
-      }
+      if (commandOptions.length !== 0)
+        applicationSubCommandData.options = this.sortByRequired(commandOptions);
     }
-
-    if (applicationSubCommandOptions.length !== 0)
-      applicationSubCommandData.options = this.sortByRequired(
-        applicationSubCommandOptions,
-      );
 
     return applicationSubCommandData;
   }
