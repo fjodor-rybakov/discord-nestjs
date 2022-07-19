@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@3.6.0...@discord-nestjs/core@4.0.0) (2022-07-19)
+
+
+### Features
+
+* Add attachment type ([1727eea](https://github.com/fjodor-rybakov/discord-nestjs/commit/1727eeaab8af80f96bf7109951c85dbc6524599f))
+* Add field type to option ([75680a0](https://github.com/fjodor-rybakov/discord-nestjs/commit/75680a020cbf180a7904679a85087a67d5e7ef9c))
+* Add localization for sub command group ([5501035](https://github.com/fjodor-rybakov/discord-nestjs/commit/5501035e3d9f89a67c88446e633b42dde7e80834))
+* Add new options for slash command params, optimise explore dto instance ([5002b0d](https://github.com/fjodor-rybakov/discord-nestjs/commit/5002b0d2e91790994b3a6b812f11139c948ad944))
+* Update to discord v14 ([6fd5732](https://github.com/fjodor-rybakov/discord-nestjs/commit/6fd57322ab7882b8811551b88339cb4918207fa2))
+
+
+### BREAKING CHANGES
+
+* Drop support discord v13
+
+
+
+
+
 # [3.6.0](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@3.5.1...@discord-nestjs/core@3.6.0) (2022-07-11)
 
 

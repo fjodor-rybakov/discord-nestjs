@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/common@3.4.2...@discord-nestjs/common@4.0.0) (2022-07-19)
+
+
+### Features
+
+* Add field type to option ([75680a0](https://github.com/fjodor-rybakov/discord-nestjs/commit/75680a020cbf180a7904679a85087a67d5e7ef9c))
+* Update to discord v14 ([6fd5732](https://github.com/fjodor-rybakov/discord-nestjs/commit/6fd57322ab7882b8811551b88339cb4918207fa2))
+
+
+### BREAKING CHANGES
+
+* Drop support discord v13
+
+
+
+
+
 ## [3.4.2](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/common@3.4.1...@discord-nestjs/common@3.4.2) (2022-07-11)
 
 **Note:** Version bump only for package @discord-nestjs/common
