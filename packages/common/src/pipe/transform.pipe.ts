@@ -25,7 +25,8 @@ export class TransformPipe implements DiscordPipeTransform {
     interaction: Interaction,
     metadata: DiscordArgumentMetadata<'interactionCreate'>,
   ): InstanceType<any> {
-    if (!metadata.metatype || !interaction || !interaction.isCommand()) return;
+    if (!metadata.metatype || !interaction || !interaction.isChatInputCommand())
+      return;
 
     const { dtoInstance } = metadata.commandNode;
     const plainObject = {};

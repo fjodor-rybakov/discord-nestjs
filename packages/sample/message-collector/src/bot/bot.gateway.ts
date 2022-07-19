@@ -1,6 +1,6 @@
 import { On, Once, UseCollectors, UseGuards } from '@discord-nestjs/core';
 import { Injectable, Logger } from '@nestjs/common';
-import { Message, MessageEmbed } from 'discord.js';
+import { EmbedBuilder, Message } from 'discord.js';
 
 import { MessageFromUserGuard } from './guards/message-from-user.guard';
 import { QuizCommandGuard } from './guards/quiz-command.guard';
@@ -19,7 +19,7 @@ export class BotGateway {
   @UseGuards(MessageFromUserGuard, QuizCommandGuard)
   @UseCollectors(QuizMessageCollector)
   async onMessage(message: Message): Promise<void> {
-    const quizEmbed = new MessageEmbed()
+    const quizEmbed = new EmbedBuilder()
       .setTitle('Who was first man in space?')
       .setFields([
         { name: 'A)', value: 'Neil Armstrong' },

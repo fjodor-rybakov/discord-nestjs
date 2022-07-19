@@ -1,16 +1,12 @@
-import { ApplicationCommandTypes } from 'discord.js/typings/enums';
+import { ApplicationCommandType, LocalizationMap } from 'discord.js';
 
 import { TInclude } from '../../definitions/types/include.type';
+import { BaseCommandOptions } from './base-command-options';
 
 /**
  * Describe base command options
  */
-export interface CommandOptions {
-  /**
-   * Command name
-   */
-  name: string;
-
+export interface CommandOptions extends BaseCommandOptions {
   /**
    * Command description (Must be a blank string for context menu commands)
    */
@@ -22,14 +18,14 @@ export interface CommandOptions {
   include?: TInclude[];
 
   /**
-   * Set default permission
+   * Localize description
    */
-  defaultPermission?: boolean;
+  descriptionLocalizations?: LocalizationMap;
 
   /**
    * Slash command type
    *
-   * @default CHAT_INPUT
+   * @default ChatInput
    */
-  type?: ApplicationCommandTypes.CHAT_INPUT;
+  type?: ApplicationCommandType.ChatInput;
 }

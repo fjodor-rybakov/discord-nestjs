@@ -1,9 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import {
+  ButtonInteraction,
   ClientEvents,
+  Collector,
   InteractionCollector,
   MessageCollector,
+  SelectMenuInteraction,
+  Snowflake,
 } from 'discord.js';
 
 import { CommandExecutionContext } from '../../definitions/interfaces/command-execution-context';
@@ -67,7 +71,8 @@ export class CommandExplorer implements ClassExplorer {
       .on(event, async (...eventArgs: ClientEvents['interactionCreate']) => {
         const [interaction] = eventArgs;
         if (
-          (!interaction.isCommand() && !interaction.isContextMenu()) ||
+          (!interaction.isChatInputCommand() &&
+            !interaction.isContextMenuCommand()) ||
           interaction.commandName !== name
         ) {
           return;
@@ -76,7 +81,7 @@ export class CommandExplorer implements ClassExplorer {
         let subcommand: string = null;
         let subcommandGroup: string = null;
 
-        if (interaction.isCommand()) {
+        if (interaction.isChatInputCommand()) {
           subcommand = interaction.options.getSubcommand(false);
           subcommandGroup = interaction.options.getSubcommandGroup(false);
         }
@@ -111,19 +116,34 @@ export class CommandExplorer implements ClassExplorer {
           });
           //#endregion
 
-          const collectors = (await this.collectorExplorer.applyCollector({
+          const collectors = await this.collectorExplorer.applyCollector({
             instance,
             methodName,
             event,
             eventArgs,
-          })) as (MessageCollector | InteractionCollector<any>)[];
+          });
+
+          if (
+            !!collectors &&
+            !this.collectorsIsInteraction(collectors) &&
+            !this.collectorsIsMessage(collectors)
+          )
+            throw new Error('Collectors cannot be apply');
 
           const transformedExecutionContext: TransformedCommandExecutionContext =
             {
               interaction,
+              // TODO: Fix problem with types
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
               collectors,
             };
-          const executionContext: CommandExecutionContext = {
+          const executionContext: CommandExecutionContext<
+            ButtonInteraction | SelectMenuInteraction
+          > = {
+            // TODO: Fix problem with types
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             collectors,
           };
 
@@ -147,5 +167,21 @@ export class CommandExplorer implements ClassExplorer {
           if (isTrowException) throw exception;
         }
       });
+  }
+
+  private collectorsIsInteraction(
+    collectors: NonNullable<Collector<Snowflake, any, any>[]>,
+  ): collectors is InteractionCollector<any>[] {
+    return collectors.every(
+      (collector) => collector instanceof InteractionCollector,
+    );
+  }
+
+  private collectorsIsMessage(
+    collectors: NonNullable<Collector<Snowflake, any, any>[]>,
+  ): collectors is MessageCollector[] {
+    return collectors.every(
+      (collector) => collector instanceof MessageCollector,
+    );
   }
 }

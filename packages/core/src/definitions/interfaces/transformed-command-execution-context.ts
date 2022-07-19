@@ -1,13 +1,13 @@
 import {
-  CommandInteraction,
-  ContextMenuInteraction,
-  Interaction,
+  ChatInputCommandInteraction,
+  CollectedInteraction,
+  ContextMenuCommandInteraction,
 } from 'discord.js';
 
 import { CommandExecutionContext } from './command-execution-context';
 
 export interface TransformedCommandExecutionContext<
-  TInteraction extends Interaction = any,
+  TInteraction extends CollectedInteraction = any,
 > extends CommandExecutionContext<TInteraction> {
-  interaction: CommandInteraction | ContextMenuInteraction;
+  interaction: ChatInputCommandInteraction | ContextMenuCommandInteraction;
 }

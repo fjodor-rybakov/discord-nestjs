@@ -1,10 +1,10 @@
 import { Injectable, Type } from '@nestjs/common';
 import {
-  Interaction,
-  InteractionCollectorOptions,
+  ChannelType,
+  MessageChannelCollectorOptionsParams,
   MessageCollectorOptions,
+  MessageComponentType,
 } from 'discord.js';
-import { ChannelTypes } from 'discord.js/typings/enums';
 
 import { FILTER_METADATA } from '../decorators/collector/filter/filter.constant';
 import { INTERACTION_COLLECTOR_METADATA } from '../decorators/collector/interaction-collector/interaction-collector.constant';
@@ -30,13 +30,13 @@ import { USE_GUARDS_DECORATOR } from '../decorators/guard/guard.constant';
 import { DiscordMiddleware } from '../decorators/middleware/discord-middleware';
 import { MiddlewareOptions } from '../decorators/middleware/middleware-options';
 import { MIDDLEWARE_DECORATOR } from '../decorators/middleware/middleware.constant';
+import { FieldOptions } from '../decorators/modal/field/field-options';
 import { FIELD_DECORATOR } from '../decorators/modal/field/field.constant';
 import { TEXT_INPUT_VALUE_DECORATOR } from '../decorators/modal/text-input-value/text-input-value.constant';
 import { CHANNEL_DECORATOR } from '../decorators/option/channel/channel.constant';
 import { CHOICE_DECORATOR } from '../decorators/option/choice/choice.constant';
 import { NonParamOptions } from '../decorators/option/param/non-param-options';
 import { NumericParamOptions } from '../decorators/option/param/numeric-param-options';
-import { ParamOptions } from '../decorators/option/param/param-options';
 import { PARAM_DECORATOR } from '../decorators/option/param/param.constant';
 import { StringParamOptions } from '../decorators/option/param/string-param-options';
 import { ParamTypeOptions } from '../decorators/param/param-type-options';
@@ -50,7 +50,6 @@ import { ArgNumOptions } from '../decorators/transformation/arg-num/arg-num-opti
 import { ARG_NUM_DECORATOR } from '../decorators/transformation/arg-num/arg-num.constant';
 import { ArgRangeOptions } from '../decorators/transformation/arg-range/arg-range-options';
 import { ARG_RANGE_DECORATOR } from '../decorators/transformation/arg-range/arg-range.constant';
-import { ExcludeEnum } from '../definitions/types/exclude-enum.type';
 import { FilterType } from '../definitions/types/filter.type';
 import { GuardType } from '../definitions/types/guard.type';
 import { PipeType } from '../definitions/types/pipe.type';
@@ -196,7 +195,7 @@ export class ReflectMetadataProvider {
   getChannelDecoratorMetadata(
     instance: InstanceType<any>,
     propertyKey: string,
-  ): ExcludeEnum<typeof ChannelTypes, 'UNKNOWN'>[] {
+  ): ChannelType[] {
     return Reflect.getMetadata(CHANNEL_DECORATOR, instance, propertyKey);
   }
 
@@ -212,9 +211,9 @@ export class ReflectMetadataProvider {
     return Reflect.getMetadata(MESSAGE_COLLECTOR_METADATA, instance);
   }
 
-  getInteractionCollectorDecoratorMetadata(
+  getInteractionCollectorDecoratorMetadata<T extends MessageComponentType>(
     instance: InstanceType<any>,
-  ): InteractionCollectorOptions<Interaction> {
+  ): MessageChannelCollectorOptionsParams<T, true> {
     return Reflect.getMetadata(INTERACTION_COLLECTOR_METADATA, instance);
   }
 
@@ -228,7 +227,7 @@ export class ReflectMetadataProvider {
   getFiledDecoratorMetadata(
     instance: InstanceType<any>,
     propertyKey: string,
-  ): { customId?: string } {
+  ): FieldOptions {
     return Reflect.getMetadata(FIELD_DECORATOR, instance, propertyKey);
   }
 

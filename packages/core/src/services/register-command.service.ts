@@ -9,8 +9,6 @@ import {
   Message,
   Snowflake,
 } from 'discord.js';
-import { Observable, firstValueFrom, isObservable } from 'rxjs';
-import { isPromise } from 'util/types';
 
 import { InjectDiscordClient } from '../decorators/client/inject-discord-client.decorator';
 import { DiscordModuleOption } from '../definitions/interfaces/discord-module-options';
@@ -220,21 +218,14 @@ export class RegisterCommandService {
             (command) => command.name === commandData.name,
           );
 
-          await command.permissions.set({ permissions });
+          await command.permissions.set({
+            permissions,
+            token: this.client.token,
+          });
         },
       ),
     );
 
     this.logger.log('All command permissions set!');
-  }
-
-  private toPromise(
-    value: boolean | Promise<boolean> | Observable<boolean>,
-  ): Promise<boolean> {
-    if (isObservable(value)) return firstValueFrom(value);
-
-    if (isPromise(value)) return value;
-
-    return Promise.resolve(value);
   }
 }

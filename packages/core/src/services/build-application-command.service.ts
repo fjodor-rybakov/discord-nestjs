@@ -1,20 +1,13 @@
 import { Injectable, Type } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import {
-  ApplicationCommandAutocompleteOption,
-  ApplicationCommandChannelOptionData,
-  ApplicationCommandChoicesData,
   ApplicationCommandData,
-  ApplicationCommandNonOptionsData,
-  ApplicationCommandNumericOptionData,
   ApplicationCommandOptionData,
+  ApplicationCommandOptionType,
   ApplicationCommandSubCommandData,
   ApplicationCommandSubGroupData,
+  ApplicationCommandType,
 } from 'discord.js';
-import {
-  ApplicationCommandOptionTypes,
-  ApplicationCommandTypes,
-} from 'discord.js/typings/enums';
 
 import { CommandOptions } from '../decorators/command/command-options';
 import { isSubCommandGroup } from '../decorators/sub-command-group/is-sub-command-group';
@@ -25,13 +18,6 @@ import { OptionExplorer } from '../explorers/option/option.explorer';
 import { ReflectMetadataProvider } from '../providers/reflect-metadata.provider';
 import { CommandTreeService } from './command-tree.service';
 import { DtoService } from './dto.service';
-
-type NonCommandData =
-  | ApplicationCommandNonOptionsData
-  | ApplicationCommandChannelOptionData
-  | ApplicationCommandChoicesData
-  | ApplicationCommandAutocompleteOption
-  | ApplicationCommandNumericOptionData;
 
 @Injectable()
 export class BuildApplicationCommandService {
@@ -50,8 +36,11 @@ export class BuildApplicationCommandService {
       name,
       description,
       include = [],
-      defaultPermission,
-      type = ApplicationCommandTypes.CHAT_INPUT,
+      dmPermission,
+      defaultMemberPermissions,
+      type = ApplicationCommandType.ChatInput,
+      nameLocalizations,
+      descriptionLocalizations,
     }: CommandOptions,
   ): Promise<ApplicationCommandData> {
     this.commandTreeService.appendNode([name], { instance });
@@ -59,10 +48,13 @@ export class BuildApplicationCommandService {
       type,
       name,
       description,
-      defaultPermission,
+      dmPermission,
+      defaultMemberPermissions,
+      nameLocalizations,
+      descriptionLocalizations,
     };
 
-    if (applicationCommandData.type === ApplicationCommandTypes.CHAT_INPUT)
+    if (applicationCommandData.type === ApplicationCommandType.ChatInput)
       applicationCommandData.options = await this.exploreSubCommandOptions(
         name,
         include,
@@ -75,34 +67,9 @@ export class BuildApplicationCommandService {
 
     if (dtoInstance) {
       this.commandTreeService.appendNode([name, 'dtoInstance'], dtoInstance);
-      const optionMetadata = this.optionExplorer.explore(dtoInstance);
-      const commandOptions: NonCommandData[] = [];
-      for (const property in optionMetadata) {
-        const propertyOptions = optionMetadata[property];
-        const {
-          name,
-          description,
-          required = false,
-          type,
-          minValue,
-          maxValue,
-          autocomplete,
-        } = propertyOptions.param;
+      const commandOptions = this.dtoService.exploreDtoOptions(dtoInstance);
 
-        commandOptions.push({
-          name,
-          description,
-          required,
-          type,
-          autocomplete,
-          minValue,
-          maxValue,
-          choices: propertyOptions.choice,
-          channelTypes: propertyOptions.channelTypes,
-        });
-      }
-
-      if (applicationCommandData.type === ApplicationCommandTypes.CHAT_INPUT)
+      if (applicationCommandData.type === ApplicationCommandType.ChatInput)
         applicationCommandData.options = applicationCommandData.options.concat(
           this.sortByRequired(commandOptions),
         );
@@ -128,7 +95,15 @@ export class BuildApplicationCommandService {
   }
 
   private async getSubCommandGroupOptions(
-    { options: { name, description }, subCommands }: SubCommandGroupOptions,
+    {
+      options: {
+        name,
+        description,
+        nameLocalizations,
+        descriptionLocalizations,
+      },
+      subCommands,
+    }: SubCommandGroupOptions,
     commandName: string,
   ): Promise<ApplicationCommandSubGroupData> {
     this.commandTreeService.appendNode([commandName, name], {});
@@ -143,8 +118,10 @@ export class BuildApplicationCommandService {
     return {
       name,
       description,
-      type: ApplicationCommandOptionTypes.SUB_COMMAND_GROUP,
+      type: ApplicationCommandOptionType.SubcommandGroup,
       options: subCommandOptions,
+      nameLocalizations,
+      descriptionLocalizations,
     };
   }
 
@@ -174,39 +151,21 @@ export class BuildApplicationCommandService {
     const applicationSubCommandData: ApplicationCommandSubCommandData = {
       name: metadata.name,
       description: metadata.description,
-      type: ApplicationCommandOptionTypes.SUB_COMMAND,
+      type: ApplicationCommandOptionType.Subcommand,
+      nameLocalizations: metadata.nameLocalizations,
+      descriptionLocalizations: metadata.descriptionLocalizations,
     };
-    const applicationSubCommandOptions = [];
 
     if (dtoInstance) {
       this.commandTreeService.appendNode(
         [commandName, subGroupName, metadata.name, 'dtoInstance'],
         dtoInstance,
       );
-      const optionMetadata = this.optionExplorer.explore(dtoInstance);
-      for (const property in optionMetadata) {
-        const propertyOptions = optionMetadata[property];
-        const {
-          name,
-          description,
-          required = false,
-          type,
-        } = propertyOptions.param;
+      const commandOptions = this.dtoService.exploreDtoOptions(dtoInstance);
 
-        applicationSubCommandOptions.push({
-          name,
-          description,
-          required,
-          type,
-          choices: propertyOptions.choice,
-        });
-      }
+      if (commandOptions.length !== 0)
+        applicationSubCommandData.options = this.sortByRequired(commandOptions);
     }
-
-    if (applicationSubCommandOptions.length !== 0)
-      applicationSubCommandData.options = this.sortByRequired(
-        applicationSubCommandOptions,
-      );
 
     return applicationSubCommandData;
   }

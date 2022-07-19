@@ -8,18 +8,18 @@ import {
   UseGuards,
   UsePipes,
 } from '@discord-nestjs/core';
+import { ModalActionRowComponentBuilder } from '@discordjs/builders';
 import { Logger } from '@nestjs/common';
 import {
+  ActionRowBuilder,
   Client,
   CommandInteraction,
   Formatters,
-  MessageActionRow,
-  Modal,
-  ModalActionRowComponent,
+  ModalBuilder,
   ModalSubmitInteraction,
-  TextInputComponent,
+  TextInputBuilder,
+  TextInputStyle,
 } from 'discord.js';
-import { TextInputStyles } from 'discord.js/typings/enums';
 
 import { IsModalInteractionGuard } from '../guard/is-modal-interaction.guard';
 import { FormDto } from './dto/form.dto';
@@ -40,23 +40,23 @@ export class RegisterCommand implements DiscordCommand {
   ) {}
 
   async handler(interaction: CommandInteraction): Promise<void> {
-    const modal = new Modal()
+    const modal = new ModalBuilder()
       .setTitle('Request participation')
       .setCustomId(this.requestParticipantModalId);
 
-    const userNameInputComponent = new TextInputComponent()
+    const userNameInputComponent = new TextInputBuilder()
       .setCustomId(this.usernameComponentId)
       .setLabel('Your username')
-      .setStyle(TextInputStyles.SHORT);
+      .setStyle(TextInputStyle.Short);
 
-    const commentInputComponent = new TextInputComponent()
+    const commentInputComponent = new TextInputBuilder()
       .setCustomId(this.commentComponentId)
       .setLabel('Add an explanatory comment')
-      .setStyle(TextInputStyles.PARAGRAPH);
+      .setStyle(TextInputStyle.Paragraph);
 
     const rows = [userNameInputComponent, commentInputComponent].map(
       (component) =>
-        new MessageActionRow<ModalActionRowComponent>().addComponents(
+        new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
           component,
         ),
     );

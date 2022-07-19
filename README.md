@@ -70,7 +70,7 @@ For ease of understanding, move your bot declarations to the root module(AppModu
 import { DiscordModule } from '@discord-nestjs/core';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Intents } from 'discord.js';
+import { GatewayIntentBits } from 'discord.js';
 
 @Module({
   imports: [
@@ -80,7 +80,7 @@ import { Intents } from 'discord.js';
       useFactory: (configService: ConfigService) => ({
         token: configService.get('TOKEN'),
         discordClientOptions: {
-          intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+          intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
         },
         registerCommandOptions: [
           {
@@ -170,7 +170,7 @@ Removed options responsible for adding global guards, pipes and filters. Instead
 import { DiscordModule, registerGuardGlobally, registerFilterGlobally } from '@discord-nestjs/core';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Intents } from 'discord.js';
+import { GatewayIntentBits } from 'discord.js';
 
 import { MyGlobalGuard } from './my-global-guard';
 import { MySecondGlobalGuard } from './my-second-global-guard';
@@ -184,7 +184,7 @@ import { MyGlobalFilter } from './my-global-filter';
       useFactory: (configService: ConfigService) => ({
         token: configService.get('TOKEN'),
         discordClientOptions: {
-          intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+          intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
         },
         registerCommandOptions: [
           {

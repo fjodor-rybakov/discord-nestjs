@@ -101,7 +101,7 @@ Below is an example of creating a dynamic module using the `forRootAsync` functi
 
 import { DiscordModule } from '@discord-nestjs/core';
 import { Module } from '@nestjs/common';
-import { Intents } from 'discord.js';
+import { GatewayIntentBits } from 'discord.js';
 
 @Module({
   imports: [
@@ -147,7 +147,7 @@ import {
   DiscordModuleOption,
   DiscordOptionsFactory,
 } from '@discord-nestjs/core';
-import { Intents } from 'discord.js';
+import { GatewayIntentBits } from 'discord.js';
 
 @Injectable()
 export class DiscordConfigService implements DiscordOptionsFactory {
@@ -340,7 +340,7 @@ And add your `BotSlashCommands` to `AppModule`.
 
 import { DiscordModule } from '@discord-nestjs/core';
 import { Module } from '@nestjs/common';
-import { Intents } from 'discord.js';
+import { GatewayIntentBits } from 'discord.js';
 import { BotSlashCommands } from './bot-slash-commands.module';
 
 @Module({
@@ -546,7 +546,7 @@ import { BotSlashCommands } from './bot-slash-commands.module';
       useFactory: (configService: ConfigService) => ({
         token: configService.get('TOKEN'),
         discordClientOptions: {
-          intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+          intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
         },
         registerCommandOptions: [
           {
@@ -810,7 +810,7 @@ You can define pipe globally with `registerPipeGlobally()` function.
 import { DiscordModule, registerPipeGlobally } from '@discord-nestjs/core';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Intents } from 'discord.js';
+import { GatewayIntentBits } from 'discord.js';
 import { BotGateway } from './bot.gateway';
 import { MyGlobalPipe } from './my-global-pipe';
 
@@ -822,7 +822,7 @@ import { MyGlobalPipe } from './my-global-pipe';
       useFactory: (configService: ConfigService) => ({
         token: configService.get('TOKEN'),
         discordClientOptions: {
-          intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+          intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
         },
         registerCommandOptions: [
           {
@@ -908,7 +908,7 @@ You can define guard globally with `registerGuardGlobally()` function.
 import { DiscordModule, registerGuardGlobally } from '@discord-nestjs/core';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Intents } from 'discord.js';
+import { GatewayIntentBits } from 'discord.js';
 import { BotGateway } from './bot.gateway';
 import { MyGlobalGuard } from './my-global-guard';
 
@@ -920,7 +920,7 @@ import { MyGlobalGuard } from './my-global-guard';
       useFactory: (configService: ConfigService) => ({
         token: configService.get('TOKEN'),
         discordClientOptions: {
-          intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+          intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
         },
         registerCommandOptions: [
           {
@@ -1027,7 +1027,7 @@ You can define filter globally with `registerFilterGlobally()` function.
 import { DiscordModule, registerFilterGlobally } from '@discord-nestjs/core';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Intents } from 'discord.js';
+import { GatewayIntentBits } from 'discord.js';
 import { EmailCommand } from './email-command';
 import { MyGlobalFilter } from './my-global-filter';
 
@@ -1039,7 +1039,7 @@ import { MyGlobalFilter } from './my-global-filter';
       useFactory: (configService: ConfigService) => ({
         token: configService.get('TOKEN'),
         discordClientOptions: {
-          intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+          intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
         },
         registerCommandOptions: [
           {

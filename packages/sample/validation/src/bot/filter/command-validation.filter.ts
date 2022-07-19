@@ -4,7 +4,7 @@ import {
   DiscordExceptionFilter,
 } from '@discord-nestjs/core';
 import { ValidationError } from 'class-validator';
-import { MessageEmbed } from 'discord.js';
+import { Colors, EmbedBuilder } from 'discord.js';
 
 @Catch(ValidationError)
 export class CommandValidationFilter implements DiscordExceptionFilter {
@@ -15,14 +15,14 @@ export class CommandValidationFilter implements DiscordExceptionFilter {
     const [interaction] = metadata.eventArgs;
 
     const embeds = exceptionList.map((exception) =>
-      new MessageEmbed().setColor('RED').addFields(
+      new EmbedBuilder().setColor(Colors.Red).addFields(
         Object.values(exception.constraints).map((value) => ({
-          name: exception.property,
+          name: exception.value,
           value,
         })),
       ),
     );
 
-    if (interaction.isCommand()) await interaction.reply({ embeds });
+    if (interaction.isRepliable()) await interaction.reply({ embeds });
   }
 }
