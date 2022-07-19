@@ -95,7 +95,15 @@ export class BuildApplicationCommandService {
   }
 
   private async getSubCommandGroupOptions(
-    { options: { name, description }, subCommands }: SubCommandGroupOptions,
+    {
+      options: {
+        name,
+        description,
+        nameLocalizations,
+        descriptionLocalizations,
+      },
+      subCommands,
+    }: SubCommandGroupOptions,
     commandName: string,
   ): Promise<ApplicationCommandSubGroupData> {
     this.commandTreeService.appendNode([commandName, name], {});
@@ -112,6 +120,8 @@ export class BuildApplicationCommandService {
       description,
       type: ApplicationCommandOptionType.SubcommandGroup,
       options: subCommandOptions,
+      nameLocalizations,
+      descriptionLocalizations,
     };
   }
 
