@@ -1,8 +1,10 @@
 import {
-  CommandInteraction,
-  ContextMenuInteraction,
+  ButtonInteraction,
+  ChatInputCommandInteraction,
+  ContextMenuCommandInteraction,
   InteractionReplyOptions,
   MessagePayload,
+  SelectMenuInteraction,
 } from 'discord.js';
 
 import { CommandExecutionContext } from './command-execution-context';
@@ -14,8 +16,10 @@ import { CommandExecutionContext } from './command-execution-context';
  */
 export interface DiscordCommand {
   handler(
-    interaction: CommandInteraction | ContextMenuInteraction,
-    executionContext: CommandExecutionContext,
+    interaction: ChatInputCommandInteraction | ContextMenuCommandInteraction,
+    executionContext: CommandExecutionContext<
+      ButtonInteraction | SelectMenuInteraction
+    >,
   ):
     | Promise<string | MessagePayload | InteractionReplyOptions | void>
     | string

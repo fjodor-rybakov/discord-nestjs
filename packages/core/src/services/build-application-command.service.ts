@@ -8,13 +8,11 @@ import {
   ApplicationCommandNonOptionsData,
   ApplicationCommandNumericOptionData,
   ApplicationCommandOptionData,
+  ApplicationCommandOptionType,
   ApplicationCommandSubCommandData,
   ApplicationCommandSubGroupData,
+  ApplicationCommandType,
 } from 'discord.js';
-import {
-  ApplicationCommandOptionTypes,
-  ApplicationCommandTypes,
-} from 'discord.js/typings/enums';
 
 import { CommandOptions } from '../decorators/command/command-options';
 import { isSubCommandGroup } from '../decorators/sub-command-group/is-sub-command-group';
@@ -50,8 +48,11 @@ export class BuildApplicationCommandService {
       name,
       description,
       include = [],
-      defaultPermission,
-      type = ApplicationCommandTypes.CHAT_INPUT,
+      dmPermission,
+      defaultMemberPermissions,
+      type = ApplicationCommandType.ChatInput,
+      nameLocalizations,
+      descriptionLocalizations,
     }: CommandOptions,
   ): Promise<ApplicationCommandData> {
     this.commandTreeService.appendNode([name], { instance });
@@ -59,10 +60,13 @@ export class BuildApplicationCommandService {
       type,
       name,
       description,
-      defaultPermission,
+      dmPermission,
+      defaultMemberPermissions,
+      nameLocalizations,
+      descriptionLocalizations,
     };
 
-    if (applicationCommandData.type === ApplicationCommandTypes.CHAT_INPUT)
+    if (applicationCommandData.type === ApplicationCommandType.ChatInput)
       applicationCommandData.options = await this.exploreSubCommandOptions(
         name,
         include,
@@ -102,7 +106,7 @@ export class BuildApplicationCommandService {
         });
       }
 
-      if (applicationCommandData.type === ApplicationCommandTypes.CHAT_INPUT)
+      if (applicationCommandData.type === ApplicationCommandType.ChatInput)
         applicationCommandData.options = applicationCommandData.options.concat(
           this.sortByRequired(commandOptions),
         );
@@ -143,7 +147,7 @@ export class BuildApplicationCommandService {
     return {
       name,
       description,
-      type: ApplicationCommandOptionTypes.SUB_COMMAND_GROUP,
+      type: ApplicationCommandOptionType.SubcommandGroup,
       options: subCommandOptions,
     };
   }
@@ -174,9 +178,12 @@ export class BuildApplicationCommandService {
     const applicationSubCommandData: ApplicationCommandSubCommandData = {
       name: metadata.name,
       description: metadata.description,
-      type: ApplicationCommandOptionTypes.SUB_COMMAND,
+      type: ApplicationCommandOptionType.Subcommand,
+      nameLocalizations: metadata.nameLocalizations,
+      descriptionLocalizations: metadata.descriptionLocalizations,
     };
-    const applicationSubCommandOptions = [];
+    const applicationSubCommandOptions: ApplicationCommandSubCommandData['options'] =
+      [];
 
     if (dtoInstance) {
       this.commandTreeService.appendNode(

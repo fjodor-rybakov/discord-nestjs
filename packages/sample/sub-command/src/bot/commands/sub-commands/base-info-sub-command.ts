@@ -1,8 +1,8 @@
 import { DiscordCommand, SubCommand } from '@discord-nestjs/core';
 import {
   CommandInteraction,
+  EmbedBuilder,
   InteractionReplyOptions,
-  MessageEmbed,
 } from 'discord.js';
 
 @SubCommand({ name: 'base-info', description: 'Base info' })
@@ -10,9 +10,9 @@ export class BaseInfoSubCommand implements DiscordCommand {
   handler(interaction: CommandInteraction): InteractionReplyOptions {
     const { user } = interaction;
 
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setImage(user.avatarURL())
-      .addField('Name', user.username);
+      .addFields([{ name: 'Name', value: user.username }]);
 
     return {
       embeds: [embed],

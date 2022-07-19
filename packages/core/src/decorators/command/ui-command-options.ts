@@ -1,20 +1,12 @@
-import { ApplicationCommandTypes } from 'discord.js/typings/enums';
+import { ApplicationCommandType } from 'discord.js';
 
-export interface UICommandOptions {
-  /**
-   * Command name
-   */
-  name: string;
+import { BaseCommandOptions } from './base-command-options';
 
-  /**
-   * Set default permission
-   */
-  defaultPermission?: boolean;
-
+export interface UICommandOptions extends BaseCommandOptions {
   /**
    * Context Menu command Type
    *
-   * @default CHAT_INPUT
+   * @default ChatInput
    */
-  type?: ApplicationCommandTypes.USER | ApplicationCommandTypes.MESSAGE;
+  type?: ApplicationCommandType.User | ApplicationCommandType.Message;
 }

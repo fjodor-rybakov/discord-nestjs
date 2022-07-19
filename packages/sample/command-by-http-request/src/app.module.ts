@@ -1,7 +1,7 @@
 import { DiscordModule } from '@discord-nestjs/core';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Intents } from 'discord.js';
+import { GatewayIntentBits } from 'discord.js';
 import { Subject } from 'rxjs';
 
 import { BotModule } from './bot/bot.module';
@@ -20,7 +20,7 @@ import { RegisterModule } from './register/register.module';
       ) => ({
         token: configService.get('TOKEN'),
         discordClientOptions: {
-          intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+          intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
         },
         registerCommandOptions: [
           {

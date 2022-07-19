@@ -1,5 +1,5 @@
 import { Type } from '@nestjs/common';
-import { ApplicationCommandPermissionData } from 'discord.js';
+import { ApplicationCommandPermissions } from 'discord.js';
 
 export interface SlashCommandPermissions {
   /**
@@ -10,5 +10,5 @@ export interface SlashCommandPermissions {
   /**
    * Permission list
    */
-  permissions: ApplicationCommandPermissionData[];
+  permissions: ApplicationCommandPermissions[];
 }

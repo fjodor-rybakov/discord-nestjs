@@ -1,8 +1,7 @@
 import {
   MessageChannelCollectorOptionsParams,
-  MessageComponentTypeResolvable,
+  MessageComponentType,
 } from 'discord.js';
 
-export type DiscordInteractionCollectorOptions<
-  T extends MessageComponentTypeResolvable = 'ACTION_ROW',
-> = Omit<MessageChannelCollectorOptionsParams<T, true>, 'filter'>;
+export type DiscordInteractionCollectorOptions<T extends MessageComponentType> =
+  Omit<MessageChannelCollectorOptionsParams<T, true>, 'filter'>;

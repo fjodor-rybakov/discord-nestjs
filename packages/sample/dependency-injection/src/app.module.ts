@@ -1,8 +1,11 @@
 import { DiscordModule } from '@discord-nestjs/core';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Intents, Message } from 'discord.js';
-import { ApplicationCommandPermissionTypes } from 'discord.js/typings/enums';
+import {
+  ApplicationCommandPermissionType,
+  GatewayIntentBits,
+  Message,
+} from 'discord.js';
 
 import { BotModule } from './bot/bot.module';
 import { PlayDto } from './bot/dto/play.dto';
@@ -15,7 +18,13 @@ import { PlayDto } from './bot/dto/play.dto';
       useFactory: (configService: ConfigService) => ({
         token: configService.get('TOKEN'),
         discordClientOptions: {
-          intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+          intents: [
+            GatewayIntentBits.Guilds,
+            GatewayIntentBits.GuildMessages,
+            // You must allow message content for your application in discord developers
+            // https://support-dev.discord.com/hc/en-us/articles/4404772028055
+            GatewayIntentBits.MessageContent,
+          ],
         },
         registerCommandOptions: [
           {
@@ -31,7 +40,7 @@ import { PlayDto } from './bot/dto/play.dto';
             permissions: [
               {
                 id: configService.get('ROLE_WITHOUT_PLAYLIST_PERMISSION'),
-                type: ApplicationCommandPermissionTypes.ROLE,
+                type: ApplicationCommandPermissionType.Role,
                 permission: true,
               },
             ],

@@ -1,6 +1,6 @@
 import { Injectable, Type } from '@nestjs/common';
 import { MetadataScanner, ModuleRef } from '@nestjs/core';
-import { Collector, InteractionCollector } from 'discord.js';
+import { Collector, InteractionCollector, Snowflake } from 'discord.js';
 
 import { BaseCollectorMetadata } from '../../definitions/types/base-collector-metadata';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
@@ -88,9 +88,9 @@ export class CollectorExplorer implements MethodExplorer {
     this.initCollectorInstances.push(...methodCollectorInstances);
   }
 
-  async applyCollector(
+  async applyCollector<T>(
     options: UseCollectorApplyOptions,
-  ): Promise<Collector<any, any>[]> {
+  ): Promise<Collector<Snowflake, T>[] | undefined> {
     const { instance, methodName } = options;
     const classType = instance.constructor;
 

@@ -1,6 +1,5 @@
-import { ChannelTypes } from 'discord.js/typings/enums';
+import { ChannelType } from 'discord.js';
 
-import { ExcludeEnum } from '../../../definitions/types/exclude-enum.type';
 import { CHANNEL_DECORATOR } from './channel.constant';
 
 /**
@@ -8,9 +7,7 @@ import { CHANNEL_DECORATOR } from './channel.constant';
  *
  * Sets the list of channel types that can be selected
  */
-export function Channel(
-  types: ExcludeEnum<typeof ChannelTypes, 'UNKNOWN'>[],
-): PropertyDecorator {
+export function Channel(types: ChannelType[]): PropertyDecorator {
   return (target: Record<string, any>, propertyKey: string | symbol): void => {
     Reflect.defineMetadata(CHANNEL_DECORATOR, types, target, propertyKey);
   };

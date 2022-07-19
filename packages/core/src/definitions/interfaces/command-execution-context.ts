@@ -1,11 +1,11 @@
 import {
-  Interaction,
+  CollectedInteraction,
   InteractionCollector,
   MessageCollector,
 } from 'discord.js';
 
 export interface CommandExecutionContext<
-  TInteraction extends Interaction = any,
+  TInteraction extends CollectedInteraction = any,
 > {
-  collectors: (MessageCollector | InteractionCollector<TInteraction>)[];
+  collectors?: (MessageCollector | InteractionCollector<TInteraction>)[];
 }

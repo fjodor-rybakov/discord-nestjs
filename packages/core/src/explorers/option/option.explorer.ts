@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { ApplicationCommandOptionChoiceData } from 'discord.js';
 import {
-  ApplicationCommandOptionTypes,
-  ChannelTypes,
-} from 'discord.js/typings/enums';
+  ApplicationCommandOptionChoiceData,
+  ApplicationCommandOptionType,
+  ChannelType,
+} from 'discord.js';
 
 import { ParamOptions } from '../../decorators/option/param/param-options';
-import { ExcludeEnum } from '../../definitions/types/exclude-enum.type';
 import { ParamType } from '../../definitions/types/param.type';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { OptionMetadata } from './option-metadata';
@@ -26,7 +25,7 @@ export class OptionExplorer {
         );
       const channelTypes = this.getChannelOptions(dtoInstance, propertyKey);
       const applicationOptionType = channelTypes
-        ? ApplicationCommandOptionTypes.CHANNEL
+        ? ApplicationCommandOptionType.Channel
         : this.getApplicationOptionTypeByArg(
             dtoInstance,
             propertyKey,
@@ -74,7 +73,7 @@ export class OptionExplorer {
   private getChannelOptions(
     dtoInstance: any,
     propertyKey: string,
-  ): ExcludeEnum<typeof ChannelTypes, 'UNKNOWN'>[] {
+  ): ChannelType[] {
     const channelTypes = this.metadataProvider.getChannelDecoratorMetadata(
       dtoInstance,
       propertyKey,
@@ -88,32 +87,32 @@ export class OptionExplorer {
     dtoInstance: any,
     propertyKey: string,
     argDecoratorOptions: ParamOptions,
-  ): ApplicationCommandOptionTypes {
+  ): ApplicationCommandOptionType {
     switch (argDecoratorOptions.type) {
       case ParamType.STRING:
-        return ApplicationCommandOptionTypes.STRING;
+        return ApplicationCommandOptionType.String;
       case ParamType.BOOLEAN:
-        return ApplicationCommandOptionTypes.BOOLEAN;
+        return ApplicationCommandOptionType.Boolean;
       case ParamType.INTEGER:
-        return ApplicationCommandOptionTypes.INTEGER;
+        return ApplicationCommandOptionType.Integer;
       case ParamType.NUMBER:
-        return ApplicationCommandOptionTypes.NUMBER;
+        return ApplicationCommandOptionType.Number;
       case ParamType.ROLE:
-        return ApplicationCommandOptionTypes.ROLE;
+        return ApplicationCommandOptionType.Role;
       case ParamType.MENTIONABLE:
-        return ApplicationCommandOptionTypes.MENTIONABLE;
+        return ApplicationCommandOptionType.Mentionable;
       case ParamType.USER:
-        return ApplicationCommandOptionTypes.USER;
+        return ApplicationCommandOptionType.User;
       default: {
         const metatype = this.metadataProvider.getPropertyTypeMetadata(
           dtoInstance,
           propertyKey,
         );
         if (metatype.name === 'String')
-          return ApplicationCommandOptionTypes.STRING;
+          return ApplicationCommandOptionType.String;
 
         if (metatype.name === 'Boolean')
-          return ApplicationCommandOptionTypes.BOOLEAN;
+          return ApplicationCommandOptionType.Boolean;
 
         throw new Error(
           `Could not determine field type "${propertyKey}" in class "${dtoInstance.constructor.name}"`,
