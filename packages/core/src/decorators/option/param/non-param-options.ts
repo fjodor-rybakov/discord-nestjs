@@ -9,5 +9,6 @@ export interface NonParamOptions extends BaseParamOptions {
     | ParamType.BOOLEAN
     | ParamType.ROLE
     | ParamType.MENTIONABLE
-    | ParamType.USER;
+    | ParamType.USER
+    | ParamType.ATTACHMENT;
 }

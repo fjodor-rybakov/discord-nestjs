@@ -3,10 +3,8 @@ import { ModuleRef } from '@nestjs/core';
 import {
   ButtonInteraction,
   ClientEvents,
-  CollectedInteraction,
   Collector,
   InteractionCollector,
-  Message,
   MessageCollector,
   SelectMenuInteraction,
   Snowflake,

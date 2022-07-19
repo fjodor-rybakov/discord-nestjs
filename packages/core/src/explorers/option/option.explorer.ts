@@ -14,7 +14,7 @@ import { OptionMetadata } from './option-metadata';
 export class OptionExplorer {
   constructor(private readonly metadataProvider: ReflectMetadataProvider) {}
 
-  explore(dtoInstance: any): OptionMetadata {
+  explore(dtoInstance: InstanceType<any>): OptionMetadata {
     const optionMetadata: OptionMetadata = {};
 
     Object.keys(dtoInstance).map((propertyKey: string) => {
@@ -50,7 +50,7 @@ export class OptionExplorer {
   }
 
   private getChoiceOptions(
-    dtoInstance: any,
+    dtoInstance: InstanceType<any>,
     propertyKey: string,
   ): ApplicationCommandOptionChoiceData[] {
     const choiceData = this.metadataProvider.getChoiceDecoratorMetadata(
@@ -71,7 +71,7 @@ export class OptionExplorer {
   }
 
   private getChannelOptions(
-    dtoInstance: any,
+    dtoInstance: InstanceType<any>,
     propertyKey: string,
   ): ChannelType[] {
     const channelTypes = this.metadataProvider.getChannelDecoratorMetadata(
@@ -84,7 +84,7 @@ export class OptionExplorer {
   }
 
   private getApplicationOptionTypeByArg(
-    dtoInstance: any,
+    dtoInstance: InstanceType<any>,
     propertyKey: string,
     argDecoratorOptions: ParamOptions,
   ): ApplicationCommandOptionType {
@@ -103,6 +103,8 @@ export class OptionExplorer {
         return ApplicationCommandOptionType.Mentionable;
       case ParamType.USER:
         return ApplicationCommandOptionType.User;
+      case ParamType.ATTACHMENT:
+        return ApplicationCommandOptionType.Attachment;
       default: {
         const metatype = this.metadataProvider.getPropertyTypeMetadata(
           dtoInstance,

@@ -6,4 +6,5 @@ export enum ParamType {
   ROLE,
   MENTIONABLE,
   NUMBER,
+  ATTACHMENT,
 }
