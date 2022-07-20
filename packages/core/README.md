@@ -77,9 +77,6 @@ creating a dynamic module through the `forRootAsync` functions.
 
 - `token` \* - Your discord bot token. You can get [here](https://discord.com/developers/applications)
 - `discordClientOptions` \* - Client options from discord.js library
-- `slashCommandsPermissions` - Slash commands permissions
-  - `commandClassType` - Class type that describes the command
-  - `permissions` - Permission list
 - `registerCommandOptions` - Specific registration of slash commands(If option is not set, global commands will be registered)
     - `forGuild` - For which guild to register a slash command
     - `trigger` - Used in cases where it is necessary to register commands by event
@@ -1299,7 +1296,8 @@ Mark class as command
 - `name` \* - Command name
 - `description` \* - Command description
 - `include` - Include subgroups and subcommands
-- `defaultPermission` - Set default permission
+- `defaultMemberPermissions` - Set default permission
+- `dmPermission` - Has DM permission
 
 ### ℹ️ @SubCommand <a name="SubCommand"></a>
 
