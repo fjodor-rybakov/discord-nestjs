@@ -45,8 +45,8 @@
   },
   "devDependencies": {
     "@discord-nestjs/core": "^4.0.1",
-    "@nestjs/common": "^9.0.4",
-    "@nestjs/core": "^9.0.4",
+    "@nestjs/common": "^9.0.5",
+    "@nestjs/core": "^9.0.5",
     "discord.js": "^14.0.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.5.6",
