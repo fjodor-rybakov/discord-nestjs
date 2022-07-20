@@ -1,5 +1,5 @@
 import { Collection } from '@discordjs/collection';
-import { Injectable, Logger, Type } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
   ApplicationCommand,
   ApplicationCommandData,
@@ -13,7 +13,6 @@ import {
 import { InjectDiscordClient } from '../decorators/client/inject-discord-client.decorator';
 import { DiscordModuleOption } from '../definitions/interfaces/discord-module-options';
 import { RegisterCommandOptions } from '../definitions/interfaces/register-command-options';
-import { SlashCommandPermissions } from '../definitions/interfaces/slash-command-permissions';
 import { DiscordCommandProvider } from '../providers/discord-command.provider';
 import { OptionService } from './option.service';
 
@@ -36,7 +35,7 @@ export class RegisterCommandService {
 
   private async registerCommands(
     client: Client,
-    { registerCommandOptions, slashCommandsPermissions }: DiscordModuleOption,
+    { registerCommandOptions }: DiscordModuleOption,
   ): Promise<void> {
     const commands = this.discordCommandProvider.getAllCommands();
 
@@ -56,32 +55,9 @@ export class RegisterCommandService {
               client.on('messageCreate', async (message: Message) => {
                 if (!allowFactory(message, commandList)) return;
 
-                const registeredCommands = await this.setupCommands(
-                  commandList,
-                  commandOptions,
-                );
-
-                if (slashCommandsPermissions)
-                  await this.setPermissions(
-                    registeredCommands,
-                    commands,
-                    slashCommandsPermissions,
-                  );
+                await this.setupCommands(commandList, commandOptions);
               });
-            } else {
-              // Registering global commands
-              const registeredCommands = await this.setupCommands(
-                commandList,
-                commandOptions,
-              );
-
-              if (slashCommandsPermissions)
-                await this.setPermissions(
-                  registeredCommands,
-                  commands,
-                  slashCommandsPermissions,
-                );
-            }
+            } else await this.setupCommands(commandList, commandOptions);
           };
 
           if (trigger)
@@ -201,31 +177,5 @@ export class RegisterCommandService {
     );
 
     return registeredCommands;
-  }
-
-  private async setPermissions(
-    registeredCommands: ApplicationCommand[],
-    rowCommandsData: Map<Type, ApplicationCommandData>,
-    slashCommandsPermissions: SlashCommandPermissions[],
-  ) {
-    await Promise.all(
-      slashCommandsPermissions.map(
-        async ({ commandClassType, permissions }) => {
-          const commandData = rowCommandsData.get(commandClassType);
-          if (!commandData) return;
-
-          const command = registeredCommands.find(
-            (command) => command.name === commandData.name,
-          );
-
-          await command.permissions.set({
-            permissions,
-            token: this.client.token,
-          });
-        },
-      ),
-    );
-
-    this.logger.log('All command permissions set!');
   }
 }

@@ -2,7 +2,6 @@ import { ClientOptions, WebhookClientData } from 'discord.js';
 
 import { PrefixCommandGlobalOptions } from './prefix-command-global-options';
 import { RegisterCommandOptions } from './register-command-options';
-import { SlashCommandPermissions } from './slash-command-permissions';
 
 export interface DiscordModuleOption {
   /**
@@ -14,11 +13,6 @@ export interface DiscordModuleOption {
    * Client options from discord.js library
    */
   discordClientOptions: ClientOptions;
-
-  /**
-   * Slash command permission which allow you to control who has access to use
-   */
-  slashCommandsPermissions?: SlashCommandPermissions[];
 
   /**
    * Specific registration of slash commands
