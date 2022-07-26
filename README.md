@@ -343,4 +343,4 @@ Also check that the `Palyoad` and `UsePipes` decorators are imported from `@disc
 
 </details>
 
-Any questions or suggestions? Discord Федок#3051
+Any questions or suggestions? Join Discord https://discord.gg/kv89Q2dXSR
