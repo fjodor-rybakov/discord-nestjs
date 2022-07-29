@@ -30,12 +30,12 @@
   },
   "schematics": "./dist/collection.json",
   "dependencies": {
-    "@angular-devkit/core": "14.0.6",
-    "@angular-devkit/schematics": "14.0.6",
+    "@angular-devkit/core": "14.1.0",
+    "@angular-devkit/schematics": "14.1.0",
     "typescript": "4.7.4"
   },
   "devDependencies": {
-    "@types/node": "18.0.6",
+    "@types/node": "18.6.2",
     "copyfiles": "^2.4.1",
     "rimraf": "^3.0.2"
   }
