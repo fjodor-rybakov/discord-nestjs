@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@4.0.2...@discord-nestjs/core@4.1.0) (2022-07-29)
+
+
+### Features
+
+* Add failOnLogin option ([5d4d690](https://github.com/fjodor-rybakov/discord-nestjs/commit/5d4d69020aa4a7d24e0686a91568f5a4443f3dcd))
+
+
+
+
+
 ## [4.0.2](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@4.0.1...@discord-nestjs/core@4.0.2) (2022-07-20)
 
 **Note:** Version bump only for package @discord-nestjs/core
