@@ -42,4 +42,11 @@ export interface DiscordModuleOption {
    * @default true
    */
   autoLogin?: boolean;
+
+  /**
+   * Throw an exception if login failed
+   *
+   * @default false
+   */
+  failOnLogin?: boolean;
 }

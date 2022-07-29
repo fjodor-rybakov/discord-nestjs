@@ -21,7 +21,7 @@ export class ClientService
   constructor(private discordOptionService: OptionService) {}
 
   initClient(options: DiscordModuleOption): void {
-    this.discordOptionService.setDefault(options);
+    this.discordOptionService.updateOptions(options);
 
     const { token, webhook, discordClientOptions } =
       this.discordOptionService.getClientData();
@@ -46,13 +46,18 @@ export class ClientService
   }
 
   async onApplicationBootstrap(): Promise<void> {
-    if (!this.discordOptionService.getClientData().autoLogin) return;
+    const { autoLogin, failOnLogin } =
+      this.discordOptionService.getClientData();
+
+    if (!autoLogin) return;
 
     try {
       await this.client.login();
-    } catch (err) {
+    } catch (error) {
       this.logger.error('Failed to connect to Discord API');
-      this.logger.error(err);
+      this.logger.error(error);
+
+      if (failOnLogin) throw error;
     }
   }
 
