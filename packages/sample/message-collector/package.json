@@ -24,7 +24,7 @@
     "@nestjs/common": "9.0.5",
     "@nestjs/config": "2.2.0",
     "@nestjs/core": "9.0.5",
-    "discord.js": "14.0.3",
+    "discord.js": "14.1.1",
     "reflect-metadata": "0.1.13",
     "rimraf": "3.0.2",
     "rxjs": "7.5.6"
