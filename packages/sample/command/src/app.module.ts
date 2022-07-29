@@ -21,6 +21,7 @@ import { BotModule } from './bot/bot.module';
             removeCommandsBefore: true,
           },
         ],
+        failOnLogin: true,
       }),
       inject: [ConfigService],
     }),

@@ -20,16 +20,15 @@ export class OptionService {
       usePipes: [],
       useFilters: [],
       registerCommandOptions: [{}],
+      autoLogin: true,
+      failOnLogin: false,
     };
   }
 
-  setDefault(options: DiscordModuleOption): void {
-    const { autoLogin } = options;
-
+  updateOptions(options: DiscordModuleOption): void {
     this.options = {
       ...this.options,
       ...options,
-      autoLogin: autoLogin ?? true,
     };
   }
 
