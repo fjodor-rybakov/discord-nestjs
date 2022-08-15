@@ -19,6 +19,8 @@ export class MiddlewareExplorer implements ClassExplorer {
 
     const metadata =
       this.metadataProvider.getMiddlewareDecoratorMetadata(instance);
+    if (!metadata) return;
+
     this.middlewareList.push({ instance, metadata });
   }
 
