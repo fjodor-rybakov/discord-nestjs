@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.2.0](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@4.1.1...@discord-nestjs/core@4.2.0) (2022-08-15)
+
+
+### Features
+
+* Male unique middleware decorator ([f06fa6e](https://github.com/fjodor-rybakov/discord-nestjs/commit/f06fa6e420344bf1d1ffd184b96d7428d932066e))
+
+
+
+
+
 ## [4.1.1](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@4.1.0...@discord-nestjs/core@4.1.1) (2022-07-29)
 
 **Note:** Version bump only for package @discord-nestjs/core
