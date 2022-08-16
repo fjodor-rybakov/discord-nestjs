@@ -107,7 +107,7 @@ import { GatewayIntentBits } from 'discord.js';
       useFactory: () => ({
         token: 'your-bot-token',
         discordClientOptions: {
-          intents: [Intents.FLAGS.GUILDS],
+          intents: [GatewayIntentBits.Guilds],
         },
       }),
     }),
@@ -153,7 +153,7 @@ export class DiscordConfigService implements DiscordOptionsFactory {
     return {
       token: 'your-bot-token',
       discordClientOptions: {
-        intents: [Intents.FLAGS.GUILDS],
+        intents: [GatewayIntentBits.Guilds],
       },
     };
   }
@@ -534,7 +534,7 @@ The `trigger`, `allowFactory`, `forGuild` and `removeCommandsBefore` options are
 import { DiscordModule } from '@discord-nestjs/core';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Intents, Message } from 'discord.js';
+import { GatewayIntentBits, Message } from 'discord.js';
 import { BotSlashCommands } from './bot-slash-commands.module';
 
 @Module({
