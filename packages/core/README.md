@@ -1195,8 +1195,10 @@ import {
 } from '@discord-nestjs/core';
 import {
   InteractionReplyOptions,
-  MessageActionRow,
-  MessageButton,
+  ActionRowBuilder,
+  MessageActionRowComponentBuilder,
+  ButtonBuilder,
+  ButtonStyle,
 } from 'discord.js';
 
 import { PlayDto } from '../dto/play.dto';
@@ -1210,12 +1212,13 @@ import { PostInteractionCollector } from '../post-interaction-collector';
 @UseCollectors(PostInteractionCollector)
 export class PlayCommand implements DiscordTransformedCommand<PlayDto> {
   async handler(@Payload() dto: PlayDto): Promise<InteractionReplyOptions> {
-    const row = new MessageActionRow().addComponents(
-      new MessageButton()
-        .setCustomId('primary')
-        .setLabel(dto.song)
-        .setStyle('PRIMARY'),
-    );
+    const row =
+      new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
+        new ButtonBuilder()
+          .setCustomId('primary')
+          .setLabel(dto.song)
+          .setStyle(ButtonStyle.Primary),
+      );
 
     return {
       content: 'Click on the button to play the song!',
