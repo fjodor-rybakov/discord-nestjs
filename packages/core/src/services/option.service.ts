@@ -22,6 +22,7 @@ export class OptionService {
       registerCommandOptions: [{}],
       autoLogin: true,
       failOnLogin: false,
+      shutdownOnAppDestroy: true,
     };
   }
 

@@ -49,4 +49,11 @@ export interface DiscordModuleOption {
    * @default false
    */
   failOnLogin?: boolean;
+
+  /**
+   * Shutdown bot on application destroy hook
+   *
+   * @default true
+   */
+  shutdownOnAppDestroy?: boolean;
 }

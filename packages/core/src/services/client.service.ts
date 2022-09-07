@@ -62,7 +62,9 @@ export class ClientService
   }
 
   onApplicationShutdown(): void {
-    this.client.destroy();
+    const { shutdownOnAppDestroy } = this.discordOptionService.getClientData();
+
+    if (shutdownOnAppDestroy) this.client.destroy();
   }
 
   private createWebhookClient(
