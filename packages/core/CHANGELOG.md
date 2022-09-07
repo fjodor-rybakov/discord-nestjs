@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@4.2.1...@discord-nestjs/core@4.3.0) (2022-09-07)
+
+
+### Features
+
+* Add shutdownOnAppDestroy option ([8251528](https://github.com/fjodor-rybakov/discord-nestjs/commit/8251528f2b4f3d993ead043f9922a13891079c8a))
+
+
+
+
+
 ## [4.2.1](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@4.2.0...@discord-nestjs/core@4.2.1) (2022-08-15)
 
 
