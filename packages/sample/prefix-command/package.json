@@ -23,7 +23,7 @@
     "@nestjs/common": "9.0.7",
     "@nestjs/config": "2.2.0",
     "@nestjs/core": "9.0.7",
-    "discord.js": "14.1.1",
+    "discord.js": "14.4.0",
     "reflect-metadata": "0.1.13",
     "rimraf": "3.0.2",
     "rxjs": "7.5.6"
