@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.3.1](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@4.3.0...@discord-nestjs/core@4.3.1) (2022-10-02)
+
+**Note:** Version bump only for package @discord-nestjs/core
+
+
+
+
+
 # [4.3.0](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@4.2.1...@discord-nestjs/core@4.3.0) (2022-09-07)
 
 
