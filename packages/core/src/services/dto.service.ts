@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import {
-  ApplicationCommandAutocompleteOption,
+  ApplicationCommandAutocompleteNumericOptionData,
+  ApplicationCommandAutocompleteStringOptionData,
+  ApplicationCommandBooleanOptionData,
   ApplicationCommandChannelOptionData,
-  ApplicationCommandChoicesData,
+  ApplicationCommandMentionableOptionData,
   ApplicationCommandNonOptionsData,
   ApplicationCommandNumericOptionData,
+  ApplicationCommandRoleOptionData,
   ApplicationCommandStringOptionData,
+  ApplicationCommandUserOptionData,
 } from 'discord.js';
 
 import { OptionExplorer } from '../explorers/option/option.explorer';
@@ -15,10 +19,14 @@ import { ParamExplorer } from '../explorers/param/param.explorer';
 export type NonCommandData =
   | ApplicationCommandNonOptionsData
   | ApplicationCommandChannelOptionData
-  | ApplicationCommandChoicesData
-  | ApplicationCommandAutocompleteOption
+  | ApplicationCommandAutocompleteNumericOptionData
+  | ApplicationCommandAutocompleteStringOptionData
+  | ApplicationCommandNumericOptionData
   | ApplicationCommandStringOptionData
-  | ApplicationCommandNumericOptionData;
+  | ApplicationCommandRoleOptionData
+  | ApplicationCommandUserOptionData
+  | ApplicationCommandMentionableOptionData
+  | ApplicationCommandBooleanOptionData;
 
 @Injectable()
 export class DtoService {

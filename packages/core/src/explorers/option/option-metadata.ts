@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionChoiceData, ChannelType } from 'discord.js';
+import { ChannelType } from 'discord.js';
 
 import { NonParamOptions } from '../../decorators/option/param/non-param-options';
 import { NumericParamOptions } from '../../decorators/option/param/numeric-param-options';
@@ -10,9 +10,9 @@ export interface OptionMetadata {
       NumericParamOptions & StringParamOptions & NonParamOptions,
       'type'
     > & {
-      type?: any; // TODO: should be ApplicationCommandOptionTypes
+      type?: any; // FIXME: should be ApplicationCommandOptionTypes
     };
-    choice?: ApplicationCommandOptionChoiceData[];
+    choice?: any[]; // FIXME: should be ApplicationCommandOptionChoiceData
     channelTypes?: ChannelType[];
   };
 }

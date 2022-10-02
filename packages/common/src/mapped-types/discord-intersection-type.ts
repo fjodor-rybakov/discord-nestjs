@@ -27,10 +27,11 @@ export function DiscordIntersectionType<A, T extends Constructor<any>[]>(
   const classes = [classA, ...classRefs];
   const instances = classes.map((classType) => new classType());
 
+  const newType = IntersectionType(...[classA, ...classRefs]);
+
+  // FIXME: Type for newType
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  const newType = IntersectionType(classA, ...classRefs);
-
   class Intersection extends newType {
     constructor(...args) {
       super(...args);

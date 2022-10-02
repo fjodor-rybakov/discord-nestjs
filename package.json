@@ -26,13 +26,13 @@
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "3.3.0",
-    "@typescript-eslint/eslint-plugin": "5.36.1",
-    "@typescript-eslint/parser": "5.31.0",
-    "eslint": "8.22.0",
+    "@typescript-eslint/eslint-plugin": "5.38.1",
+    "@typescript-eslint/parser": "5.38.1",
+    "eslint": "8.24.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-prettier": "4.2.1",
     "husky": "8.0.1",
-    "lerna": "5.3.0",
+    "lerna": "5.5.4",
     "lint-staged": "13.0.3",
     "prettier": "2.7.1"
   },
