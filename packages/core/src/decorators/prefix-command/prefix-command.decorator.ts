@@ -4,7 +4,7 @@ import { ON_PREFIX_COMMAND_DECORATOR } from './prefix-command.constant';
 /**
  * On prefix command decorator
  *
- * Crate prefix command
+ * Create prefix command
  */
 export function PrefixCommand(
   name: string,
