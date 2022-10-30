@@ -7,4 +7,5 @@ export enum ParamType {
   MENTIONABLE,
   NUMBER,
   ATTACHMENT,
+  CHANNEL
 }

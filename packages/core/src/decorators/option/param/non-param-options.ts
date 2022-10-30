@@ -11,4 +11,5 @@ export interface NonParamOptions extends BaseParamOptions {
     | ParamType.MENTIONABLE
     | ParamType.USER
     | ParamType.ATTACHMENT;
+    | ParamType.CHANNEL
 }
