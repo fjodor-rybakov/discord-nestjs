@@ -30,7 +30,7 @@ export class ModalFieldsTransformPipe implements DiscordPipeTransform {
     Object.keys(dtoInstance).forEach((property) => {
       const fieldCustomMetadata =
         this.metadataProvider.getFiledDecoratorMetadata(dtoInstance, property);
-      if (fieldCustomMetadata) {
+      if (fieldCustomMetadata && modal.fields) {
         plainObject[property] = modal.fields.getField(
           fieldCustomMetadata.customId ?? property,
           fieldCustomMetadata.type,
@@ -44,7 +44,7 @@ export class ModalFieldsTransformPipe implements DiscordPipeTransform {
           dtoInstance,
           property,
         );
-      if (textInputValueCustomMetadata) {
+      if (textInputValueCustomMetadata && modal.fields) {
         plainObject[property] = modal.fields.getTextInputValue(
           textInputValueCustomMetadata.customId ?? property,
         );
