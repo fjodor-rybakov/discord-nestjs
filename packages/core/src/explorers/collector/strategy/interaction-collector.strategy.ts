@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import {
-  ButtonInteraction,
   ClientEvents,
   InteractionCollector,
+  MappedInteractionTypes,
   MessageChannelCollectorOptionsParams,
   MessageComponentType,
-  SelectMenuInteraction,
 } from 'discord.js';
 
 import { BaseEvents } from '../../../definitions/types/event.type';
@@ -23,7 +22,9 @@ export class InteractionCollectorStrategy implements CollectorStrategy {
     { event, eventArgs }: UseCollectorApplyOptions,
     { metadata, filterMethodName, events, classInstance }: CollectorMetadata,
     moduleRef: ModuleRef,
-  ): Promise<InteractionCollector<ButtonInteraction | SelectMenuInteraction>> {
+  ): Promise<
+    InteractionCollector<MappedInteractionTypes[MessageComponentType]>
+  > {
     if (
       !this.isMessageEvent(event, eventArgs) &&
       !this.isInteractionEvent(event, eventArgs)

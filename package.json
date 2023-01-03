@@ -25,16 +25,16 @@
     "update": "npx npm-check-updates --deep -u"
   },
   "devDependencies": {
-    "@trivago/prettier-plugin-sort-imports": "3.3.0",
-    "@typescript-eslint/eslint-plugin": "5.40.0",
-    "@typescript-eslint/parser": "5.40.0",
-    "eslint": "8.25.0",
-    "eslint-config-prettier": "8.5.0",
+    "@trivago/prettier-plugin-sort-imports": "4.0.0",
+    "@typescript-eslint/eslint-plugin": "5.48.0",
+    "@typescript-eslint/parser": "5.48.0",
+    "eslint": "8.31.0",
+    "eslint-config-prettier": "8.6.0",
     "eslint-plugin-prettier": "4.2.1",
-    "husky": "8.0.1",
-    "lerna": "5.6.2",
-    "lint-staged": "13.0.3",
-    "prettier": "2.7.1"
+    "husky": "8.0.3",
+    "lerna": "6.3.0",
+    "lint-staged": "13.1.0",
+    "prettier": "2.8.1"
   },
   "lint-staged": {
     "*.ts": [
