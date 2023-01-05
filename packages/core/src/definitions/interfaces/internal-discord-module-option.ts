@@ -5,7 +5,7 @@ import { DiscordModuleOption } from './discord-module-options';
 
 export interface InternalDiscordModuleOption extends DiscordModuleOption {
   /**
-   * Use pipes for all handlers
+   * Use interceptors for all handlers
    * Takes list of class types or list of instances
    */
   usePipes?: DiscordPipeTransform[];

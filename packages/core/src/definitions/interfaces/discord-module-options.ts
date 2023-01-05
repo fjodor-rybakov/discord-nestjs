@@ -56,4 +56,11 @@ export interface DiscordModuleOption {
    * @default true
    */
   shutdownOnAppDestroy?: boolean;
+
+  /**
+   * Rethrow forbidden exception(in guard case)
+   *
+   * @default false
+   */
+  isTrowForbiddenException?: boolean;
 }

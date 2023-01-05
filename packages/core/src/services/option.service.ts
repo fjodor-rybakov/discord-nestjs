@@ -23,6 +23,7 @@ export class OptionService {
       autoLogin: true,
       failOnLogin: false,
       shutdownOnAppDestroy: true,
+      isTrowForbiddenException: false,
     };
   }
 

@@ -1,3 +1,6 @@
+import { assignMetadata } from '@nestjs/common';
+
+import { DiscordParamType } from '../../../factory/discord-param-type';
 import { PAYLOAD_DECORATOR } from './payload.constant';
 
 /**
@@ -11,8 +14,8 @@ export function Payload(): ParameterDecorator {
   ): void => {
     Reflect.defineMetadata(
       PAYLOAD_DECORATOR,
-      { parameterIndex },
-      target,
+      assignMetadata({}, DiscordParamType.PAYLOAD, parameterIndex),
+      target.constructor,
       propertyKey,
     );
   };

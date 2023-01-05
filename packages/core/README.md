@@ -755,12 +755,12 @@ You can create your custom pipe by implementing the `DiscordPipeTransform` inter
 #### 💡 Example
 
 ```typescript
-/* message-to-upper.pipe.ts */
+/* message-to-upper.interceptor.ts */
 
 import { DiscordPipeTransform } from '@discord-nestjs/core';
 import { Message } from 'discord.js';
 
-export class MessageToUpperPipe implements DiscordPipeTransform {
+export class MessageToUpperInterceptor implements DiscordPipeTransform {
   transform([message]: [Message]): [Message] {
     message.content = message.content.toUpperCase();
 
@@ -776,7 +776,7 @@ export class MessageToUpperPipe implements DiscordPipeTransform {
 ```typescript
 /* bot.gateway.ts */
 
-import { MessageToUpperPipe } from './pipes/message-to-upper.pipe';
+import { MessageToUpperInterceptor } from './interceptors/message-to-upper.pipe';
 import { On, UsePipes } from '@discord-nestjs/core';
 import { Injectable, Logger } from '@nestjs/common';
 import { Message } from 'discord.js';
@@ -786,7 +786,7 @@ export class BotGateway {
   private readonly logger = new Logger(BotGateway.name);
 
   @On('messageCreate')
-  @UsePipes(MessageToUpperPipe)
+  @UsePipes(MessageToUpperInterceptor)
   async onMessage(message: Message): Promise<void> {
     if (message.author.bot) return;
 

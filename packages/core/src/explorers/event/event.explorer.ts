@@ -1,17 +1,15 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import { ExternalContextCreator } from '@nestjs/core/helpers/external-context-creator';
+import { STATIC_CONTEXT } from '@nestjs/core/injector/constants';
 import { ClientEvents } from 'discord.js';
 
-import { ExecutionContext } from '../../definitions/interfaces/execution-context';
+import { EVENT_ARGS_DECORATOR } from '../../decorators/param/event-param.constant';
+import { DiscordParamFactory } from '../../factory/discord-param-factory';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { ClientService } from '../../services/client.service';
-import { DtoService } from '../../services/dto.service';
-import { CollectorExplorer } from '../collector/collector.explorer';
-import { FilterExplorer } from '../filter/filter.explorer';
-import { GuardExplorer } from '../guard/guard.explorer';
+import { OptionService } from '../../services/option.service';
 import { MethodExplorer } from '../interfaces/method-explorer';
 import { MethodExplorerOptions } from '../interfaces/method-explorer-options';
-import { MiddlewareExplorer } from '../middleware/middleware.explorer';
-import { PipeExplorer } from '../pipe/pipe.explorer';
 
 @Injectable()
 export class EventExplorer implements MethodExplorer {
@@ -20,12 +18,8 @@ export class EventExplorer implements MethodExplorer {
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
     private readonly discordClientService: ClientService,
-    private readonly middlewareExplorer: MiddlewareExplorer,
-    private readonly guardExplorer: GuardExplorer,
-    private readonly filterExplorer: FilterExplorer,
-    private readonly pipeExplorer: PipeExplorer,
-    private readonly collectorExplorer: CollectorExplorer,
-    private readonly dtoService: DtoService,
+    private readonly optionService: OptionService,
+    private readonly externalContextCreator: ExternalContextCreator,
   ) {}
 
   async explore(options: MethodExplorerOptions): Promise<void> {
@@ -49,64 +43,27 @@ export class EventExplorer implements MethodExplorer {
       instance.constructor.name,
     );
 
-    const dtoInstance = await this.dtoService.createDtoInstance(
-      instance,
-      methodName,
-    );
-
     this.discordClientService
       .getClient()
       [eventMethod](
         event,
         async (...eventArgs: ClientEvents[keyof ClientEvents]) => {
+          const handler = this.externalContextCreator.create(
+            instance,
+            instance[methodName],
+            methodName,
+            EVENT_ARGS_DECORATOR,
+            new DiscordParamFactory(),
+          );
+
           try {
-            //#region apply middleware, guard, pipe
-            await this.middlewareExplorer.applyMiddleware(event, eventArgs);
-            const isAllowFromGuards = await this.guardExplorer.applyGuard({
-              instance,
-              methodName,
-              event,
-              eventArgs,
-            });
-            if (!isAllowFromGuards) return;
-
-            const pipeResult = await this.pipeExplorer.applyPipe({
-              instance,
-              methodName,
-              event,
-              eventArgs,
-              initValue: eventArgs,
-              metatype: dtoInstance?.constructor,
-              commandNode: { dtoInstance },
-            });
-            //#endregion
-
-            const collectors = await this.collectorExplorer.applyCollector({
-              instance,
-              methodName,
-              event,
-              eventArgs,
-            });
-
-            const executionContext: ExecutionContext = {
-              collectors,
-            };
-
-            const handlerArgs = dtoInstance
-              ? [pipeResult, ...eventArgs]
-              : eventArgs;
-
-            await instance[methodName](...handlerArgs, executionContext);
+            await handler(...eventArgs);
           } catch (exception) {
-            const isTrowException = await this.filterExplorer.applyFilter({
-              instance,
-              methodName,
-              event,
-              eventArgs,
-              exception,
-            });
-
-            if (isTrowException) throw exception;
+            if (
+              exception instanceof ForbiddenException &&
+              this.optionService.getClientData().isTrowForbiddenException
+            )
+              throw exception;
           }
         },
       );

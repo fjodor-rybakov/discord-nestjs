@@ -7,7 +7,7 @@ import { DISCORD_APP_PIPE } from '../definitions/constants/discord-app-pipe';
 
 class ProviderGroup {
   /**
-   * Filters, pipes and guards
+   * Filters, interceptors and guards
    */
   globalLifecycleParts: InstanceWrapper[] = [];
 
