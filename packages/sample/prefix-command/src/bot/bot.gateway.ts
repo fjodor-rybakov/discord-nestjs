@@ -1,12 +1,14 @@
-import { PrefixCommandTransformPipe } from '@discord-nestjs/common';
+import {
+  PrefixCommandInterceptor,
+  PrefixCommandPipe,
+} from '@discord-nestjs/common';
 import {
   InjectDiscordClient,
+  MessageEvent,
+  On,
   Once,
-  Payload,
-  PrefixCommand,
-  UsePipes,
 } from '@discord-nestjs/core';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, UseInterceptors } from '@nestjs/common';
 import { Client } from 'discord.js';
 
 import { StartDto } from './dto/start.dto';
@@ -25,9 +27,11 @@ export class BotGateway {
     this.logger.log(`Bot ${this.client.user.tag} was started!`);
   }
 
-  @PrefixCommand('start')
-  @UsePipes(PrefixCommandTransformPipe)
-  async onMessage(@Payload() dto: StartDto): Promise<string> {
+  @On('messageCreate')
+  @UseInterceptors(new PrefixCommandInterceptor('start'))
+  async onMessage(
+    @MessageEvent(PrefixCommandPipe) dto: StartDto,
+  ): Promise<string> {
     console.log(dto);
 
     return 'Message processed successfully';

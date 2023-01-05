@@ -692,13 +692,13 @@ export class StartDto {
 ```
 
 Then just create a command. Mark the DTO with the `@Payload` decorator as the first parameter.
-It is also necessary to hang a pipe that will create DTO. You can use the already built-in `PrefixCommandTransformPipe`
+It is also necessary to hang a pipe that will create DTO. You can use the already built-in `PrefixCommandPipe`
 from the package `@discord/common` package or create your own pipe.
 
 ```typescript
 /* bot.gateway.ts */
 
-import { PrefixCommandTransformPipe } from '@discord-nestjs/common';
+import { PrefixCommandPipe } from '@discord-nestjs/common';
 import {
   InjectDiscordClient,
   PrefixCommand,
@@ -726,7 +726,7 @@ export class BotGateway {
   }
 
   @PrefixCommand('start')
-  @UsePipes(PrefixCommandTransformPipe)
+  @UsePipes(PrefixCommandPipe)
   async onMessage(@Payload() dto: StartDto, message: Message): Promise<string> {
     console.log(dto);
 

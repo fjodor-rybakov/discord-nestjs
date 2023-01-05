@@ -22,7 +22,7 @@ $ yarn add @discord-nestjs/common
 
 `TransformPipe` fills in the fields `DTO` from `CommandInteraction`. 
 
-For prefix command use `PrefixCommandTransformPipe`.
+For prefix command use `PrefixCommandPipe`.
 
 #### 💡 Example
 

@@ -1,4 +1,4 @@
-export interface PrefixCommandGlobalOptions {
+export interface PrefixCommandOptions {
   /**
    * Remove command name from input string
    *
@@ -26,4 +26,11 @@ export interface PrefixCommandGlobalOptions {
    * @default false
    */
   isRemoveMessage?: boolean;
+
+  /**
+   * Prefix for text command
+   *
+   * @default !
+   */
+  prefix?: string;
 }

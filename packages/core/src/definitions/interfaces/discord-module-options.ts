@@ -20,14 +20,14 @@ export interface DiscordModuleOption {
   registerCommandOptions?: RegisterCommandOptions[];
 
   /**
-   * Command prefix
+   * Command prefix-command
    *
-   * Only for prefix command
+   * Only for prefix-command command
    */
   prefix?: string;
 
   /**
-   * Global options for prefix command
+   * Global options for prefix-command command
    */
   prefixGlobalOptions?: PrefixCommandGlobalOptions;
 

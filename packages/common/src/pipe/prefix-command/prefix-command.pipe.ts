@@ -1,18 +1,17 @@
 import {
   ArgNumOptions,
   ArgRangeOptions,
-  DiscordArgumentMetadata,
-  DiscordPipeTransform,
   ReflectMetadataProvider,
 } from '@discord-nestjs/core';
-import { Inject, Injectable, Optional } from '@nestjs/common';
+import { Inject, Injectable, Optional, PipeTransform } from '@nestjs/common';
+import { ArgumentMetadata } from '@nestjs/common/interfaces/features/pipe-transform.interface';
 import { ClassTransformOptions, plainToInstance } from 'class-transformer';
 import { Message } from 'discord.js';
 
-import { TRANSFORMER_OPTION } from '../contants/transformer-options.constant';
+import { TRANSFORMER_OPTION } from '../../contants/transformer-options.constant';
 
 @Injectable()
-export class PrefixCommandTransformPipe implements DiscordPipeTransform {
+export class PrefixCommandPipe implements PipeTransform {
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
     @Optional()
@@ -20,21 +19,18 @@ export class PrefixCommandTransformPipe implements DiscordPipeTransform {
     private readonly classTransformerOptions?: ClassTransformOptions,
   ) {}
 
-  transform(
-    message: Message,
-    metadata: DiscordArgumentMetadata<'messageCreate'>,
-  ): InstanceType<any> {
-    if (!metadata.metatype || !message) return;
+  transform(message: Message, metadata: ArgumentMetadata): InstanceType<any> {
+    if (!metadata.metatype || !message || !(message instanceof Message)) return;
 
-    const { dtoInstance } = metadata.commandNode;
     const plainObject = {};
-
     const messageContentParts = message.content.split(' ');
+    const allKeys = Object.keys(new metadata.metatype());
+
     let lastIndex = 0;
 
-    Object.keys(dtoInstance).forEach((property: string) => {
+    allKeys.forEach((property: string) => {
       const argNumMetadata = this.metadataProvider.getArgNumDecoratorMetadata(
-        dtoInstance,
+        metadata.metatype,
         property,
       );
 
@@ -53,7 +49,7 @@ export class PrefixCommandTransformPipe implements DiscordPipeTransform {
 
       const argRangeMetadata =
         this.metadataProvider.getArgRangeDecoratorMetadata(
-          dtoInstance,
+          metadata.metatype,
           property,
         );
 

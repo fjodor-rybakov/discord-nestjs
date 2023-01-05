@@ -14,7 +14,6 @@ import { ClassExplorer } from '../explorers/interfaces/class-explorer';
 import { MethodExplorer } from '../explorers/interfaces/method-explorer';
 import { MiddlewareExplorer } from '../explorers/middleware/middleware.explorer';
 import { PipeExplorer } from '../explorers/pipe/pipe.explorer';
-import { PrefixCommandExplorer } from '../explorers/prefix-command/prefix-command.explorer';
 import { IsObject } from '../utils/function/is-object';
 import { GlobalProviderService } from './global-provider.service';
 import { OptionService } from './option.service';
@@ -34,7 +33,6 @@ export class ExplorerService implements OnModuleInit {
     private readonly globalProviderService: GlobalProviderService,
     private readonly registerCommandService: RegisterCommandService,
     private readonly collectorExplorer: CollectorExplorer,
-    private readonly prefixCommandExplorer: PrefixCommandExplorer,
     private readonly discordOptionService: OptionService,
   ) {}
 
@@ -68,7 +66,7 @@ export class ExplorerService implements OnModuleInit {
       }
     });
 
-    const methodExplorers = [this.eventExplorer, this.prefixCommandExplorer];
+    const methodExplorers = [this.eventExplorer];
 
     const classExplorers = [this.commandExplorer, this.middlewareExplorer];
 

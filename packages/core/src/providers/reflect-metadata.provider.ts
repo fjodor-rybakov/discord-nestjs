@@ -92,10 +92,10 @@ export class ReflectMetadataProvider {
   }
 
   getArgNumDecoratorMetadata(
-    instance: InstanceType<any>,
+    type: Type,
     propertyKey: string,
   ): (last?: number) => ArgNumOptions {
-    return Reflect.getMetadata(ARG_NUM_DECORATOR, instance, propertyKey);
+    return Reflect.getMetadata(ARG_NUM_DECORATOR, type, propertyKey);
   }
 
   getArgRangeDecoratorMetadata(

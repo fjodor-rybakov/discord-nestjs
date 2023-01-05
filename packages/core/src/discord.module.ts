@@ -24,7 +24,6 @@ import { MiddlewareExplorer } from './explorers/middleware/middleware.explorer';
 import { OptionExplorer } from './explorers/option/option.explorer';
 import { ParamExplorer } from './explorers/param/param.explorer';
 import { PipeExplorer } from './explorers/pipe/pipe.explorer';
-import { PrefixCommandExplorer } from './explorers/prefix-command/prefix-command.explorer';
 import { DiscordClientProvider } from './providers/discord-client.provider';
 import { DiscordCommandProvider } from './providers/discord-command.provider';
 import { ReflectMetadataProvider } from './providers/reflect-metadata.provider';
@@ -59,7 +58,6 @@ export class DiscordModule {
         GuardExplorer,
         ParamExplorer,
         CommandExplorer,
-        PrefixCommandExplorer,
         DtoService,
         EventExplorer,
         ExplorerService,
