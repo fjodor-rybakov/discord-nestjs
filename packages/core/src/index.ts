@@ -66,6 +66,8 @@ export * from './decorators/prefix-command/prefix-command.decorator';
 export * from './decorators/transformation/arg-num/arg-num.decorator';
 export * from './decorators/transformation/arg-range/arg-range.decorator';
 export * from './decorators/param/event-param.decorator';
+export * from './decorators/command/handler/handler.decorator';
+export * from './decorators/command/options/command-option.decorator';
 
 // Providers
 export * from './providers/discord-client.provider';

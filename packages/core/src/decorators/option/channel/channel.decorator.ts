@@ -9,6 +9,11 @@ import { CHANNEL_DECORATOR } from './channel.constant';
  */
 export function Channel(types: ChannelType[]): PropertyDecorator {
   return (target: Record<string, any>, propertyKey: string | symbol): void => {
-    Reflect.defineMetadata(CHANNEL_DECORATOR, types, target, propertyKey);
+    Reflect.defineMetadata(
+      CHANNEL_DECORATOR,
+      types,
+      target.constructor,
+      propertyKey,
+    );
   };
 }

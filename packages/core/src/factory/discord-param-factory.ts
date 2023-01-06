@@ -24,6 +24,8 @@ export class DiscordParamFactory implements ParamsFactory {
         return data && typeof data === 'string' && interaction
           ? interaction[data]
           : interaction;
+      case DiscordParamType.EVENT_PARAMS:
+        return args;
       default:
         return null;
     }

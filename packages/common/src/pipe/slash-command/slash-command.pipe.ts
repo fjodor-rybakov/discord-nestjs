@@ -1,19 +1,21 @@
+import { ReflectMetadataProvider } from '@discord-nestjs/core';
 import {
-  DiscordArgumentMetadata,
-  DiscordPipeTransform,
-  ReflectMetadataProvider,
-} from '@discord-nestjs/core';
-import { Inject, Injectable, Optional } from '@nestjs/common';
+  ArgumentMetadata,
+  Inject,
+  Injectable,
+  Optional,
+  PipeTransform,
+} from '@nestjs/common';
 import { ClassTransformOptions, plainToInstance } from 'class-transformer';
 import { Interaction } from 'discord.js';
 
-import { TRANSFORMER_OPTION } from '../contants/transformer-options.constant';
+import { TRANSFORMER_OPTION } from '../../contants/transformer-options.constant';
 
 /**
  * Fills DTO with values from interaction
  */
 @Injectable()
-export class TransformPipe implements DiscordPipeTransform {
+export class SlashCommandPipe implements PipeTransform {
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
     @Optional()
@@ -23,17 +25,26 @@ export class TransformPipe implements DiscordPipeTransform {
 
   transform(
     interaction: Interaction,
-    metadata: DiscordArgumentMetadata<'interactionCreate'>,
+    metadata: ArgumentMetadata,
   ): InstanceType<any> {
-    if (!metadata.metatype || !interaction || !interaction.isChatInputCommand())
-      return;
+    if (
+      !metadata.metatype ||
+      !interaction ||
+      typeof interaction['isChatInputCommand'] !== 'function' ||
+      !interaction.isChatInputCommand()
+    )
+      return interaction;
 
-    const { dtoInstance } = metadata.commandNode;
     const plainObject = {};
+    const dtoInstance = new metadata.metatype();
+    const allKeys = Object.keys(dtoInstance);
 
-    Object.keys(dtoInstance).forEach((property: string) => {
+    allKeys.forEach((property: string) => {
       const paramDecoratorMetadata =
-        this.metadataProvider.getParamDecoratorMetadata(dtoInstance, property);
+        this.metadataProvider.getParamDecoratorMetadata(
+          metadata.metatype,
+          property,
+        );
 
       if (!paramDecoratorMetadata) return;
 

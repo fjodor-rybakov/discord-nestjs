@@ -68,7 +68,7 @@ export class ExplorerService implements OnModuleInit {
 
     const methodExplorers = [this.eventExplorer];
 
-    const classExplorers = [this.commandExplorer, this.middlewareExplorer];
+    const classExplorers = [this.commandExplorer];
 
     const lifecyclePartsExplorers: MethodExplorer[] = [
       this.guardExplorer,

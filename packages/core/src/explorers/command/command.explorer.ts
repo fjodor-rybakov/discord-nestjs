@@ -1,17 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
+import { ExternalContextCreator } from '@nestjs/core/helpers/external-context-creator';
 import {
-  ButtonInteraction,
   ClientEvents,
   Collector,
   InteractionCollector,
   MessageCollector,
-  SelectMenuInteraction,
   Snowflake,
 } from 'discord.js';
 
-import { CommandExecutionContext } from '../../definitions/interfaces/command-execution-context';
-import { TransformedCommandExecutionContext } from '../../definitions/interfaces/transformed-command-execution-context';
+import { EVENT_PARAMS_DECORATOR } from '../../decorators/param/event-param.constant';
+import { DiscordParamFactory } from '../../factory/discord-param-factory';
 import { DiscordCommandProvider } from '../../providers/discord-command.provider';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { BuildApplicationCommandService } from '../../services/build-application-command.service';
@@ -39,6 +38,7 @@ export class CommandExplorer implements ClassExplorer {
     private readonly commandTreeService: CommandTreeService,
     private readonly filterExplorer: FilterExplorer,
     private readonly collectorExplorer: CollectorExplorer,
+    private readonly externalContextCreator: ExternalContextCreator,
   ) {}
 
   async explore({ instance }: ClassExplorerOptions): Promise<void> {
@@ -48,11 +48,9 @@ export class CommandExplorer implements ClassExplorer {
 
     const { name, forGuild } = metadata;
     const event = 'interactionCreate';
-    const methodName = 'handler';
     const commandData =
       await this.buildApplicationCommandService.exploreCommandOptions(
         instance,
-        methodName,
         metadata,
       );
 
@@ -92,79 +90,35 @@ export class CommandExplorer implements ClassExplorer {
           subcommand,
         ]);
 
-        const { dtoInstance, instance: commandInstance } = commandNode;
+        const { instance: commandInstance, methodName: commandHandlerName } =
+          commandNode;
 
-        try {
-          //#region apply middleware, guard, pipe
-          await this.middlewareExplorer.applyMiddleware(event, eventArgs);
-          const isAllowFromGuards = await this.guardExplorer.applyGuard({
-            instance: commandInstance,
-            methodName,
-            event,
-            eventArgs,
-          });
-          if (!isAllowFromGuards) return;
+        const collectors = await this.collectorExplorer.applyCollector({
+          instance,
+          methodName: commandHandlerName,
+          event,
+          eventArgs,
+        });
 
-          const pipeResult = await this.pipeExplorer.applyPipe({
-            instance: commandInstance,
-            methodName,
-            event,
-            metatype: dtoInstance?.constructor,
-            eventArgs,
-            initValue: interaction,
-            commandNode,
-          });
-          //#endregion
+        if (
+          !!collectors &&
+          !this.collectorsIsInteraction(collectors) &&
+          !this.collectorsIsMessage(collectors)
+        )
+          throw new Error('Collectors cannot be apply');
 
-          const collectors = await this.collectorExplorer.applyCollector({
-            instance,
-            methodName,
-            event,
-            eventArgs,
-          });
+        const handler = this.externalContextCreator.create(
+          commandInstance,
+          commandInstance[commandHandlerName],
+          commandHandlerName,
+          EVENT_PARAMS_DECORATOR,
+          new DiscordParamFactory(),
+        );
 
-          if (
-            !!collectors &&
-            !this.collectorsIsInteraction(collectors) &&
-            !this.collectorsIsMessage(collectors)
-          )
-            throw new Error('Collectors cannot be apply');
+        const returnReply = await handler(...eventArgs);
 
-          const transformedExecutionContext: TransformedCommandExecutionContext =
-            {
-              interaction,
-              // TODO: Fix problem with types
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              collectors,
-            };
-          const executionContext: CommandExecutionContext<
-            ButtonInteraction | SelectMenuInteraction
-          > = {
-            // TODO: Fix problem with types
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            collectors,
-          };
-
-          const handlerArgs = dtoInstance
-            ? [pipeResult, transformedExecutionContext]
-            : [interaction, executionContext];
-          const replyResult = await commandInstance[methodName](...handlerArgs);
-
-          if (replyResult) await interaction.reply(replyResult);
-        } catch (exception) {
-          const isTrowException = await this.filterExplorer.applyFilter({
-            instance: commandInstance,
-            methodName,
-            event,
-            metatype: dtoInstance?.constructor,
-            eventArgs,
-            exception,
-            commandNode,
-          });
-
-          if (isTrowException) throw exception;
+        if (returnReply) {
+          await interaction.reply(returnReply);
         }
       });
   }

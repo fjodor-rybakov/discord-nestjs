@@ -3,8 +3,13 @@ import {
   ArgRangeOptions,
   ReflectMetadataProvider,
 } from '@discord-nestjs/core';
-import { Inject, Injectable, Optional, PipeTransform } from '@nestjs/common';
-import { ArgumentMetadata } from '@nestjs/common/interfaces/features/pipe-transform.interface';
+import {
+  ArgumentMetadata,
+  Inject,
+  Injectable,
+  Optional,
+  PipeTransform,
+} from '@nestjs/common';
 import { ClassTransformOptions, plainToInstance } from 'class-transformer';
 import { Message } from 'discord.js';
 

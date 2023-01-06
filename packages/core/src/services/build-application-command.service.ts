@@ -12,10 +12,10 @@ import {
 import { CommandOptions } from '../decorators/command/command-options';
 import { isSubCommandGroup } from '../decorators/sub-command-group/is-sub-command-group';
 import { SubCommandGroupOptions } from '../decorators/sub-command-group/sub-command-group-options';
-import { DiscordCommand } from '../definitions/interfaces/discord-command';
 import { TInclude } from '../definitions/types/include.type';
 import { OptionExplorer } from '../explorers/option/option.explorer';
 import { ReflectMetadataProvider } from '../providers/reflect-metadata.provider';
+import { CommandHandlerFinderService } from './command-handler-finder.service';
 import { CommandTreeService } from './command-tree.service';
 import { DtoService } from './dto.service';
 
@@ -27,11 +27,11 @@ export class BuildApplicationCommandService {
     private readonly optionExplorer: OptionExplorer,
     private readonly commandTreeService: CommandTreeService,
     private readonly dtoService: DtoService,
+    private readonly commandHandlerFinderService: CommandHandlerFinderService,
   ) {}
 
   async exploreCommandOptions(
-    instance: DiscordCommand,
-    methodName: string,
+    instance: InstanceType<any>,
     {
       name,
       description,
@@ -43,7 +43,11 @@ export class BuildApplicationCommandService {
       descriptionLocalizations,
     }: CommandOptions,
   ): Promise<ApplicationCommandData> {
-    this.commandTreeService.appendNode([name], { instance });
+    const methodName = await this.commandHandlerFinderService.searchHandler(
+      instance,
+    );
+
+    this.commandTreeService.appendNode([name], { instance, methodName });
     const applicationCommandData: ApplicationCommandData = {
       type,
       name,
@@ -60,14 +64,10 @@ export class BuildApplicationCommandService {
         include,
       );
 
-    const dtoInstance = await this.dtoService.createDtoInstance(
-      instance,
-      methodName,
-    );
+    const dtoType = await this.dtoService.getDtoMetatype(instance, methodName);
 
-    if (dtoInstance) {
-      this.commandTreeService.appendNode([name, 'dtoInstance'], dtoInstance);
-      const commandOptions = this.dtoService.exploreDtoOptions(dtoInstance);
+    if (dtoType) {
+      const commandOptions = this.dtoService.exploreDtoOptions(dtoType);
 
       if (applicationCommandData.type === ApplicationCommandType.ChatInput)
         applicationCommandData.options = applicationCommandData.options.concat(
@@ -138,13 +138,16 @@ export class BuildApplicationCommandService {
 
     if (!metadata) throw new Error(`Passed class is not a subcommand`);
 
-    this.commandTreeService.appendNode(
-      [commandName, subGroupName, metadata.name],
-      { instance: subCommandInstance },
+    const methodName = await this.commandHandlerFinderService.searchHandler(
+      subCommandInstance,
     );
 
-    const methodName = 'handler';
-    const dtoInstance = await this.dtoService.createDtoInstance(
+    this.commandTreeService.appendNode(
+      [commandName, subGroupName, metadata.name],
+      { instance: subCommandInstance, methodName },
+    );
+
+    const dtoType = await this.dtoService.getDtoMetatype(
       subCommandInstance,
       methodName,
     );
@@ -156,12 +159,8 @@ export class BuildApplicationCommandService {
       descriptionLocalizations: metadata.descriptionLocalizations,
     };
 
-    if (dtoInstance) {
-      this.commandTreeService.appendNode(
-        [commandName, subGroupName, metadata.name, 'dtoInstance'],
-        dtoInstance,
-      );
-      const commandOptions = this.dtoService.exploreDtoOptions(dtoInstance);
+    if (dtoType) {
+      const commandOptions = this.dtoService.exploreDtoOptions(dtoType);
 
       if (commandOptions.length !== 0)
         applicationSubCommandData.options = this.sortByRequired(commandOptions);

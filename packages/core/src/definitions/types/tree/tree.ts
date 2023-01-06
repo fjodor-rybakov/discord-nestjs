@@ -1,5 +1,3 @@
 import { CommandNode } from './command-node';
 
-export type Tree = {
-  [commandName: string]: CommandNode;
-};
+export type Tree = CommandNode;

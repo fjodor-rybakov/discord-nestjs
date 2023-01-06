@@ -14,6 +14,8 @@ import { REACTION_COLLECTOR_METADATA } from '../decorators/collector/reaction-co
 import { USE_COLLECTORS_METADATA } from '../decorators/collector/use-collectors/use-collectors.constant';
 import { CommandOptions } from '../decorators/command/command-options';
 import { COMMAND_DECORATOR } from '../decorators/command/command.constant';
+import { HANDLER_DECORATOR } from '../decorators/command/handler/handler.constant';
+import { COMMAND_OPTION } from '../decorators/command/options/command-option.contant';
 import { OnCollectDecoratorOptions } from '../decorators/event/on-collect-decorator-options';
 import { OnDecoratorOptions } from '../decorators/event/on-decorator-options';
 import {
@@ -39,8 +41,6 @@ import { NonParamOptions } from '../decorators/option/param/non-param-options';
 import { NumericParamOptions } from '../decorators/option/param/numeric-param-options';
 import { PARAM_DECORATOR } from '../decorators/option/param/param.constant';
 import { StringParamOptions } from '../decorators/option/param/string-param-options';
-import { ParamTypeOptions } from '../decorators/param/param-type-options';
-import { PAYLOAD_DECORATOR } from '../decorators/param/payload/payload.constant';
 import { USE_PIPES_DECORATOR } from '../decorators/pipe/pipe.constant';
 import { PrefixCommandOptions } from '../decorators/prefix-command/prefix-command-options';
 import { ON_PREFIX_COMMAND_DECORATOR } from '../decorators/prefix-command/prefix-command.constant';
@@ -58,6 +58,17 @@ import { PipeType } from '../definitions/types/pipe.type';
 export class ReflectMetadataProvider {
   getCommandDecoratorMetadata(instance: InstanceType<any>): CommandOptions {
     return Reflect.getMetadata(COMMAND_DECORATOR, instance);
+  }
+
+  getHandlerDecoratorMetadata(
+    instance: InstanceType<any>,
+    methodName: string,
+  ): Record<string, any> {
+    return Reflect.getMetadata(HANDLER_DECORATOR, instance, methodName);
+  }
+
+  getCommandOptionDecoratorMetadata(classType: Type): Record<string, any> {
+    return Reflect.getMetadata(COMMAND_OPTION, classType.prototype);
   }
 
   getSubCommandDecoratorMetadata(
@@ -171,32 +182,22 @@ export class ReflectMetadataProvider {
     return Reflect.getMetadata('design:type', instance, methodName);
   }
 
-  getPayloadDecoratorMetadata(
-    instance: InstanceType<any>,
-    methodName: string,
-  ): ParamTypeOptions {
-    return Reflect.getMetadata(PAYLOAD_DECORATOR, instance, methodName);
-  }
-
   getParamDecoratorMetadata(
-    instance: InstanceType<any>,
+    type: Type,
     propertyKey: string,
   ): NumericParamOptions & StringParamOptions & NonParamOptions {
-    return Reflect.getMetadata(PARAM_DECORATOR, instance, propertyKey);
+    return Reflect.getMetadata(PARAM_DECORATOR, type, propertyKey);
   }
 
   getChoiceDecoratorMetadata(
-    instance: InstanceType<any>,
+    type: Type,
     propertyKey: string,
   ): Record<string, any> | Map<string, string | number> {
-    return Reflect.getMetadata(CHOICE_DECORATOR, instance, propertyKey);
+    return Reflect.getMetadata(CHOICE_DECORATOR, type, propertyKey);
   }
 
-  getChannelDecoratorMetadata(
-    instance: InstanceType<any>,
-    propertyKey: string,
-  ): ChannelType[] {
-    return Reflect.getMetadata(CHANNEL_DECORATOR, instance, propertyKey);
+  getChannelDecoratorMetadata(type: Type, propertyKey: string): ChannelType[] {
+    return Reflect.getMetadata(CHANNEL_DECORATOR, type, propertyKey);
   }
 
   getReactionCollectorDecoratorMetadata(

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Type } from '@nestjs/common';
 import {
   ApplicationCommandOptionChoiceData,
   ApplicationCommandOptionType,
@@ -14,16 +14,14 @@ import { OptionMetadata } from './option-metadata';
 export class OptionExplorer {
   constructor(private readonly metadataProvider: ReflectMetadataProvider) {}
 
-  explore(dtoInstance: InstanceType<any>): OptionMetadata {
+  explore(dtoType: Type): OptionMetadata {
     const optionMetadata: OptionMetadata = {};
+    const dtoInstance = new dtoType();
 
     Object.keys(dtoInstance).map((propertyKey: string) => {
       const paramDecoratorMetadata =
-        this.metadataProvider.getParamDecoratorMetadata(
-          dtoInstance,
-          propertyKey,
-        );
-      const channelTypes = this.getChannelOptions(dtoInstance, propertyKey);
+        this.metadataProvider.getParamDecoratorMetadata(dtoType, propertyKey);
+      const channelTypes = this.getChannelOptions(dtoType, propertyKey);
       const applicationOptionType = channelTypes
         ? ApplicationCommandOptionType.Channel
         : this.getApplicationOptionTypeByArg(
@@ -41,7 +39,7 @@ export class OptionExplorer {
           autocomplete: paramDecoratorMetadata.autocomplete,
           required: paramDecoratorMetadata.required,
         },
-        choice: this.getChoiceOptions(dtoInstance, propertyKey),
+        choice: this.getChoiceOptions(dtoType, propertyKey),
         channelTypes,
       };
     });
@@ -50,11 +48,11 @@ export class OptionExplorer {
   }
 
   private getChoiceOptions(
-    dtoInstance: InstanceType<any>,
+    dtoType: Type,
     propertyKey: string,
   ): ApplicationCommandOptionChoiceData[] {
     const choiceData = this.metadataProvider.getChoiceDecoratorMetadata(
-      dtoInstance,
+      dtoType,
       propertyKey,
     );
     if (!choiceData) return;
@@ -70,21 +68,15 @@ export class OptionExplorer {
     return entries.map(([name, value]) => ({ name, value }));
   }
 
-  private getChannelOptions(
-    dtoInstance: InstanceType<any>,
-    propertyKey: string,
-  ): ChannelType[] {
-    const channelTypes = this.metadataProvider.getChannelDecoratorMetadata(
-      dtoInstance,
+  private getChannelOptions(dtoType: Type, propertyKey: string): ChannelType[] {
+    return this.metadataProvider.getChannelDecoratorMetadata(
+      dtoType,
       propertyKey,
     );
-    if (!channelTypes) return;
-
-    return channelTypes;
   }
 
   private getApplicationOptionTypeByArg(
-    dtoInstance: InstanceType<any>,
+    instance: InstanceType<any>,
     propertyKey: string,
     argDecoratorOptions: ParamOptions,
   ): ApplicationCommandOptionType {
@@ -107,7 +99,7 @@ export class OptionExplorer {
         return ApplicationCommandOptionType.Attachment;
       default: {
         const metatype = this.metadataProvider.getPropertyTypeMetadata(
-          dtoInstance,
+          instance,
           propertyKey,
         );
         if (metatype.name === 'String')
@@ -117,7 +109,7 @@ export class OptionExplorer {
           return ApplicationCommandOptionType.Boolean;
 
         throw new Error(
-          `Could not determine field type "${propertyKey}" in class "${dtoInstance.constructor.name}"`,
+          `Could not determine field type "${propertyKey}" in class "${instance.constructor.name}"`,
         );
       }
     }

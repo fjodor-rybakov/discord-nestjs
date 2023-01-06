@@ -22,13 +22,13 @@ import { FilterExplorer } from './explorers/filter/filter.explorer';
 import { GuardExplorer } from './explorers/guard/guard.explorer';
 import { MiddlewareExplorer } from './explorers/middleware/middleware.explorer';
 import { OptionExplorer } from './explorers/option/option.explorer';
-import { ParamExplorer } from './explorers/param/param.explorer';
 import { PipeExplorer } from './explorers/pipe/pipe.explorer';
 import { DiscordClientProvider } from './providers/discord-client.provider';
 import { DiscordCommandProvider } from './providers/discord-command.provider';
 import { ReflectMetadataProvider } from './providers/reflect-metadata.provider';
 import { BuildApplicationCommandService } from './services/build-application-command.service';
 import { ClientService } from './services/client.service';
+import { CommandHandlerFinderService } from './services/command-handler-finder.service';
 import { CommandTreeService } from './services/command-tree.service';
 import { DtoService } from './services/dto.service';
 import { ExplorerService } from './services/explorer.service';
@@ -56,11 +56,11 @@ export class DiscordModule {
         MiddlewareExplorer,
         PipeExplorer,
         GuardExplorer,
-        ParamExplorer,
         CommandExplorer,
         DtoService,
         EventExplorer,
         ExplorerService,
+        CommandHandlerFinderService,
         BuildApplicationCommandService,
         GlobalProviderService,
         CommandTreeService,

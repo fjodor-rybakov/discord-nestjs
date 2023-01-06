@@ -20,7 +20,7 @@ $ yarn add @discord-nestjs/common
 
 ### ℹ️ Pipes template
 
-`TransformPipe` fills in the fields `DTO` from `CommandInteraction`. 
+`SlashCommandPipe` fills in the fields `DTO` from `CommandInteraction`. 
 
 For prefix command use `PrefixCommandPipe`.
 
@@ -57,14 +57,14 @@ export class RegistrationEmailDto {
 
 import { RegistrationDto } from './registration.dto';
 import { Command, UsePipes, Payload, DiscordTransformedCommand } from '@discord-nestjs/core';
-import { TransformPipe } from '@discord-nestjs/common';
+import { SlashCommandPipe } from '@discord-nestjs/common';
 import { CommandInteraction } from 'discord.js';
 
 @Command({
   name: 'reg',
   description: 'User registration',
 })
-@UsePipes(TransformPipe)
+@UsePipes(SlashCommandPipe)
 export class BaseInfoCommand implements DiscordTransformedCommand<RegistrationEmailDto>
 {
   handler(@Payload() dto: RegistrationEmailDto): string {
@@ -113,14 +113,14 @@ export class RegistrationEmailDto {
 
 import { RegistrationDto } from './registration.dto';
 import { Command, UsePipes, Payload, DiscordTransformedCommand } from '@discord-nestjs/core';
-import { TransformPipe, ValidationPipe } from '@discord-nestjs/common';
+import { SlashCommandPipe, ValidationPipe } from '@discord-nestjs/common';
 import { CommandInteraction } from 'discord.js';
 
 @Command({
   name: 'reg',
   description: 'User registration',
 })
-@UsePipes(TransformPipe, ValidationPipe)
+@UsePipes(SlashCommandPipe, ValidationPipe)
 export class BaseInfoCommand implements DiscordTransformedCommand<RegistrationEmailDto> {
   handler(@Payload() dto: RegistrationEmailDto): string {
     // dto instance must be valid

@@ -1,9 +1,8 @@
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { ExternalContextCreator } from '@nestjs/core/helpers/external-context-creator';
-import { STATIC_CONTEXT } from '@nestjs/core/injector/constants';
 import { ClientEvents } from 'discord.js';
 
-import { EVENT_ARGS_DECORATOR } from '../../decorators/param/event-param.constant';
+import { EVENT_PARAMS_DECORATOR } from '../../decorators/param/event-param.constant';
 import { DiscordParamFactory } from '../../factory/discord-param-factory';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { ClientService } from '../../services/client.service';
@@ -52,7 +51,7 @@ export class EventExplorer implements MethodExplorer {
             instance,
             instance[methodName],
             methodName,
-            EVENT_ARGS_DECORATOR,
+            EVENT_PARAMS_DECORATOR,
             new DiscordParamFactory(),
           );
 

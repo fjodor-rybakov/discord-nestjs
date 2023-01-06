@@ -24,7 +24,7 @@ export class ModalFieldsTransformPipe implements DiscordPipeTransform {
   ): any {
     if (!metadata.metatype || !modal) return;
 
-    const { dtoInstance } = metadata.commandNode;
+    const dtoInstance = new metadata.metatype();
     const plainObject = {};
 
     Object.keys(dtoInstance).forEach((property) => {

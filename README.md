@@ -35,7 +35,7 @@ NestJS package for discord.js
 
 This monorepo consists of several packages.
 * [@discord-nestjs/core](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/core) - Main package containing decorators, basic types and module declaration.
-* [@discord-nestjs/common](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/common) - Contains optional common templates. For example TransformPipe or ValidationPipe.
+* [@discord-nestjs/common](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/common) - Contains optional common templates. For example SlashCommandPipe or ValidationPipe.
 * [@discord-nestjs/schematics](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/schematics) - Provides cli to create a bot template.
 * Samples
   * [@sample/command](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/sample/command) - Bot example with slash commands
@@ -333,7 +333,7 @@ Check your intent is passed to the `discordClientOptions` of the module. [More i
 
 </details>
 
-### I created DTO and added `TransformPipe`, but when I receive response to the command, the DTO fields are missing
+### I created DTO and added `SlashCommandPipe`, but when I receive response to the command, the DTO fields are missing
 
 <details>
   <summary>Click to expand</summary>

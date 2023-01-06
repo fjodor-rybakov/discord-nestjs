@@ -235,7 +235,7 @@ export class PlaylistCommand implements DiscordCommand {
 If your command accepts parameters, you need to already implement the `DiscordTransformedCommand` interface.
 The `handler` method of the `DiscordTransformedCommand` interface takes a DTO marked with `@Payload` decorator as the first parameter.
 
-> ⚠️**Important! For fields to be filled in `DTO` from `CommandInteraction`, you must use `TransformPipe` from `@discord-nestjs/common`**
+> ⚠️**Important! For fields to be filled in `DTO` from `CommandInteraction`, you must use `SlashCommandPipe` from `@discord-nestjs/common`**
 
 #### 💡 Example
 
@@ -244,7 +244,7 @@ The `handler` method of the `DiscordTransformedCommand` interface takes a DTO ma
 
 import { RegistrationDto } from './registration.dto';
 import { Command, UsePipes, Payload, DiscordTransformedCommand } from '@discord-nestjs/core';
-import { TransformPipe } from '@discord-nestjs/common';
+import { SlashCommandPipe } from '@discord-nestjs/common';
 import { Injectable } from '@nestjs/common';
 import { CommandInteraction } from 'discord.js';
 
@@ -253,7 +253,7 @@ import { CommandInteraction } from 'discord.js';
   description: 'User registration',
 })
 @Injectable()
-@UsePipes(TransformPipe)
+@UsePipes(SlashCommandPipe)
 export class BaseInfoCommand implements DiscordTransformedCommand<RegistrationDto>
 {
   handler(@Payload() dto: RegistrationDto, interaction: CommandInteraction): string {
@@ -299,7 +299,7 @@ export class RegistrationDto {
 > to pass the type. The type will resolve **automatically**.
 
 > You can also transform and validate the parameters to match your DTO by using the [common](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/common) package's 
-> TransformPipe and ValidationPipe, or by using custom [Pipes](#Pipes).
+> SlashCommandPipe and ValidationPipe, or by using custom [Pipes](#Pipes).
 
 Each command must be added to a NestJS module.
 
@@ -405,9 +405,9 @@ import {
   DiscordTransformedCommand,
   UsePipes,
 } from '@discord-nestjs/core';
-import { TransformPipe } from '@discord-nestjs/common';
+import { SlashCommandPipe } from '@discord-nestjs/common';
 
-@UsePipes(TransformPipe)
+@UsePipes(SlashCommandPipe)
 @SubCommand({ name: 'email', description: 'Register by email' })
 export class EmailSubCommand implements DiscordTransformedCommand<EmailDto> {
   handler(@Payload() dto: EmailDto): string {
@@ -426,9 +426,9 @@ import {
   SubCommand,
   UsePipes,
 } from '@discord-nestjs/core';
-import { TransformPipe } from '@discord-nestjs/common';
+import { SlashCommandPipe } from '@discord-nestjs/common';
 
-@UsePipes(TransformPipe)
+@UsePipes(SlashCommandPipe)
 @SubCommand({ name: 'number', description: 'Register by phone number' })
 export class NumberSubCommand implements DiscordTransformedCommand<NumberDto> {
   handler(@Payload() dto: NumberDto): string {
@@ -998,7 +998,7 @@ After that, you just need to pass the filter to `@UseFilters` decorator.
 
 import { EmailDto } from '../../dto/email.dto';
 import { CommandValidationFilter } from '../../filter/command-validation.filter';
-import { TransformPipe, ValidationPipe } from '@discord-nestjs/common';
+import { SlashCommandPipe, ValidationPipe } from '@discord-nestjs/common';
 import {
   Payload,
   Command,
@@ -1008,7 +1008,7 @@ import {
 } from '@discord-nestjs/core';
 
 @UseFilters(CommandValidationFilter)
-@UsePipes(TransformPipe, ValidationPipe)
+@UsePipes(SlashCommandPipe, ValidationPipe)
 @Command({ name: 'email', description: 'Register by email' })
 export class EmailCommand implements DiscordTransformedCommand<EmailDto> {
   handler(@Payload() dto: EmailDto): string {
@@ -1185,7 +1185,7 @@ export class PostInteractionCollector {
 ```typescript
 /* play.command.ts */
 
-import { TransformPipe } from '@discord-nestjs/common';
+import { SlashCommandPipe } from '@discord-nestjs/common';
 import {
   Command,
   DiscordTransformedCommand,
@@ -1208,7 +1208,7 @@ import { PostInteractionCollector } from '../post-interaction-collector';
   name: 'play',
   description: 'Plays a song',
 })
-@UsePipes(TransformPipe)
+@UsePipes(SlashCommandPipe)
 @UseCollectors(PostInteractionCollector)
 export class PlayCommand implements DiscordTransformedCommand<PlayDto> {
   async handler(@Payload() dto: PlayDto): Promise<InteractionReplyOptions> {
