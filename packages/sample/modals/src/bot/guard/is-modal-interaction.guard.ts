@@ -1,14 +1,10 @@
-import { DiscordGuard, EventArgs } from '@discord-nestjs/core';
-import { ClientEvents, InteractionType } from 'discord.js';
+import { CanActivate, ExecutionContext } from '@nestjs/common';
+import { InteractionType } from 'discord.js';
 
-export class IsModalInteractionGuard implements DiscordGuard {
-  canActive(
-    event: keyof ClientEvents,
-    [interaction]: EventArgs<'interactionCreate'>,
-  ): boolean | Promise<boolean> {
-    return (
-      event === 'interactionCreate' &&
-      interaction.type === InteractionType.ModalSubmit
-    );
+export class IsModalInteractionGuard implements CanActivate {
+  canActivate(context: ExecutionContext): boolean {
+    const interaction = context.getArgByIndex(0);
+
+    return interaction.type === InteractionType.ModalSubmit;
   }
 }

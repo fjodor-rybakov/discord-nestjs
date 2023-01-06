@@ -1,16 +1,18 @@
+import { ReflectMetadataProvider } from '@discord-nestjs/core';
 import {
-  DiscordArgumentMetadata,
-  DiscordPipeTransform,
-  ReflectMetadataProvider,
-} from '@discord-nestjs/core';
-import { Inject, Injectable, Optional } from '@nestjs/common';
+  ArgumentMetadata,
+  Inject,
+  Injectable,
+  Optional,
+  PipeTransform,
+} from '@nestjs/common';
 import { ClassTransformOptions, plainToInstance } from 'class-transformer';
-import { ModalSubmitInteraction } from 'discord.js';
+import { Interaction } from 'discord.js';
 
-import { TRANSFORMER_OPTION } from '../contants/transformer-options.constant';
+import { TRANSFORMER_OPTION } from '../../contants/transformer-options.constant';
 
 @Injectable()
-export class ModalFieldsTransformPipe implements DiscordPipeTransform {
+export class ModalFieldsTransformPipe implements PipeTransform {
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
     @Optional()
@@ -19,19 +21,26 @@ export class ModalFieldsTransformPipe implements DiscordPipeTransform {
   ) {}
 
   transform(
-    [modal]: [ModalSubmitInteraction],
-    metadata: DiscordArgumentMetadata<'interactionCreate'>,
-  ): any {
-    if (!metadata.metatype || !modal) return;
+    interaction: Interaction,
+    metadata: ArgumentMetadata,
+  ): InstanceType<any> {
+    if (
+      !metadata.metatype ||
+      !interaction ||
+      typeof interaction['isModalSubmit'] !== 'function' ||
+      !interaction.isModalSubmit()
+    )
+      return;
 
     const dtoInstance = new metadata.metatype();
+    const keys = Object.keys(dtoInstance);
     const plainObject = {};
 
-    Object.keys(dtoInstance).forEach((property) => {
+    keys.forEach((property) => {
       const fieldCustomMetadata =
         this.metadataProvider.getFiledDecoratorMetadata(dtoInstance, property);
-      if (fieldCustomMetadata && modal.fields) {
-        plainObject[property] = modal.fields.getField(
+      if (fieldCustomMetadata && interaction.fields) {
+        plainObject[property] = interaction.fields.getField(
           fieldCustomMetadata.customId ?? property,
           fieldCustomMetadata.type,
         );
@@ -44,8 +53,8 @@ export class ModalFieldsTransformPipe implements DiscordPipeTransform {
           dtoInstance,
           property,
         );
-      if (textInputValueCustomMetadata && modal.fields) {
-        plainObject[property] = modal.fields.getTextInputValue(
+      if (textInputValueCustomMetadata && interaction.fields) {
+        plainObject[property] = interaction.fields.getTextInputValue(
           textInputValueCustomMetadata.customId ?? property,
         );
 
