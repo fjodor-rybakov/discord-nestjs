@@ -43,9 +43,13 @@ export class BuildApplicationCommandService {
       descriptionLocalizations,
     }: CommandOptions,
   ): Promise<ApplicationCommandData> {
-    const methodName = await this.commandHandlerFinderService.searchHandler(
-      instance,
-    );
+    let methodName = void 0;
+
+    if (include.length === 0) {
+      methodName = await this.commandHandlerFinderService.searchHandler(
+        instance,
+      );
+    }
 
     this.commandTreeService.appendNode([name], { instance, methodName });
     const applicationCommandData: ApplicationCommandData = {

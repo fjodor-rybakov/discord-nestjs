@@ -1,4 +1,4 @@
-import { DiscordCommand, SubCommand } from '@discord-nestjs/core';
+import { Handler, SubCommand } from '@discord-nestjs/core';
 import {
   CommandInteraction,
   EmbedBuilder,
@@ -6,8 +6,9 @@ import {
 } from 'discord.js';
 
 @SubCommand({ name: 'base-info', description: 'Base info' })
-export class BaseInfoSubCommand implements DiscordCommand {
-  handler(interaction: CommandInteraction): InteractionReplyOptions {
+export class BaseInfoSubCommand {
+  @Handler()
+  onBaseInfoCommand(interaction: CommandInteraction): InteractionReplyOptions {
     const { user } = interaction;
 
     const embed = new EmbedBuilder()
