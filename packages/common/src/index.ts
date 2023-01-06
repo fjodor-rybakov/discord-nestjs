@@ -12,3 +12,6 @@ export * from './mapped-types/discord-intersection-type';
 // Interceptors
 export * from './interceptors/prefix-command/prefix-command.interceptor';
 export * from './interceptors/prefix-command/prefix-command-options';
+
+// Exceptions
+export * from './exceptions/wrong-args.exception';

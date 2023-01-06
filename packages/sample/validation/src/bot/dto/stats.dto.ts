@@ -1,6 +1,7 @@
-import { Param } from '@discord-nestjs/core';
+import { CommandOption, Param } from '@discord-nestjs/core';
 import { IsAlphanumeric, IsPhoneNumber } from 'class-validator';
 
+@CommandOption()
 export class StatsDto {
   @IsAlphanumeric()
   @Param({
