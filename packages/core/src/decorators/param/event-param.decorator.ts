@@ -13,7 +13,6 @@ import { EVENT_PARAMS_DECORATOR } from './event-param.constant';
 /**
  * Extract `Interaction` instance from event params
  */
-/*
 export function InteractionEvent(
   property?: string | (Type<PipeTransform> | PipeTransform),
   ...pipes: (Type<PipeTransform> | PipeTransform)[]
@@ -23,17 +22,6 @@ export function InteractionEvent(
     ...pipes,
   );
 }
-*/
-export const InteractionEvent = createParamDecorator<
-  string,
-  ExecutionContextHost
->((data, input) => {
-  const interaction = input.getArgByIndex(0);
-
-  return data && typeof data === 'string' && interaction
-    ? interaction[data]
-    : interaction;
-});
 
 export const EventParams = createParamDecorator<string, ExecutionContextHost>(
   (data, input) => {
