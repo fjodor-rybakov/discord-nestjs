@@ -5,12 +5,8 @@ import { Collector, InteractionCollector, Snowflake } from 'discord.js';
 import { BaseCollectorMetadata } from '../../definitions/types/base-collector-metadata';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { InstantiationService } from '../../services/instantiation.service';
-import { FilterExplorer } from '../filter/filter.explorer';
-import { GuardExplorer } from '../guard/guard.explorer';
 import { MethodExplorer } from '../interfaces/method-explorer';
 import { MethodExplorerOptions } from '../interfaces/method-explorer-options';
-import { MiddlewareExplorer } from '../middleware/middleware.explorer';
-import { PipeExplorer } from '../pipe/pipe.explorer';
 import { CollectMethodEventsInfo } from './collect-method-events-info';
 import { CollectorMetadata } from './collector-metadata';
 import { DiscordCollectors } from './discord-collectors';
@@ -27,10 +23,6 @@ export class CollectorExplorer implements MethodExplorer {
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
     private readonly instantiationService: InstantiationService,
-    private readonly middlewareExplorer: MiddlewareExplorer,
-    private readonly guardExplorer: GuardExplorer,
-    private readonly filterExplorer: FilterExplorer,
-    private readonly pipeExplorer: PipeExplorer,
     private readonly metadataScanner: MetadataScanner,
     private readonly reactCollectorStrategy: ReactCollectorStrategy,
     private readonly interactionCollectorStrategy: InteractionCollectorStrategy,
