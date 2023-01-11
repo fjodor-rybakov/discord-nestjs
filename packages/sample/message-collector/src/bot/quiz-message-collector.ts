@@ -1,10 +1,5 @@
-import {
-  MessageEventCollector,
-  On,
-  Once,
-  UseGuards,
-} from '@discord-nestjs/core';
-import { Logger } from '@nestjs/common';
+import { MessageEventCollector, On, Once } from '@discord-nestjs/core';
+import { Logger, UseGuards } from '@nestjs/common';
 import { Message } from 'discord.js';
 
 import { MessageFromUserGuard } from './guards/message-from-user.guard';

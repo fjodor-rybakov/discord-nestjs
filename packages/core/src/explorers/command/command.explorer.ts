@@ -93,20 +93,6 @@ export class CommandExplorer implements ClassExplorer {
         const { instance: commandInstance, methodName: commandHandlerName } =
           commandNode;
 
-        const collectors = await this.collectorExplorer.applyCollector({
-          instance,
-          methodName: commandHandlerName,
-          event,
-          eventArgs,
-        });
-
-        if (
-          !!collectors &&
-          !this.collectorsIsInteraction(collectors) &&
-          !this.collectorsIsMessage(collectors)
-        )
-          throw new Error('Collectors cannot be apply');
-
         const handler = this.externalContextCreator.create(
           commandInstance,
           commandInstance[commandHandlerName],
@@ -121,21 +107,5 @@ export class CommandExplorer implements ClassExplorer {
           await interaction.reply(returnReply);
         }
       });
-  }
-
-  private collectorsIsInteraction(
-    collectors: NonNullable<Collector<Snowflake, any, any>[]>,
-  ): collectors is InteractionCollector<any>[] {
-    return collectors.every(
-      (collector) => collector instanceof InteractionCollector,
-    );
-  }
-
-  private collectorsIsMessage(
-    collectors: NonNullable<Collector<Snowflake, any, any>[]>,
-  ): collectors is MessageCollector[] {
-    return collectors.every(
-      (collector) => collector instanceof MessageCollector,
-    );
   }
 }

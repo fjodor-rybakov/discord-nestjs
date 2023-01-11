@@ -1,6 +1,12 @@
 import { Injectable, Type } from '@nestjs/common';
 import { MetadataScanner, ModuleRef } from '@nestjs/core';
-import { Collector, InteractionCollector, Snowflake } from 'discord.js';
+import {
+  InteractionCollector,
+  MappedInteractionTypes,
+  MessageCollector,
+  MessageComponentType,
+  ReactionCollector,
+} from 'discord.js';
 
 import { BaseCollectorMetadata } from '../../definitions/types/base-collector-metadata';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
@@ -80,11 +86,16 @@ export class CollectorExplorer implements MethodExplorer {
     this.initCollectorInstances.push(...methodCollectorInstances);
   }
 
-  async applyCollector<T>(
+  async applyCollector(
     options: UseCollectorApplyOptions,
-  ): Promise<Collector<Snowflake, T>[] | undefined> {
-    const { instance, methodName } = options;
-    const classType = instance.constructor;
+  ): Promise<
+    (
+      | ReactionCollector
+      | MessageCollector
+      | InteractionCollector<MappedInteractionTypes[MessageComponentType]>
+    )[]
+  > {
+    const { classType, methodName } = options;
 
     if (!this.cachedCollectors.has(classType)) return;
 

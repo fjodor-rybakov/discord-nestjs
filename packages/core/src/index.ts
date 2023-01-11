@@ -10,6 +10,7 @@ export * from './definitions/interfaces/execution-context';
 export * from './definitions/interfaces/command-execution-context';
 export * from './definitions/interfaces/transformed-command-execution-context';
 export * from './definitions/interfaces/prefix-command-global-options';
+export * from './definitions/interfaces/event-context';
 
 export * from './decorators/command/command-options';
 export * from './decorators/sub-command/sub-command-options';
@@ -73,6 +74,7 @@ export * from './decorators/command/options/command-option.decorator';
 export * from './providers/discord-client.provider';
 export * from './providers/reflect-metadata.provider';
 export * from './providers/discord-command.provider';
+export * from './providers/collector.provider';
 
 // Constants
 export * from './decorators/client/inject-discord-client.constant';

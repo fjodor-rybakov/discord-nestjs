@@ -1,9 +1,12 @@
 import { DynamicModule, Module, Provider, Type } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
+import { DiscoveryService } from '@nestjs/core/discovery/discovery-service';
 import { Subject, firstValueFrom } from 'rxjs';
 
 import { INJECT_DISCORD_CLIENT } from './decorators/client/inject-discord-client.constant';
+import { COLLECTOR_EXPLORER_ALIAS } from './definitions/constants/collector-explorer-alias';
 import { DISCORD_CLIENT_PROVIDER_ALIAS } from './definitions/constants/discord-client-provider-alias';
+import { DISCORD_COLLECTOR_PROVIDER_ALIAS } from './definitions/constants/discord-collector-provider-alias';
 import { DISCORD_COMMAND_PROVIDER_ALIAS } from './definitions/constants/discord-command-provider-alias';
 import { DISCORD_MODULE_OPTIONS } from './definitions/constants/discord-module.contant';
 import { REFLECT_METADATA_PROVIDER_ALIAS } from './definitions/constants/reflect-metadata-provider-alias';
@@ -23,6 +26,7 @@ import { GuardExplorer } from './explorers/guard/guard.explorer';
 import { MiddlewareExplorer } from './explorers/middleware/middleware.explorer';
 import { OptionExplorer } from './explorers/option/option.explorer';
 import { PipeExplorer } from './explorers/pipe/pipe.explorer';
+import { CollectorProvider } from './providers/collector.provider';
 import { DiscordClientProvider } from './providers/discord-client.provider';
 import { DiscordCommandProvider } from './providers/discord-command.provider';
 import { ReflectMetadataProvider } from './providers/reflect-metadata.provider';
@@ -64,13 +68,13 @@ export class DiscordModule {
         BuildApplicationCommandService,
         GlobalProviderService,
         CommandTreeService,
-        CollectorExplorer,
         ReactCollectorStrategy,
         MessageCollectorStrategy,
         InteractionCollectorStrategy,
         CollectorRegister,
       ],
       exports: [
+        CollectorProvider,
         DiscordClientProvider,
         ReflectMetadataProvider,
         DiscordCommandProvider,
@@ -96,11 +100,20 @@ export class DiscordModule {
           useExisting: REFLECT_METADATA_PROVIDER_ALIAS,
         },
         {
+          provide: CollectorExplorer,
+          useExisting: COLLECTOR_EXPLORER_ALIAS,
+        },
+        {
           provide: DiscordCommandProvider,
           useExisting: DISCORD_COMMAND_PROVIDER_ALIAS,
         },
+        {
+          provide: CollectorProvider,
+          useExisting: DISCORD_COLLECTOR_PROVIDER_ALIAS,
+        },
       ],
       exports: [
+        CollectorProvider,
         DiscordClientProvider,
         ReflectMetadataProvider,
         DiscordCommandProvider,
@@ -134,12 +147,16 @@ export class DiscordModule {
         ],
       },
       {
-        provide: ReflectMetadataProvider,
-        useExisting: REFLECT_METADATA_PROVIDER_ALIAS,
-      },
-      {
         provide: DiscordCommandProvider,
         useExisting: DISCORD_COMMAND_PROVIDER_ALIAS,
+      },
+      {
+        provide: CollectorExplorer,
+        useExisting: COLLECTOR_EXPLORER_ALIAS,
+      },
+      {
+        provide: CollectorProvider,
+        useExisting: DISCORD_COLLECTOR_PROVIDER_ALIAS,
       },
       {
         provide: INJECT_DISCORD_CLIENT,
@@ -147,6 +164,7 @@ export class DiscordModule {
           discordClientProvider.getClient(),
         inject: [DiscordClientProvider],
       },
+      ReflectMetadataProvider,
     ];
   }
 

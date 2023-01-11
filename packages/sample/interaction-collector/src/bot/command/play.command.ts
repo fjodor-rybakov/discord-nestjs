@@ -1,12 +1,7 @@
-import { TransformPipe } from '@discord-nestjs/common';
-import {
-  Command,
-  DiscordTransformedCommand,
-  Payload,
-  UseCollectors,
-  UsePipes,
-} from '@discord-nestjs/core';
+import { CollectorInterceptor, SlashCommandPipe } from '@discord-nestjs/common';
+import { Command, Handler, IA, UseCollectors } from '@discord-nestjs/core';
 import { MessageActionRowComponentBuilder } from '@discordjs/builders';
+import { UseInterceptors } from '@nestjs/common';
 import {
   ActionRowBuilder,
   ButtonBuilder,
@@ -21,10 +16,13 @@ import { PostInteractionCollector } from '../post-interaction-collector';
   name: 'play',
   description: 'Plays a song',
 })
-@UsePipes(TransformPipe)
+@UseInterceptors(CollectorInterceptor)
 @UseCollectors(PostInteractionCollector)
-export class PlayCommand implements DiscordTransformedCommand<PlayDto> {
-  async handler(@Payload() dto: PlayDto): Promise<InteractionReplyOptions> {
+export class PlayCommand {
+  @Handler()
+  async onPlayCommand(
+    @IA(SlashCommandPipe) dto: PlayDto,
+  ): Promise<InteractionReplyOptions> {
     const row =
       new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
         new ButtonBuilder()
