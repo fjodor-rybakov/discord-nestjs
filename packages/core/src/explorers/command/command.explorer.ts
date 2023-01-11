@@ -1,15 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { ExternalContextCreator } from '@nestjs/core/helpers/external-context-creator';
-import {
-  ClientEvents,
-  Collector,
-  InteractionCollector,
-  MessageCollector,
-  Snowflake,
-} from 'discord.js';
+import { ClientEvents } from 'discord.js';
 
 import { EVENT_PARAMS_DECORATOR } from '../../decorators/param/event-param.constant';
+import { EventContext } from '../../definitions/interfaces/event-context';
 import { DiscordParamFactory } from '../../factory/discord-param-factory';
 import { DiscordCommandProvider } from '../../providers/discord-command.provider';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
@@ -101,7 +96,10 @@ export class CommandExplorer implements ClassExplorer {
           new DiscordParamFactory(),
         );
 
-        const returnReply = await handler(...eventArgs);
+        const returnReply = await handler(...eventArgs, {
+          event,
+          collectors: [],
+        } as EventContext);
 
         if (returnReply) {
           await interaction.reply(returnReply);

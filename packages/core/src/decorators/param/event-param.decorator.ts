@@ -29,6 +29,16 @@ export const EventParams = createParamDecorator<string, ExecutionContextHost>(
   },
 );
 
+export function AppliedCollectors(
+  index?: number | (Type<PipeTransform> | PipeTransform),
+  ...pipes: (Type<PipeTransform> | PipeTransform)[]
+): ParameterDecorator {
+  return createPipesEventParamDecorator(DiscordParamType.APPLIED_COLLECTORS)(
+    index.toString(),
+    ...pipes,
+  );
+}
+
 /**
  * Extract `Message` instance from event params
  */

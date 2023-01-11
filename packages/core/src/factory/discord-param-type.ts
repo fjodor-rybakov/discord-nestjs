@@ -2,5 +2,6 @@ export enum DiscordParamType {
   MESSAGE,
   INTERACTION,
   EVENT_PARAMS,
+  APPLIED_COLLECTORS,
   PAYLOAD,
 }

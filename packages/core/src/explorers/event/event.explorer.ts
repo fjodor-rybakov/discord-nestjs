@@ -3,6 +3,7 @@ import { ExternalContextCreator } from '@nestjs/core/helpers/external-context-cr
 import { ClientEvents } from 'discord.js';
 
 import { EVENT_PARAMS_DECORATOR } from '../../decorators/param/event-param.constant';
+import { EventContext } from '../../definitions/interfaces/event-context';
 import { DiscordParamFactory } from '../../factory/discord-param-factory';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { ClientService } from '../../services/client.service';
@@ -56,7 +57,10 @@ export class EventExplorer implements MethodExplorer {
           );
 
           try {
-            await handler(...eventArgs);
+            await handler(...eventArgs, {
+              event,
+              collectors: [],
+            } as EventContext);
           } catch (exception) {
             if (
               exception instanceof ForbiddenException &&
