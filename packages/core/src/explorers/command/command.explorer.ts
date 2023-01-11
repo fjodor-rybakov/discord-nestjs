@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
 import { ExternalContextCreator } from '@nestjs/core/helpers/external-context-creator';
 import { ClientEvents } from 'discord.js';
 
@@ -12,26 +11,17 @@ import { BuildApplicationCommandService } from '../../services/build-application
 import { ClientService } from '../../services/client.service';
 import { CommandTreeService } from '../../services/command-tree.service';
 import { CollectorExplorer } from '../collector/collector.explorer';
-import { FilterExplorer } from '../filter/filter.explorer';
-import { GuardExplorer } from '../guard/guard.explorer';
 import { ClassExplorer } from '../interfaces/class-explorer';
 import { ClassExplorerOptions } from '../interfaces/class-explorer-options';
-import { MiddlewareExplorer } from '../middleware/middleware.explorer';
-import { PipeExplorer } from '../pipe/pipe.explorer';
 
 @Injectable()
 export class CommandExplorer implements ClassExplorer {
   constructor(
     private readonly discordClientService: ClientService,
     private readonly metadataProvider: ReflectMetadataProvider,
-    private readonly middlewareExplorer: MiddlewareExplorer,
     private readonly discordCommandProvider: DiscordCommandProvider,
-    private readonly guardExplorer: GuardExplorer,
-    private readonly moduleRef: ModuleRef,
-    private readonly pipeExplorer: PipeExplorer,
     private readonly buildApplicationCommandService: BuildApplicationCommandService,
     private readonly commandTreeService: CommandTreeService,
-    private readonly filterExplorer: FilterExplorer,
     private readonly collectorExplorer: CollectorExplorer,
     private readonly externalContextCreator: ExternalContextCreator,
   ) {}

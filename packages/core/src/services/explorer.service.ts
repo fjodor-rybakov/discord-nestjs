@@ -2,21 +2,12 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { DiscoveryService, MetadataScanner } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 
-import { DISCORD_APP_FILTER } from '../definitions/constants/discord-app-filter';
-import { DISCORD_APP_GUARD } from '../definitions/constants/discord-app-guard';
-import { DISCORD_APP_PIPE } from '../definitions/constants/discord-app-pipe';
 import { CollectorExplorer } from '../explorers/collector/collector.explorer';
 import { CommandExplorer } from '../explorers/command/command.explorer';
 import { EventExplorer } from '../explorers/event/event.explorer';
-import { FilterExplorer } from '../explorers/filter/filter.explorer';
-import { GuardExplorer } from '../explorers/guard/guard.explorer';
 import { ClassExplorer } from '../explorers/interfaces/class-explorer';
 import { MethodExplorer } from '../explorers/interfaces/method-explorer';
-import { MiddlewareExplorer } from '../explorers/middleware/middleware.explorer';
-import { PipeExplorer } from '../explorers/pipe/pipe.explorer';
 import { IsObject } from '../utils/function/is-object';
-import { GlobalProviderService } from './global-provider.service';
-import { OptionService } from './option.service';
 import { RegisterCommandService } from './register-command.service';
 
 @Injectable()
@@ -24,16 +15,10 @@ export class ExplorerService implements OnModuleInit {
   constructor(
     private readonly discoveryService: DiscoveryService,
     private readonly metadataScanner: MetadataScanner,
-    private readonly filterExplorer: FilterExplorer,
     private readonly eventExplorer: EventExplorer,
-    private readonly guardExplorer: GuardExplorer,
-    private readonly pipeExplorer: PipeExplorer,
-    private readonly middlewareExplorer: MiddlewareExplorer,
     private readonly commandExplorer: CommandExplorer,
-    private readonly globalProviderService: GlobalProviderService,
     private readonly registerCommandService: RegisterCommandService,
     private readonly collectorExplorer: CollectorExplorer,
-    private readonly discordOptionService: OptionService,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -47,37 +32,12 @@ export class ExplorerService implements OnModuleInit {
     providers: InstanceWrapper[],
     controllers: InstanceWrapper[],
   ): Promise<void> {
-    const { globalLifecycleParts, restProviders } =
-      this.globalProviderService.filterGlobalProviders(providers);
-
-    const sortedGlobalProviders =
-      this.globalProviderService.sortGlobalProviders(globalLifecycleParts);
-
-    sortedGlobalProviders.forEach(({ token, instance }: InstanceWrapper) => {
-      const [globalToken] = (token as string).split(':');
-
-      switch (globalToken) {
-        case DISCORD_APP_PIPE:
-          return !this.discordOptionService.addPipe(instance);
-        case DISCORD_APP_GUARD:
-          return !this.discordOptionService.addGuard(instance);
-        case DISCORD_APP_FILTER:
-          return !this.discordOptionService.addFilter(instance);
-      }
-    });
-
     const methodExplorers = [this.eventExplorer];
 
     const classExplorers = [this.commandExplorer];
 
-    const lifecyclePartsExplorers: MethodExplorer[] = [
-      this.guardExplorer,
-      this.pipeExplorer,
-      this.filterExplorer,
-    ];
-
     await Promise.all(
-      restProviders
+      providers
         .concat(controllers)
         .map(async ({ instance }: InstanceWrapper) => {
           if (!instance || !IsObject(instance)) return;
@@ -89,7 +49,7 @@ export class ExplorerService implements OnModuleInit {
           const methodNames = this.scanMetadata(instance);
 
           await this.exploreClassOrMethod(
-            lifecyclePartsExplorers.concat([this.collectorExplorer]),
+            [this.collectorExplorer],
             instance,
             methodNames,
           );
@@ -107,18 +67,6 @@ export class ExplorerService implements OnModuleInit {
             ),
           );
         }),
-    );
-
-    await Promise.all(
-      this.collectorExplorer.getInitCollectorInstances().map((instance) => {
-        const methodNames = this.scanMetadata(instance);
-
-        return this.exploreClassOrMethod(
-          lifecyclePartsExplorers,
-          instance,
-          methodNames,
-        );
-      }),
     );
 
     await this.registerCommandService.register();

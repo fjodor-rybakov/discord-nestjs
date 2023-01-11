@@ -21,11 +21,7 @@ import { MessageCollectorStrategy } from './explorers/collector/strategy/message
 import { ReactCollectorStrategy } from './explorers/collector/strategy/react-collector.strategy';
 import { CommandExplorer } from './explorers/command/command.explorer';
 import { EventExplorer } from './explorers/event/event.explorer';
-import { FilterExplorer } from './explorers/filter/filter.explorer';
-import { GuardExplorer } from './explorers/guard/guard.explorer';
-import { MiddlewareExplorer } from './explorers/middleware/middleware.explorer';
 import { OptionExplorer } from './explorers/option/option.explorer';
-import { PipeExplorer } from './explorers/pipe/pipe.explorer';
 import { CollectorProvider } from './providers/collector.provider';
 import { DiscordClientProvider } from './providers/discord-client.provider';
 import { DiscordCommandProvider } from './providers/discord-command.provider';
@@ -36,7 +32,6 @@ import { CommandHandlerFinderService } from './services/command-handler-finder.s
 import { CommandTreeService } from './services/command-tree.service';
 import { DtoService } from './services/dto.service';
 import { ExplorerService } from './services/explorer.service';
-import { GlobalProviderService } from './services/global-provider.service';
 import { InstantiationService } from './services/instantiation.service';
 import { RegisterCommandService } from './services/register-command.service';
 
@@ -56,17 +51,12 @@ export class DiscordModule {
         InstantiationService,
         RegisterCommandService,
         OptionExplorer,
-        FilterExplorer,
-        MiddlewareExplorer,
-        PipeExplorer,
-        GuardExplorer,
         CommandExplorer,
         DtoService,
         EventExplorer,
         ExplorerService,
         CommandHandlerFinderService,
         BuildApplicationCommandService,
-        GlobalProviderService,
         CommandTreeService,
         ReactCollectorStrategy,
         MessageCollectorStrategy,

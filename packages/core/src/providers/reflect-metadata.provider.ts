@@ -26,12 +26,6 @@ import {
   ONCE_COLLECT_DECORATOR,
   ONCE_DECORATOR,
 } from '../decorators/event/once/once.constant';
-import { CATCH_EXCEPTION_FILTER_DECORATOR } from '../decorators/filter/catch/catch.constant';
-import { USE_FILTER_DECORATOR } from '../decorators/filter/use-filter.constant';
-import { USE_GUARDS_DECORATOR } from '../decorators/guard/guard.constant';
-import { DiscordMiddleware } from '../decorators/middleware/discord-middleware';
-import { MiddlewareOptions } from '../decorators/middleware/middleware-options';
-import { MIDDLEWARE_DECORATOR } from '../decorators/middleware/middleware.constant';
 import { FieldOptions } from '../decorators/modal/field/field-options';
 import { FIELD_DECORATOR } from '../decorators/modal/field/field.constant';
 import { TEXT_INPUT_VALUE_DECORATOR } from '../decorators/modal/text-input-value/text-input-value.constant';
@@ -41,7 +35,6 @@ import { NonParamOptions } from '../decorators/option/param/non-param-options';
 import { NumericParamOptions } from '../decorators/option/param/numeric-param-options';
 import { PARAM_DECORATOR } from '../decorators/option/param/param.constant';
 import { StringParamOptions } from '../decorators/option/param/string-param-options';
-import { USE_PIPES_DECORATOR } from '../decorators/pipe/pipe.constant';
 import { PrefixCommandOptions } from '../decorators/prefix-command/prefix-command-options';
 import { ON_PREFIX_COMMAND_DECORATOR } from '../decorators/prefix-command/prefix-command.constant';
 import { SubCommandOptions } from '../decorators/sub-command/sub-command-options';
@@ -50,9 +43,6 @@ import { ArgNumOptions } from '../decorators/transformation/arg-num/arg-num-opti
 import { ARG_NUM_DECORATOR } from '../decorators/transformation/arg-num/arg-num.constant';
 import { ArgRangeOptions } from '../decorators/transformation/arg-range/arg-range-options';
 import { ARG_RANGE_DECORATOR } from '../decorators/transformation/arg-range/arg-range.constant';
-import { FilterType } from '../definitions/types/filter.type';
-import { GuardType } from '../definitions/types/guard.type';
-import { PipeType } from '../definitions/types/pipe.type';
 
 @Injectable()
 export class ReflectMetadataProvider {
@@ -135,37 +125,6 @@ export class ReflectMetadataProvider {
     methodName: string,
   ): Record<string, any> {
     return Reflect.getMetadata(FILTER_METADATA, instance, methodName);
-  }
-
-  getMiddlewareDecoratorMetadata(
-    instance: DiscordMiddleware,
-  ): MiddlewareOptions {
-    return Reflect.getMetadata(MIDDLEWARE_DECORATOR, instance);
-  }
-
-  getUseGuardsDecoratorMetadata(
-    instance: InstanceType<any>,
-    methodName?: string,
-  ): GuardType[] {
-    return Reflect.getMetadata(USE_GUARDS_DECORATOR, instance, methodName);
-  }
-
-  getUsePipesDecoratorMetadata(
-    instance: InstanceType<any>,
-    methodName?: string,
-  ): PipeType[] {
-    return Reflect.getMetadata(USE_PIPES_DECORATOR, instance, methodName);
-  }
-
-  getUseFiltersDecoratorMetadata(
-    instance: InstanceType<any>,
-    methodName?: string,
-  ): FilterType[] {
-    return Reflect.getMetadata(USE_FILTER_DECORATOR, instance, methodName);
-  }
-
-  getCatchDecoratorMetadata(instance: InstanceType<any>): Type[] {
-    return Reflect.getMetadata(CATCH_EXCEPTION_FILTER_DECORATOR, instance);
   }
 
   getParamTypesMetadata(
