@@ -4,17 +4,38 @@ import {
   ApplicationCommand,
   ApplicationCommandData,
   Client,
-  FetchApplicationCommandOptions,
   GuildResolvable,
   Message,
-  Snowflake,
 } from 'discord.js';
+import {
+  Observable,
+  OperatorFunction,
+  from,
+  groupBy,
+  lastValueFrom,
+  map,
+  mergeMap,
+  reduce,
+  tap,
+} from 'rxjs';
 
 import { InjectDiscordClient } from '../decorators/client/inject-discord-client.decorator';
+import { AppCommandData } from '../definitions/interfaces/app-command-data';
 import { DiscordModuleOption } from '../definitions/interfaces/discord-module-options';
 import { RegisterCommandOptions } from '../definitions/interfaces/register-command-options';
 import { DiscordCommandProvider } from '../providers/discord-command.provider';
 import { OptionService } from './option.service';
+
+interface GroupedCommands {
+  commandList: ApplicationCommandData[];
+  registerCommandOptions: RegisterCommandOptions;
+}
+
+interface CommandWithRegistrationOptions {
+  commandData: ApplicationCommandData;
+
+  registerCommandOptions: RegisterCommandOptions;
+}
 
 @Injectable()
 export class RegisterCommandService {
@@ -55,9 +76,19 @@ export class RegisterCommandService {
               client.on('messageCreate', async (message: Message) => {
                 if (!allowFactory(message, commandList)) return;
 
-                await this.setupCommands(commandList, commandOptions);
+                await lastValueFrom(
+                  this.groupCommandsByGuildId(commandList, commandOptions).pipe(
+                    tap((commandInfo) => this.setupCommands(commandInfo)),
+                  ),
+                );
               });
-            } else await this.setupCommands(commandList, commandOptions);
+            } else {
+              await lastValueFrom(
+                this.groupCommandsByGuildId(commandList, commandOptions).pipe(
+                  tap((commandInfo) => this.setupCommands(commandInfo)),
+                ),
+              );
+            }
           };
 
           if (trigger)
@@ -122,17 +153,65 @@ export class RegisterCommandService {
     );
   }
 
-  private async setupCommands(
-    commandList: ApplicationCommandData[],
-    { forGuild, removeCommandsBefore }: RegisterCommandOptions,
-  ): Promise<ApplicationCommand[]> {
+  private groupCommandsByGuildId(
+    appCommandData: AppCommandData[],
+    registerCommandOptions: RegisterCommandOptions,
+  ): Observable<GroupedCommands> {
+    return from(appCommandData).pipe(
+      map((commandData) =>
+        this.defineGuildIdForCommand(commandData, registerCommandOptions),
+      ),
+      groupBy(({ registerCommandOptions }) => registerCommandOptions.forGuild),
+      mergeMap((group) => group.pipe(this.unionGroupByCommandData())),
+    );
+  }
+
+  private defineGuildIdForCommand(
+    { commandData, additionalOptions }: AppCommandData,
+    registerCommandOptions: RegisterCommandOptions,
+  ): CommandWithRegistrationOptions {
+    if (additionalOptions.forGuild) {
+      return {
+        commandData,
+        registerCommandOptions: {
+          ...registerCommandOptions,
+          forGuild: additionalOptions.forGuild,
+        },
+      };
+    }
+
+    return {
+      commandData,
+      registerCommandOptions,
+    };
+  }
+
+  private unionGroupByCommandData(): OperatorFunction<
+    CommandWithRegistrationOptions,
+    GroupedCommands
+  > {
+    return reduce(
+      (acc: GroupedCommands, { commandData, registerCommandOptions }) => {
+        acc.commandList = acc.commandList.concat(commandData);
+        acc.registerCommandOptions = registerCommandOptions;
+
+        return acc;
+      },
+      {
+        commandList: [],
+      },
+    );
+  }
+
+  private async setupCommands({
+    commandList,
+    registerCommandOptions: { forGuild, removeCommandsBefore },
+  }: GroupedCommands): Promise<ApplicationCommand[]> {
     // Fetch guild or global commands
-    const options: FetchApplicationCommandOptions & { guildId: Snowflake } =
+    const existCommandList = await this.client.application.commands.fetch(
       forGuild && {
         guildId: forGuild,
-      };
-    const existCommandList = await this.client.application.commands.fetch(
-      options,
+      },
     );
 
     // Remove if needed
