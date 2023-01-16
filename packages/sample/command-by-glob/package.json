@@ -28,7 +28,7 @@
     "discord.js": "14.7.1",
     "nestjs-dynamic-providers": "0.1.7",
     "reflect-metadata": "0.1.13",
-    "rimraf": "4.0.5",
+    "rimraf": "4.0.7",
     "rxjs": "7.8.0"
   },
   "devDependencies": {
