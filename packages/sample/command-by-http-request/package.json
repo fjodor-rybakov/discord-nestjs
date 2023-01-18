@@ -28,7 +28,7 @@
     "class-transformer": "0.5.1",
     "discord.js": "14.7.1",
     "reflect-metadata": "0.1.13",
-    "rimraf": "4.0.5",
+    "rimraf": "4.1.1",
     "rxjs": "7.8.0"
   },
   "devDependencies": {
