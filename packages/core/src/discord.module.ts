@@ -1,6 +1,5 @@
 import { DynamicModule, Module, Provider, Type } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
-import { DiscoveryService } from '@nestjs/core/discovery/discovery-service';
 import { Subject, firstValueFrom } from 'rxjs';
 
 import { INJECT_DISCORD_CLIENT } from './decorators/client/inject-discord-client.constant';
