@@ -80,3 +80,4 @@ export * from './decorators/sub-command/sub-command.constant';
 export * from './utils/function/register-filter-globally';
 export * from './utils/function/register-guard-globally';
 export * from './utils/function/register-pipe-globally';
+export { AppCommandData } from './definitions/interfaces/app-command-data';

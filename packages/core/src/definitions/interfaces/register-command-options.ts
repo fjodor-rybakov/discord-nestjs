@@ -1,5 +1,7 @@
-import { ApplicationCommandData, Message, Snowflake } from 'discord.js';
+import { Message, Snowflake } from 'discord.js';
 import { Subject } from 'rxjs';
+
+import { AppCommandData } from './app-command-data';
 
 export interface RegisterCommandOptions {
   /**
@@ -10,15 +12,12 @@ export interface RegisterCommandOptions {
   /**
    * Used in cases where it is necessary to register commands by event
    */
-  trigger?: (commandList: ApplicationCommandData[]) => Subject<any>;
+  trigger?: (commandList: AppCommandData[]) => Subject<any>;
 
   /**
    * Based on what criteria will slash commands be registered
    */
-  allowFactory?: (
-    message: Message,
-    commandList: ApplicationCommandData[],
-  ) => boolean;
+  allowFactory?: (message: Message, commandList: AppCommandData[]) => boolean;
 
   /**
    * Remove only missing commands

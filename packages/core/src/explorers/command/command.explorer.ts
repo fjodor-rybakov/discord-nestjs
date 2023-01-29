@@ -46,10 +46,10 @@ export class CommandExplorer implements ClassExplorer {
       this.metadataProvider.getCommandDecoratorMetadata(instance);
     if (!metadata) return;
 
-    const { name } = metadata;
+    const { name, forGuild } = metadata;
     const event = 'interactionCreate';
     const methodName = 'handler';
-    const applicationCommandData =
+    const commandData =
       await this.buildApplicationCommandService.exploreCommandOptions(
         instance,
         methodName,
@@ -58,13 +58,13 @@ export class CommandExplorer implements ClassExplorer {
 
     if (Logger.isLevelEnabled('debug')) {
       Logger.debug('Slash command options', CommandExplorer.name);
-      Logger.debug(applicationCommandData, CommandExplorer.name);
+      Logger.debug(commandData, CommandExplorer.name);
     }
 
-    this.discordCommandProvider.addCommand(
-      instance.constructor,
-      applicationCommandData,
-    );
+    this.discordCommandProvider.addCommand(instance.constructor, {
+      commandData,
+      additionalOptions: { forGuild },
+    });
 
     this.discordClientService
       .getClient()
