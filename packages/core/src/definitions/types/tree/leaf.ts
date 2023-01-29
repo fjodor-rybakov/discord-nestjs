@@ -5,7 +5,7 @@ export type Leaf = {
   instance?: any;
 
   /**
-   * Command instance(Used only to define metadata)
+   * Command handler name
    */
-  dtoInstance?: any;
+  methodName?: string;
 };

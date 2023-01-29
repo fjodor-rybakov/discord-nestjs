@@ -1,16 +1,18 @@
 import { Injectable, Type } from '@nestjs/common';
 import { MetadataScanner, ModuleRef } from '@nestjs/core';
-import { Collector, InteractionCollector, Snowflake } from 'discord.js';
+import {
+  InteractionCollector,
+  MappedInteractionTypes,
+  MessageCollector,
+  MessageComponentType,
+  ReactionCollector,
+} from 'discord.js';
 
 import { BaseCollectorMetadata } from '../../definitions/types/base-collector-metadata';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { InstantiationService } from '../../services/instantiation.service';
-import { FilterExplorer } from '../filter/filter.explorer';
-import { GuardExplorer } from '../guard/guard.explorer';
 import { MethodExplorer } from '../interfaces/method-explorer';
 import { MethodExplorerOptions } from '../interfaces/method-explorer-options';
-import { MiddlewareExplorer } from '../middleware/middleware.explorer';
-import { PipeExplorer } from '../pipe/pipe.explorer';
 import { CollectMethodEventsInfo } from './collect-method-events-info';
 import { CollectorMetadata } from './collector-metadata';
 import { DiscordCollectors } from './discord-collectors';
@@ -27,10 +29,6 @@ export class CollectorExplorer implements MethodExplorer {
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
     private readonly instantiationService: InstantiationService,
-    private readonly middlewareExplorer: MiddlewareExplorer,
-    private readonly guardExplorer: GuardExplorer,
-    private readonly filterExplorer: FilterExplorer,
-    private readonly pipeExplorer: PipeExplorer,
     private readonly metadataScanner: MetadataScanner,
     private readonly reactCollectorStrategy: ReactCollectorStrategy,
     private readonly interactionCollectorStrategy: InteractionCollectorStrategy,
@@ -88,11 +86,16 @@ export class CollectorExplorer implements MethodExplorer {
     this.initCollectorInstances.push(...methodCollectorInstances);
   }
 
-  async applyCollector<T>(
+  async applyCollector(
     options: UseCollectorApplyOptions,
-  ): Promise<Collector<Snowflake, T>[] | undefined> {
-    const { instance, methodName } = options;
-    const classType = instance.constructor;
+  ): Promise<
+    (
+      | ReactionCollector
+      | MessageCollector
+      | InteractionCollector<MappedInteractionTypes[MessageComponentType]>
+    )[]
+  > {
+    const { classType, methodName } = options;
 
     if (!this.cachedCollectors.has(classType)) return;
 

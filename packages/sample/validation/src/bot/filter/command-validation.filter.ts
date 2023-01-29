@@ -1,20 +1,16 @@
-import {
-  Catch,
-  DiscordArgumentMetadata,
-  DiscordExceptionFilter,
-} from '@discord-nestjs/core';
-import { ValidationError } from 'class-validator';
+import { WrongArgsException } from '@discord-nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { Colors, EmbedBuilder } from 'discord.js';
 
-@Catch(ValidationError)
-export class CommandValidationFilter implements DiscordExceptionFilter {
+@Catch(WrongArgsException)
+export class CommandValidationFilter implements ExceptionFilter {
   async catch(
-    exceptionList: ValidationError[],
-    metadata: DiscordArgumentMetadata<'interactionCreate'>,
+    exceptionList: WrongArgsException,
+    host: ArgumentsHost,
   ): Promise<void> {
-    const [interaction] = metadata.eventArgs;
+    const interaction = host.getArgByIndex(0);
 
-    const embeds = exceptionList.map((exception) =>
+    const embeds = exceptionList.getError().map((exception) =>
       new EmbedBuilder().setColor(Colors.Red).addFields(
         Object.values(exception.constraints).map((value) => ({
           name: exception.value,

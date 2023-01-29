@@ -1,12 +1,13 @@
-import { DiscordPipeTransform } from '@discord-nestjs/core';
-import { Injectable, Optional } from '@nestjs/common';
+import { Injectable, Optional, PipeTransform } from '@nestjs/common';
 import { ValidatorOptions, validate } from 'class-validator';
+
+import { WrongArgsException } from '../exceptions/wrong-args.exception';
 
 /**
  * Validates DTO with class-validator
  */
 @Injectable()
-export class ValidationPipe implements DiscordPipeTransform {
+export class ValidationPipe implements PipeTransform {
   constructor(
     @Optional()
     private readonly validatorOptions?: ValidatorOptions,
@@ -15,7 +16,7 @@ export class ValidationPipe implements DiscordPipeTransform {
   async transform(dtoInstance: object): Promise<any> {
     const result = await validate(dtoInstance, this.validatorOptions);
 
-    if (result.length > 0) throw result;
+    if (result.length > 0) throw new WrongArgsException(result);
 
     return dtoInstance;
   }

@@ -54,7 +54,7 @@ function getPathByTemplate(template: TemplateOption): string {
     case TemplateOption.SLASH_COMMAND:
       return './files/command';
     case TemplateOption.PREFIX_COMMAND:
-      return './files/prefix-command';
+      return './files/prefix-command-command';
     default:
       throw new SchematicsException('Unknown template option.');
   }

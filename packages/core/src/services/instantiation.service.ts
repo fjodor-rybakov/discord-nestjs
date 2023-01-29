@@ -2,10 +2,6 @@ import { Injectable, Type } from '@nestjs/common';
 import { DiscoveryService, ModuleRef } from '@nestjs/core';
 import { Module } from '@nestjs/core/injector/module';
 
-import { FilterType } from '../definitions/types/filter.type';
-import { GuardType } from '../definitions/types/guard.type';
-import { PipeType } from '../definitions/types/pipe.type';
-
 @Injectable()
 export class InstantiationService {
   constructor(private readonly discoveryService: DiscoveryService) {}
@@ -25,7 +21,7 @@ export class InstantiationService {
   }
 
   exploreInstances(
-    classTypeOrInstance: (PipeType | FilterType | GuardType | Type)[],
+    classTypeOrInstance: Type[],
     hostModule: Module,
   ): Promise<InstanceType<any>[]> {
     return Promise.all(

@@ -1,5 +1,6 @@
-import { On, Once, UseCollectors, UseGuards } from '@discord-nestjs/core';
-import { Injectable, Logger } from '@nestjs/common';
+import { CollectorInterceptor } from '@discord-nestjs/common';
+import { On, Once, UseCollectors } from '@discord-nestjs/core';
+import { Injectable, Logger, UseGuards, UseInterceptors } from '@nestjs/common';
 import { EmbedBuilder, Message } from 'discord.js';
 
 import { MessageFromUserGuard } from './guards/message-from-user.guard';
@@ -16,6 +17,7 @@ export class BotGateway {
   }
 
   @On('messageCreate')
+  @UseInterceptors(CollectorInterceptor)
   @UseGuards(MessageFromUserGuard, QuizCommandGuard)
   @UseCollectors(QuizMessageCollector)
   async onMessage(message: Message): Promise<void> {

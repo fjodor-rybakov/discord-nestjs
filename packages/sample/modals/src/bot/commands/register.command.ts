@@ -1,24 +1,23 @@
 import { ModalFieldsTransformPipe } from '@discord-nestjs/common';
 import {
   Command,
-  DiscordCommand,
+  EventParams,
+  Handler,
+  IA,
   InjectDiscordClient,
   On,
-  Payload,
-  UseGuards,
-  UsePipes,
 } from '@discord-nestjs/core';
-import { ModalActionRowComponentBuilder } from '@discordjs/builders';
-import { Logger } from '@nestjs/common';
+import type { ModalActionRowComponentBuilder } from '@discordjs/builders';
+import { Logger, UseGuards } from '@nestjs/common';
 import {
   ActionRowBuilder,
   Client,
+  ClientEvents,
   CommandInteraction,
-  Formatters,
   ModalBuilder,
-  ModalSubmitInteraction,
   TextInputBuilder,
   TextInputStyle,
+  codeBlock,
 } from 'discord.js';
 
 import { IsModalInteractionGuard } from '../guard/is-modal-interaction.guard';
@@ -28,7 +27,7 @@ import { FormDto } from './dto/form.dto';
   name: 'submit-registration-request',
   description: 'Apply for registration',
 })
-export class RegisterCommand implements DiscordCommand {
+export class RegisterCommand {
   private readonly logger = new Logger(RegisterCommand.name);
   private readonly requestParticipantModalId = 'RequestParticipant';
   private readonly usernameComponentId = 'Username';
@@ -39,7 +38,8 @@ export class RegisterCommand implements DiscordCommand {
     private readonly client: Client,
   ) {}
 
-  async handler(interaction: CommandInteraction): Promise<void> {
+  @Handler()
+  async onRegisterCommand(interaction: CommandInteraction): Promise<void> {
     const modal = new ModalBuilder()
       .setTitle('Request participation')
       .setCustomId(this.requestParticipantModalId);
@@ -67,19 +67,22 @@ export class RegisterCommand implements DiscordCommand {
   }
 
   @On('interactionCreate')
-  @UsePipes(ModalFieldsTransformPipe) // ModalFieldsTransformPipe is required if you want use DTO
   @UseGuards(IsModalInteractionGuard)
   async onModuleSubmit(
-    @Payload() { username, comment }: FormDto,
-    modal: ModalSubmitInteraction,
-  ) {
+    @IA(ModalFieldsTransformPipe) { username, comment }: FormDto,
+    @EventParams() eventArgs: ClientEvents['interactionCreate'],
+  ): Promise<void> {
+    const [modal] = eventArgs;
+
+    if (!modal.isModalSubmit()) return;
+
     this.logger.log(`Modal ${modal.customId} submit`);
 
     if (modal.customId !== this.requestParticipantModalId) return;
 
     await modal.reply(
       `${username.value}, your request has been submitted.` +
-        Formatters.codeBlock('markdown', comment),
+        codeBlock('markdown', comment),
     );
   }
 }

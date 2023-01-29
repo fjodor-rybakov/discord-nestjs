@@ -7,7 +7,7 @@ export interface PrefixCommandOptions extends PrefixCommandGlobalOptions {
   name: string;
 
   /**
-   * Command prefix (If set, it overrides the global)
+   * Command prefix-command (If set, it overrides the global)
    */
   prefix?: string;
 }

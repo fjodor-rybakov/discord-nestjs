@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Type } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import {
   ApplicationCommandAutocompleteNumericOptionData,
@@ -12,9 +12,10 @@ import {
   ApplicationCommandStringOptionData,
   ApplicationCommandUserOptionData,
 } from 'discord.js';
+import { filter, from, lastValueFrom, map, toArray } from 'rxjs';
 
 import { OptionExplorer } from '../explorers/option/option.explorer';
-import { ParamExplorer } from '../explorers/param/param.explorer';
+import { ReflectMetadataProvider } from '../providers/reflect-metadata.provider';
 
 export type NonCommandData =
   | ApplicationCommandNonOptionsData
@@ -31,24 +32,40 @@ export type NonCommandData =
 @Injectable()
 export class DtoService {
   constructor(
-    private readonly paramExplorer: ParamExplorer,
+    private readonly metadataProvider: ReflectMetadataProvider,
     private readonly moduleRef: ModuleRef,
     private readonly optionExplorer: OptionExplorer,
   ) {}
 
-  async createDtoInstance(
-    instance: InstanceType<any>,
+  async getDtoMetatype(
+    commandInstance: InstanceType<any>,
     methodName: string,
   ): Promise<InstanceType<any>> {
-    const payloadType = this.paramExplorer.getPayloadType(instance, methodName);
+    const paramsTypes = this.metadataProvider.getParamTypesMetadata(
+      commandInstance,
+      methodName,
+    );
+    if (!paramsTypes) return;
 
-    if (!payloadType) return;
+    const [commandOption] = await lastValueFrom(
+      from(paramsTypes).pipe(
+        map((type, index) => ({
+          type,
+          index,
+          metadata:
+            this.metadataProvider.getCommandOptionsDecoratorMetadata(type),
+        })),
+        filter(({ metadata }) => !!metadata),
+        toArray(),
+      ),
+    );
+    if (!commandOption) return;
 
-    return this.moduleRef.create(payloadType);
+    return commandOption.type;
   }
 
-  exploreDtoOptions(dtoInstance: InstanceType<any>): NonCommandData[] {
-    const optionMetadata = this.optionExplorer.explore(dtoInstance);
+  exploreDtoOptions(dtoType: Type): NonCommandData[] {
+    const optionMetadata = this.optionExplorer.explore(dtoType);
     const commandOptions: NonCommandData[] = [];
     for (const property in optionMetadata) {
       const propertyOptions = optionMetadata[property];

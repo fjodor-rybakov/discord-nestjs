@@ -8,6 +8,11 @@ export const ArgRange = (
   options: (last: number) => ArgRangeOptions,
 ): PropertyDecorator => {
   return (target: Record<string, any>, propertyKey: string | symbol): void => {
-    Reflect.defineMetadata(ARG_RANGE_DECORATOR, options, target, propertyKey);
+    Reflect.defineMetadata(
+      ARG_RANGE_DECORATOR,
+      options,
+      target.constructor,
+      propertyKey,
+    );
   };
 };

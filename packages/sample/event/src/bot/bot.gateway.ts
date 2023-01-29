@@ -1,15 +1,9 @@
-import {
-  InjectDiscordClient,
-  On,
-  Once,
-  UseGuards,
-  UsePipes,
-} from '@discord-nestjs/core';
-import { Injectable, Logger } from '@nestjs/common';
+import { InjectDiscordClient, On, Once } from '@discord-nestjs/core';
+import { Injectable, Logger, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Client, Message } from 'discord.js';
 
 import { MessageFromUserGuard } from './guards/message-from-user.guard';
-import { MessageToUpperPipe } from './pipes/message-to-upper.pipe';
+import { MessageToUpperInterceptor } from './interceptors/message-to-upper.interceptor';
 
 @Injectable()
 export class BotGateway {
@@ -27,7 +21,7 @@ export class BotGateway {
 
   @On('messageCreate')
   @UseGuards(MessageFromUserGuard)
-  @UsePipes(MessageToUpperPipe)
+  @UseInterceptors(MessageToUpperInterceptor)
   async onMessage(message: Message): Promise<void> {
     this.logger.log(`Incoming message: ${message.content}`);
 

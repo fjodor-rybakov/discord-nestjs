@@ -1,4 +1,4 @@
-import { CommandOptions } from './command-options';
+import { ChatInputCommandOptions } from './chat-input-command-options';
 import { COMMAND_DECORATOR } from './command.constant';
 import { UICommandOptions } from './ui-command-options';
 
@@ -7,10 +7,10 @@ import { UICommandOptions } from './ui-command-options';
  *
  * Register new slash command
  */
-export function Command(options: CommandOptions): ClassDecorator;
+export function Command(options: ChatInputCommandOptions): ClassDecorator;
 export function Command(options: UICommandOptions): ClassDecorator;
 export function Command(
-  options: CommandOptions | UICommandOptions,
+  options: ChatInputCommandOptions | UICommandOptions,
 ): ClassDecorator {
   return <TFunction extends Function>(target: TFunction): TFunction | void => {
     Reflect.defineMetadata(COMMAND_DECORATOR, options, target.prototype);

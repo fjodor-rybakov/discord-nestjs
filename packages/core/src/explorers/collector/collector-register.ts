@@ -1,23 +1,19 @@
-import { Injectable, Scope } from '@nestjs/common';
-import { ContextIdFactory, MetadataScanner, ModuleRef } from '@nestjs/core';
+import { ForbiddenException, Injectable, Scope } from '@nestjs/common';
+import { ContextIdFactory, ModuleRef } from '@nestjs/core';
+import { ExternalContextCreator } from '@nestjs/core/helpers/external-context-creator';
 import { Collector } from 'discord.js';
 
-import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
-import { FilterExplorer } from '../filter/filter.explorer';
-import { GuardExplorer } from '../guard/guard.explorer';
-import { MiddlewareExplorer } from '../middleware/middleware.explorer';
-import { PipeExplorer } from '../pipe/pipe.explorer';
+import { EVENT_PARAMS_DECORATOR } from '../../decorators/param/event-param.constant';
+import { RequestPayload } from '../../definitions/interfaces/request-payload';
+import { DiscordParamFactory } from '../../factory/discord-param-factory';
+import { OptionService } from '../../services/option.service';
 import { CollectMethodEventsInfo } from './collect-method-events-info';
 
 @Injectable()
 export class CollectorRegister {
   constructor(
-    private readonly metadataProvider: ReflectMetadataProvider,
-    private readonly metadataScanner: MetadataScanner,
-    private readonly middlewareExplorer: MiddlewareExplorer,
-    private readonly guardExplorer: GuardExplorer,
-    private readonly filterExplorer: FilterExplorer,
-    private readonly pipeExplorer: PipeExplorer,
+    private readonly externalContextCreator: ExternalContextCreator,
+    private readonly optionService: OptionService,
   ) {}
 
   subscribeToEvents(
@@ -28,37 +24,22 @@ export class CollectorRegister {
     Object.entries(events).forEach(
       ([methodName, { eventMethod, eventName }]) => {
         collector[eventMethod](eventName as any, async (...eventArgs) => {
+          const handler = this.externalContextCreator.create(
+            classInstance,
+            classInstance[methodName],
+            methodName,
+            EVENT_PARAMS_DECORATOR,
+            new DiscordParamFactory(),
+          );
+
           try {
-            //#region apply middleware, guard, pipe
-            await this.middlewareExplorer.applyMiddleware(eventName, eventArgs);
-            const isAllowFromGuards = await this.guardExplorer.applyGuard({
-              instance: classInstance,
-              methodName,
-              event: eventName,
-              eventArgs,
-            });
-            if (!isAllowFromGuards) return;
-
-            const pipeResult = await this.pipeExplorer.applyPipe({
-              instance: classInstance,
-              methodName,
-              event: eventName,
-              eventArgs,
-              initValue: eventArgs,
-            });
-            //#endregion
-
-            classInstance[methodName](...(pipeResult || eventArgs));
+            await handler(...eventArgs);
           } catch (exception) {
-            const isTrowException = await this.filterExplorer.applyFilter({
-              instance: classInstance,
-              methodName,
-              event: eventName,
-              eventArgs,
-              exception,
-            });
-
-            if (isTrowException) throw exception;
+            if (
+              exception instanceof ForbiddenException &&
+              this.optionService.getClientData().isTrowForbiddenException
+            )
+              throw exception;
           }
         });
       },
@@ -68,7 +49,7 @@ export class CollectorRegister {
   async registerRequest(
     moduleRef: ModuleRef,
     classInstance: InstanceType<any>,
-    requestObject: unknown,
+    requestObject: RequestPayload,
   ): Promise<InstanceType<any>> {
     if (moduleRef.introspect(classInstance.constructor).scope === Scope.DEFAULT)
       return classInstance;

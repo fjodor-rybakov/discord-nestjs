@@ -7,7 +7,7 @@ export interface PrefixCommandGlobalOptions {
   isRemoveCommandName?: boolean;
 
   /**
-   * Remove prefix from input string
+   * Remove prefix-command from input string
    *
    * @default true
    */

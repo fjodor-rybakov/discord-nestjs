@@ -2,9 +2,9 @@ import { PrefixCommandOptions } from './prefix-command-options';
 import { ON_PREFIX_COMMAND_DECORATOR } from './prefix-command.constant';
 
 /**
- * On prefix command decorator
+ * On prefix-command command decorator
  *
- * Create prefix command
+ * Create prefix-command command
  */
 export function PrefixCommand(
   name: string,

@@ -20,18 +20,19 @@ $ yarn add @discord-nestjs/common
 
 ### ℹ️ Pipes template
 
-`TransformPipe` fills in the fields `DTO` from `CommandInteraction`. 
+`SlashCommandPipe` fills in the fields `DTO` from `CommandInteraction`. 
 
-For prefix command use `PrefixCommandTransformPipe`.
+For prefix command use `PrefixCommandPipe`.
 
 #### 💡 Example
 
 ```typescript
 /* registration-email.dto.ts */
 
-import { City } from '../definitions/city';
-import { Param, ParamType, Choice } from '@discord-nestjs/core';
+import {City} from '../definitions/city';
+import {Param, ParamType, Choice, CommandOptions} from '@discord-nestjs/core';
 
+@CommandOptions()
 export class RegistrationEmailDto {
   @Param({
     name: 'email',
@@ -40,14 +41,14 @@ export class RegistrationEmailDto {
   })
   email: string;
 
-  @Param({ description: 'User nickname', required: true })
+  @Param({description: 'User nickname', required: true})
   name: string;
 
-  @Param({ description: 'User age', required: true, type: ParamType.INTEGER })
+  @Param({description: 'User age', required: true, type: ParamType.INTEGER})
   age: number;
 
   @Choice(City)
-  @Param({ description: 'City of residence', type: ParamType.INTEGER })
+  @Param({description: 'City of residence', type: ParamType.INTEGER})
   city: City;
 }
 ```
@@ -56,18 +57,17 @@ export class RegistrationEmailDto {
 /* play.command.ts */
 
 import { RegistrationDto } from './registration.dto';
-import { Command, UsePipes, Payload, DiscordTransformedCommand } from '@discord-nestjs/core';
-import { TransformPipe } from '@discord-nestjs/common';
+import { Command, IA } from '@discord-nestjs/core';
+import { SlashCommandPipe } from '@discord-nestjs/common';
 import { CommandInteraction } from 'discord.js';
 
 @Command({
   name: 'reg',
   description: 'User registration',
 })
-@UsePipes(TransformPipe)
-export class BaseInfoCommand implements DiscordTransformedCommand<RegistrationEmailDto>
+export class BaseInfoCommand
 {
-  handler(@Payload() dto: RegistrationEmailDto): string {
+  handler(@IA(SlashCommandPipe) dto: RegistrationEmailDto): string {
     // dto instance must have the following fields: email, name, age, city
   }
 }
@@ -76,7 +76,7 @@ export class BaseInfoCommand implements DiscordTransformedCommand<RegistrationEm
 `ValidationPipe` validate the resulting `DTO` based on class-validator. If the `DTO` is invalid then an exception will be thrown, 
 which can be caught by the filter from the package `@discord-nestjs/core`. 
 
-Also suitable for prefix commands.
+Also, suitable for prefix commands.
 
 > for validation, you need to install package `class-validator`
 
@@ -85,9 +85,10 @@ Also suitable for prefix commands.
 ```typescript
 /* registration-email.dto.ts */
 
-import { Param, ParamType } from '@discord-nestjs/core';
-import { IsEmail, Length, Max, Min } from 'class-validator';
+import {CommandOptions, Param, ParamType} from '@discord-nestjs/core';
+import {IsEmail, Length, Max, Min} from 'class-validator';
 
+@CommandOptions()
 export class RegistrationEmailDto {
   @IsEmail()
   @Param({
@@ -97,11 +98,11 @@ export class RegistrationEmailDto {
   })
   email: string;
 
-  @Param({ description: 'User nickname', required: true })
+  @Param({description: 'User nickname', required: true})
   @Length(3, 100)
   name: string;
 
-  @Param({ description: 'User age', required: true, type: ParamType.INTEGER })
+  @Param({description: 'User age', required: true, type: ParamType.INTEGER})
   @Max(150)
   @Min(18)
   age: number;
@@ -111,18 +112,18 @@ export class RegistrationEmailDto {
 ```typescript
 /* play.command.ts */
 
-import { RegistrationDto } from './registration.dto';
-import { Command, UsePipes, Payload, DiscordTransformedCommand } from '@discord-nestjs/core';
-import { TransformPipe, ValidationPipe } from '@discord-nestjs/common';
-import { CommandInteraction } from 'discord.js';
+import {RegistrationDto} from './registration.dto';
+import {Command, IA} from '@discord-nestjs/core';
+import {SlashCommandPipe, ValidationPipe, UsePipes} from '@discord-nestjs/common';
+import {CommandInteraction} from 'discord.js';
 
 @Command({
   name: 'reg',
   description: 'User registration',
 })
-@UsePipes(TransformPipe, ValidationPipe)
-export class BaseInfoCommand implements DiscordTransformedCommand<RegistrationEmailDto> {
-  handler(@Payload() dto: RegistrationEmailDto): string {
+@UsePipes(SlashCommandPipe, ValidationPipe)
+export class BaseInfoCommand {
+  handler(@IA() dto: RegistrationEmailDto): string {
     // dto instance must be valid
   }
 }
@@ -165,6 +166,7 @@ class ResidencePlace {
 import { DiscordIntersectionType } from '@discord-nestjs/common';
 
 // Must have properties name, city and street
+@CommandOptions()
 class Profile extends DiscordIntersectionType(FullName, ResidencePlace) {
 }
 ```

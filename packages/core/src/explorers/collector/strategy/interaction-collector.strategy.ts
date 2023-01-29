@@ -45,7 +45,10 @@ export class InteractionCollectorStrategy implements CollectorStrategy {
     const executedClassInstance = await this.collectorRegister.registerRequest(
       moduleRef,
       classInstance,
-      interactionCollector,
+      {
+        collector: interactionCollector,
+        causeEvent: messageOrInteraction,
+      },
     );
 
     if (filterMethodName)

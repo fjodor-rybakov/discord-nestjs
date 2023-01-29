@@ -1,4 +1,4 @@
-import { Command, DiscordCommand } from '@discord-nestjs/core';
+import { Command, Handler } from '@discord-nestjs/core';
 import { Injectable } from '@nestjs/common';
 import { ApplicationCommandType, CommandInteraction } from 'discord.js';
 
@@ -7,8 +7,9 @@ import { ApplicationCommandType, CommandInteraction } from 'discord.js';
   name: 'playlist',
   type: ApplicationCommandType.User,
 })
-export class PlaylistCommand implements DiscordCommand {
-  handler(interaction: CommandInteraction): string {
+export class PlaylistCommand {
+  @Handler()
+  onPlaylistCommand(interaction: CommandInteraction): string {
     return 'Your playlist...';
   }
 }
