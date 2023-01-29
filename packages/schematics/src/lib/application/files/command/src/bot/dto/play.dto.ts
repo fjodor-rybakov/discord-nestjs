@@ -1,5 +1,4 @@
-import { Param } from '@discord-nestjs/core';
-import { ChatInputCommandOptions } from '@discord-nestjs/core/src';
+import { CommandOptions, Param } from '@discord-nestjs/core';
 import { Transform } from 'class-transformer';
 
 @CommandOptions()
