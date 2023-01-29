@@ -4,6 +4,7 @@ import { ExternalContextCreator } from '@nestjs/core/helpers/external-context-cr
 import { Collector } from 'discord.js';
 
 import { EVENT_PARAMS_DECORATOR } from '../../decorators/param/event-param.constant';
+import { RequestPayload } from '../../definitions/interfaces/request-payload';
 import { DiscordParamFactory } from '../../factory/discord-param-factory';
 import { OptionService } from '../../services/option.service';
 import { CollectMethodEventsInfo } from './collect-method-events-info';
@@ -48,7 +49,7 @@ export class CollectorRegister {
   async registerRequest(
     moduleRef: ModuleRef,
     classInstance: InstanceType<any>,
-    requestObject: unknown,
+    requestObject: RequestPayload,
   ): Promise<InstanceType<any>> {
     if (moduleRef.introspect(classInstance.constructor).scope === Scope.DEFAULT)
       return classInstance;

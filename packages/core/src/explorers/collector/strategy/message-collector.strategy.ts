@@ -38,7 +38,10 @@ export class MessageCollectorStrategy implements CollectorStrategy {
     const executedClassInstance = await this.collectorRegister.registerRequest(
       moduleRef,
       classInstance,
-      messageCollector,
+      {
+        collector: messageCollector,
+        causeEvent: messageOrInteraction,
+      },
     );
 
     if (filterMethodName)

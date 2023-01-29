@@ -1,5 +1,5 @@
-import { DynamicModule, Module, Provider, Type } from '@nestjs/common';
-import { DiscoveryModule } from '@nestjs/core';
+import { DynamicModule, Module, Provider, Scope, Type } from '@nestjs/common';
+import { DiscoveryModule, REQUEST } from '@nestjs/core';
 import { Subject, firstValueFrom } from 'rxjs';
 
 import { INJECT_DISCORD_CLIENT } from './decorators/client/inject-discord-client.constant';
@@ -12,6 +12,7 @@ import { REFLECT_METADATA_PROVIDER_ALIAS } from './definitions/constants/reflect
 import { DiscordModuleAsyncOptions } from './definitions/interfaces/discord-module-async-options';
 import { DiscordModuleOption } from './definitions/interfaces/discord-module-options';
 import { DiscordOptionsFactory } from './definitions/interfaces/discord-options-factory';
+import { RequestPayload } from './definitions/interfaces/request-payload';
 import { DiscordHostModule } from './discord-host.module';
 import { CollectorRegister } from './explorers/collector/collector-register';
 import { CollectorExplorer } from './explorers/collector/collector.explorer';
@@ -22,6 +23,8 @@ import { CommandExplorer } from './explorers/command/command.explorer';
 import { EventExplorer } from './explorers/event/event.explorer';
 import { OptionExplorer } from './explorers/option/option.explorer';
 import { CollectorProvider } from './providers/collector.provider';
+import { CAUSE_EVENT } from './providers/constants/cause-event.constant';
+import { COLLECTOR } from './providers/constants/collector.constant';
 import { DiscordClientProvider } from './providers/discord-client.provider';
 import { DiscordCommandProvider } from './providers/discord-command.provider';
 import { ReflectMetadataProvider } from './providers/reflect-metadata.provider';
@@ -61,6 +64,7 @@ export class DiscordModule {
         MessageCollectorStrategy,
         InteractionCollectorStrategy,
         CollectorRegister,
+        ...DiscordModule.createRequestProvides(),
       ],
       exports: [
         CollectorProvider,
@@ -68,6 +72,8 @@ export class DiscordModule {
         ReflectMetadataProvider,
         DiscordCommandProvider,
         INJECT_DISCORD_CLIENT,
+        COLLECTOR,
+        CAUSE_EVENT,
       ],
     };
   }
@@ -100,6 +106,7 @@ export class DiscordModule {
           provide: CollectorProvider,
           useExisting: DISCORD_COLLECTOR_PROVIDER_ALIAS,
         },
+        ...DiscordModule.createRequestProvides(),
       ],
       exports: [
         CollectorProvider,
@@ -107,6 +114,8 @@ export class DiscordModule {
         ReflectMetadataProvider,
         DiscordCommandProvider,
         INJECT_DISCORD_CLIENT,
+        COLLECTOR,
+        CAUSE_EVENT,
       ],
     };
   }
@@ -198,5 +207,22 @@ export class DiscordModule {
         },
       ];
     }
+  }
+
+  private static createRequestProvides(): Provider[] {
+    return [
+      {
+        provide: COLLECTOR,
+        useFactory: ({ collector }: RequestPayload) => collector,
+        inject: [REQUEST],
+        scope: Scope.REQUEST,
+      },
+      {
+        provide: CAUSE_EVENT,
+        useFactory: ({ causeEvent }: RequestPayload) => causeEvent,
+        inject: [REQUEST],
+        scope: Scope.REQUEST,
+      },
+    ];
   }
 }

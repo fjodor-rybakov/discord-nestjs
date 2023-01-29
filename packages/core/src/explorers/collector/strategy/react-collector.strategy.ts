@@ -34,7 +34,10 @@ export class ReactCollectorStrategy implements CollectorStrategy {
     const executedClassInstance = await this.collectorRegister.registerRequest(
       moduleRef,
       classInstance,
-      reactionCollector,
+      {
+        collector: reactionCollector,
+        causeEvent: message,
+      },
     );
 
     if (filterMethodName)
