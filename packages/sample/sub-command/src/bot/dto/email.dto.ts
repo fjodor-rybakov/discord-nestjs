@@ -1,8 +1,8 @@
-import { Choice, CommandOption, Param, ParamType } from '@discord-nestjs/core';
+import { Choice, CommandOptions, Param, ParamType } from '@discord-nestjs/core';
 
 import { City } from '../definitions/city';
 
-@CommandOption()
+@CommandOptions()
 export class EmailDto {
   @Param({
     description: 'Base user email',

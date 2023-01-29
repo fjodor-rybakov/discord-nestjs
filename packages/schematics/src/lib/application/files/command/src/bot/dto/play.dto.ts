@@ -1,8 +1,8 @@
 import { Param } from '@discord-nestjs/core';
-import { CommandOption } from '@discord-nestjs/core/src';
+import { ChatInputCommandOptions } from '@discord-nestjs/core/src';
 import { Transform } from 'class-transformer';
 
-@CommandOption()
+@CommandOptions()
 export class PlayDto {
   @Transform(({ value }) => value.toUpperCase())
   @Param({

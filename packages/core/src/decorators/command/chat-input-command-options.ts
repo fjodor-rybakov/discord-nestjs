@@ -7,7 +7,7 @@ import { BaseCommandOptions } from './base-command-options';
 /**
  * Describe base command options
  */
-export interface CommandOptions
+export interface ChatInputCommandOptions
   extends BaseCommandOptions,
     AdditionalCommandOptions {
   /**

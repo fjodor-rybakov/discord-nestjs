@@ -12,10 +12,10 @@ import { MESSAGE_COLLECTOR_METADATA } from '../decorators/collector/message-coll
 import { DiscordReactionCollectorOptions } from '../decorators/collector/reaction-collector/reaction-collector-options';
 import { REACTION_COLLECTOR_METADATA } from '../decorators/collector/reaction-collector/reaction-collector.constant';
 import { USE_COLLECTORS_METADATA } from '../decorators/collector/use-collectors/use-collectors.constant';
-import { CommandOptions } from '../decorators/command/command-options';
+import { ChatInputCommandOptions } from '../decorators/command/chat-input-command-options';
 import { COMMAND_DECORATOR } from '../decorators/command/command.constant';
 import { HANDLER_DECORATOR } from '../decorators/command/handler/handler.constant';
-import { COMMAND_OPTION } from '../decorators/command/options/command-option.contant';
+import { COMMAND_OPTIONS } from '../decorators/command/options/command-options.contant';
 import { OnCollectDecoratorOptions } from '../decorators/event/on-collect-decorator-options';
 import { OnDecoratorOptions } from '../decorators/event/on-decorator-options';
 import {
@@ -46,7 +46,9 @@ import { ARG_RANGE_DECORATOR } from '../decorators/transformation/arg-range/arg-
 
 @Injectable()
 export class ReflectMetadataProvider {
-  getCommandDecoratorMetadata(instance: InstanceType<any>): CommandOptions {
+  getCommandDecoratorMetadata(
+    instance: InstanceType<any>,
+  ): ChatInputCommandOptions {
     return Reflect.getMetadata(COMMAND_DECORATOR, instance);
   }
 
@@ -57,8 +59,8 @@ export class ReflectMetadataProvider {
     return Reflect.getMetadata(HANDLER_DECORATOR, instance, methodName);
   }
 
-  getCommandOptionDecoratorMetadata(classType: Type): Record<string, any> {
-    return Reflect.getMetadata(COMMAND_OPTION, classType.prototype);
+  getCommandOptionsDecoratorMetadata(classType: Type): Record<string, any> {
+    return Reflect.getMetadata(COMMAND_OPTIONS, classType.prototype);
   }
 
   getSubCommandDecoratorMetadata(

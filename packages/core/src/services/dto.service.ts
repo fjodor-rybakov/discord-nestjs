@@ -53,7 +53,7 @@ export class DtoService {
           type,
           index,
           metadata:
-            this.metadataProvider.getCommandOptionDecoratorMetadata(type),
+            this.metadataProvider.getCommandOptionsDecoratorMetadata(type),
         })),
         filter(({ metadata }) => !!metadata),
         toArray(),

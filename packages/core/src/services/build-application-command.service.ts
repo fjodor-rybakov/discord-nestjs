@@ -9,7 +9,7 @@ import {
   ApplicationCommandType,
 } from 'discord.js';
 
-import { CommandOptions } from '../decorators/command/command-options';
+import { ChatInputCommandOptions } from '../decorators/command/chat-input-command-options';
 import { isSubCommandGroup } from '../decorators/sub-command-group/is-sub-command-group';
 import { SubCommandGroupOptions } from '../decorators/sub-command-group/sub-command-group-options';
 import { TInclude } from '../definitions/types/include.type';
@@ -41,7 +41,7 @@ export class BuildApplicationCommandService {
       type = ApplicationCommandType.ChatInput,
       nameLocalizations,
       descriptionLocalizations,
-    }: CommandOptions,
+    }: ChatInputCommandOptions,
   ): Promise<ApplicationCommandData> {
     let methodName = void 0;
 

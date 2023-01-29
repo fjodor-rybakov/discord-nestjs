@@ -7,7 +7,7 @@ export * from './definitions/interfaces/discord-options-factory';
 export * from './definitions/interfaces/prefix-command-global-options';
 export * from './definitions/interfaces/event-context';
 
-export * from './decorators/command/command-options';
+export * from './decorators/command/chat-input-command-options';
 export * from './decorators/sub-command/sub-command-options';
 export * from './decorators/sub-command-group/use-group-options';
 export * from './decorators/collector/inject-collector/inject-collector';
@@ -46,7 +46,7 @@ export * from './decorators/transformation/arg-num/arg-num.decorator';
 export * from './decorators/transformation/arg-range/arg-range.decorator';
 export * from './decorators/param/event-param.decorator';
 export * from './decorators/command/handler/handler.decorator';
-export * from './decorators/command/options/command-option.decorator';
+export * from './decorators/command/options/command-options.decorator';
 
 // Providers
 export * from './providers/discord-client.provider';
