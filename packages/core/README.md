@@ -208,15 +208,15 @@ export class BotGateway {
 > , you can run the follow command to create a slash-command bot template: 
 > `schematics @discord-nestjs/schematics:application --template slash-command`
 
-To add a slash command, you need to create a class that will implement the `DiscordCommand` interface and mark it with `@Command` decorator.
-Command decorator accepts a `name` and `description` as parameters.
+To add a slash command, you need to create a class with `@Command` decorator.
+The `@Handler` decorator will point to the command processing method.
 
 #### 💡 Example
 
 ```typescript
 /* playlist.command.ts */
 
-import { Command, DiscordCommand } from '@discord-nestjs/core';
+import { Command, Handler } from '@discord-nestjs/core';
 import { CommandInteraction } from 'discord.js';
 import { Injectable } from '@nestjs/common';
 
@@ -225,49 +225,21 @@ import { Injectable } from '@nestjs/common';
   description: 'Get current playlist',
 })
 @Injectable()
-export class PlaylistCommand implements DiscordCommand {
-  handler(interaction: CommandInteraction): string {
+export class PlaylistCommand {
+  @Handler() 
+  onPlaylist(interaction: CommandInteraction): string {
     return 'List with music...';
   }
 }
 ```
 
-If your command accepts parameters, you need to already implement the `DiscordTransformedCommand` interface.
-The `handler` method of the `DiscordTransformedCommand` interface takes a DTO marked with `@Payload` decorator as the first parameter.
-
-> ⚠️**Important! For fields to be filled in `DTO` from `CommandInteraction`, you must use `SlashCommandPipe` from `@discord-nestjs/common`**
-
-#### 💡 Example
-
-```typescript
-/* registration.command.ts */
-
-import { RegistrationDto } from './registration.dto';
-import { Command, UsePipes, Payload, DiscordTransformedCommand } from '@discord-nestjs/core';
-import { SlashCommandPipe } from '@discord-nestjs/common';
-import { Injectable } from '@nestjs/common';
-import { CommandInteraction } from 'discord.js';
-
-@Command({
-  name: 'reg',
-  description: 'User registration',
-})
-@Injectable()
-@UsePipes(SlashCommandPipe)
-export class BaseInfoCommand implements DiscordTransformedCommand<RegistrationDto>
-{
-  handler(@Payload() dto: RegistrationDto, interaction: CommandInteraction): string {
-    return `User was registered with name: ${dto.name}, age ${dto.age} and city ${dto.city}`;
-  }
-}
-```
-
-`DTO` is declared as follows:
+If your command accepts parameters, you need to create a class with options.
+Mark class with `@CommandOptions()` decorator.
 
 ```typescript
 /* registration.dto.ts */
 
-import { Param, Choice, ParamType } from '@discord-nestjs/core';
+import { Param, Choice, ParamType, CommandOptions } from '@discord-nestjs/core';
 
 enum City {
   Moscow,
@@ -275,7 +247,8 @@ enum City {
   Tokyo,
 }
 
-export class RegistrationDto {
+@CommandOptions()
+export class RegistrationOptions {
   @Param({ description: 'User name', required: true })
   name: string;
 
@@ -292,14 +265,42 @@ export class RegistrationDto {
 * `@Choice` decorator marks command parameter as dropdown(**Accepts `enum` or `Map`**).
 * `@Channel` decorator marks command parameter as channel select.
 
-> By default, if `name` is not passed to the decorator parameters, 
-> then the name of the marked property will be taken. 
+> By default, if `name` is not passed to the decorator parameters,
+> then the name of the marked property will be taken.
 
-> If the command parameter is a `string` or a `boolean`, then it is not necessary 
+> If the command parameter is a `string` or a `boolean`, then it is not necessary
 > to pass the type. The type will resolve **automatically**.
 
-> You can also transform and validate the parameters to match your DTO by using the [common](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/common) package's 
-> SlashCommandPipe and ValidationPipe, or by using custom [Pipes](#Pipes).
+To get object with command option you need add `@InteractionEvent()`/`@IA()` with `SlashCommandPipe`.
+`InteractionEvent` will extract the data from event args and `SlashCommandPipe` will convert the data into an object.
+
+> You can import `SlashCommandPipe` from [common](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/common) package
+
+#### 💡 Example
+
+```typescript
+/* registration.command.ts */
+
+import {Command, InteractionEvent, Handler} from '@discord-nestjs/core';
+import {SlashCommandPipe} from '@discord-nestjs/common';
+import {Injectable} from '@nestjs/common';
+
+import {RegistrationOptions} from './registration.dto';
+
+@Command({
+  name: 'reg',
+  description: 'User registration',
+})
+@Injectable()
+export class BaseInfoCommand {
+  @Handler()
+  onRegistration(@InteractionEvent(SlashCommandPipe) options: RegistrationOptions): string {
+    return `User was registered with name: ${options.name}, age ${options.age} and city ${options.city}`;
+  }
+}
+```
+
+> Also, you can validate the options using `ValidationPipe` from [common](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/common) package.
 
 Each command must be added to a NestJS module.
 
@@ -313,7 +314,7 @@ import { Module } from '@nestjs/common';
 @Module({
   providers: [PlaylistCommand, BaseInfoCommand],
 })
-export class BotSlashCommands {
+export class BotSlashCommandsModule {
 }
 ```
 
@@ -328,10 +329,10 @@ import { InjectDynamicProviders } from 'nestjs-dynamic-providers';
 
 @InjectDynamicProviders('**/*.command.js')
 @Module({})
-export class BotSlashCommands {}
+export class BotSlashCommandsModule {}
 ```
 
-And add your `BotSlashCommands` to `AppModule`.
+And add your `BotSlashCommandsModule` to `AppModule`.
 
 ```typescript
 /* app.module.ts */
@@ -339,7 +340,7 @@ And add your `BotSlashCommands` to `AppModule`.
 import { DiscordModule } from '@discord-nestjs/core';
 import { Module } from '@nestjs/common';
 import { GatewayIntentBits } from 'discord.js';
-import { BotSlashCommands } from './bot-slash-commands.module';
+import { BotSlashCommandsModule } from './bot-slash-commands.module';
 
 @Module({
   imports: [
@@ -350,8 +351,8 @@ import { BotSlashCommands } from './bot-slash-commands.module';
           intents: [Intents.FLAGS.GUILDS],
         },
       }),
-    }),
-    BotSlashCommands,
+    }), 
+    BotSlashCommandsModule,
   ],
 })
 export class AppModule {}
@@ -398,19 +399,19 @@ specify which interface they implement(`DiscordCommand` or `DiscordTransformedCo
 ```typescript
 /* email-sub-command.ts */
 
-import { EmailDto } from '../../dto/email.dto';
 import {
-  Payload,
+  Handler,
+  IA,
   SubCommand,
-  DiscordTransformedCommand,
-  UsePipes,
 } from '@discord-nestjs/core';
-import { SlashCommandPipe } from '@discord-nestjs/common';
+import {SlashCommandPipe} from '@discord-nestjs/common';
 
-@UsePipes(SlashCommandPipe)
-@SubCommand({ name: 'email', description: 'Register by email' })
-export class EmailSubCommand implements DiscordTransformedCommand<EmailDto> {
-  handler(@Payload() dto: EmailDto): string {
+import {EmailDto} from '../../dto/email.dto';
+
+@SubCommand({name: 'email', description: 'Register by email'})
+export class EmailSubCommand {
+  @Handler()
+  onEmail(@IA(SlashCommandPipe) dto: EmailDto): string {
     return `Success register user: ${dto.email}, ${dto.name}, ${dto.age}, ${dto.city}`;
   }
 }
@@ -419,19 +420,19 @@ export class EmailSubCommand implements DiscordTransformedCommand<EmailDto> {
 ```typescript
 /* number-sub-command.ts */
 
-import { NumberDto } from '../../dto/number.dto';
 import {
-  DiscordTransformedCommand,
-  Payload,
+  Handler,
+  IA,
   SubCommand,
-  UsePipes,
 } from '@discord-nestjs/core';
-import { SlashCommandPipe } from '@discord-nestjs/common';
+import {SlashCommandPipe} from '@discord-nestjs/common';
 
-@UsePipes(SlashCommandPipe)
-@SubCommand({ name: 'number', description: 'Register by phone number' })
-export class NumberSubCommand implements DiscordTransformedCommand<NumberDto> {
-  handler(@Payload() dto: NumberDto): string {
+import {NumberDto} from '../../dto/number.dto';
+
+@SubCommand({name: 'number', description: 'Register by phone number'})
+export class NumberSubCommand {
+  @Handler()
+  onPhoneNumber(@IA(SlashCommandPipe) dto: NumberDto): string {
     return `Success register user: ${dto.phoneNumber}, ${dto.name}, ${dto.age}, ${dto.city}`;
   }
 }
@@ -440,17 +441,18 @@ export class NumberSubCommand implements DiscordTransformedCommand<NumberDto> {
 ```typescript
 /* base-info-sub-command.ts */
 
-import { DiscordCommand, SubCommand } from '@discord-nestjs/core';
+import {Handler, SubCommand} from '@discord-nestjs/core';
 import {
   CommandInteraction,
   InteractionReplyOptions,
   MessageEmbed,
 } from 'discord.js';
 
-@SubCommand({ name: 'base-info', description: 'Base info' })
-export class BaseInfoSubCommand implements DiscordCommand {
-  handler(interaction: CommandInteraction): InteractionReplyOptions {
-    const { user } = interaction;
+@SubCommand({name: 'base-info', description: 'Base info'})
+export class BaseInfoSubCommand {
+  @Handler()
+  onBaseInfo(interaction: CommandInteraction): InteractionReplyOptions {
+    const {user} = interaction;
 
     const embed = new MessageEmbed()
       .setImage(user.avatarURL())
@@ -482,7 +484,7 @@ import { Module } from '@nestjs/common';
     BaseInfoSubCommand,
   ],
 })
-export class BotSlashCommands {
+export class BotSlashCommandsModule {
 }
 ```
 
@@ -494,16 +496,17 @@ To do this, you need to explicitly set the command type. (`USER` or `MESSAGE`)
 ```typescript
 /* playlist.command.ts */
 
-import { Command, DiscordCommand } from '@discord-nestjs/core';
-import { ContextMenuInteraction } from 'discord.js';
-import { ApplicationCommandTypes } from 'discord.js/typings/enums';
+import {Command, Handler} from '@discord-nestjs/core';
+import {ContextMenuInteraction} from 'discord.js';
+import {ApplicationCommandTypes} from 'discord.js/typings/enums';
 
 @Command({
   name: 'playlist',
   type: ApplicationCommandTypes.USER,
 })
-export class PlaylistCommand implements DiscordCommand {
-  handler(interaction: ContextMenuInteraction): string {
+export class PlaylistCommand {
+  @Handler()
+  onPlaylist(interaction: ContextMenuInteraction): string {
     return 'Your playlist...';
   }
 }
@@ -535,7 +538,7 @@ import { DiscordModule } from '@discord-nestjs/core';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GatewayIntentBits, Message } from 'discord.js';
-import { BotSlashCommands } from './bot-slash-commands.module';
+import { BotSlashCommandsModule } from './bot-slash-commands.module';
 
 @Module({
   imports: [
@@ -556,7 +559,7 @@ import { BotSlashCommands } from './bot-slash-commands.module';
       }),
       inject: [ConfigService],
     }),
-    BotSlashCommands
+    BotSlashCommandsModule
   ],
 })
 export class BotModule {}
@@ -628,7 +631,7 @@ export class BotGateway {
 > , you can run the follow command to create a prefix-command bot template:
 > `schematics @discord-nestjs/schematics:application --template prefix-command`
 
-To create a command with a prefix from the `messageCreate` event use the `@PrefixCommand` decorator.
+To create a command with a prefix from the `messageCreate` event use the `PrefixCommandInterceptor`.
 The following code will create a `!start` prefix command.
 
 #### 💡 Example
@@ -636,13 +639,16 @@ The following code will create a `!start` prefix command.
 ```typescript
 /* bot.gateway.ts */
 
+import {PrefixCommandInterceptor} from '@discord-nestjs/common';
 import {
-  InjectDiscordClient,
-  PrefixCommand,
-  Once,
+    InjectDiscordClient,
+    On,
+    Once,
 } from '@discord-nestjs/core';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, UseInterceptors } from '@nestjs/common';
 import { Client } from 'discord.js';
+
+import { StartDto } from './dto/start.dto';
 
 @Injectable()
 export class BotGateway {
@@ -654,11 +660,12 @@ export class BotGateway {
   ) {}
 
   @Once('ready')
-  onReady() {
+  onReady(): void {
     this.logger.log(`Bot ${this.client.user.tag} was started!`);
   }
 
-  @PrefixCommand('start', { prefix: '!' })
+  @On('messageCreate')
+  @UseInterceptors(new PrefixCommandInterceptor('start'))
   async onMessage(message: Message): Promise<string> {
     return 'Message processed successfully';
   }
@@ -691,25 +698,25 @@ export class StartDto {
 }
 ```
 
-Then just create a command. Mark the DTO with the `@Payload` decorator as the first parameter.
-It is also necessary to hang a pipe that will create DTO. You can use the already built-in `PrefixCommandPipe`
-from the package `@discord/common` package or create your own pipe.
+Then just create a command. To get object with command option you need add `@MessageEvent()`/`@MSG()` with `PrefixCommandPipe`.
+`MessageEvent` will extract the data from event args and `PrefixCommandPipe` will convert the data into an object.
+
+> You can import `PrefixCommandPipe` from [common](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/common) package
 
 ```typescript
 /* bot.gateway.ts */
 
-import { PrefixCommandPipe } from '@discord-nestjs/common';
+import {PrefixCommandInterceptor, PrefixCommandPipe} from '@discord-nestjs/common';
 import {
   InjectDiscordClient,
-  PrefixCommand,
+  On,
   Once,
-  Payload,
-  UsePipes,
+  MessageEvent
 } from '@discord-nestjs/core';
-import { Injectable, Logger } from '@nestjs/common';
-import { Client, Message } from 'discord.js';
+import { Injectable, Logger, UseInterceptors } from '@nestjs/common';
+import { Client } from 'discord.js';
 
-import { StartDto } from './dto/start.dto';
+import {StartDto} from './dto/start.dto';
 
 @Injectable()
 export class BotGateway {
@@ -718,7 +725,8 @@ export class BotGateway {
   constructor(
     @InjectDiscordClient()
     private readonly client: Client,
-  ) {}
+  ) {
+  }
 
   @Once('ready')
   onReady() {
@@ -727,7 +735,7 @@ export class BotGateway {
 
   @PrefixCommand('start')
   @UsePipes(PrefixCommandPipe)
-  async onMessage(@Payload() dto: StartDto, message: Message): Promise<string> {
+  async onMessage(@MessageEvent(PrefixCommandPipe) dto: StartDto): Promise<string> {
     console.log(dto);
 
     return 'Message processed successfully';
@@ -741,333 +749,21 @@ The message `!start warzone misha mark` in the channel should generate
 `StartDto { game: 'warzone', players: [ 'misha', 'mark' ] }` DTO.
 
 
-### ℹ️ Pipes <a name="Pipes"></a>
+### ℹ️ Pipes, Guards, Interceptors and Filters <a name="Consumers"></a>
 
-To intercept and transform messages before invoking the handler, use the `@UsePipes` decorator. Works with all event.
-Pipes are often used for validation. For example `@discord-nestjs/common` package already has ready-made `ValidationPipe` template.
+[Pipes](https://docs.nestjs.com/pipes), [Guards](https://docs.nestjs.com/guards), [Interceptors](https://docs.nestjs.com/interceptors)
+and [Filter](https://docs.nestjs.com/exception-filters) work the same as Nest.
 
-Pipes are executed sequentially from left to right.
-
-> ⚠️**Import `@UsePipes` from the `@discord-nestjs/core` package**
-
-You can create your custom pipe by implementing the `DiscordPipeTransform` interface.
-
-#### 💡 Example
-
-```typescript
-/* message-to-upper.interceptor.ts */
-
-import { DiscordPipeTransform } from '@discord-nestjs/core';
-import { Message } from 'discord.js';
-
-export class MessageToUpperInterceptor implements DiscordPipeTransform {
-  transform([message]: [Message]): [Message] {
-    message.content = message.content.toUpperCase();
-
-    return [message];
-  }
-}
-```
-
-> For events, you must return an array of arguments that will be set to the handler
-
-> `@UsePipes` for slash commands are set only on the class
-
-```typescript
-/* bot.gateway.ts */
-
-import { MessageToUpperInterceptor } from './interceptors/message-to-upper.pipe';
-import { On, UsePipes } from '@discord-nestjs/core';
-import { Injectable, Logger } from '@nestjs/common';
-import { Message } from 'discord.js';
-
-@Injectable()
-export class BotGateway {
-  private readonly logger = new Logger(BotGateway.name);
-
-  @On('messageCreate')
-  @UsePipes(MessageToUpperInterceptor)
-  async onMessage(message: Message): Promise<void> {
-    if (message.author.bot) return;
-
-    this.logger.log(`Incoming message: ${message.content}`);
-
-    await message.reply('Message processed successfully');
-  }
-}
-```
-
-You can also set `@UsePipes` decorator on class. In this case, the decorator is applied to all methods in the class. 
-Excluding command classes.
-
-You can define pipe globally with `registerPipeGlobally()` function.
-
-```typescript
-/* app.module.ts */
-
-import { DiscordModule, registerPipeGlobally } from '@discord-nestjs/core';
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { GatewayIntentBits } from 'discord.js';
-import { BotGateway } from './bot.gateway';
-import { MyGlobalPipe } from './my-global-pipe';
-
-@Module({
-  imports: [
-    ConfigModule.forRoot(),
-    DiscordModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        token: configService.get('TOKEN'),
-        discordClientOptions: {
-          intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
-        },
-        registerCommandOptions: [
-          {
-            forGuild: configService.get('GUILD_ID_WITH_COMMANDS'),
-            removeCommandsBefore: true,
-          },
-        ],
-      }),
-      inject: [ConfigService],
-    }),
-  ],
-  providers: [
-    BotGateway,
-    {
-      provide: registerPipeGlobally(),
-      useClass: MyGlobalPipe,
-    },
-  ],
-})
-export class AppModule {}
-```
-
-> The `registerPipeGlobally()` function always generate a unique provider key, so you can define as many pipes as you want.
-
-### ℹ️ Guards <a name="Guards"></a>
-
-To protect commands and events, use. The `canActive` function returns boolean. If one of the guards returns false,
-then the chain will stop there and the handler itself will not be called.
-
-> `@UseGuards` for slash commands are set only on the class
-
-For create guard you need to implement the `DiscordGuard` interface
-
-#### 💡 Example
-
-```typescript
-/* message-from-user.guard.ts */
-
-import { DiscordGuard } from '@discord-nestjs/core';
-import { Message } from 'discord.js';
-
-export class MessageFromUserGuard implements DiscordGuard {
-  canActive(event: 'messageCreate', [message]: [Message]): boolean {
-    return !message.author.bot;
-  }
-}
-```
-
-And mark method or class with `@UseGuards` decorator
-
-> ⚠️**Import `@UseGuards` from the `@discord-nestjs/core` package**
-
-```typescript
-/* bot.gateway.ts */
-
-import { MessageFromUserGuard } from './guards/message-from-user.guard';
-import { On, UseGuards } from '@discord-nestjs/core';
-import { Injectable, Logger } from '@nestjs/common';
-import { Message } from 'discord.js';
-
-@Injectable()
-export class BotGateway {
-  private readonly logger = new Logger(BotGateway.name);
-
-  @On('messageCreate')
-  @UseGuards(MessageFromUserGuard)
-  async onMessage(message: Message): Promise<void> {
-    this.logger.log(`Incoming message: ${message.content}`);
-
-    await message.reply('Message processed successfully');
-  }
-}
-```
-
-You can also set `@UseGuards` decorator on class. In this case, the decorator is applied to all methods in the class.
-Excluding command classes.
-
-You can define guard globally with `registerGuardGlobally()` function.
-
-```typescript
-/* app.module.ts */
-
-import { DiscordModule, registerGuardGlobally } from '@discord-nestjs/core';
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { GatewayIntentBits } from 'discord.js';
-import { BotGateway } from './bot.gateway';
-import { MyGlobalGuard } from './my-global-guard';
-
-@Module({
-  imports: [
-    ConfigModule.forRoot(),
-    DiscordModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        token: configService.get('TOKEN'),
-        discordClientOptions: {
-          intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
-        },
-        registerCommandOptions: [
-          {
-            forGuild: configService.get('GUILD_ID_WITH_COMMANDS'),
-            removeCommandsBefore: true,
-          },
-        ],
-      }),
-      inject: [ConfigService],
-    }),
-  ],
-  providers: [
-    BotGateway,
-    {
-      provide: registerGuardGlobally(),
-      useClass: MyGlobalGuard,
-    },
-  ],
-})
-export class AppModule {}
-```
-
-> The `registerGuardGlobally()` function always generate a unique provider key, so you can define as many guards as you want.
-
-### ℹ️ Exception filters <a name="Filters"></a>
-
-In order to catch exceptions in the handler of a command, event or pipe, you can use the exception filter.
-Filters work in the same way as in the `NestJS` framework. The first thing you need to do is create a class that will 
-implement the `DiscordExceptionFilter` interface and mark the class with `@Catch` decorator. `@Catch` decorator accepts a list of exception types.
-If there are no parameters, then the filter will react to any exception.
-
-> ⚠️**Import `DiscordExceptionFilter` and `@Catch` from the `@discord-nestjs/core` package**
-
-#### 💡 Example
-
-```typescript
-/* command-validation-filter.ts */
-
-import {
-  DiscordArgumentMetadata,
-  DiscordExceptionFilter,
-  Catch,
-} from '@discord-nestjs/core';
-import { ValidationError } from 'class-validator';
-import { MessageEmbed } from 'discord.js';
-
-@Catch(ValidationError)
-export class CommandValidationFilter implements DiscordExceptionFilter {
-  async catch(
-    exceptionList: ValidationError[],
-    metadata: DiscordArgumentMetadata<'interactionCreate'>,
-  ): Promise<void> {
-    const [interaction] = metadata.eventArgs;
-
-    const embeds = exceptionList.map((exception) =>
-      new MessageEmbed().setColor('RED').addFields(
-        Object.values(exception.constraints).map((value) => ({
-          name: exception.property,
-          value,
-        })),
-      ),
-    );
-
-    if (interaction.isCommand()) await interaction.reply({ embeds });
-  }
-}
-```
-
-After that, you just need to pass the filter to `@UseFilters` decorator.
-
-> `@UseFilters` for slash commands are set only on the class
-
-> ⚠️**Import `UseFilters` from the `@discord-nestjs/core` package**
-
-```typescript
-/* email-command.ts */
-
-import { EmailDto } from '../../dto/email.dto';
-import { CommandValidationFilter } from '../../filter/command-validation.filter';
-import { SlashCommandPipe, ValidationPipe } from '@discord-nestjs/common';
-import {
-  Payload,
-  Command,
-  DiscordTransformedCommand,
-  UseFilters,
-  UsePipes,
-} from '@discord-nestjs/core';
-
-@UseFilters(CommandValidationFilter)
-@UsePipes(SlashCommandPipe, ValidationPipe)
-@Command({ name: 'email', description: 'Register by email' })
-export class EmailCommand implements DiscordTransformedCommand<EmailDto> {
-  handler(@Payload() dto: EmailDto): string {
-    return `Success register user: ${dto.email}, ${dto.name}, ${dto.age}, ${dto.city}`;
-  }
-}
-```
-
-You can define filter globally with `registerFilterGlobally()` function.
-
-```typescript
-/* app.module.ts */
-
-import { DiscordModule, registerFilterGlobally } from '@discord-nestjs/core';
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { GatewayIntentBits } from 'discord.js';
-import { EmailCommand } from './email-command';
-import { MyGlobalFilter } from './my-global-filter';
-
-@Module({
-  imports: [
-    ConfigModule.forRoot(),
-    DiscordModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        token: configService.get('TOKEN'),
-        discordClientOptions: {
-          intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
-        },
-        registerCommandOptions: [
-          {
-            forGuild: configService.get('GUILD_ID_WITH_COMMANDS'),
-            removeCommandsBefore: true,
-          },
-        ],
-      }),
-      inject: [ConfigService],
-    }),
-  ],
-  providers: [
-    EmailCommand,
-    {
-      provide: registerFilterGlobally(),
-      useClass: MyGlobalFilter,
-    },
-  ],
-})
-export class AppModule {}
-```
-
-> The `registerFilterGlobally()` function always generate a unique provider key, so you can define as many filters as you want.
+The only exception is guard. In NestJS `Guard` consumer throw Forbidden exception, when access denied. 
+The `discord-nestjs` listeners catch `ForbiddenException` by default. To override this behavior set 
+`isTrowForbiddenException: true` in `DiscordModule` options.
 
 ### ℹ️ Collectors <a name="Collectors"></a>
 
 In addition to the standard implementation of `collectors` from `discord.js`, `discord-nestjs` provides their declaration 
 through decorators. You can create three types of collectors: ReactCollector, MessageCollector and InteractionCollector.
 
-The first thing you need to do is create a collector class and mark it with either `@MessageCollector` or 
+The first thing you need to do is create a collector class and mark it with either `@MessageEventCollector` or 
 `@ReactionEventCollector` or `@InteractionEventCollector` with a decorator. For example, let's create a `ReactionCollector`.
 
 #### 💡 Example
@@ -1122,9 +818,7 @@ If you use this decorator, you need to add `scope: Scope.REQUEST`. The default i
 * The `@Filter` decorator filters the incoming data into the collector. Treat it like the `filter` option in `createReactionCollector`.
 * Decorators `On` and `Once` subscribe to collector events.
 
-> Filters, guards and pipes can be applied to collector events.
-
-All collectors, guards, pipes and filters are created automatically in the module used.
+> Filters, guards, interceptors and pipes can be applied to collector events.
 
 To apply your collector to the message use `@UseCollectors` decorator.
 
@@ -1133,8 +827,9 @@ To apply your collector to the message use `@UseCollectors` decorator.
 ```typescript
 /* bot.gateway.ts */
 
-import { On, Once, UseCollectors, UseGuards } from '@discord-nestjs/core';
-import { Injectable, Logger } from '@nestjs/common';
+import { On, Once, UseCollectors } from '@discord-nestjs/core';
+import { CollectorInterceptor } from '@discord-nestjs/common';
+import { Injectable, Logger, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Message } from 'discord.js';
 
 import { AppreciatedReactionCollector } from './appreciated-reaction-collector';
@@ -1152,11 +847,18 @@ export class BotGateway {
   @On('messageCreate')
   @UseGuards(MessageFromUserGuard)
   @UseCollectors(AppreciatedReactionCollector)
+  @UseInterceptors(CollectorInterceptor)
   async onMessage(message: Message): Promise<void> {
     await message.reply('Start collector');
   }
 }
 ```
+
+In order for the collector to be called in the correct order, you need to hang `CollectorInterceptor` interceptor.
+
+> You can import `CollectorInterceptor` from [common](https://github.com/fjodor-rybakov/discord-nestjs/tree/master/packages/common) package
+
+If you need to get applied collectors use `@AppliedCollectors` param decorator.
 
 Other collectors types are created exactly by analogy. They apply to both event handlers and commands.
 
@@ -1167,11 +869,28 @@ For example, below is a sample button creation.
 ```typescript
 /* post-interaction-collector.ts */
 
-import { InteractionEventCollector, On, Once } from '@discord-nestjs/core';
-import { ButtonInteraction } from 'discord.js';
+import {
+  Filter,
+  InjectCauseEvent,
+  InteractionEventCollector,
+  On,
+} from '@discord-nestjs/core';
+import { Injectable, Scope } from '@nestjs/common';
+import { ButtonInteraction, ChatInputCommandInteraction } from 'discord.js';
 
+@Injectable({ scope: Scope.REQUEST })
 @InteractionEventCollector({ time: 15000 })
 export class PostInteractionCollector {
+  constructor(
+    @InjectCauseEvent()
+    private readonly causeInteraction: ChatInputCommandInteraction,
+  ) {}
+
+  @Filter()
+  filter(interaction: ButtonInteraction): boolean {
+    return this.causeInteraction.id === interaction.message.interaction.id;
+  }
+
   @On('collect')
   async onCollect(interaction: ButtonInteraction): Promise<void> {
     await interaction.update({
@@ -1180,25 +899,31 @@ export class PostInteractionCollector {
     });
   }
 }
+
 ```
+
+* The `@InjectCauseEvent` decorator allow you get event that created the collector
 
 ```typescript
 /* play.command.ts */
 
-import { SlashCommandPipe } from '@discord-nestjs/common';
+import { CollectorInterceptor, SlashCommandPipe } from '@discord-nestjs/common';
 import {
+  AppliedCollectors,
   Command,
-  DiscordTransformedCommand,
-  Payload,
+  Handler,
+  IA,
   UseCollectors,
-  UsePipes,
 } from '@discord-nestjs/core';
+import { MessageActionRowComponentBuilder } from '@discordjs/builders';
+import { UseInterceptors } from '@nestjs/common';
 import {
-  InteractionReplyOptions,
   ActionRowBuilder,
-  MessageActionRowComponentBuilder,
   ButtonBuilder,
+  ButtonInteraction,
   ButtonStyle,
+  InteractionCollector,
+  InteractionReplyOptions,
 } from 'discord.js';
 
 import { PlayDto } from '../dto/play.dto';
@@ -1208,10 +933,14 @@ import { PostInteractionCollector } from '../post-interaction-collector';
   name: 'play',
   description: 'Plays a song',
 })
-@UsePipes(SlashCommandPipe)
+@UseInterceptors(CollectorInterceptor)
 @UseCollectors(PostInteractionCollector)
-export class PlayCommand implements DiscordTransformedCommand<PlayDto> {
-  async handler(@Payload() dto: PlayDto): Promise<InteractionReplyOptions> {
+export class PlayCommand {
+  @Handler()
+  async onPlayCommand(
+    @IA(SlashCommandPipe) dto: PlayDto,
+    @AppliedCollectors(0) collector: InteractionCollector<ButtonInteraction>,
+  ): Promise<InteractionReplyOptions> {
     const row =
       new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
         new ButtonBuilder()
@@ -1220,6 +949,8 @@ export class PlayCommand implements DiscordTransformedCommand<PlayDto> {
           .setStyle(ButtonStyle.Primary),
       );
 
+    console.log(collector);
+
     return {
       content: 'Click on the button to play the song!',
       components: [row],
@@ -1227,34 +958,6 @@ export class PlayCommand implements DiscordTransformedCommand<PlayDto> {
   }
 }
 ```
-
-### ℹ️ Middleware <a name="MiddlewareUsage"></a>
-
-You can use a middleware to process all incoming messages.
-To do this, you need to implement the `DiscordMiddleware` interface.
-
-#### 💡 Example
-
-```typescript
-/* bot.middleware.ts */
-
-import { Middleware, DiscordMiddleware } from '@discord-nestjs/core';
-import { Logger } from '@nestjs/common';
-import { ClientEvents } from 'discord.js';
-
-@Middleware()
-export class BotMiddleware implements DiscordMiddleware {
-  private readonly logger = new Logger(BotMiddleware.name);
-
-  use(event: keyof ClientEvents, context: any[]): void {
-    if (event === 'message') {
-      this.logger.log('On message event triggered');
-    }
-  }
-}
-```
-
-Also don't forget to add your middleware to the providers.
 
 ### ℹ️ Modals <a name="Modals"></a>
 
