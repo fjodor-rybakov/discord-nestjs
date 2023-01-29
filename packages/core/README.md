@@ -22,28 +22,26 @@ NestJS package for discord.js
   - [ℹ️ DiscordClientProvider](#DiscordClientProvider)
   - [ℹ️ DiscordCommandProvider](#DiscordCommandProvider)
   - [ℹ️ ReflectMetadataProvider](#ReflectMetadataProvider)
+  - [ℹ️ CollectorProvider](#CollectorProvider)
 - [🗂 Decorators description](#DecoratorsDescription)
   - [ℹ️ @InjectDiscordClient](#InjectDiscordClient)
   - [ℹ️ @Command](#Command)
   - [ℹ️ @SubCommand](#SubCommand)
   - [ℹ️ @On](#On)
   - [ℹ️ @Once](#Once)
-  - [ℹ️ @PrefixCommand](#PrefixCommand)
   - [ℹ️ @ArgNum](#ArgNum)
   - [ℹ️ @ArgRange](#ArgRange)
-  - [ℹ️ @Payload](#Payload)
-  - [ℹ️ @UsePipes](#UsePipes)
-  - [ℹ️ @UseGuards](#UseGuards)
-  - [ℹ️ @UseFilters](#UseFilters)
+  - [ℹ️ @InteractionEvent/@IA](#InteractionEvent)
+  - [ℹ️ @InteractionEvent/@MSG](#MessageEvent)
   - [ℹ️ @Param](#Param)
   - [ℹ️ @Choice](#Choice)
   - [ℹ️ @Channel](#Channel)
-  - [ℹ️ @Middleware](#Middleware)
   - [ℹ️ @InteractionEventCollector](#InteractionEventCollector)
   - [ℹ️ @MessageEventCollector](#MessageEventCollector)
   - [ℹ️ @ReactionEventCollector](#ReactionEventCollector)
   - [ℹ️ @UseCollectors](#UseCollectors)
   - [ℹ️ @InjectCollector](#InjectCollector)
+  - [ℹ️ @InjectCauseEvent](#InjectCauseEvent)
   - [ℹ️ @Filter](#Filter)
   - [ℹ️ @Field](#Field)
   - [ℹ️ @TextInputValue](#TextInputValue)
@@ -984,6 +982,9 @@ For example, this is useful when you need to lazily register commands or registe
 
 Provides methods for getting metadata for decorators.
 
+### ℹ️ CollectorProvider <a name="CollectorProvider"></a>
+
+Allow you to apply collector event
 
 
 
@@ -1027,19 +1028,6 @@ Handle discord and collector events [hint](https://gist.github.com/koad/316b265a
 
 Handle discord and collector events (only once) [hint](https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584)
 
-### ℹ️ @PrefixCommand <a name="PrefixCommand"></a>
-
-Create prefix command
-
-#### Params
-
-`name` \* - Command name
-`prefix` - Command prefix (If set, it overrides the global)
-`isRemoveCommandName` - Remove command name from input string (Default `true`)
-`isRemovePrefix` - Remove prefix from input string (Default `true`)
-`isIgnoreBotMessage` - Ignore messages from bots (Default `true`)
-`isRemoveMessage` - Remove message from channel after processing (Default `false`)
-
 ### ℹ️ @ArgNum <a name="ArgNum"></a>
 
 Set value by argument number
@@ -1067,33 +1055,13 @@ Set value by argument number
 
 `event` \* - Name of the event to listen to
 
-### ℹ️ @Payload <a name="Payload"></a>
+### ℹ️ @InteractionEvent/@IA <a name="InteractionEvent"></a>
 
-Marks the parameter as DTO
+Extract interaction event from args
 
-### ℹ️ @UsePipes <a name="UsePipes"></a>
+### ℹ️ @MessageEvent/@MSG <a name="MessageEvent"></a>
 
-To intercept and transform incoming messages for some function
-
-#### Params
-
-- List of classes or instances that implement the `DiscordPipeTransform` interface
-
-### ℹ️ @UseGuards <a name="UseGuards"></a>
-
-To guard incoming messages
-
-#### Params
-
-- List of classes or instances that implement the `DiscordGuard` interface
-
-### ℹ️ @UseFilters <a name="UseFilters"></a>
-
-To catch exceptions from command handlers, events, pipes, guards and middleware
-
-#### Params
-
-- List of classes or instances that implement the `DiscordExceptionFilter` interface
+Extract message event from args
 
 ### ℹ️ @Param <a name="Param"></a>
 
@@ -1124,15 +1092,6 @@ Marks command parameter as channel select.
 #### Params
 
 `channelType` - list of channel types
-
-### ℹ️ @Middleware <a name="Middleware"></a>
-
-For handling intermediate requests
-
-#### Params
-
-- `allowEvents` - Handled events
-- `denyEvents` - Skipped events
 
 ### ℹ️ @InteractionEventCollector <a name="InteractionEventCollector"></a>
 
@@ -1170,6 +1129,10 @@ Apply collector
 ### ℹ️ @InjectCollector <a name="InjectCollector"></a>
 
 Inject collector in constructor (only in class collector)
+
+### ℹ️ @InjectCauseEvent <a name="InjectCauseEvent"></a>
+
+Inject cause event in constructor (only in class collector)
 
 ### ℹ️ @Filter <a name="Filter"></a>
 
