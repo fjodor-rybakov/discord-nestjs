@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.1.0](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@5.0.0...@discord-nestjs/core@5.1.0) (2023-01-30)
+
+### Features
+
+- Command option decorator unnecessary, mark as deprecated ([0b248f1](https://github.com/fjodor-rybakov/discord-nestjs/commit/0b248f16f75c1373284fe960efd1d5ae7f357b76))
+
 # [5.0.0](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@4.3.1...@discord-nestjs/core@5.0.0) (2023-01-29)
 
 ### Bug Fixes

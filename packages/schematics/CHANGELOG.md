@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/schematics@0.3.0...@discord-nestjs/schematics@0.4.0) (2023-01-30)
+
+### Features
+
+- Command option decorator unnecessary, mark as deprecated ([0b248f1](https://github.com/fjodor-rybakov/discord-nestjs/commit/0b248f16f75c1373284fe960efd1d5ae7f357b76))
+
 # [0.3.0](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/schematics@0.2.4...@discord-nestjs/schematics@0.3.0) (2023-01-29)
 
 ### Bug Fixes
