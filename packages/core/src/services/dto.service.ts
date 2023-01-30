@@ -49,13 +49,13 @@ export class DtoService {
 
     const [commandOption] = await lastValueFrom(
       from(paramsTypes).pipe(
-        map((type, index) => ({
-          type,
-          index,
-          metadata:
-            this.metadataProvider.getCommandOptionsDecoratorMetadata(type),
-        })),
-        filter(({ metadata }) => !!metadata),
+        map((type) => {
+          return {
+            type,
+            isDto: this.isDto(type),
+          };
+        }),
+        filter(({ isDto }) => isDto),
         toArray(),
       ),
     );
@@ -101,5 +101,28 @@ export class DtoService {
     }
 
     return commandOptions;
+  }
+
+  private isDto(type: Type): boolean {
+    try {
+      const instance = new type();
+      const allProperties = Object.keys(instance);
+
+      return allProperties.some(
+        (property) =>
+          !!(
+            this.metadataProvider.getParamDecoratorMetadata(type, property) ||
+            this.metadataProvider.getArgNumDecoratorMetadata(type, property) ||
+            this.metadataProvider.getArgNumDecoratorMetadata(type, property) ||
+            this.metadataProvider.getFiledDecoratorMetadata(type, property) ||
+            this.metadataProvider.getTextInputValueDecoratorMetadata(
+              type,
+              property,
+            )
+          ),
+      );
+    } catch {
+      return false;
+    }
   }
 }

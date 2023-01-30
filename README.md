@@ -70,7 +70,7 @@ Check your intent is passed to the `discordClientOptions` of the module. [More i
   <summary>Click to expand</summary>
 
 Set `useDefineForClassFields` to `true` in your `tsconfig.json`.
-Also check that the `@CommandOptions` and `@InteractionEvent` decorators are set.
+Also check that the `@InteractionEvent` decorators are set.
 
 </details>
 

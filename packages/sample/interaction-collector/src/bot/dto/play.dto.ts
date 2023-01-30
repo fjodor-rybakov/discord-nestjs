@@ -1,6 +1,5 @@
-import { CommandOptions, Param } from '@discord-nestjs/core';
+import { Param } from '@discord-nestjs/core';
 
-@CommandOptions()
 export class PlayDto {
   @Param({
     name: 'song',

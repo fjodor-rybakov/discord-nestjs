@@ -229,12 +229,11 @@ export class PlaylistCommand {
 ```
 
 If your command accepts parameters, you need to create a class with options.
-Mark class with `@CommandOptions()` decorator.
 
 ```typescript
 /* registration.dto.ts */
 
-import { Param, Choice, ParamType, CommandOptions } from '@discord-nestjs/core';
+import { Param, Choice, ParamType } from '@discord-nestjs/core';
 
 enum City {
   Moscow,
@@ -242,8 +241,7 @@ enum City {
   Tokyo,
 }
 
-@CommandOptions()
-export class RegistrationOptions {
+export class RegistrationDto {
   @Param({ description: 'User name', required: true })
   name: string;
 
@@ -280,7 +278,7 @@ import {Command, InteractionEvent, Handler} from '@discord-nestjs/core';
 import {SlashCommandPipe} from '@discord-nestjs/common';
 import {Injectable} from '@nestjs/common';
 
-import {RegistrationOptions} from './registration.dto';
+import {RegistrationDto} from './registration.dto';
 
 @Command({
   name: 'reg',
@@ -289,7 +287,7 @@ import {RegistrationOptions} from './registration.dto';
 @Injectable()
 export class BaseInfoCommand {
   @Handler()
-  onRegistration(@InteractionEvent(SlashCommandPipe) options: RegistrationOptions): string {
+  onRegistration(@InteractionEvent(SlashCommandPipe) options: RegistrationDto): string {
     return `User was registered with name: ${options.name}, age ${options.age} and city ${options.city}`;
   }
 }

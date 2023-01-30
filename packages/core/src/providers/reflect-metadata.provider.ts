@@ -15,7 +15,6 @@ import { USE_COLLECTORS_METADATA } from '../decorators/collector/use-collectors/
 import { ChatInputCommandOptions } from '../decorators/command/chat-input-command-options';
 import { COMMAND_DECORATOR } from '../decorators/command/command.constant';
 import { HANDLER_DECORATOR } from '../decorators/command/handler/handler.constant';
-import { COMMAND_OPTIONS } from '../decorators/command/options/command-options.contant';
 import { OnCollectDecoratorOptions } from '../decorators/event/on-collect-decorator-options';
 import { OnDecoratorOptions } from '../decorators/event/on-decorator-options';
 import {
@@ -57,10 +56,6 @@ export class ReflectMetadataProvider {
     methodName: string,
   ): Record<string, any> {
     return Reflect.getMetadata(HANDLER_DECORATOR, instance, methodName);
-  }
-
-  getCommandOptionsDecoratorMetadata(classType: Type): Record<string, any> {
-    return Reflect.getMetadata(COMMAND_OPTIONS, classType.prototype);
   }
 
   getSubCommandDecoratorMetadata(

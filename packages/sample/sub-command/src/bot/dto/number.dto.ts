@@ -1,8 +1,7 @@
-import { Choice, CommandOptions, Param, ParamType } from '@discord-nestjs/core';
+import { Choice, Param, ParamType } from '@discord-nestjs/core';
 
 import { City } from '../definitions/city';
 
-@CommandOptions()
 export class NumberDto {
   @Param({
     name: 'phone-number',

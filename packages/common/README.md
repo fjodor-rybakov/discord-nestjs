@@ -30,9 +30,8 @@ For prefix command use `PrefixCommandPipe`.
 /* registration-email.dto.ts */
 
 import {City} from '../definitions/city';
-import {Param, ParamType, Choice, CommandOptions} from '@discord-nestjs/core';
+import {Param, ParamType, Choice} from '@discord-nestjs/core';
 
-@CommandOptions()
 export class RegistrationEmailDto {
   @Param({
     name: 'email',
@@ -85,10 +84,9 @@ Also, suitable for prefix commands.
 ```typescript
 /* registration-email.dto.ts */
 
-import {CommandOptions, Param, ParamType} from '@discord-nestjs/core';
+import {Param, ParamType} from '@discord-nestjs/core';
 import {IsEmail, Length, Max, Min} from 'class-validator';
 
-@CommandOptions()
 export class RegistrationEmailDto {
   @IsEmail()
   @Param({
@@ -166,7 +164,6 @@ class ResidencePlace {
 import { DiscordIntersectionType } from '@discord-nestjs/common';
 
 // Must have properties name, city and street
-@CommandOptions()
 class Profile extends DiscordIntersectionType(FullName, ResidencePlace) {
 }
 ```
