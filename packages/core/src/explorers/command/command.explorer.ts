@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { ExternalContextCreator } from '@nestjs/core/helpers/external-context-creator';
 import { ClientEvents } from 'discord.js';
 
@@ -10,6 +10,7 @@ import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provid
 import { BuildApplicationCommandService } from '../../services/build-application-command.service';
 import { ClientService } from '../../services/client.service';
 import { CommandTreeService } from '../../services/command-tree.service';
+import { OptionService } from '../../services/option.service';
 import { CollectorExplorer } from '../collector/collector.explorer';
 import { ClassExplorer } from '../interfaces/class-explorer';
 import { ClassExplorerOptions } from '../interfaces/class-explorer-options';
@@ -24,6 +25,7 @@ export class CommandExplorer implements ClassExplorer {
     private readonly commandTreeService: CommandTreeService,
     private readonly collectorExplorer: CollectorExplorer,
     private readonly externalContextCreator: ExternalContextCreator,
+    private readonly optionService: OptionService,
   ) {}
 
   async explore({ instance }: ClassExplorerOptions): Promise<void> {
@@ -86,13 +88,21 @@ export class CommandExplorer implements ClassExplorer {
           new DiscordParamFactory(),
         );
 
-        const returnReply = await handler(...eventArgs, {
-          event,
-          collectors: [],
-        } as EventContext);
+        try {
+          const returnReply = await handler(...eventArgs, {
+            event,
+            collectors: [],
+          } as EventContext);
 
-        if (returnReply) {
-          await interaction.reply(returnReply);
+          if (returnReply) {
+            await interaction.reply(returnReply);
+          }
+        } catch (exception) {
+          if (
+            exception instanceof ForbiddenException &&
+            this.optionService.getClientData().isTrowForbiddenException
+          )
+            throw exception;
         }
       });
   }
