@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.1](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@5.1.0...@discord-nestjs/core@5.1.1) (2023-01-30)
+
+### Bug Fixes
+
+- Catch ForbiddenException in interaction listener ([bf07acb](https://github.com/fjodor-rybakov/discord-nestjs/commit/bf07acbf992d98d7167b7f301ef7db8ee84fe42a))
+
 # [5.1.0](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@5.0.0...@discord-nestjs/core@5.1.0) (2023-01-30)
 
 ### Features
