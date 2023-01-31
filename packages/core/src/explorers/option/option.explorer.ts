@@ -65,7 +65,13 @@ export class OptionExplorer {
           ([key]) => !(key in Object.keys(choiceData)),
         );
 
-    return entries.map(([name, value]) => ({ name, value }));
+    return entries.map(([name, value]) => {
+      if (typeof value === 'object') {
+        return { name, ...value };
+      }
+
+      return { name, value };
+    });
   }
 
   private getChannelOptions(dtoType: Type, propertyKey: string): ChannelType[] {

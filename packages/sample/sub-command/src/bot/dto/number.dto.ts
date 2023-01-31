@@ -16,7 +16,22 @@ export class NumberDto {
   @Param({ description: 'User age', required: true, type: ParamType.INTEGER })
   age: number;
 
-  @Choice(City)
+  @Choice(
+    new Map([
+      [
+        'Moscow',
+        {
+          value: City.MOSCOW,
+          nameLocalizations: { ru: 'Москва' },
+        },
+      ],
+      [
+        'New-york',
+        { value: City.NEW_YORK, nameLocalizations: { ru: 'Нью-йорк' } },
+      ],
+      ['Tokyo', { value: City.TOKYO, nameLocalizations: { ru: 'Токио' } }],
+    ]),
+  )
   @Param({ description: 'City of residence', type: ParamType.INTEGER })
   city: City;
 }

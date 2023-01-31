@@ -29,6 +29,7 @@ import { FieldOptions } from '../decorators/modal/field/field-options';
 import { FIELD_DECORATOR } from '../decorators/modal/field/field.constant';
 import { TEXT_INPUT_VALUE_DECORATOR } from '../decorators/modal/text-input-value/text-input-value.constant';
 import { CHANNEL_DECORATOR } from '../decorators/option/channel/channel.constant';
+import { ChoiceOptions } from '../decorators/option/choice/choice-options';
 import { CHOICE_DECORATOR } from '../decorators/option/choice/choice.constant';
 import { NonParamOptions } from '../decorators/option/param/non-param-options';
 import { NumericParamOptions } from '../decorators/option/param/numeric-param-options';
@@ -145,10 +146,7 @@ export class ReflectMetadataProvider {
     return Reflect.getMetadata(PARAM_DECORATOR, type, propertyKey);
   }
 
-  getChoiceDecoratorMetadata(
-    type: Type,
-    propertyKey: string,
-  ): Record<string, any> | Map<string, string | number> {
+  getChoiceDecoratorMetadata(type: Type, propertyKey: string): ChoiceOptions {
     return Reflect.getMetadata(CHOICE_DECORATOR, type, propertyKey);
   }
 
