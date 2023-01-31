@@ -5,6 +5,7 @@ import {
   Injectable,
   Optional,
   PipeTransform,
+  Type,
 } from '@nestjs/common';
 import { ClassTransformOptions, plainToInstance } from 'class-transformer';
 import { Interaction } from 'discord.js';
@@ -29,6 +30,7 @@ export class SlashCommandPipe implements PipeTransform {
   ): InstanceType<any> {
     if (
       !metadata.metatype ||
+      !this.isDto(metadata.metatype) ||
       !interaction ||
       typeof interaction['isChatInputCommand'] !== 'function' ||
       !interaction.isChatInputCommand()
@@ -59,5 +61,28 @@ export class SlashCommandPipe implements PipeTransform {
       plainObject,
       this.classTransformerOptions,
     );
+  }
+
+  private isDto(type: Type): boolean {
+    try {
+      const instance = new type();
+      const allProperties = Object.keys(instance);
+
+      return allProperties.some(
+        (property) =>
+          !!(
+            this.metadataProvider.getParamDecoratorMetadata(type, property) ||
+            this.metadataProvider.getArgNumDecoratorMetadata(type, property) ||
+            this.metadataProvider.getArgNumDecoratorMetadata(type, property) ||
+            this.metadataProvider.getFiledDecoratorMetadata(type, property) ||
+            this.metadataProvider.getTextInputValueDecoratorMetadata(
+              type,
+              property,
+            )
+          ),
+      );
+    } catch {
+      return false;
+    }
   }
 }
