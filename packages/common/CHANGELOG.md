@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.2](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/common@5.1.1...@discord-nestjs/common@5.1.2) (2023-01-31)
+
+### Bug Fixes
+
+- Add check is dto in all pipes ([9c78f8c](https://github.com/fjodor-rybakov/discord-nestjs/commit/9c78f8c70a44fa79c870566b17ebb897fc915bb2))
+
 ## [5.1.1](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/common@5.1.0...@discord-nestjs/common@5.1.1) (2023-01-30)
 
 **Note:** Version bump only for package @discord-nestjs/common
