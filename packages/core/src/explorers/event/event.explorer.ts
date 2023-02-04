@@ -22,6 +22,8 @@ export class EventExplorer implements MethodExplorer {
     private readonly externalContextCreator: ExternalContextCreator,
   ) {}
 
+  private readonly discordParamFactory = new DiscordParamFactory();
+
   async explore(options: MethodExplorerOptions): Promise<void> {
     const { instance, methodName } = options;
     let eventMethod: 'on' | 'once' = 'on';
@@ -53,7 +55,7 @@ export class EventExplorer implements MethodExplorer {
             instance[methodName],
             methodName,
             EVENT_PARAMS_DECORATOR,
-            new DiscordParamFactory(),
+            this.discordParamFactory,
           );
 
           try {
