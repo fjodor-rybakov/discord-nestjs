@@ -28,6 +28,8 @@ export class CommandExplorer implements ClassExplorer {
     private readonly optionService: OptionService,
   ) {}
 
+  private readonly discordParamFactory = new DiscordParamFactory();
+
   async explore({ instance }: ClassExplorerOptions): Promise<void> {
     const metadata =
       this.metadataProvider.getCommandDecoratorMetadata(instance);
@@ -85,7 +87,7 @@ export class CommandExplorer implements ClassExplorer {
           commandInstance[commandHandlerName],
           commandHandlerName,
           EVENT_PARAMS_DECORATOR,
-          new DiscordParamFactory(),
+          this.discordParamFactory,
         );
 
         try {

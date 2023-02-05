@@ -16,6 +16,8 @@ export class CollectorRegister {
     private readonly optionService: OptionService,
   ) {}
 
+  private readonly discordParamFactory = new DiscordParamFactory();
+
   subscribeToEvents(
     collector: Collector<any, any, any>,
     events: CollectMethodEventsInfo,
@@ -29,7 +31,7 @@ export class CollectorRegister {
             classInstance[methodName],
             methodName,
             EVENT_PARAMS_DECORATOR,
-            new DiscordParamFactory(),
+            this.discordParamFactory,
           );
 
           try {

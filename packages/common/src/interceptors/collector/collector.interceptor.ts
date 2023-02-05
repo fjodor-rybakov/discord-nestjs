@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 
 @Injectable()
 export class CollectorInterceptor implements NestInterceptor {
-  constructor(private readonly collectorInterceptor: CollectorProvider) {}
+  constructor(private readonly collectorProvider: CollectorProvider) {}
 
   async intercept(
     context: ExecutionContext,
@@ -23,7 +23,7 @@ export class CollectorInterceptor implements NestInterceptor {
       context.getArgs().length - 1,
     );
 
-    eventContext.collectors = await this.collectorInterceptor.applyCollector({
+    eventContext.collectors = await this.collectorProvider.applyCollector({
       classType,
       methodName,
       event: eventContext.event,
