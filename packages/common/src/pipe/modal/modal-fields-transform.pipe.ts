@@ -25,22 +25,23 @@ export class ModalFieldsTransformPipe implements PipeTransform {
     interaction: Interaction,
     metadata: ArgumentMetadata,
   ): InstanceType<any> {
+    const { metatype } = metadata;
     if (
-      !metadata.metatype ||
-      !this.isDto(metadata.metatype) ||
+      !metatype ||
+      !this.isDto(metatype) ||
       !interaction ||
       typeof interaction['isModalSubmit'] !== 'function' ||
       !interaction.isModalSubmit()
     )
       return;
 
-    const dtoInstance = new metadata.metatype();
+    const dtoInstance = new metatype();
     const keys = Object.keys(dtoInstance);
     const plainObject = {};
 
     keys.forEach((property) => {
       const fieldCustomMetadata =
-        this.metadataProvider.getFiledDecoratorMetadata(dtoInstance, property);
+        this.metadataProvider.getFiledDecoratorMetadata(metatype, property);
       if (fieldCustomMetadata && interaction.fields) {
         plainObject[property] = interaction.fields.getField(
           fieldCustomMetadata.customId ?? property,
@@ -52,7 +53,7 @@ export class ModalFieldsTransformPipe implements PipeTransform {
 
       const textInputValueCustomMetadata =
         this.metadataProvider.getTextInputValueDecoratorMetadata(
-          dtoInstance,
+          metatype,
           property,
         );
       if (textInputValueCustomMetadata && interaction.fields) {
@@ -64,11 +65,7 @@ export class ModalFieldsTransformPipe implements PipeTransform {
       }
     });
 
-    return plainToInstance(
-      metadata.metatype,
-      plainObject,
-      this.classTransformerOptions,
-    );
+    return plainToInstance(metatype, plainObject, this.classTransformerOptions);
   }
 
   private isDto(type: Type): boolean {

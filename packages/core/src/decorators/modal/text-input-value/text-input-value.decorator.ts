@@ -8,7 +8,7 @@ export function TextInputValue(customId?: string): PropertyDecorator {
     Reflect.defineMetadata(
       TEXT_INPUT_VALUE_DECORATOR,
       { customId },
-      target,
+      target.constructor,
       propertyKey,
     );
   };

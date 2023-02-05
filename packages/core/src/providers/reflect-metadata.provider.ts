@@ -179,21 +179,14 @@ export class ReflectMetadataProvider {
     return Reflect.getMetadata(USE_COLLECTORS_METADATA, instance, methodName);
   }
 
-  getFiledDecoratorMetadata(
-    instance: InstanceType<any>,
-    propertyKey: string,
-  ): FieldOptions {
-    return Reflect.getMetadata(FIELD_DECORATOR, instance, propertyKey);
+  getFiledDecoratorMetadata(type: Type, propertyKey: string): FieldOptions {
+    return Reflect.getMetadata(FIELD_DECORATOR, type, propertyKey);
   }
 
   getTextInputValueDecoratorMetadata(
-    instance: InstanceType<any>,
+    type: Type,
     propertyKey: string,
   ): { customId?: string } {
-    return Reflect.getMetadata(
-      TEXT_INPUT_VALUE_DECORATOR,
-      instance,
-      propertyKey,
-    );
+    return Reflect.getMetadata(TEXT_INPUT_VALUE_DECORATOR, type, propertyKey);
   }
 }

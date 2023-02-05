@@ -13,6 +13,11 @@ export function Field(arg?: FieldOptions | string): PropertyDecorator {
 
     if (!IsObject(arg)) result = { customId: arg };
 
-    Reflect.defineMetadata(FIELD_DECORATOR, result, target, propertyKey);
+    Reflect.defineMetadata(
+      FIELD_DECORATOR,
+      result,
+      target.constructor,
+      propertyKey,
+    );
   };
 }
