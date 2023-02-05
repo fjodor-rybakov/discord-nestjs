@@ -12,7 +12,7 @@ NestJS package for discord.js
     - [ℹ️ Automatic registration of slash commands](#AutoRegCommand)
   - [ℹ️ Subscribe to event](#SubToEvent)
   - [ℹ️ Prefix commands](#PrefixCommands)
-  - [ℹ️ ️ Pipes, Guards, Interceptors and Filters](#Consumers)
+  - [ℹ️ Pipes, Guards, Interceptors and Filters](#Consumers)
   - [ℹ️ Collectors](#Collectors)
   - [ℹ️ Modals](#Modals)
 - [🛠️ Exported providers](#Providers)
