@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { ExternalContextCreator } from '@nestjs/core/helpers/external-context-creator';
-import { ClientEvents } from 'discord.js';
+import { ClientEvents, Message } from 'discord.js';
 
 import { EVENT_PARAMS_DECORATOR } from '../../decorators/param/event-param.constant';
 import { EventContext } from '../../definitions/interfaces/event-context';
@@ -59,10 +59,16 @@ export class EventExplorer implements MethodExplorer {
           );
 
           try {
-            await handler(...eventArgs, {
+            const response = await handler(...eventArgs, {
               event,
               collectors: [],
             } as EventContext);
+
+            const [eventArg] = eventArgs;
+
+            if (response && this.hasReply(eventArg)) {
+              eventArg['reply'](response);
+            }
           } catch (exception) {
             if (
               exception instanceof ForbiddenException &&
@@ -72,5 +78,9 @@ export class EventExplorer implements MethodExplorer {
           }
         },
       );
+  }
+
+  private hasReply(value: any): value is Message {
+    return typeof value['reply'] === 'function';
   }
 }
