@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.3.0](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@5.2.1...@discord-nestjs/core@5.3.0) (2023-02-14)
+
+### Bug Fixes
+
+- Typo in docs for prefix command ([f91a817](https://github.com/fjodor-rybakov/discord-nestjs/commit/f91a817c3ffd8c10d06527694e61687adb15a36e))
+
+### Features
+
+- Add reply for event handler ([6307337](https://github.com/fjodor-rybakov/discord-nestjs/commit/63073372da3a7e900e5a54c982344a81fde6e38e))
+
 ## [5.2.1](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@5.2.0...@discord-nestjs/core@5.2.1) (2023-02-05)
 
 ### Bug Fixes
