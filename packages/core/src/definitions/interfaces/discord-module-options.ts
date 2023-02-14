@@ -1,6 +1,5 @@
 import { ClientOptions, WebhookClientData } from 'discord.js';
 
-import { PrefixCommandGlobalOptions } from './prefix-command-global-options';
 import { RegisterCommandOptions } from './register-command-options';
 
 export interface DiscordModuleOption {
@@ -18,18 +17,6 @@ export interface DiscordModuleOption {
    * Specific registration of slash commands
    */
   registerCommandOptions?: RegisterCommandOptions[];
-
-  /**
-   * Command prefix-command
-   *
-   * Only for prefix-command command
-   */
-  prefix?: string;
-
-  /**
-   * Global options for prefix-command command
-   */
-  prefixGlobalOptions?: PrefixCommandGlobalOptions;
 
   /**
    * Webhook for the bot

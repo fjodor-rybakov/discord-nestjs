@@ -4,14 +4,12 @@ export * from './discord.module';
 export * from './definitions/interfaces/discord-module-options';
 export * from './definitions/interfaces/discord-module-async-options';
 export * from './definitions/interfaces/discord-options-factory';
-export * from './definitions/interfaces/prefix-command-global-options';
 export * from './definitions/interfaces/event-context';
 
 export * from './decorators/command/chat-input-command-options';
 export * from './decorators/sub-command/sub-command-options';
 export * from './decorators/sub-command-group/use-group-options';
 export * from './decorators/collector/inject-collector/inject-collector';
-export * from './decorators/prefix-command/prefix-command-options';
 export * from './decorators/transformation/arg-num/arg-num-options';
 export * from './decorators/transformation/arg-range/arg-range-options';
 
@@ -41,7 +39,6 @@ export * from './decorators/collector/message-collector/message-collector.decora
 export * from './decorators/collector/interaction-collector/interaction-collector.decorator';
 export * from './decorators/collector/use-collectors/use-collectors.decorator';
 export * from './decorators/collector/filter/filter.decorator';
-export * from './decorators/prefix-command/prefix-command.decorator';
 export * from './decorators/transformation/arg-num/arg-num.decorator';
 export * from './decorators/transformation/arg-range/arg-range.decorator';
 export * from './decorators/param/event-param.decorator';

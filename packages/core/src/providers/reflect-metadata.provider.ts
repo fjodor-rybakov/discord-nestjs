@@ -35,8 +35,6 @@ import { NonParamOptions } from '../decorators/option/param/non-param-options';
 import { NumericParamOptions } from '../decorators/option/param/numeric-param-options';
 import { PARAM_DECORATOR } from '../decorators/option/param/param.constant';
 import { StringParamOptions } from '../decorators/option/param/string-param-options';
-import { PrefixCommandOptions } from '../decorators/prefix-command/prefix-command-options';
-import { ON_PREFIX_COMMAND_DECORATOR } from '../decorators/prefix-command/prefix-command.constant';
 import { SubCommandOptions } from '../decorators/sub-command/sub-command-options';
 import { SUB_COMMAND_DECORATOR } from '../decorators/sub-command/sub-command.constant';
 import { ArgNumOptions } from '../decorators/transformation/arg-num/arg-num-options';
@@ -77,17 +75,6 @@ export class ReflectMetadataProvider {
     methodName: string,
   ): OnDecoratorOptions {
     return Reflect.getMetadata(ONCE_DECORATOR, instance, methodName);
-  }
-
-  getOnCommandDecoratorMetadata(
-    instance: InstanceType<any>,
-    methodName: string,
-  ): PrefixCommandOptions {
-    return Reflect.getMetadata(
-      ON_PREFIX_COMMAND_DECORATOR,
-      instance,
-      methodName,
-    );
   }
 
   getArgNumDecoratorMetadata(
