@@ -726,8 +726,8 @@ export class BotGateway {
     this.logger.log(`Bot ${this.client.user.tag} was started!`);
   }
 
-  @PrefixCommand('start')
-  @UsePipes(PrefixCommandPipe)
+  @On('messageCreate')
+  @UseInterceptors(new PrefixCommandInterceptor('start'))
   async onMessage(@MessageEvent(PrefixCommandPipe) dto: StartDto): Promise<string> {
     console.log(dto);
 
