@@ -21,7 +21,7 @@
   "dependencies": {
     "@discord-nestjs/common": "*",
     "@discord-nestjs/core": "*",
-    "@nestjs/common": "9.3.2",
+    "@nestjs/common": "9.3.9",
     "@nestjs/config": "2.3.0",
     "@nestjs/core": "9.3.9",
     "class-validator": "0.14.0",
