@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import {
+  ChannelType,
   ClientEvents,
   MessageCollector,
   MessageCollectorOptions,
@@ -27,6 +28,11 @@ export class MessageCollectorStrategy implements CollectorStrategy {
     )
       return;
     const [messageOrInteraction] = eventArgs;
+
+    if (messageOrInteraction.channel.type !== ChannelType.GuildText) {
+      return;
+    }
+
     const messageCollectorOptions: MessageCollectorOptions = {
       ...metadata,
     };
