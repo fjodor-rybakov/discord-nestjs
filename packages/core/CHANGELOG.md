@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.3.1](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@5.3.0...@discord-nestjs/core@5.3.1) (2023-02-22)
+
+### Performance Improvements
+
+- Move context beyond listener ([48ea8c0](https://github.com/fjodor-rybakov/discord-nestjs/commit/48ea8c00041049f01588075832b1a63fc5cc0c0b))
+
 # [5.3.0](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@5.2.1...@discord-nestjs/core@5.3.0) (2023-02-14)
 
 ### Bug Fixes

@@ -1,6 +1,6 @@
 {
   "name": "@discord-nestjs/common",
-  "version": "5.1.5",
+  "version": "5.1.6",
   "description": "Common module",
   "author": "fjodor-rybakov",
   "license": "MIT",
@@ -44,7 +44,7 @@
     "rxjs": "^7.*"
   },
   "devDependencies": {
-    "@discord-nestjs/core": "^5.3.0",
+    "@discord-nestjs/core": "^5.3.1",
     "@nestjs/common": "^9.3.9",
     "@nestjs/core": "^9.3.9",
     "discord.js": "^14.7.1",
