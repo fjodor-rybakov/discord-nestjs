@@ -25,15 +25,15 @@ export class CollectorRegister {
   ): void {
     Object.entries(events).forEach(
       ([methodName, { eventMethod, eventName }]) => {
-        collector[eventMethod](eventName as any, async (...eventArgs) => {
-          const handler = this.externalContextCreator.create(
-            classInstance,
-            classInstance[methodName],
-            methodName,
-            EVENT_PARAMS_DECORATOR,
-            this.discordParamFactory,
-          );
+        const handler = this.externalContextCreator.create(
+          classInstance,
+          classInstance[methodName],
+          methodName,
+          EVENT_PARAMS_DECORATOR,
+          this.discordParamFactory,
+        );
 
+        collector[eventMethod](eventName as any, async (...eventArgs) => {
           try {
             await handler(...eventArgs);
           } catch (exception) {

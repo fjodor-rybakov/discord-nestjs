@@ -1,15 +1,13 @@
-import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { ExternalContextCreator } from '@nestjs/core/helpers/external-context-creator';
 import { ClientEvents } from 'discord.js';
 
 import { EVENT_PARAMS_DECORATOR } from '../../decorators/param/event-param.constant';
 import { EventContext } from '../../definitions/interfaces/event-context';
 import { DiscordParamFactory } from '../../factory/discord-param-factory';
-import { DiscordCommandProvider } from '../../providers/discord-command.provider';
 import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provider';
 import { BuildApplicationCommandService } from '../../services/build-application-command.service';
 import { ClientService } from '../../services/client.service';
-import { CommandTreeService } from '../../services/command-tree.service';
 import { OptionService } from '../../services/option.service';
 import { CollectorExplorer } from '../collector/collector.explorer';
 import { ClassExplorer } from '../interfaces/class-explorer';
@@ -20,92 +18,93 @@ export class CommandExplorer implements ClassExplorer {
   constructor(
     private readonly discordClientService: ClientService,
     private readonly metadataProvider: ReflectMetadataProvider,
-    private readonly discordCommandProvider: DiscordCommandProvider,
     private readonly buildApplicationCommandService: BuildApplicationCommandService,
-    private readonly commandTreeService: CommandTreeService,
     private readonly collectorExplorer: CollectorExplorer,
     private readonly externalContextCreator: ExternalContextCreator,
     private readonly optionService: OptionService,
   ) {}
 
   private readonly discordParamFactory = new DiscordParamFactory();
+  private readonly event: keyof ClientEvents = 'interactionCreate';
 
   async explore({ instance }: ClassExplorerOptions): Promise<void> {
     const metadata =
       this.metadataProvider.getCommandDecoratorMetadata(instance);
     if (!metadata) return;
 
-    const { name, forGuild } = metadata;
-    const event = 'interactionCreate';
     const commandData =
-      await this.buildApplicationCommandService.exploreCommandOptions(
+      await this.buildApplicationCommandService.exploreCommand(
         instance,
         metadata,
       );
 
-    if (Logger.isLevelEnabled('debug')) {
-      Logger.debug('Slash command options', CommandExplorer.name);
-      Logger.debug(commandData, CommandExplorer.name);
-    }
-
-    this.discordCommandProvider.addCommand(instance.constructor, {
-      commandData,
-      additionalOptions: { forGuild },
-    });
-
-    this.discordClientService
-      .getClient()
-      .on(event, async (...eventArgs: ClientEvents['interactionCreate']) => {
-        const [interaction] = eventArgs;
-        if (
-          (!interaction.isChatInputCommand() &&
-            !interaction.isContextMenuCommand()) ||
-          interaction.commandName !== name
-        ) {
-          return;
-        }
-
-        let subcommand: string = null;
-        let subcommandGroup: string = null;
-
-        if (interaction.isChatInputCommand()) {
-          subcommand = interaction.options.getSubcommand(false);
-          subcommandGroup = interaction.options.getSubcommandGroup(false);
-        }
-
-        const commandNode = this.commandTreeService.getNode([
-          interaction.commandName,
-          subcommandGroup,
-          subcommand,
-        ]);
-
-        const { instance: commandInstance, methodName: commandHandlerName } =
-          commandNode;
-
+    commandData.forEach(
+      ({
+        name,
+        group,
+        subName,
+        methodName: commandMethodName,
+        instance: commandInstance,
+      }) => {
         const handler = this.externalContextCreator.create(
           commandInstance,
-          commandInstance[commandHandlerName],
-          commandHandlerName,
+          commandInstance[commandMethodName],
+          commandMethodName,
           EVENT_PARAMS_DECORATOR,
           this.discordParamFactory,
         );
 
-        try {
-          const returnReply = await handler(...eventArgs, {
-            event,
-            collectors: [],
-          } as EventContext);
+        this.listenCommand(handler, name, subName, group);
+      },
+    );
+  }
 
-          if (returnReply) {
-            await interaction.reply(returnReply);
-          }
-        } catch (exception) {
+  private listenCommand(
+    handler: (...args: any[]) => Promise<any>,
+    commandName: string,
+    subCommandName?: string,
+    groupName?: string,
+  ): void {
+    this.discordClientService
+      .getClient()
+      .on(
+        this.event,
+        async (...eventArgs: ClientEvents['interactionCreate']) => {
+          const [interaction] = eventArgs;
           if (
-            exception instanceof ForbiddenException &&
-            this.optionService.getClientData().isTrowForbiddenException
+            (!interaction.isChatInputCommand() &&
+              !interaction.isContextMenuCommand()) ||
+            interaction.commandName !== commandName
+          ) {
+            return;
+          }
+
+          if (
+            interaction.isChatInputCommand() &&
+            ((groupName &&
+              interaction.options.getSubcommandGroup(false) !== groupName) ||
+              (subCommandName &&
+                interaction.options.getSubcommand(false) !== subCommandName))
           )
-            throw exception;
-        }
-      });
+            return;
+
+          try {
+            const returnReply = await handler(...eventArgs, {
+              event: this.event,
+              collectors: [],
+            } as EventContext);
+
+            if (returnReply) {
+              await interaction.reply(returnReply);
+            }
+          } catch (exception) {
+            if (
+              exception instanceof ForbiddenException &&
+              this.optionService.getClientData().isTrowForbiddenException
+            )
+              throw exception;
+          }
+        },
+      );
   }
 }

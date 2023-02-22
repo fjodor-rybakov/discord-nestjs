@@ -15,9 +15,6 @@ export * from './decorators/transformation/arg-range/arg-range-options';
 
 // Types
 export * from './definitions/types/param.type';
-export * from './definitions/types/tree/tree';
-export * from './definitions/types/tree/command-node';
-export * from './definitions/types/tree/leaf';
 export * from './definitions/types/event.type';
 
 // Decorators

@@ -31,7 +31,6 @@ import { ReflectMetadataProvider } from './providers/reflect-metadata.provider';
 import { BuildApplicationCommandService } from './services/build-application-command.service';
 import { ClientService } from './services/client.service';
 import { CommandHandlerFinderService } from './services/command-handler-finder.service';
-import { CommandTreeService } from './services/command-tree.service';
 import { DtoService } from './services/dto.service';
 import { ExplorerService } from './services/explorer.service';
 import { InstantiationService } from './services/instantiation.service';
@@ -59,7 +58,6 @@ export class DiscordModule {
         ExplorerService,
         CommandHandlerFinderService,
         BuildApplicationCommandService,
-        CommandTreeService,
         ReactCollectorStrategy,
         MessageCollectorStrategy,
         InteractionCollectorStrategy,

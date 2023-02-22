@@ -100,7 +100,15 @@ export class DtoService {
       });
     }
 
-    return commandOptions;
+    return this.sortByRequired(commandOptions);
+  }
+
+  private sortByRequired<TOption extends { required?: boolean }>(
+    options: TOption[],
+  ): TOption[] {
+    return options.sort((first, second) =>
+      first.required > second.required ? -1 : 1,
+    );
   }
 
   private isDto(type: Type): boolean {

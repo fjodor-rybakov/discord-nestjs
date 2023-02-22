@@ -45,19 +45,19 @@ export class EventExplorer implements MethodExplorer {
       instance.constructor.name,
     );
 
+    const handler = this.externalContextCreator.create(
+      instance,
+      instance[methodName],
+      methodName,
+      EVENT_PARAMS_DECORATOR,
+      this.discordParamFactory,
+    );
+
     this.discordClientService
       .getClient()
       [eventMethod](
         event,
         async (...eventArgs: ClientEvents[keyof ClientEvents]) => {
-          const handler = this.externalContextCreator.create(
-            instance,
-            instance[methodName],
-            methodName,
-            EVENT_PARAMS_DECORATOR,
-            this.discordParamFactory,
-          );
-
           try {
             const response = await handler(...eventArgs, {
               event,
