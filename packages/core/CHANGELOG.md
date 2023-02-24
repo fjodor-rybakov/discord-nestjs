@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.3.2](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@5.3.1...@discord-nestjs/core@5.3.2) (2023-02-24)
+
+### Bug Fixes
+
+- Bug with search handler ([c920d17](https://github.com/fjodor-rybakov/discord-nestjs/commit/c920d17eba4409534f88031cc3a291cdb21a350a))
+
 ## [5.3.1](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@5.3.0...@discord-nestjs/core@5.3.1) (2023-02-22)
 
 ### Performance Improvements
