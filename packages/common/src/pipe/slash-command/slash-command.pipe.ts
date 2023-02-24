@@ -1,4 +1,4 @@
-import { ReflectMetadataProvider } from '@discord-nestjs/core';
+import { ParamType, ReflectMetadataProvider } from '@discord-nestjs/core';
 import {
   ArgumentMetadata,
   Inject,
@@ -8,7 +8,7 @@ import {
   Type,
 } from '@nestjs/common';
 import { ClassTransformOptions, plainToInstance } from 'class-transformer';
-import { Interaction } from 'discord.js';
+import { Attachment, Interaction } from 'discord.js';
 
 import { TRANSFORMER_OPTION } from '../../contants/transformer-options.constant';
 
@@ -40,6 +40,7 @@ export class SlashCommandPipe implements PipeTransform {
     const plainObject = {};
     const dtoInstance = new metadata.metatype();
     const allKeys = Object.keys(dtoInstance);
+    const assignWithoutTransform: Record<string, any> = {};
 
     allKeys.forEach((property: string) => {
       const paramDecoratorMetadata =
@@ -50,17 +51,34 @@ export class SlashCommandPipe implements PipeTransform {
 
       if (!paramDecoratorMetadata) return;
 
-      const { name, required } = paramDecoratorMetadata;
-      plainObject[property] =
-        interaction.options.get(name ?? property, required)?.value ??
-        dtoInstance[property];
+      const { required, type } = paramDecoratorMetadata;
+      const name = paramDecoratorMetadata.name ?? property;
+      const interactionOption = interaction.options.get(name, required);
+
+      plainObject[property] = interactionOption?.value ?? dtoInstance[property];
+
+      if (type === ParamType.ATTACHMENT) {
+        const propertyType = Reflect.getMetadata(
+          'design:type',
+          dtoInstance,
+          property,
+        );
+
+        if (Object.is(propertyType, Attachment)) {
+          assignWithoutTransform[property] =
+            interactionOption?.attachment ?? dtoInstance[property];
+        }
+      }
     });
 
-    return plainToInstance(
+    // class-validator breaks classes trying to recreate an instance from a property type
+    const resultDto = plainToInstance(
       metadata.metatype,
       plainObject,
       this.classTransformerOptions,
     );
+
+    return Object.assign(resultDto, assignWithoutTransform);
   }
 
   private isDto(type: Type): boolean {
