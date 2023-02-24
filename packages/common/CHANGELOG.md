@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.2.0](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/common@5.1.7...@discord-nestjs/common@5.2.0) (2023-02-24)
+
+### Features
+
+- Set attachment object if prop type is Attachment ([7c659d8](https://github.com/fjodor-rybakov/discord-nestjs/commit/7c659d8873fed59ddc544638ad77d7a22d839976))
+
 ## [5.1.7](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/common@5.1.6...@discord-nestjs/common@5.1.7) (2023-02-24)
 
 **Note:** Version bump only for package @discord-nestjs/common
