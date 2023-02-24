@@ -46,6 +46,10 @@ export class CommandExplorer implements ClassExplorer {
         methodName: commandMethodName,
         instance: commandInstance,
       }) => {
+        if (!commandMethodName || !commandInstance) {
+          return;
+        }
+
         const handler = this.externalContextCreator.create(
           commandInstance,
           commandInstance[commandMethodName],

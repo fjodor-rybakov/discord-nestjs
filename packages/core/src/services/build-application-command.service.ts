@@ -40,7 +40,8 @@ export class BuildApplicationCommandService {
     instance: InstanceType<any>,
     chatInputCommandOptions: ChatInputCommandOptions,
   ): Promise<CommandListenerDescribe[]> {
-    const methodName = await this.commandHandlerFinderService.searchHandler(
+    const methodName = await this.getMethodName(
+      chatInputCommandOptions,
       instance,
     );
     const commandData = this.getBaseApplicationCommandData(
@@ -222,5 +223,19 @@ export class BuildApplicationCommandService {
       nameLocalizations,
       descriptionLocalizations,
     };
+  }
+
+  private async getMethodName(
+    chatInputCommandOptions: ChatInputCommandOptions,
+    instance: InstanceType<any>,
+  ): Promise<string> {
+    if (
+      chatInputCommandOptions.include &&
+      chatInputCommandOptions.include.length !== 0
+    ) {
+      return;
+    }
+
+    return this.commandHandlerFinderService.searchHandler(instance);
   }
 }

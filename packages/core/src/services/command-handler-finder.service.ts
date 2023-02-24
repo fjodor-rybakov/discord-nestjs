@@ -13,9 +13,7 @@ export class CommandHandlerFinderService {
 
   async searchHandler(instance: InstanceType<any>): Promise<string> {
     const methodNames = new Set(
-      this.metadataScanner.getAllFilteredMethodNames(
-        Object.getPrototypeOf(instance),
-      ),
+      this.metadataScanner.getAllMethodNames(Object.getPrototypeOf(instance)),
     );
 
     if (methodNames.size === 0)

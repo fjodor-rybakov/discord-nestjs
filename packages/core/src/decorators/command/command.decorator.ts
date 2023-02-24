@@ -19,7 +19,7 @@ export function Command(
       options.type = ApplicationCommandType.ChatInput;
     }
 
-    if (options.type === ApplicationCommandType.ChatInput) {
+    if (options.type === ApplicationCommandType.ChatInput && !options.include) {
       options.include = [];
     }
 
