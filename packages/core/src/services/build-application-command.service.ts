@@ -13,7 +13,6 @@ import { isSubCommandGroup } from '../decorators/sub-command-group/is-sub-comman
 import { SubCommandGroupOptions } from '../decorators/sub-command-group/sub-command-group-options';
 import { TInclude } from '../definitions/types/include.type';
 import { CommandListenerDescribe } from '../explorers/command/interfaces/command-listener-describe';
-import { OptionExplorer } from '../explorers/option/option.explorer';
 import { DiscordCommandProvider } from '../providers/discord-command.provider';
 import { ReflectMetadataProvider } from '../providers/reflect-metadata.provider';
 import { CommandHandlerFinderService } from './command-handler-finder.service';
@@ -30,7 +29,6 @@ export class BuildApplicationCommandService {
   constructor(
     private readonly moduleRef: ModuleRef,
     private readonly metadataProvider: ReflectMetadataProvider,
-    private readonly optionExplorer: OptionExplorer,
     private readonly discordCommandProvider: DiscordCommandProvider,
     private readonly dtoService: DtoService,
     private readonly commandHandlerFinderService: CommandHandlerFinderService,

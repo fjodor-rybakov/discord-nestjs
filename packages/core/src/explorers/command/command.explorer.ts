@@ -9,7 +9,6 @@ import { ReflectMetadataProvider } from '../../providers/reflect-metadata.provid
 import { BuildApplicationCommandService } from '../../services/build-application-command.service';
 import { ClientService } from '../../services/client.service';
 import { OptionService } from '../../services/option.service';
-import { CollectorExplorer } from '../collector/collector.explorer';
 import { ClassExplorer } from '../interfaces/class-explorer';
 import { ClassExplorerOptions } from '../interfaces/class-explorer-options';
 
@@ -19,7 +18,6 @@ export class CommandExplorer implements ClassExplorer {
     private readonly discordClientService: ClientService,
     private readonly metadataProvider: ReflectMetadataProvider,
     private readonly buildApplicationCommandService: BuildApplicationCommandService,
-    private readonly collectorExplorer: CollectorExplorer,
     private readonly externalContextCreator: ExternalContextCreator,
     private readonly optionService: OptionService,
   ) {}

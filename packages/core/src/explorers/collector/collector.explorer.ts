@@ -24,7 +24,6 @@ import { UseCollectorApplyOptions } from './use-collector-apply-options';
 @Injectable()
 export class CollectorExplorer implements MethodExplorer {
   private readonly cachedCollectors = new WeakMap<Type, DiscordCollectors>();
-  private readonly initCollectorInstances: InstanceType<any>[] = [];
 
   constructor(
     private readonly metadataProvider: ReflectMetadataProvider,
@@ -82,8 +81,6 @@ export class CollectorExplorer implements MethodExplorer {
         moduleRef,
       });
     }
-
-    this.initCollectorInstances.push(...methodCollectorInstances);
   }
 
   async applyCollector(
@@ -111,10 +108,6 @@ export class CollectorExplorer implements MethodExplorer {
         collector.strategy.setupCollector(options, collector, moduleRef),
       ),
     );
-  }
-
-  getInitCollectorInstances(): InteractionCollector<any>[] {
-    return this.initCollectorInstances;
   }
 
   private getCollectorsInfo(
