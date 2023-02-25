@@ -9,7 +9,6 @@ import {
   Injectable,
   Optional,
   PipeTransform,
-  Type,
 } from '@nestjs/common';
 import { ClassTransformOptions, plainToInstance } from 'class-transformer';
 import { Message } from 'discord.js';
@@ -28,7 +27,7 @@ export class PrefixCommandPipe implements PipeTransform {
   transform(message: Message, metadata: ArgumentMetadata): InstanceType<any> {
     if (
       !metadata.metatype ||
-      !this.isDto(metadata.metatype) ||
+      !this.metadataProvider.isDto(metadata.metatype) ||
       !message ||
       !(message instanceof Message)
     )
@@ -99,28 +98,5 @@ export class PrefixCommandPipe implements PipeTransform {
     item.toPosition =
       item.toPosition !== undefined ? item.toPosition : inputPart.length;
     return inputPart.slice(item.formPosition, item.toPosition);
-  }
-
-  private isDto(type: Type): boolean {
-    try {
-      const instance = new type();
-      const allProperties = Object.keys(instance);
-
-      return allProperties.some(
-        (property) =>
-          !!(
-            this.metadataProvider.getParamDecoratorMetadata(type, property) ||
-            this.metadataProvider.getArgNumDecoratorMetadata(type, property) ||
-            this.metadataProvider.getArgNumDecoratorMetadata(type, property) ||
-            this.metadataProvider.getFiledDecoratorMetadata(type, property) ||
-            this.metadataProvider.getTextInputValueDecoratorMetadata(
-              type,
-              property,
-            )
-          ),
-      );
-    } catch {
-      return false;
-    }
   }
 }

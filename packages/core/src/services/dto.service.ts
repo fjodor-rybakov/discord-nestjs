@@ -52,7 +52,7 @@ export class DtoService {
         map((type) => {
           return {
             type,
-            isDto: this.isDto(type),
+            isDto: this.metadataProvider.isDto(type),
           };
         }),
         filter(({ isDto }) => isDto),
@@ -109,28 +109,5 @@ export class DtoService {
     return options.sort((first, second) =>
       first.required > second.required ? -1 : 1,
     );
-  }
-
-  private isDto(type: Type): boolean {
-    try {
-      const instance = new type();
-      const allProperties = Object.keys(instance);
-
-      return allProperties.some(
-        (property) =>
-          !!(
-            this.metadataProvider.getParamDecoratorMetadata(type, property) ||
-            this.metadataProvider.getArgNumDecoratorMetadata(type, property) ||
-            this.metadataProvider.getArgNumDecoratorMetadata(type, property) ||
-            this.metadataProvider.getFiledDecoratorMetadata(type, property) ||
-            this.metadataProvider.getTextInputValueDecoratorMetadata(
-              type,
-              property,
-            )
-          ),
-      );
-    } catch {
-      return false;
-    }
   }
 }

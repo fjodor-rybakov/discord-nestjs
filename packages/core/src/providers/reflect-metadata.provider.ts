@@ -176,4 +176,24 @@ export class ReflectMetadataProvider {
   ): { customId?: string } {
     return Reflect.getMetadata(TEXT_INPUT_VALUE_DECORATOR, type, propertyKey);
   }
+
+  isDto(type: Type): boolean {
+    try {
+      const instance = new type();
+      const allProperties = Object.keys(instance);
+
+      return allProperties.some(
+        (property) =>
+          !!(
+            this.getParamDecoratorMetadata(type, property) ||
+            this.getArgNumDecoratorMetadata(type, property) ||
+            this.getArgNumDecoratorMetadata(type, property) ||
+            this.getFiledDecoratorMetadata(type, property) ||
+            this.getTextInputValueDecoratorMetadata(type, property)
+          ),
+      );
+    } catch {
+      return false;
+    }
+  }
 }
