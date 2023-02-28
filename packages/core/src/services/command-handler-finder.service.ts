@@ -12,9 +12,7 @@ export class CommandHandlerFinderService {
   ) {}
 
   async searchHandler(instance: InstanceType<any>): Promise<string> {
-    const methodNames = new Set(
-      this.metadataScanner.getAllMethodNames(Object.getPrototypeOf(instance)),
-    );
+    const methodNames = new Set(this.getMethodsFromInstance(instance));
 
     if (methodNames.size === 0)
       throw new Error(
@@ -41,5 +39,18 @@ export class CommandHandlerFinderService {
     );
 
     return handlerData.methodName;
+  }
+
+  private getMethodsFromInstance(instance: InstanceType<any>) {
+    if (typeof this.metadataScanner.getAllMethodNames === 'function') {
+      return this.metadataScanner.getAllMethodNames(
+        Object.getPrototypeOf(instance),
+      );
+    }
+
+    // TODO: Remove later deprecated method
+    return this.metadataScanner.getAllFilteredMethodNames(
+      Object.getPrototypeOf(instance),
+    );
   }
 }
