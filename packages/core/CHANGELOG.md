@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.3.3](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@5.3.2...@discord-nestjs/core@5.3.3) (2023-02-28)
+
+### Bug Fixes
+
+- Non exist getAllMethodNames from metadataScanner ([3705893](https://github.com/fjodor-rybakov/discord-nestjs/commit/3705893a629bccb314e5ca1601e4a3dfb672192f))
+
 ## [5.3.2](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@5.3.1...@discord-nestjs/core@5.3.2) (2023-02-24)
 
 ### Bug Fixes
