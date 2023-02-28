@@ -1,5 +1,4 @@
 {
-  "name": "discord-nestjs",
   "private": true,
   "workspaces": [
     "packages/*",
