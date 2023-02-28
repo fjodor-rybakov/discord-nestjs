@@ -19,8 +19,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@discord-nestjs/common": "5.1.5",
-    "@discord-nestjs/core": "5.3.0",
+    "@discord-nestjs/common": "5.2.1",
+    "@discord-nestjs/core": "5.3.3",
     "@nestjs/common": "9.3.9",
     "@nestjs/config": "2.3.1",
     "@nestjs/core": "9.3.9",
@@ -33,10 +33,10 @@
   "devDependencies": {
     "@nestjs/cli": "9.2.0",
     "@nestjs/schematics": "9.0.4",
-    "@types/node": "18.14.0",
-    "@typescript-eslint/eslint-plugin": "5.53.0",
-    "@typescript-eslint/parser": "5.53.0",
-    "eslint": "8.34.0",
+    "@types/node": "18.14.2",
+    "@typescript-eslint/eslint-plugin": "5.54.0",
+    "@typescript-eslint/parser": "5.54.0",
+    "eslint": "8.35.0",
     "eslint-config-prettier": "8.6.0",
     "eslint-plugin-prettier": "4.2.1",
     "prettier": "2.8.4",
