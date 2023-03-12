@@ -31,13 +31,9 @@ export class OptionExplorer {
           );
       optionMetadata[propertyKey] = {
         param: {
+          ...paramDecoratorMetadata,
           name: paramDecoratorMetadata.name ?? propertyKey,
-          description: paramDecoratorMetadata.description,
           type: applicationOptionType,
-          maxValue: paramDecoratorMetadata.maxValue,
-          minValue: paramDecoratorMetadata.minValue,
-          autocomplete: paramDecoratorMetadata.autocomplete,
-          required: paramDecoratorMetadata.required,
         },
         choice: this.getChoiceOptions(dtoType, propertyKey),
         channelTypes,
