@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.3.4](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@5.3.3...@discord-nestjs/core@5.3.4) (2023-03-12)
+
+### Bug Fixes
+
+- Localizations for params ([8fa71ec](https://github.com/fjodor-rybakov/discord-nestjs/commit/8fa71ec861315ca5d45aa3b6d7069ac5c8c3dc66))
+
 ## [5.3.3](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@5.3.2...@discord-nestjs/core@5.3.3) (2023-02-28)
 
 ### Bug Fixes
