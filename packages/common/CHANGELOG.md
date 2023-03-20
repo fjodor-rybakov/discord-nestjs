@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.2.3](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/common@5.2.2...@discord-nestjs/common@5.2.3) (2023-03-20)
+
+**Note:** Version bump only for package @discord-nestjs/common
+
 ## [5.2.2](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/common@5.2.1...@discord-nestjs/common@5.2.2) (2023-03-12)
 
 **Note:** Version bump only for package @discord-nestjs/common
