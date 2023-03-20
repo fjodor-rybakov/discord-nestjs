@@ -28,7 +28,8 @@
   ],
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "nest build"
+    "build": "nest build",
+    "test": "jest"
   },
   "dependencies": {
     "class-transformer": "0.5.1"

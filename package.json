@@ -13,6 +13,7 @@
     "bootstrap": "lerna bootstrap",
     "clean": "lerna clean",
     "build": "lerna run build --no-private",
+    "test": "lerna run test --scope=@discord-nestjs/*",
     "format": "prettier --write \"packages/**/*.ts\" --ignore-path .gitignore",
     "prepublish:release": "npm run build",
     "postinstall": "npm run build",
