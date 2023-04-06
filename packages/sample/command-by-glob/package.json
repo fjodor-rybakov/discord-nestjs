@@ -23,7 +23,7 @@
     "@discord-nestjs/core": "*",
     "@nestjs/common": "9.3.10",
     "@nestjs/config": "2.3.1",
-    "@nestjs/core": "9.3.10",
+    "@nestjs/core": "9.4.0",
     "class-transformer": "0.5.1",
     "discord.js": "14.8.0",
     "nestjs-dynamic-providers": "0.1.9",
