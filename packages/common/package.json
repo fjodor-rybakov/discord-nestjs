@@ -45,16 +45,12 @@
   },
   "devDependencies": {
     "@discord-nestjs/core": "^5.3.5",
-    "@nestjs/common": "^9.3.10",
-    "@nestjs/core": "^9.3.10",
-    "discord.js": "^14.8.0",
+    "@nestjs/cli": "^9.4.2",
+    "@nestjs/common": "^9.4.0",
+    "@nestjs/core": "^9.4.0",
+    "discord.js": "^14.10.2",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.0",
-    "typescript": "5.0.2"
-  },
-  "overrides": {
-    "@nestjs/mapped-types": {
-      "class-validator": "$class-validator"
-    }
+    "rxjs": "^7.8.1",
+    "typescript": "5.0.4"
   }
 }
