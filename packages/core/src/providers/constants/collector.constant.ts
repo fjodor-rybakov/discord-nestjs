@@ -1,1 +1,1 @@
-export const COLLECTOR = '__discord_collector__';
+export const COLLECTOR: string | symbol | undefined = '__discord_collector__';

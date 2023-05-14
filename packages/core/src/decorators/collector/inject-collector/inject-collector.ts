@@ -6,13 +6,13 @@ import { COLLECTOR } from '../../../providers/constants/collector.constant';
 /**
  * Inject collector from request
  */
-export function InjectCollector() {
+export function InjectCollector(): ParameterDecorator {
   return Inject(COLLECTOR);
 }
 
 /**
  * Inject an event based on which the collector was created
  */
-export function InjectCauseEvent() {
+export function InjectCauseEvent(): ParameterDecorator {
   return Inject(CAUSE_EVENT);
 }
