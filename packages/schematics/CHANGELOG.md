@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.7](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/schematics@0.4.6...@discord-nestjs/schematics@0.4.7) (2023-05-14)
+
+### Bug Fixes
+
+- Problem with types ([422ea12](https://github.com/fjodor-rybakov/discord-nestjs/commit/422ea120721a2fd5b63abdc8f20699e72bfe8a74))
+
 ## [0.4.6](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/schematics@0.4.5...@discord-nestjs/schematics@0.4.6) (2023-05-03)
 
 **Note:** Version bump only for package @discord-nestjs/schematics
