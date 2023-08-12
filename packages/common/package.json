@@ -45,10 +45,10 @@
   },
   "devDependencies": {
     "@discord-nestjs/core": "^5.3.8",
-    "@nestjs/cli": "^10.1.7",
-    "@nestjs/common": "^10.0.5",
-    "@nestjs/core": "^10.0.5",
-    "discord.js": "^14.11.0",
+    "@nestjs/cli": "^10.1.11",
+    "@nestjs/common": "^10.1.3",
+    "@nestjs/core": "^10.1.3",
+    "discord.js": "^14.12.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
     "typescript": "5.1.6"
