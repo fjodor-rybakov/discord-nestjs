@@ -33,7 +33,7 @@
     "@nestjs/cli": "10.1.11",
     "@nestjs/schematics": "10.0.2",
     "@types/node": "20.4.10",
-    "@typescript-eslint/eslint-plugin": "6.3.0",
+    "@typescript-eslint/eslint-plugin": "6.4.0",
     "@typescript-eslint/parser": "6.3.0",
     "eslint": "8.47.0",
     "eslint-config-prettier": "9.0.0",
