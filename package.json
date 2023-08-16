@@ -33,7 +33,7 @@
     "husky": "8.0.3",
     "lerna": "7.1.5",
     "lint-staged": "13.2.3",
-    "prettier": "3.0.1"
+    "prettier": "3.0.2"
   },
   "lint-staged": {
     "*.ts": [
