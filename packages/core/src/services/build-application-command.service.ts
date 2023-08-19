@@ -164,9 +164,8 @@ export class BuildApplicationCommandService {
 
     if (!metadata) throw new Error(`Passed class is not a subcommand`);
 
-    const methodName = await this.commandHandlerFinderService.searchHandler(
-      subCommandInstance,
-    );
+    const methodName =
+      await this.commandHandlerFinderService.searchHandler(subCommandInstance);
 
     const dtoType = await this.dtoService.getDtoMetatype(
       subCommandInstance,
@@ -212,15 +211,23 @@ export class BuildApplicationCommandService {
       descriptionLocalizations,
     } = chatInputCommandOptions;
 
-    return {
+    const data: ApplicationCommandData = {
       type,
       name,
       description,
-      dmPermission,
-      defaultMemberPermissions,
       nameLocalizations,
       descriptionLocalizations,
     };
+
+    if (defaultMemberPermissions) {
+      data.defaultMemberPermissions = defaultMemberPermissions;
+    }
+
+    if (dmPermission) {
+      data.dmPermission = dmPermission;
+    }
+
+    return data;
   }
 
   private async getMethodName(
