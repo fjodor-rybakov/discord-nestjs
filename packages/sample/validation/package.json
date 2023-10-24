@@ -31,7 +31,7 @@
     "rxjs": "7.8.1"
   },
   "devDependencies": {
-    "@nestjs/cli": "10.1.17",
+    "@nestjs/cli": "10.2.0",
     "@nestjs/schematics": "10.0.2",
     "@types/node": "20.6.3",
     "@types/validator": "^13.11.1",
