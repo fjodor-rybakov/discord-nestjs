@@ -25,15 +25,15 @@
     "update": "npx npm-check-updates --deep -u"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "6.10.0",
-    "@typescript-eslint/parser": "6.10.0",
-    "eslint": "8.53.0",
-    "eslint-config-prettier": "9.0.0",
-    "eslint-plugin-prettier": "5.0.1",
-    "husky": "8.0.3",
-    "lerna": "7.4.2",
-    "lint-staged": "15.1.0",
-    "prettier": "3.0.3"
+    "@typescript-eslint/eslint-plugin": "6.21.0",
+    "@typescript-eslint/parser": "6.21.0",
+    "eslint": "8.56.0",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-plugin-prettier": "5.1.3",
+    "husky": "9.0.10",
+    "lerna": "8.1.2",
+    "lint-staged": "15.2.2",
+    "prettier": "3.2.5"
   },
   "lint-staged": {
     "*.ts": [
