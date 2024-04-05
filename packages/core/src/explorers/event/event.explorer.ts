@@ -55,29 +55,28 @@ export class EventExplorer implements MethodExplorer {
 
     this.discordClientService
       .getClient()
-      [eventMethod](
-        event,
-        async (...eventArgs: ClientEvents[keyof ClientEvents]) => {
-          try {
-            const response = await handler(...eventArgs, {
-              event,
-              collectors: [],
-            } as EventContext);
+      [
+        eventMethod
+      ](event, async (...eventArgs: ClientEvents[keyof ClientEvents]) => {
+        try {
+          const response = await handler(...eventArgs, {
+            event,
+            collectors: [],
+          } as EventContext);
 
-            const [eventArg] = eventArgs;
+          const [eventArg] = eventArgs;
 
-            if (response && this.hasReply(eventArg)) {
-              eventArg['reply'](response);
-            }
-          } catch (exception) {
-            if (
-              exception instanceof ForbiddenException &&
-              this.optionService.getClientData().isTrowForbiddenException
-            )
-              throw exception;
+          if (response && this.hasReply(eventArg)) {
+            await eventArg['reply'](response);
           }
-        },
-      );
+        } catch (exception) {
+          if (
+            exception instanceof ForbiddenException &&
+            this.optionService.getClientData().isTrowForbiddenException
+          )
+            throw exception;
+        }
+      });
   }
 
   private hasReply(value: any): value is Message {
