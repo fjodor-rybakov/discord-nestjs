@@ -20,7 +20,7 @@ export class CommandExplorer implements ClassExplorer {
     private readonly buildApplicationCommandService: BuildApplicationCommandService,
     private readonly externalContextCreator: ExternalContextCreator,
     private readonly optionService: OptionService,
-  ) {}
+  ) { }
 
   private readonly discordParamFactory = new DiscordParamFactory();
   private readonly event: keyof ClientEvents = 'interactionCreate';
@@ -68,19 +68,10 @@ export class CommandExplorer implements ClassExplorer {
     groupName?: string,
   ): void {
     this.discordClientService
-      .getClient()
-      .on(
-        this.event,
+      .addCommandHandler(
+        commandName,
         async (...eventArgs: ClientEvents['interactionCreate']) => {
           const [interaction] = eventArgs;
-          if (
-            (!interaction.isChatInputCommand() &&
-              !interaction.isContextMenuCommand()) ||
-            interaction.commandName !== commandName
-          ) {
-            return;
-          }
-
           if (
             interaction.isChatInputCommand() &&
             ((groupName &&
@@ -96,8 +87,10 @@ export class CommandExplorer implements ClassExplorer {
               collectors: [],
             } as EventContext);
 
-            if (returnReply) {
+            if (returnReply && !interaction.isAutocomplete()) {
               await interaction.reply(returnReply);
+            }else if (returnReply && interaction.isAutocomplete()) {
+              await interaction.respond(returnReply);
             }
           } catch (exception) {
             if (
