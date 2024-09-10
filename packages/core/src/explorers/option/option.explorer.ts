@@ -99,6 +99,8 @@ export class OptionExplorer {
         return ApplicationCommandOptionType.User;
       case ParamType.ATTACHMENT:
         return ApplicationCommandOptionType.Attachment;
+      case ParamType.CHANNEL:
+        return ApplicationCommandOptionType.Channel;
       default: {
         const metatype = this.metadataProvider.getPropertyTypeMetadata(
           instance,

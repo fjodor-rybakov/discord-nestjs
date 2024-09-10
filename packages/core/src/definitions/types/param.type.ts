@@ -3,6 +3,7 @@ export enum ParamType {
   INTEGER,
   BOOLEAN,
   USER,
+  CHANNEL,
   ROLE,
   MENTIONABLE,
   NUMBER,
