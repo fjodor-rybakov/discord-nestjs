@@ -36,7 +36,7 @@ export class CommandExplorer implements ClassExplorer {
         metadata,
       );
 
-    commandData.forEach(
+    const mapped = commandData.map(
       ({
         name,
         group,
@@ -56,56 +56,62 @@ export class CommandExplorer implements ClassExplorer {
           this.discordParamFactory,
         );
 
-        this.listenCommand(handler, name, subName, group);
+        return {
+          handler,
+          commandName: name,
+          subCommandName: subName,
+          groupName: group,
+        };
       },
     );
-  }
 
-  private listenCommand(
-    handler: (...args: any[]) => Promise<any>,
-    commandName: string,
-    subCommandName?: string,
-    groupName?: string,
-  ): void {
     this.discordClientService
       .getClient()
       .on(
         this.event,
         async (...eventArgs: ClientEvents['interactionCreate']) => {
-          const [interaction] = eventArgs;
-          if (
-            (!interaction.isChatInputCommand() &&
-              !interaction.isContextMenuCommand()) ||
-            interaction.commandName !== commandName
-          ) {
-            return;
-          }
+          await Promise.all(
+            mapped.map(
+              async ({ handler, commandName, subCommandName, groupName }) => {
+                const [interaction] = eventArgs;
+                if (
+                  (!interaction.isChatInputCommand() &&
+                    !interaction.isContextMenuCommand()) ||
+                  interaction.commandName !== commandName
+                ) {
+                  return;
+                }
 
-          if (
-            interaction.isChatInputCommand() &&
-            ((groupName &&
-              interaction.options.getSubcommandGroup(false) !== groupName) ||
-              (subCommandName &&
-                interaction.options.getSubcommand(false) !== subCommandName))
-          )
-            return;
+                if (
+                  interaction.isChatInputCommand() &&
+                  ((groupName &&
+                    interaction.options.getSubcommandGroup(false) !==
+                      groupName) ||
+                    (subCommandName &&
+                      interaction.options.getSubcommand(false) !==
+                        subCommandName))
+                )
+                  return;
 
-          try {
-            const returnReply = await handler(...eventArgs, {
-              event: this.event,
-              collectors: [],
-            } as EventContext);
+                try {
+                  const returnReply = await handler(...eventArgs, {
+                    event: this.event,
+                    collectors: [],
+                  } as EventContext);
 
-            if (returnReply) {
-              await interaction.reply(returnReply);
-            }
-          } catch (exception) {
-            if (
-              exception instanceof ForbiddenException &&
-              this.optionService.getClientData().isTrowForbiddenException
-            )
-              throw exception;
-          }
+                  if (returnReply) {
+                    await interaction.reply(returnReply);
+                  }
+                } catch (exception) {
+                  if (
+                    exception instanceof ForbiddenException &&
+                    this.optionService.getClientData().isTrowForbiddenException
+                  )
+                    throw exception;
+                }
+              },
+            ),
+          );
         },
       );
   }
