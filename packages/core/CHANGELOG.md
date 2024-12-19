@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.4.0](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@5.3.14...@discord-nestjs/core@5.4.0) (2024-12-19)
+
+### Features
+
+- Ad await before reply ([938037a](https://github.com/fjodor-rybakov/discord-nestjs/commit/938037aae8fb671060b0b1d3d802d94e4e0dc2fb))
+- update dependencies ([c95ea29](https://github.com/fjodor-rybakov/discord-nestjs/commit/c95ea2965cc205445cf371590cc98da27f55892b))
+
 ## [5.3.14](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@5.3.13...@discord-nestjs/core@5.3.14) (2024-02-13)
 
 **Note:** Version bump only for package @discord-nestjs/core
