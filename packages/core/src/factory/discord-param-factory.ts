@@ -20,21 +20,23 @@ export class DiscordParamFactory implements ParamsFactory {
           ? message[data]
           : message;
       }
-      case DiscordParamType.INTERACTION:
+      case DiscordParamType.INTERACTION: {
         const interaction = args[0];
 
         return data && typeof data === 'string' && interaction
           ? interaction[data]
           : interaction;
+      }
       case DiscordParamType.EVENT_PARAMS:
         return args;
-      case DiscordParamType.APPLIED_COLLECTORS:
+      case DiscordParamType.APPLIED_COLLECTORS: {
         const { collectors } = args[args.length - 1] as EventContext;
         const index = data && Number(data);
 
         return !isNaN(index) && collectors && collectors.length
           ? collectors[index]
           : collectors;
+      }
       default:
         return null;
     }

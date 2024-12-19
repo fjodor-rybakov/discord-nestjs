@@ -97,7 +97,7 @@ export class DtoService {
         descriptionLocalizations,
         choices: propertyOptions.choice,
         channelTypes: propertyOptions.channelTypes,
-      });
+      } as any);
     }
 
     return this.sortByRequired(commandOptions);

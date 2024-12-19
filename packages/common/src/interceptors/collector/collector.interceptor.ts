@@ -5,7 +5,7 @@ import {
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
-import { Message } from 'discord.js';
+import { Message, OmitPartialGroupDMChannel } from 'discord.js';
 import { Observable } from 'rxjs';
 
 @Injectable()
@@ -18,7 +18,8 @@ export class CollectorInterceptor implements NestInterceptor {
   ): Promise<Observable<any>> {
     const classType = context.getClass();
     const methodName = context.getHandler().name;
-    const eventArgs = context.getArgs<[message: Message]>();
+    const eventArgs =
+      context.getArgs<[message: OmitPartialGroupDMChannel<Message>]>();
     const eventContext = context.getArgByIndex<EventContext>(
       context.getArgs().length - 1,
     );
