@@ -21,6 +21,11 @@ export class OptionExplorer {
     Object.keys(dtoInstance).map((propertyKey: string) => {
       const paramDecoratorMetadata =
         this.metadataProvider.getParamDecoratorMetadata(dtoType, propertyKey);
+
+      if (!paramDecoratorMetadata) {
+        throw new Error('@Param decorator is not set');
+      }
+
       const channelTypes = this.getChannelOptions(dtoType, propertyKey);
       const applicationOptionType = channelTypes
         ? ApplicationCommandOptionType.Channel
