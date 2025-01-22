@@ -5,7 +5,6 @@ import {
   createParamDecorator,
 } from '@nestjs/common';
 import { isNil, isString } from '@nestjs/common/utils/shared.utils';
-import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
 
 import { DiscordParamType } from '../../factory/discord-param-type';
 import { EVENT_PARAMS_DECORATOR } from './event-param.constant';
@@ -23,7 +22,7 @@ export function InteractionEvent(
   );
 }
 
-export const EventParams = createParamDecorator<string, ExecutionContextHost>(
+export const EventParams = createParamDecorator<string, any[]>(
   (data, input) => {
     return input.getArgs();
   },
