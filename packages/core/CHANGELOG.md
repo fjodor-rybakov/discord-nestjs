@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.5.1](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@5.5.0...@discord-nestjs/core@5.5.1) (2025-01-22)
+
+### Bug Fixes
+
+- add throw error if decorator is not set ([e0a5207](https://github.com/fjodor-rybakov/discord-nestjs/commit/e0a52077349931495af04bc8190b59981a8b1506))
+
 # [5.5.0](https://github.com/fjodor-rybakov/discord-nestjs/compare/@discord-nestjs/core@5.4.0...@discord-nestjs/core@5.5.0) (2024-12-19)
 
 ### Features
