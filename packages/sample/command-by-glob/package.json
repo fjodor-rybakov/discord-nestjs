@@ -35,7 +35,7 @@
     "@nestjs/cli": "11.0.2",
     "@nestjs/schematics": "11.0.0",
     "@types/node": "22.10.7",
-    "@typescript-eslint/eslint-plugin": "8.21.0",
+    "@typescript-eslint/eslint-plugin": "8.24.1",
     "@typescript-eslint/parser": "8.21.0",
     "eslint": "9.18.0",
     "eslint-config-prettier": "10.0.1",
