@@ -522,7 +522,7 @@ command registration setting. It works according to the following principle:
 
 The `trigger`, `allowFactory`, `forGuild` and `removeCommandsBefore` options are combined with each other.
 
-> Global commands, unlike guild commands, are cached and updated once per hour. [More info](https://discordjs.guide/interactions/slash-commands.html#global-commands).
+> Global commands, unlike guild commands, are cached and updated once per hour. [More info](https://discordjs.guide/creating-your-bot/command-deployment.html#global-commands).
 
 #### 💡 Example
 
